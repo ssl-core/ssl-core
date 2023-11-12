@@ -1,0 +1,173 @@
+---
+Checks: >
+  -*,
+  abseil-*,
+  boost-*,
+  bugprone-*,
+  cert-*, -cert-err33-c,
+  clang-analyzer-*,
+  concurrency-*,
+  cppcoreguidelines-*, -cppcoreguidelines-pro-type-vararg,
+  darwin-*,
+  google-*,
+  hicpp-*,
+  linuxkernel-*,
+  llvm-*, -llvm-header-guard, -llvm-include-order,
+  misc-*,
+  modernize-*, -modernize-use-trailing-return-type,
+  mpi-*,
+  openmp-*,
+  performance-*,
+  portability-*,
+  readability-*, -readability-identifier-length
+
+WarningsAsErrors: >
+  *,
+  -cert-err58-cpp,
+  -readability-magic-numbers
+
+CheckOptions:
+  # bugprone-argument-comment:
+  - key: bugprone-argument-comment.CommentBoolLiterals
+    value: true
+  - key: bugprone-argument-comment.CommentIntegerLiterals
+    value: true
+  - key: bugprone-argument-comment.CommentFloatLiterals
+    value: true
+  - key: bugprone-argument-comment.CommentCharacterLiterals
+    value: true
+  - key: bugprone-argument-comment.CommentUserDefinedLiterals
+    value: true
+  - key: bugprone-argument-comment.CommentNullPtrs
+    value: true
+  # bugprone-assert-side-effect:
+  - key: bugprone-assert-side-effect.AssertMacros
+    value: "assert"
+  # bugprone-misplaced-widening-cast:
+  - key: bugprone-misplaced-widening-cast.CheckImplicitCasts
+    value: true
+  # cppcoreguidelines-avoid-do-while:
+  - key: cppcoreguidelines-avoid-do-while.IgnoreMacros
+    value: true
+  # cppcoreguidelines-init-variables:
+  - key: cppcoreguidelines-init-variables.IncludeStyle
+    value: "google"
+  - key: cppcoreguidelines-init-variables.MathHeader
+    value: "<cmath>"
+  # cppcoreguidelines-narrowing-conversions
+  - key: cppcoreguidelines-narrowing-conversions.PedanticMode
+    value: true
+  # misc-const-correctness
+  - key: misc-const-correctness.WarnPointersAsValues
+    value: true
+  - key: misc-const-correctness.TransformPointersAsValues
+    value: true
+  # misc-non-private-member-variables-in-classes
+  - key: misc-non-private-member-variables-in-classes.IgnoreClassesWithAllMemberVariablesBeingPublic
+    value: true
+  # misc-uniqueptr-reset-release
+  - key: misc-uniqueptr-reset-release.IncludeStyle
+    value: "google"
+
+  # readability-identifier-naming
+  # * namespace:
+  - key: readability-identifier-naming.NamespaceCase
+    value: lower_case
+
+  # * class:
+  - key: readability-identifier-naming.ClassCase
+    value: CamelCase
+  - key: readability-identifier-naming.ClassIgnoredRegexp
+    value: "^(const_)?([a-zA-Z0-9_]*)(_t|_?type|_?iterator|_?pointer|_?reference)$"
+  - key: readability-identifier-naming.ClassConstantCase
+    value: CamelCase
+  - key: readability-identifier-naming.ClassConstantPrefix
+    value: k
+  - key: readability-identifier-naming.ClassMemberCase
+    value: lower_case
+  - key: readability-identifier-naming.ClassMethodCase
+    value: camelBack
+
+  # * enum:
+  - key: readability-identifier-naming.EnumCase
+    value: CamelCase
+  - key: readability-identifier-naming.EnumConstantCase
+    value: CamelCase
+  - key: readability-identifier-naming.EnumConstantPrefix
+    value: e
+  - key: readability-identifier-naming.ScopedEnumConstantCase
+    value: CamelCase
+
+  # * function:
+  - key: readability-identifier-naming.FunctionCase
+    value: camelBack
+
+  # * global:
+  - key: readability-identifier-naming.GlobalConstantCase
+    value: CamelCase
+  - key: readability-identifier-naming.GlobalConstantPrefix
+    value: k
+  - key: readability-identifier-naming.GlobalConstantIgnoredRegexp
+    value: "^[a-z][a-zA-Z0-9]*_v$"
+
+  # * local:
+  - key: readability-identifier-naming.LocalConstantCase
+    value: CamelCase
+  - key: readability-identifier-naming.LocalConstantPrefix
+    value: k
+
+  # * macro:
+  - key: readability-identifier-naming.MacroDefinitionCase
+    value: UPPER_CASE
+
+  # * member:
+  - key: readability-identifier-naming.MemberCase
+    value: lower_case
+  - key: readability-identifier-naming.ConstantMemberCase
+    value: CamelCase
+  - key: readability-identifier-naming.ConstantMemberPrefix
+    value: k
+
+  # * method:
+  - key: readability-identifier-naming.MethodCase
+    value: camelBack
+
+  # * parameter:
+  - key: readability-identifier-naming.ParameterCase
+    value: lower_case
+  - key: readability-identifier-naming.ParameterPackCase
+    value: lower_case
+  - key: readability-identifier-naming.ConstantParameterCase
+    value: lower_case
+
+  # * private:
+  - key: readability-identifier-naming.PrivateMemberSuffix
+    value: _
+
+  # * protected:
+  - key: readability-identifier-naming.ProtectedMemberSuffix
+    value: _
+
+  # * struct:
+  - key: readability-identifier-naming.StructCase
+    value: CamelCase
+  - key: readability-identifier-naming.StructIgnoredRegexp
+    value: "^(const_)?([a-zA-Z0-9_]*)(_t|_?type|_?iterator|_?pointer|_?reference)$"
+
+  # * template:
+  - key: readability-identifier-naming.TemplateParameterCase
+    value: CamelCase
+
+  # * type alias:
+  - key: readability-identifier-naming.TypeAliasCase
+    value: CamelCase
+  - key: readability-identifier-naming.TypeAliasIgnoredRegexp
+    value: "^(const_)?([a-zA-Z0-9_]*)(_t|_?type|_?iterator|_?pointer|_?reference)$"
+
+  # * union:
+  - key: readability-identifier-naming.UnionCase
+    value: CamelCase
+
+  # * variable:
+  - key: readability-identifier-naming.VariableCase
+    value: lower_case
