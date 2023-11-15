@@ -1,0 +1,19 @@
+
+version: '3'
+
+services:
+  client:
+    build:
+      context: ./app
+      dockerfile: Dockerfile
+    command: python app.py
+    ports:
+      - "8000:80"
+    depends_on:
+      - redis
+
+  redis:
+    image: redis:latest
+    command: redis-server --appendonly yes
+    ports:
+      - "6379:6379"
