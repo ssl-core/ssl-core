@@ -9,11 +9,6 @@ endif ()
 
 ########################################################################################################################
 
-# define the project path to be used in the code
-get_filename_component(ROBOCIN_PROJECT_PATH "${CMAKE_CURRENT_LIST_DIR}/.." ABSOLUTE)
-
-########################################################################################################################
-
 # set CMAKE_EXPORT_COMPILE_COMMANDS to ON to generate a compile_commands.json file in the build directory by default
 # this file is used by clang tools such as clangd, clang-tidy and clang-format
 
@@ -113,7 +108,7 @@ function(robocin_cpp_library)
   target_compile_definitions(${ARG_NAME} PRIVATE ROBOCIN_PROJECT_NAME="${ROBOCIN_PROJECT_NAME}")
   target_compile_definitions(${ARG_NAME} PRIVATE ROBOCIN_PROJECT_PATH="${ROBOCIN_PROJECT_PATH}")
 
-  target_sources(${ARG_NAME} PUBLIC FILE_SET cxx_modules TYPE CXX_MODULES FILES ${ARG_MODS})
+  # target_sources(${ARG_NAME} PUBLIC FILE_SET cxx_modules TYPE CXX_MODULES FILES ${ARG_MODS})
 
   if (ARG_MACROS)
     target_compile_definitions(${ARG_NAME} ${ARG_MACROS})
@@ -160,7 +155,7 @@ function(robocin_cpp_test)
   target_compile_definitions(${ARG_NAME} PRIVATE ROBOCIN_PROJECT_NAME="${ROBOCIN_PROJECT_NAME}")
   target_compile_definitions(${ARG_NAME} PRIVATE ROBOCIN_PROJECT_PATH="${ROBOCIN_PROJECT_PATH}")
 
-  target_sources(${ARG_NAME} PUBLIC FILE_SET cxx_modules TYPE CXX_MODULES FILES ${ARG_MODS})
+  # target_sources(${ARG_NAME} PUBLIC FILE_SET cxx_modules TYPE CXX_MODULES FILES ${ARG_MODS})
 
   if (ARG_MACROS)
     target_compile_definitions(${ARG_NAME} ${ARG_MACROS})
@@ -209,7 +204,7 @@ function(robocin_cpp_benchmark_test)
   target_compile_definitions(${ARG_NAME} PRIVATE ROBOCIN_PROJECT_NAME="${ROBOCIN_PROJECT_NAME}")
   target_compile_definitions(${ARG_NAME} PRIVATE ROBOCIN_PROJECT_PATH="${ROBOCIN_PROJECT_PATH}")
 
-  target_sources(${ARG_NAME} PUBLIC FILE_SET cxx_modules TYPE CXX_MODULES FILES ${ARG_MODS})
+  # target_sources(${ARG_NAME} PUBLIC FILE_SET cxx_modules TYPE CXX_MODULES FILES ${ARG_MODS})
 
   if (ARG_MACROS)
     target_compile_definitions(${ARG_NAME} ${ARG_MACROS})
@@ -256,7 +251,7 @@ function(robocin_cpp_executable)
   target_compile_definitions(${ARG_NAME} PRIVATE ROBOCIN_PROJECT_NAME="${ROBOCIN_PROJECT_NAME}")
   target_compile_definitions(${ARG_NAME} PRIVATE ROBOCIN_PROJECT_PATH="${ROBOCIN_PROJECT_PATH}")
 
-  target_sources(${ARG_NAME} PUBLIC FILE_SET cxx_modules TYPE CXX_MODULES FILES ${ARG_MODS})
+  # target_sources(${ARG_NAME} PUBLIC FILE_SET cxx_modules TYPE CXX_MODULES FILES ${ARG_MODS})
 
   if (ARG_MACROS)
     target_compile_definitions(${ARG_NAME} ${ARG_MACROS})

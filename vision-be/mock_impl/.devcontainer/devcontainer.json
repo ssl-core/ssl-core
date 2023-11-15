@@ -47,7 +47,7 @@
         "clangd.path": "/usr/bin/clangd",
         // CMake Settings
         "cmake.buildDirectory": "${workspaceFolder}/build",
-        "cmake.cmakePath": "/usr/local/bin/cmake",
+        "cmake.cmakePath": "/usr/bin/cmake",
         "cmake.generator": "Ninja",
         // Code Spell Checker Settings
         "cSpell.language": "en, pt-BR",

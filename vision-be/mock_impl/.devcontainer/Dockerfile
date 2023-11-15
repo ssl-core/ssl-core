@@ -1,1 +1,1 @@
-FROM robocin/clang-cpp23-ubuntu-latest:manual-experimental-v3
+FROM robocin/robocin-ines:manual-robocup-v4

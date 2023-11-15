@@ -1,0 +1,38 @@
+version: '3'
+
+services:
+  service-0:
+    build:
+      context: .
+      dockerfile: service.Dockerfile
+    command: ["0"]
+    
+  service-1:
+    build:
+      context: .
+      dockerfile: service.Dockerfile
+    command: ["1"]
+
+  service-2:
+    build:
+      context: .
+      dockerfile: service.Dockerfile
+    command: ["2"]
+
+  service-3:
+    build:
+      context: .
+      dockerfile: service.Dockerfile
+    command: ["3"]
+
+  service-4:
+    build:
+      context: .
+      dockerfile: service.Dockerfile
+    command: ["4"]
+
+  service-5:
+    build:
+      context: .
+      dockerfile: service.Dockerfile
+    command: ["5"]
