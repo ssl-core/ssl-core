@@ -16,8 +16,8 @@ default_field = Field(length=9000.0, width=6000.0, goal_depth=500.0, goal_width=
 # Create a list of frames with different robots and the same ball and field.
 frames_with_different_robots = []
 
-# Create 5 frames
-NUMBER_OF_FRAMES = 500
+# Create # of frames
+NUMBER_OF_FRAMES = 100000
 for frame_id in range(NUMBER_OF_FRAMES):
     create_robot = lambda color, id: Robot(
         uuid=str(id),

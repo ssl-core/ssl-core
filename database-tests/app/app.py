@@ -3,11 +3,13 @@ from src.data.Frame import seed
 import time
 
 def main():
-    REPOSITORY_TYPE = "redis"
+    REPOSITORY_TYPE = "scylladb"
     repository = repository_factory_mapping[REPOSITORY_TYPE]
     frame_repository = repository.createFrameRepository()
     default_frames = seed.frames_with_different_robots
     number_of_frames = seed.NUMBER_OF_FRAMES
+
+    print("Using {REPOSITORY_TYPE} repository...".format(REPOSITORY_TYPE=REPOSITORY_TYPE))
 
     print("Saving frames...")
     start = time.time()
