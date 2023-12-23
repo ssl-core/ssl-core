@@ -28,12 +28,18 @@ All the code developed was done in [Visual Studio Code](https://code.visualstudi
 * [`experiments`](experiments/README.md)
 
   Contains experiments and prototypes for conceptual validation.
+
 * [`vision-be`](vision-be/README.md)
 
   Contains the vision microservice.
+
 * [`common`](common/README.md)
 
   Contains common code and utilities used across the project.
+
+* [`.cmake`](.cmake/README.md)
+
+  Contains common [CMake](https://cmake.org) rules and utilities used across the project.
 
 ## How to Contribute
 
