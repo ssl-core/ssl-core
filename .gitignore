@@ -1,0 +1,106 @@
+*~
+*.autosave
+*.a
+*.core
+*.moc
+*.o
+*.obj
+*.orig
+*.rej
+*.so
+*.so.*
+*_pch.h.cpp
+*_resource.rc
+*.qm
+.#*
+*.*#
+core
+!core/
+tags/
+.DS_Store
+.directory
+*.debug
+Makefile*
+*.prl
+*.app
+moc_*.h
+moc_*.cpp
+mocs_*.cpp
+ui_*.h
+qrc_*.cpp
+Thumbs.db
+*.res
+*.rc
+/.qmake.cache
+/.qmake.stash
+*.cbp
+
+# QtCreator generated files
+*.pro.user
+*.pro.user*
+
+# XEmacs temporary files
+*.flc
+
+# Vim temporary files
+.*.swp
+
+# Visual Studio generated files
+*.ib_pdb_index
+*.idb
+*.ilk
+*.pdb
+*.sln
+*.suo
+*.vcproj
+*vcproj.*.*.user
+*.ncb
+*.sdf
+*.opensdf
+*.vcxproj
+*vcxproj.*
+
+# VS Code generated files
+.cache/
+.vscode/*.log
+
+# MinGW generated files
+*.Debug
+*.Release
+
+# Python byte code
+*.pyc
+
+# Binaries
+*.dll
+*.exe
+
+# QtCreator unit tests
+target_wrapper.*
+
+# Binaries' folder
+bin/
+lib/
+
+# Build
+build/
+
+# CMake
+CMakeLists.txt.user
+CMakeCache.txt
+CMakeFiles
+CMakeScripts
+Testing
+cmake_install.cmake
+install_manifest.txt
+compile_commands.json
+CTestTestfile.cmake
+_deps
+CMakeDoxyfile.in
+CMakeDoxygenDefaults.cmake
+
+# Python cache
+__pycache__
+
+# Jetbrains IDE
+.idea/
