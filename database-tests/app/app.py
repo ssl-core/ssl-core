@@ -3,7 +3,7 @@ from src.data.Frame import seed
 import time
 
 def main():
-    REPOSITORY_TYPE = "scylladb"
+    REPOSITORY_TYPE = "mongodb"
     repository = repository_factory_mapping[REPOSITORY_TYPE]
     frame_repository = repository.createFrameRepository()
     default_frames = seed.frames_with_different_robots

@@ -9,25 +9,20 @@ services:
     ports:
       - "8000:80"
     depends_on:
-      - scylla
+      - mongodb
 
-  redis:
-    image: redis:latest
-    command: redis-server --appendonly yes
-    ports:
-      - "6379:6379"
+  # redis:
+  #   image: redis:latest
+  #   command: redis-server --appendonly yes
+  #   ports:
+  #     - "6379:6379"
 
   mongodb:
       image: mongo:latest
       ports:
         - "27017:27017"
 
-  cassandra:
-    image: cassandra:latest
-    ports:
-      - "9042:9042"
-
-  scylla:
-    image: scylladb/scylla
-    ports:
-      - "9043:9043"
+  # cassandra:
+  #   image: cassandra:latest
+  #   ports:
+  #     - "9042:9042"

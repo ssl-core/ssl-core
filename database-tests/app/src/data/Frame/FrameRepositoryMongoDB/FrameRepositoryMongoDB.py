@@ -21,7 +21,7 @@ class FrameRepositoryMongoDB(IFrameRepository):
         except TypeError:
             print("Frame object contains non-serializable attributes.")
         else:
-            frame_dict = {'_id': frame_id, 'data': frame_data}
+            frame_dict = {'mock': frame_id, 'data': frame_data}
             self.collection.insert_one(frame_dict)
 
     def find(self, frame_id: str) -> Frame:
