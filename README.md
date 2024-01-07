@@ -1,7 +1,6 @@
 [![RobôCIn](https://img.shields.io/badge/🇧🇷-RobôCIn-009B3A)](https://robocin.com.br)
-[![](https://img.shields.io/github/issues/robocin/ssl-core)](https://github.com/robocin/ssl-core/issues)
-[![](https://img.shields.io/github/issues-pr/robocin/ssl-core
-)](https://github.com/robocin/ssl-core/pulls)
+[![Issues](https://img.shields.io/github/issues/robocin/ssl-core)](https://github.com/robocin/ssl-core/issues)
+[![Pull Requests](https://img.shields.io/github/issues-pr/robocin/ssl-core)](https://github.com/robocin/ssl-core/pulls)
 [![C++](https://img.shields.io/badge/C%2B%2B-20%2B-darkblue.svg)](https://en.cppreference.com/w/cpp/20)
 [![CMake](https://img.shields.io/badge/CMake-3.28%2B-blue.svg)](https://cmake.org/cmake/help/latest/release/3.28.html)
 [![VS Code Dev Containers](https://img.shields.io/static/v1?label=VS+Code&message=Dev+Containers&logo=visualstudiocode&color=007ACC&labelColor=2C2C32&logoColor=007ACC)](https://code.visualstudio.com/docs/devcontainers/containers)

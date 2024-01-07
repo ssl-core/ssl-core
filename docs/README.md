@@ -6,3 +6,4 @@ This folder contains documentation pages as guides, tutorials, and other useful 
 
 * [How to Contribute](how-to-contribute.md)
 * [Contribution Guidelines](contribution-guidelines.md)
+* [Coding Standards](coding-standards.md)
