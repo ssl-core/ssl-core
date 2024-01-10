@@ -41,18 +41,23 @@ macro(robocin_cpp_project_setup)
 
   message(STATUS "Output directory: '${CMAKE_RUNTIME_OUTPUT_DIRECTORY}'")
 
-  if (ARG_SOURCE_DIRECTORY)
-    set(SOURCE_DIRECTORY ${ARG_SOURCE_DIRECTORY})
-  else ()
-    set(SOURCE_DIRECTORY ${ROBOCIN_PROJECT_NAME})
+  if (ARG_SOURCE_DIRECTORY AND ARG_NO_SOURCE_DIRECTORY)
+    message(FATAL_ERROR "robocin_cpp_project_setup: cannot set both SOURCE_DIRECTORY and NO_SOURCE_DIRECTORY.")
   endif ()
 
-  message(STATUS "Source directory: '${CMAKE_CURRENT_LIST_DIR}/${SOURCE_DIRECTORY}'")
-  
-  if (EXISTS ${CMAKE_CURRENT_LIST_DIR}/${SOURCE_DIRECTORY}/CMakeLists.txt)
-    add_subdirectory(${SOURCE_DIRECTORY})
-  else ()
-    message(FATAL_ERROR "robocin_cpp_project_setup: It is expected that all source code should be present in folder '${SOURCE_DIRECTORY}/'.")
+  if (NOT ARG_NO_SOURCE_DIRECTORY)
+    if (ARG_SOURCE_DIRECTORY)
+      set(SOURCE_DIRECTORY ${ARG_SOURCE_DIRECTORY})
+    else ()
+      set(SOURCE_DIRECTORY ${ROBOCIN_PROJECT_NAME})
+    endif ()
+
+    if (EXISTS ${CMAKE_CURRENT_LIST_DIR}/${SOURCE_DIRECTORY}/CMakeLists.txt)
+      message(STATUS "Source directory: '${CMAKE_CURRENT_LIST_DIR}/${SOURCE_DIRECTORY}'")
+      add_subdirectory(${SOURCE_DIRECTORY})
+    else ()
+      message(FATAL_ERROR "robocin_cpp_project_setup: It is expected that all source code should be present in folder '${SOURCE_DIRECTORY}/'.")
+    endif ()
   endif ()
 
 endmacro()
