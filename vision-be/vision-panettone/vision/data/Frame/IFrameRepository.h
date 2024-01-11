@@ -6,6 +6,7 @@
 
 class IFrameRepository {
  public:
+  IFrameRepository() = default;
   virtual ~IFrameRepository() = default;
 
   IFrameRepository(const IFrameRepository&) = delete;
