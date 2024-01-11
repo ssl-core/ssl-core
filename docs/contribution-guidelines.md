@@ -157,7 +157,7 @@ See also: #456, #789
 To perform a *simple* commit, a single command if sufficient:
 
 ```sh
-$ git commit -m"Fix my commit message title style"
+$ git commit -m "Fix my commit message title style"
 ```
 
 Here's an example of a title and body commit message:
@@ -319,7 +319,7 @@ Otherwise, you have to always fill the body with a description of the changes yo
   * If your PR has not yet started to be revised for submission, you may want to leave it as draft
   * Opening a PR as draft early is a good way to avoid doubts only in the final revision, what can save **rework**
 * Don't worry about the number of commits or their size during development, but always about the size of the PR
-* Immediately before converting your PR from draft to standard one make sure that their related commits are in accordance with the [committing code](#committing-code) section
+* Immediately before converting your PR from draft to standard, make sure that their related commits are in accordance with the [committing code](#committing-code) section
 
 ### After Requesting a Review
 
