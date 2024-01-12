@@ -1,0 +1,32 @@
+@font-face {
+  font-family: "Manrope", sans-serif;
+  src: url('fonts/Manrope.ttf') format("truetype");
+}
+
+:root {
+  font-family: "Manrope", sans-serif;
+  font-weight: 400;
+  color: var(--color-white);
+  background-color: var(--color-background);
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+html, body {
+  margin: 0;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+}
+
+body {
+  display: flex;
+  flex-direction: row;
+}
+
+a {
+  text-decoration: none;
+  color: inherit;
+}

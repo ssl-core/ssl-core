@@ -7,9 +7,34 @@
     <title>RobôCIn-INES</title>
   </head>
   <body>
-    <div id="app">
+    <nav id="sidebar">
+      <ul>
+        <a href="/" id="link-logo">
+          <li>
+            <object data="robocin.svg" type="image/svg+xml"></object>
+            <span class="tooltip">SSL | RobôCIn</span>
+          </li>
+        </a>
+        <div id="pages">
+
+        </div>
+        <a href="/">
+          <li>
+            <i data-lucide="keyboard"></i>
+            <span class="tooltip">Atalhos</span>
+          </li>
+        </a>
+        <a href="/about">
+          <li>
+            <i data-lucide="settings"></i>
+            <span class="tooltip">Configurações</span>
+          </li>
+        </a>
+      </ul>
+    </nav>
+    <main id="app">
       <h1>Application Shell</h1>
-    </div>
+    </main>
     <script type="module" src="/src/main.ts"></script>
   </body>
 </html>
