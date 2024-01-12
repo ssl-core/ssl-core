@@ -1,15 +1,17 @@
 // RepositoryFactoryMapping.cpp
 #include "RepositoryFactoryMapping.h"
 
+#include "../RepositoryFactoryMongoDB/RepositoryFactoryMongoDB.h"
+
 RepositoryFactoryMapping::RepositoryFactoryMapping() {
-  factoryMapping_[RepositoryType::MONGODB] = new RepositoryFactoryMongoDB();
+  factoryMapping_[RepositoryType::MONGODB] = std::make_shared<RepositoryFactoryMongoDB>();
 }
 
-RepositoryAbstractFactory*
-RepositoryFactoryMapping::getFactory(RepositoryType repositoryType) const {
-  auto it = factoryMapping.find(repositoryType);
-  if (it != factoryMapping.end()) {
+std::shared_ptr<RepositoryAbstractFactory>
+RepositoryFactoryMapping::getFactory(RepositoryType repository_type) const {
+  auto it = factoryMapping_.find(repository_type);
+  if (it != factoryMapping_.end()) {
     return it->second;
   }
-  return nullptr; // Or handle the case when the repository type is not found
+  return nullptr;
 }

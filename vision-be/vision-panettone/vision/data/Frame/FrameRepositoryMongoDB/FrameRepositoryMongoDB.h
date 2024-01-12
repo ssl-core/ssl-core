@@ -12,7 +12,7 @@ class FrameRepositoryMongoDB : public IFrameRepository {
   FrameRepositoryMongoDB();
 
   void save(const Frame& frame) override;
-  [[nodiscard]] Frame find(const std::string& frame_id) const override;
+  [[nodiscard]] std::optional<Frame> find(const std::string& frame_id) override;
   Frame update(const Frame& frame) override;
   void remove(const Frame& frame) override;
 

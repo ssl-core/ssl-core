@@ -28,4 +28,14 @@ class Field {
   double goal_center_to_penalty_mark_;
 };
 
+// Static constant instance definition outside the class
+static const Field kDefaultField = Field(/*length=*/9.0,
+                                         /*width=*/6.0,
+                                         /*goal_depth=*/0.6,
+                                         /*goal_width=*/1.0,
+                                         /*penalty_area_depth=*/1.8,
+                                         /*penalty_area_width=*/3.0,
+                                         /*boundary_width=*/0.3,
+                                         /*goal_center_to_penalty_mark=*/1.0);
+
 #endif // FIELD_H

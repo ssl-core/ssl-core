@@ -1,6 +1,8 @@
 // Frame.cpp
 #include "Frame.h"
 
+#include "vision/src/Field/Field.h"
+
 Frame::Frame(int id,
              const std::vector<Ball>& balls,
              const std::vector<Robot>& robots,
@@ -25,4 +27,7 @@ std::ostream& operator<<(std::ostream& os, const Frame& frame) {
   return os;
 }
 
-int Frame::getId() const { return id_; }
+Frame Frame::fromJson([[maybe_unused]] const std::string& json) {
+  // TODO(protobuf): Use Protobuf to parse.
+  return Frame{/*id=*/0, {}, {}, kDefaultField};
+}

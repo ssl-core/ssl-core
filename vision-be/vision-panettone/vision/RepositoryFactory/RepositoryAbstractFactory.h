@@ -4,9 +4,13 @@
 
 #include "../data/Frame/IFrameRepository.h"
 
+#include <memory>
+
 class RepositoryAbstractFactory {
  public:
-  [[nodiscard]] virtual IFrameRepository* createFrameRepository() const = 0;
+  [[nodiscard]] virtual std::unique_ptr<IFrameRepository> createFrameRepository() const = 0;
+  // TODO(repositories): Create other repositories for Ball, Robot, etc.
+
   virtual ~RepositoryAbstractFactory() = default;
 
   RepositoryAbstractFactory(const RepositoryAbstractFactory&) = default;

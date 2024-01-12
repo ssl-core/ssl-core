@@ -24,6 +24,10 @@ class Frame {
   [[nodiscard]] std::vector<Robot> getRobots() const; // Getter for robots
   [[nodiscard]] Field getField() const;               // Getter for field
 
+  // - MARK: JSON Support.
+  [[nodiscard]] std::string toJson() const;
+  [[nodiscard]] static Frame fromJson([[maybe_unused]] const std::string& json);
+
  private:
   int id_;
   std::vector<Ball> balls_;

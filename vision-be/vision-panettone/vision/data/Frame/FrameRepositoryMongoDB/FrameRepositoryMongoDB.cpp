@@ -3,25 +3,14 @@
 
 #include <bsoncxx/builder/basic/document.hpp>
 #include <bsoncxx/builder/basic/kvp.hpp>
+#include <bsoncxx/document/view.hpp>
 #include <bsoncxx/json.hpp>
+#include <cassert>
 #include <iostream>
+#include <mongocxx/collection.hpp>
 #include <mongocxx/instance.hpp>
 
-// Redefine assert after including headers. Release builds may undefine the assert macro and result
-// in -Wunused-variable warnings.
-#if defined(NDEBUG) || !defined(assert)
-#undef assert
-#define assert(stmt)                                                                               \
-  do {                                                                                             \
-    if (!(stmt)) {                                                                                 \
-      std::cerr << "Assert on line " << __LINE__ << " failed: " << #stmt << "\n";                  \
-      abort();                                                                                     \
-    }                                                                                              \
-  } while (0)
-#endif
-
 using bsoncxx::builder::basic::kvp;
-using bsoncxx::builder::basic::make_array;
 using bsoncxx::builder::basic::make_document;
 
 FrameRepositoryMongoDB::FrameRepositoryMongoDB() :
@@ -32,36 +21,26 @@ FrameRepositoryMongoDB::FrameRepositoryMongoDB() :
 void FrameRepositoryMongoDB::save(const Frame& frame) {
   auto frame_id = frame.getId();
   try {
-    auto doc_value = make_document(kvp("id", frame.getId()),
-                                   kvp("balls", frame.getBalls()),
-                                   kvp("robots", frame.getRobots()),
-                                   kvp("field", frame.getField()));
-    auto doc_view = doc_value.view();
-    auto insert_one_result = collection_.insert_one(doc_view);
+    auto document = make_document(kvp("_id", frame.getId()),
+                                  kvp("balls", frame.getBalls()),
+                                  kvp("robots", frame.getRobots()),
+                                  kvp("field", frame.getField()));
+    auto insert_one_result = collection_.insert_one(document.view());
     assert(insert_one_result);
-
   } catch (const std::exception& e) {
     std::cerr << "Error saving frame: " << e.what() << "\n";
   }
 }
 
-Frame FrameRepositoryMongoDB::find(const std::string& frame_id) const {
+std::optional<Frame> FrameRepositoryMongoDB::find(const std::string& frame_id) {
   try {
-    bsoncxx::stdx::optional<bsoncxx::document::value> result = collection_.find_one(
-        bsoncxx::builder::basic::make_document(bsoncxx::builder::basic::kvp("mock", frameId)));
+    auto frame = collection_.find_one(make_document(kvp("_id", frame_id)));
+    assert(frame);
 
-    if (result) {
-      bsoncxx::document::view frameDict = result->view();
-      std::string frameData = bsoncxx::to_json(frameDict["data"].get_value());
-      return Frame::fromJson(frameData);
-    } else {
-      std::cerr << "Frame not found." << std::endl;
-      // Handle the case when the frame is not found
-      return Frame(); // Return a default-constructed Frame as a placeholder
-    }
+    std::string frame_data = bsoncxx::to_json(frame->view());
+    return Frame::fromJson(frame_data);
   } catch (const std::exception& e) {
-    std::cerr << "Exception: " << e.what() << std::endl;
-    // Handle the exception
-    return Frame(); // Return a default-constructed Frame as a placeholder
+    std::cerr << "Error : " << e.what() << '\n';
+    return std::nullopt;
   }
 }

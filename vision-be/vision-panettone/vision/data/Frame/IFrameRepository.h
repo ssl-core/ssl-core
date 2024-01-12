@@ -4,6 +4,8 @@
 
 #include "../../src/Frame/Frame.h"
 
+#include <optional>
+
 class IFrameRepository {
  public:
   IFrameRepository() = default;
@@ -15,7 +17,7 @@ class IFrameRepository {
   IFrameRepository& operator=(IFrameRepository&&) = delete;
 
   virtual void save(const Frame& frame) = 0;
-  [[nodiscard]] virtual Frame find(const std::string& frame_id) const;
+  [[nodiscard]] virtual std::optional<Frame> find(const std::string& frame_id) = 0;
   virtual Frame update(const Frame& frame) = 0;
   virtual void remove(const Frame& frame) = 0;
 };
