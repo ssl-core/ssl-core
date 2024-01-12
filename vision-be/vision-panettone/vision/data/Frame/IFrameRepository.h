@@ -15,7 +15,7 @@ class IFrameRepository {
   IFrameRepository& operator=(IFrameRepository&&) = delete;
 
   virtual void save(const Frame& frame) = 0;
-  [[nodiscard]] virtual Frame find(const std::string& frame_id) const = 0;
+  [[nodiscard]] virtual Frame find(const std::string& frame_id) const;
   virtual Frame update(const Frame& frame) = 0;
   virtual void remove(const Frame& frame) = 0;
 };

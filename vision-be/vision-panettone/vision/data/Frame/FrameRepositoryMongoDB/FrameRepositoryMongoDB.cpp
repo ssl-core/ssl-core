@@ -29,15 +29,17 @@ FrameRepositoryMongoDB::FrameRepositoryMongoDB() :
     db_{client_["frames_database"]},
     collection_{db_["frames_collection"]} {}
 
-void FrameRepositoryMongoDB::save(Frame& frame) {
+void FrameRepositoryMongoDB::save(const Frame& frame) {
   auto frame_id = frame.getId();
   try {
     auto doc_value = make_document(kvp("id", frame.getId()),
                                    kvp("balls", frame.getBalls()),
                                    kvp("robots", frame.getRobots()),
                                    kvp("field", frame.getField()));
-    auto insert_one_result = collection_.insert_one(doc_value);
+    auto doc_view = doc_value.view();
+    auto insert_one_result = collection_.insert_one(doc_view);
     assert(insert_one_result);
+
   } catch (const std::exception& e) {
     std::cerr << "Error saving frame: " << e.what() << "\n";
   }

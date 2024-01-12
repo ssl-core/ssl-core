@@ -11,7 +11,7 @@ class FrameRepositoryMongoDB : public IFrameRepository {
  public:
   FrameRepositoryMongoDB();
 
-  void save(Frame& frame) override;
+  void save(const Frame& frame) override;
   [[nodiscard]] Frame find(const std::string& frame_id) const override;
   Frame update(const Frame& frame) override;
   void remove(const Frame& frame) override;
