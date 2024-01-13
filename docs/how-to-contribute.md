@@ -1,4 +1,4 @@
-# Contributing to [`ssl-core`](https://github.com/robocin/ssl-core)
+# How to Contribute
 
 We appreciate your enthusiasm for contributing to `ssl-core`!
 
