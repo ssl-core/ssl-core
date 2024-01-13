@@ -1,6 +1,7 @@
 // Field.cpp
 #include "Field.h"
 
+// NOLINTBEGIN(bugprone-easily-swappable-parameters)
 Field::Field(double length,
              double width,
              double goal_depth,
@@ -17,6 +18,7 @@ Field::Field(double length,
     penalty_area_width_(penalty_area_width),
     boundary_width_(boundary_width),
     goal_center_to_penalty_mark_(goal_center_to_penalty_mark) {}
+// NOLINTEND(bugprone-easily-swappable-parameters)
 
 std::ostream& operator<<(std::ostream& os, const Field& field) {
   os << "Field(length=" << field.length_ << ", width=" << field.width_

@@ -4,6 +4,7 @@
 
 #include "../../src/Frame/Frame.h"
 
+#include <mongocxx/collection.hpp>
 #include <optional>
 
 class IFrameRepository {
@@ -18,8 +19,9 @@ class IFrameRepository {
 
   virtual void save(const Frame& frame) = 0;
   [[nodiscard]] virtual std::optional<Frame> find(const std::string& frame_id) = 0;
-  virtual Frame update(const Frame& frame) = 0;
-  virtual void remove(const Frame& frame) = 0;
+  virtual std::optional<Frame> update(const std::string& frame_id, bsoncxx::document::value& update)
+      = 0;
+  virtual void remove(const std::string& frame_id) = 0;
 };
 
 #endif // IFRAME_REPOSITORY_H

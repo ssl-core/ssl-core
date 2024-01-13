@@ -13,8 +13,9 @@ class FrameRepositoryMongoDB : public IFrameRepository {
 
   void save(const Frame& frame) override;
   [[nodiscard]] std::optional<Frame> find(const std::string& frame_id) override;
-  Frame update(const Frame& frame) override;
-  void remove(const Frame& frame) override;
+  std::optional<Frame> update(const std::string& frame_id,
+                              bsoncxx::document::value& update) override;
+  void remove(const std::string& frame_id) override;
 
  private:
   mongocxx::client client_;

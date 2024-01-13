@@ -44,3 +44,30 @@ std::optional<Frame> FrameRepositoryMongoDB::find(const std::string& frame_id) {
     return std::nullopt;
   }
 }
+
+std::optional<Frame> FrameRepositoryMongoDB::update(const std::string& frame_id,
+                                                    bsoncxx::document::value& update) {
+  try {
+    auto filter = make_document(kvp("_id", frame_id));
+    auto updated_frame = collection_.find_one_and_update(
+        filter.view(),
+        update.view()); // TODO(aqb): verify if find_one_and_update is the right method
+    assert(updated_frame);
+
+    std::string frame_data = bsoncxx::to_json(updated_frame->view());
+    return Frame::fromJson(frame_data);
+  } catch (const std::exception& e) {
+    std::cerr << "Error : " << e.what() << '\n';
+    return std::nullopt;
+  }
+}
+
+void FrameRepositoryMongoDB::remove(const std::string& frame_id) {
+  try {
+    auto deleted_frame = collection_.delete_one(make_document(kvp("_id", frame_id)));
+    assert(deleted_frame);
+
+  } catch (const std::exception& e) {
+    std::cerr << "Error : " << e.what() << '\n';
+  }
+}
