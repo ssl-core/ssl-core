@@ -22,3 +22,6 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+
+# Re-add folders ignored by the previous exclusion
+!lib/
