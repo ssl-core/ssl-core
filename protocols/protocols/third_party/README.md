@@ -4,8 +4,7 @@ This directory contains the libraries needed for a RoboCup Small Size League gam
 
 ## Protobufs
 
-The `.proto` files in this directory are named differently from the original files. The mapping between the files
-described here and the original files are shown below:
+The `.proto` files in this directory are named differently from the original files and the mapping between them and the original ones is shown below:
 
 ### detection
 
