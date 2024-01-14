@@ -10,7 +10,7 @@ The protocols contained in this repository are Protocol Buffers (protobuf).
 
 ### Protobufs
 
-[Protobufs](https://protobuf.dev) are a language-agnostic data serialization format developed by Google, which allow for efficient and structured communication between different software components.
+[Protobufs](https://protobuf.dev) are a language-agnostic data serialization format developed by Google that allows  efficient and structured communication between different software components.
 
 Protocol Buffers offer numerous advantages, such as efficient serialization, platform independence, and language interoperability. By using Protocol Buffers, you can easily serialize, deserialize, and exchange structured data between different systems or languages.
 
