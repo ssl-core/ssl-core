@@ -19,7 +19,7 @@ Its conception consists of a long-term project that tries to apply the concept o
   - [About](#about)
   - [System Requirements](#system-requirements)
   - [Codemap](#codemap)
-  - [Contributing](#contributing)
+  - [How to Contribute](#how-to-contribute)
   - [License](#license)
   - [Acknowledgements](#acknowledgements)
 
@@ -53,7 +53,7 @@ All the code developed was done in [Visual Studio Code](https://code.visualstudi
 
   Contains documentation pages as guides, tutorials, and other useful information.
 
-## Contributing
+## How to Contribute
 
 There are many ways in which you can participate in this project, for example:
 

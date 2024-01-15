@@ -324,40 +324,40 @@ Otherwise, you have to always fill the body with a description of the changes yo
 ### After Requesting a Review
 
 01. **Wait for Feedback:**
-   * Give your team members some time to review your code and provide feedback. Be patient and allow them to thoroughly examine your changes
+   * Give your team members some time to review your code and provide feedback. Be patient and allow them to thoroughly examine your changes.
 
 02. **Address Comments:**
-   * If reviewers leave comments on your pull request, address them promptly. You can reply to each comment to clarify your intentions or make the necessary changes to your code
+   * If reviewers leave comments on your pull request, address them promptly. You can reply to each comment to clarify your intentions or make the necessary changes to your code.
 
 03. **Ping Team Members:**
-   * If a significant amount of time passes without any reviews, feel free to ping your team members to bring attention to your pull request. This helps ensure timely feedback and keeps the collaboration process efficient
+   * If a significant amount of time passes without any reviews, feel free to ping your team members to bring attention to your pull request. This helps ensure timely feedback and keeps the collaboration process efficient.
 
 04. **Iterate and Update:**
-   * Make any required changes based on the feedback received. Ensure that your code aligns with your team's coding standards and follows best practices
+   * Make any required changes based on the feedback received. Ensure that your code aligns with your team's coding standards and follows best practices.
 
 05. **Re-request Review:**
-   * After making updates, re-request a review from your team. This signals to the reviewers that you've addressed their comments and that the changes are ready for another round of review
+   * After making updates, re-request a review from your team. This signals to the reviewers that you've addressed their comments and that the changes are ready for another round of review.
 
 06. **Continuous Integration (CI) Checks:**
-   * Ensure that your code passes any automated tests or CI checks that are in place for your project. This helps maintain the overall code quality
+   * Ensure that your code passes any automated tests or CI checks that are in place for your project. This helps maintain the overall code quality.
 
 07. **Documentation:**
-   * Update any relevant documentation, such as README files or inline code comments, to reflect the changes you've made
+   * Update any relevant documentation, such as README files or inline code comments, to reflect the changes you've made.
 
 08. **Rebase or Merge with Main/Branch:**
-   * Merge the latest changes from the `main` branch into your feature branch. Alternatively, you can rebase your changes to incorporate the latest updates if you haven't already requested a review
+   * Merge the latest changes from the `main` branch into your feature branch. Alternatively, you can rebase your changes to incorporate the latest updates if you haven't already requested a review.
 
 09. **Notify Reviewers:**
-   * Once you've addressed the feedback and made any necessary updates, consider notifying the reviewers that your changes are ready for another review
+   * Once you've addressed the feedback and made any necessary updates, consider notifying the reviewers that your changes are ready for another review.
 
 10. **Follow-up Discussions:**
-   * Engage in any follow-up discussions that may arise during the review process. Clear communication is key to ensuring everyone is on the same page
+   * Engage in any follow-up discussions that may arise during the review process. Clear communication is key to ensuring everyone is on the same page.
 
 11. **Create Follow-up Issues:**
-   * Identify any potential enhancements, improvements, or additional tasks related to your changes. Open follow-up issues to track these items, providing a clear roadmap for future development
+   * Identify any potential enhancements, improvements, or additional tasks related to your changes. Open follow-up issues to track these items, providing a clear roadmap for future development.
 
 12. **Approval and Merge:**
-   * Once your code has received approval from the required number of reviewers and any CI checks pass, you can proceed with merging your changes into the main branch
+   * Once your code has received approval from the required number of reviewers and any CI checks pass, you can proceed with merging your changes into the main branch.
 
 > **Note:** Maintaining open communication and being proactive in addressing potential delays can contribute to a smoother pull request process.
 
@@ -368,45 +368,45 @@ The key to project excellence lies in the detailed review of pull requests. It e
 ### Steps
 
 01. **Prompt Review:**
-   * Try to review pull requests promptly to avoid unnecessary delays in the development process. If you cannot review immediately, communicate an estimated timeframe with the pull request author
+   * Try to review pull requests promptly to avoid unnecessary delays in the development process. If you cannot review immediately, communicate an estimated timeframe with the pull request author.
 
 02. **Understand the Changes:**
-   * Thoroughly understand the changes introduced in the pull request. Check if the proposed solution aligns with the project requirements and coding standards
+   * Thoroughly understand the changes introduced in the pull request. Check if the proposed solution aligns with the project requirements and coding standards.
 
 03. **Reference Existing Documentation:**
-   * If the changes relate to existing documentation, ensure that the pull request author has updated or added relevant documentation. Reference the documentation in your feedback if applicable
+   * If the changes relate to existing documentation, ensure that the pull request author has updated or added relevant documentation. Reference the documentation in your feedback if applicable.
 
 04. **Mention Relevant Issues:**
-   * If the pull request addresses a specific issue or is part of a larger project, mention the relevant issue(s) in your review comments. This provides additional context for both the author and other team members
+   * If the pull request addresses a specific issue or is part of a larger project, mention the relevant issue(s) in your review comments. This provides additional context for both the author and other team members.
 
 05. **Provide Clear Feedback:**
-   * Leave clear and constructive feedback. If something is unclear, ask for clarification. Be specific about any concerns or suggestions you may have
+   * Leave clear and constructive feedback. If something is unclear, ask for clarification. Be specific about any concerns or suggestions you may have.
 
 06. **Focus on Code Quality:**
-   * Evaluate the code for readability, maintainability, and adherence to best practices. Ensure that the changes do not introduce new issues or negatively impact existing functionality
+   * Evaluate the code for readability, maintainability, and adherence to best practices. Ensure that the changes do not introduce new issues or negatively impact existing functionality.
 
 07. **Check for Edge Cases:**
-   * Consider potential edge cases and scenarios that may not have been covered by the pull request author. Identify any areas where additional testing may be required
+   * Consider potential edge cases and scenarios that may not have been covered by the pull request author. Identify any areas where additional testing may be required.
 
 08. **Verify Tests and CI Checks:**
-   * Check if the pull request includes new tests for the introduced features or bug fixes. Ensure that existing tests are updated as needed. Verify that all CI checks pass successfully
+   * Check if the pull request includes new tests for the introduced features or bug fixes. Ensure that existing tests are updated as needed. Verify that all CI checks pass successfully.
 
 09. **Respect Coding Guidelines:**
-   * Ensure that the code follows the established coding guidelines and style conventions of the project. This consistency is essential for the overall maintainability of the codebase
+   * Ensure that the code follows the established coding guidelines and style conventions of the project. This consistency is essential for the overall maintainability of the codebase.
 
 10. **Encourage Best Practices:**
-   * Encourage the use of best practices and suggest improvements when necessary. Share your knowledge with the pull request author to help them grow as a developer
+   * Encourage the use of best practices and suggest improvements when necessary. Share your knowledge with the pull request author to help them grow as a developer.
 
 11. **Be Responsive:**
-   * Be responsive to any follow-up questions or discussions initiated by the pull request author. Collaboration and communication are key elements of the review process
+   * Be responsive to any follow-up questions or discussions initiated by the pull request author. Collaboration and communication are key elements of the review process.
 
 12. **Approve or Request Changes:**
-   * If the changes meet the project's standards and address the intended issues, approve the pull request. If there are concerns, request changes and provide guidance on what needs to be addressed
+   * If the changes meet the project's standards and address the intended issues, approve the pull request. If there are concerns, request changes and provide guidance on what needs to be addressed.
 
 13. **Notify of Approval:**
-   * If you approve the pull request, notify the pull request author that their changes are accepted. This helps them move forward with the next steps, such as merging the code
+   * If you approve the pull request, notify the pull request author that their changes are accepted. This helps them move forward with the next steps, such as merging the code.
 
 14. **Follow Up:**
-   * Follow up on any changes requested and re-review the pull request after the author has made updates. Confirm that the issues identified during the initial review have been properly addressed
+   * Follow up on any changes requested and re-review the pull request after the author has made updates. Confirm that the issues identified during the initial review have been properly addressed.
 
 > **Note:** Including references and mentioning issues in your review comments enhances clarity and helps maintain a well-documented and organized development process.
