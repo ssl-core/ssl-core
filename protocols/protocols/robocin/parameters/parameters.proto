@@ -1,0 +1,30 @@
+syntax = "proto3";
+
+package protocols.robocin.parameters;
+
+import "protocols/robocin/common";
+
+message Param {
+  message Value {
+    oneof kind {
+      bool bool_value = 1;
+      int32 int32_value = 2;
+      uint32 uint32_value = 3;
+      int64 int64_value = 4;
+      uint64 uint64_value = 5;
+      float float_value = 6;
+      double double_value = 7;
+      string string_value = 8;
+
+      common.Point2Df point2df_value = 9;
+      common.Point3Df point3df_value = 10;
+    }
+  }
+
+  string name = 1;
+  string description = 2;
+  repeated Value values = 3;
+}
+
+// using parameter_value = std::variant<bool, int32_t, uint32_t, int64_t, uint64_t, float, double, std::string, Point2Df, Point3Df>;
+

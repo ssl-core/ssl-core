@@ -1,0 +1,14 @@
+syntax = "proto3";
+
+package protocols.robocin.common;
+
+message Point2Df {
+  float x = 1;
+  float y = 2;
+}
+
+message Point3Df {
+  float x = 1;
+  float y = 2;
+  float z = 3;
+}

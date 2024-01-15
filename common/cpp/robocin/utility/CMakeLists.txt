@@ -10,3 +10,9 @@ robocin_cpp_test(
   SRCS concepts_test.cpp
   DEPS concepts
 )
+
+robocin_cpp_library(
+  NAME singleton
+  HDRS singleton.h
+  SRCS singleton.cpp
+)
