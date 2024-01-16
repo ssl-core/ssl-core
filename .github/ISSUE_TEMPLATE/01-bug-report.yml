@@ -13,30 +13,16 @@ body:
     id: steps
     attributes:
       label: Steps to reproduce the problem
-      description: It is important that we are able to reproduce the problem that you are experiencing. Please provide all code and relevant steps to reproduce the problem, including your `CMakeLists.txt` file and build commands. Links to a GitHub branch that demonstrate the problem are also helpful.
-    validations:
-      required: true
-  - type: textarea
-    id: version
-    attributes:
-      label: What version of ssl-core are you using?
-      description: Please include the output of `git rev-parse HEAD` or the name of the LTS release that you are using.
+      description: It is important that we are able to reproduce the problem that you are experiencing. Please provide all code and relevant steps to reproduce the problem, including your build configuration file and build commands. Links to a GitHub branch that demonstrate the problem are also helpful.
     validations:
       required: true
   - type: textarea
     id: os
     attributes:
-      label: What operating system and version are you using?
-      description: If you are using a Linux distribution please include the name and version of the distribution as well.
+      label: Docker image name and tag
+      description: If you are using a custom docker image, please provide your Dockerfile.
     validations:
-      required: true
-  - type: textarea
-    id: compiler
-    attributes:
-      label: What compiler and version are you using?
-      description: Please include the output of `gcc -v` or `clang -v`, or the equivalent for your compiler.
-    validations:
-      required: true
+      required: false
   - type: textarea
     id: additional
     attributes:

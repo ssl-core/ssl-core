@@ -17,7 +17,7 @@ body:
   - type: textarea
     id: use-case
     attributes:
-      label: Describe scenario use case
+      label: Describe the scenario use case
       placeholder: The capability and/or customer usage scenario this request supports.
     validations:
       required: true
