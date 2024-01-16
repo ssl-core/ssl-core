@@ -16,3 +16,9 @@ robocin_cpp_library(
   HDRS singleton.h
   SRCS singleton.cpp
 )
+
+robocin_cpp_library(
+  NAME nameof
+  HDRS nameof.h
+  SRCS nameof.cpp
+)
