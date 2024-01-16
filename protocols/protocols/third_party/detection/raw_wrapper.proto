@@ -1,0 +1,11 @@
+syntax = "proto2";
+
+package protocols.third_party.detection;
+
+import "protocols/third_party/detection/geometry.proto";
+import "protocols/third_party/detection/raw.proto";
+
+message SSL_WrapperPacket {
+  optional SSL_DetectionFrame detection = 1;
+  optional SSL_GeometryData geometry = 2;
+}

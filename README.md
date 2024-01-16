@@ -49,6 +49,10 @@ All the code developed was done in [Visual Studio Code](https://code.visualstudi
 
   Contains common [CMake](https://cmake.org) rules and utilities used across the project.
 
+* [`protocols`](protocols/README.md)
+
+  Contains the [Protocol Buffers](https://developers.google.com/protocol-buffers) definitions used across the project.
+
 * [`docs`](docs/README.md)
 
   Contains documentation pages as guides, tutorials, and other useful information.
