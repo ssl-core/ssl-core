@@ -1,0 +1,29 @@
+syntax = "proto2";
+
+package protocols.third_party.simulation.erforce;
+
+// Custom robot specs for ER-Force simulator
+message RobotSpecErForce {
+  // The distance [m] from the robot center to the ball, when the ball is as
+  // close as possible to the robot. The ball may be a little bit inside the
+  // robot when looking from top, due to the dimensions of the dribbler.
+  optional float shoot_radius = 1;
+
+  // The height of the dribbling bar from the ground [m]
+  // required float dribbler_height = 2;
+
+  // Note for all teams: dribbler_height is not read at the moment, and so
+  // commented out and reserved. We as ER-Force think setting a different
+  // dribbler-hight (without beeing able to change max rpm or dribbler radius)
+  // will most likely result in A) A robot that cannot dribble the ball properly
+  // B) A robot that cannot shoot the ball properly
+  // C) A robot that might suck the ball on top of the mesh or
+  // D) A robot that might such the ball under the mesh and flip over.
+  // As none of those sound appealing, we disabled configuring the dribbler
+  // height for now.
+  reserved 2;
+
+  // The width of the dribbler itself (where the ball can be controlled),
+  // without the mechanical frame [m].
+  optional float dribbler_width = 3;
+}
