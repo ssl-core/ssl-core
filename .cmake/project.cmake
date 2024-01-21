@@ -1,12 +1,13 @@
 # configure cpp project
 # named parameters:
+#  NO_SOURCE_DIRECTORY: if set, the source directory will not be added to the project
 #  STANDARD: c++ standard
 #  SOURCE_DIRECTORY: source directory
 #  OUTPUT_DIRECTORY: output directory
 macro(robocin_cpp_project_setup)
   cmake_parse_arguments(
     ARG                                            # prefix of output variables
-    ""                                             # list of names of the boolean arguments
+    "NO_SOURCE_DIRECTORY"                          # list of names of the boolean arguments
     "STANDARD;SOURCE_DIRECTORY;OUTPUT_DIRECTORY"   # list of names of mono-valued arguments
     ""                                             # list of names of multi-valued arguments
     ${ARGN}                                        # arguments of the function to parse (ARGN contains all the arguments after the function name)
