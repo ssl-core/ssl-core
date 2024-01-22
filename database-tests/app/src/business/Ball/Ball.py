@@ -10,4 +10,4 @@ class Ball:
         self.velocity = velocity
 
     def __str__(self):
-        return f'Ball(uuid={self.uuid}, source={self.source}, position={self.position}, velocity={self.velocity})'
+        return f'Ball(uuid={self.uuid}, source={self.source.name}, position={self.position}, velocity={self.velocity})'

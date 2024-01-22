@@ -17,7 +17,7 @@ default_field = Field(length=9000.0, width=6000.0, goal_depth=500.0, goal_width=
 frames_with_different_robots = []
 
 # Create # of frames
-NUMBER_OF_FRAMES = 10000
+NUMBER_OF_FRAMES = 100000
 for frame_id in range(NUMBER_OF_FRAMES):
     create_robot = lambda color, id: Robot(
         uuid=str(id),
@@ -46,7 +46,7 @@ for frame_id in range(NUMBER_OF_FRAMES):
                         source=Source.SIMULATION)
 
     # Create a frame with the generated robots, the same ball, and the default field.
-    frame = Frame(id=frame_id, balls=[default_ball], robots=all_robots, field=default_field)
+    frame = Frame(id=str(frame_id), balls=[default_ball], robots=all_robots, field=default_field)
 
     # Add the frame to the list.
     frames_with_different_robots.append(frame)

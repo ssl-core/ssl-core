@@ -22,4 +22,4 @@ class Robot:
         self.source = source
 
     def __str__(self) -> str:
-        return f'Robot(uuid={self.uuid}, id={self.id}, color={self.color}, position={self.position}, angle={self.angle}, velocity={self.velocity}, angular_velocity={self.angular_velocity}, source={self.source})'
+        return f'Robot(uuid={self.uuid}, id={self.id}, color={self.color.name}, position={self.position}, angle={self.angle}, velocity={self.velocity}, angular_velocity={self.angular_velocity}, source={self.source.name})'

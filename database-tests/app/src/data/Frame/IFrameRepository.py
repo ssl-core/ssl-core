@@ -4,7 +4,13 @@ class IFrameRepository:
     def __init__(self) -> None:
         pass
 
+    def repository_name(self) -> str:
+        raise NotImplementedError
+
     def save(self, frame: Frame) -> None:
+        raise NotImplementedError
+
+    def save_serialized(self, frame: Frame) -> None:
         raise NotImplementedError
 
     def find(self, frame_id: str) -> Frame:
@@ -14,4 +20,10 @@ class IFrameRepository:
         raise NotImplementedError
 
     def delete(self, frame: Frame) -> None:
+        raise NotImplementedError
+    
+    def delete_all(self) -> None:
+        raise NotImplementedError
+
+    def get_data_size(self) -> int:
         raise NotImplementedError

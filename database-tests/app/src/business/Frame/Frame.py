@@ -3,7 +3,7 @@ from src.business.Robot.Robot import Robot
 from src.business.Field.Field import Field
 
 class Frame:
-    def __init__(self, id, balls: [Ball], robots: [Robot], field: Field):
+    def __init__(self, id: str, balls: [Ball], robots: [Robot], field: Field):
         self.id = id
         self.ball = balls
         self.robots = robots
