@@ -183,7 +183,7 @@ function(robocin_cpp_library)
   target_include_directories(${ARG_NAME} PRIVATE ${ROBOCIN_PROJECT_PATH})
   target_include_directories(${ARG_NAME} PRIVATE ${CMAKE_BINARY_DIR})
 
-  # add dependencies include directories to the library (required for modules installation)
+  # add include directories of dependencies to the library (required for modules installation)
   foreach (DEP ${ARG_DEPS})
     get_target_property(dep_include_dirs ${DEP} INTERFACE_INCLUDE_DIRECTORIES)
     target_include_directories(${ARG_NAME} PRIVATE ${dep_include_dirs})
@@ -254,8 +254,6 @@ function(robocin_cpp_library)
           DESTINATION "${CMAKE_INSTALL_LIBDIR}/cmake/${PROJECT_NAME}"
           CXX_MODULES_DIRECTORY cxx_modules
   )
-
-  # add modules include path external lib dependencies: IMPORTED_CXX_MODULES_INCLUDE_DIRECTORIES
 
 endfunction(robocin_cpp_library)
 
