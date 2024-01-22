@@ -2,6 +2,8 @@
 
 #include <arpa/inet.h>
 #include <cassert>
+#include <cerrno>
+#include <fcntl.h>
 #include <ifaddrs.h>
 #include <net/if.h>
 #include <netinet/in.h>
@@ -38,6 +40,10 @@ UdpMulticastSocketReceiver::UdpMulticastSocketReceiver(const std::string& ip_add
       .imr_address = {.s_addr = ::inet_addr(inet_address.data())},
   };
   ::setsockopt(socket_, IPPROTO_IP, IP_ADD_MEMBERSHIP, &membership, sizeof(membership));
+
+  int flags = fcntl(socket_, F_GETFL, 0);
+  assert(flags != -1);
+  assert(fcntl(socket_, F_SETFL, flags | O_NONBLOCK) != -1);
 }
 
 int UdpMulticastSocketReceiver::fileDescriptor() const { return socket_; }
@@ -46,7 +52,12 @@ void UdpMulticastSocketReceiver::close() { ::close(socket_); }
 
 std::string UdpMulticastSocketReceiver::receive() {
   std::string message(2048, '\0');
-  ::recvfrom(socket_, message.data(), 2048, 0, nullptr, nullptr);
+  ssize_t recv_message = ::recvfrom(socket_, message.data(), 2048, 0, nullptr, nullptr);
+  if (recv_message == -1) {
+    if (errno == EAGAIN || errno == EWOULDBLOCK) {
+      return std::string{};
+    }
+  }
   return message;
 }
 } // namespace vision
