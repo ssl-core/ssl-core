@@ -4,12 +4,12 @@ class ShortcutsHandler {
   private eventBus: EventBus;
   private shortcuts: { [key: string]: { eventName: string; data: object } };
 
-  constructor(eventBus: EventBus) {
+  constructor(
+    eventBus: EventBus,
+    shortcuts: Record<string, { eventName: string; data: object }>
+  ) {
     this.eventBus = eventBus;
-    this.shortcuts = {
-      s: { eventName: "save", data: {} },
-      d: { eventName: "delete", data: {} },
-    };
+    this.shortcuts = shortcuts;
   }
 
   initialize() {

@@ -53,15 +53,15 @@
   visibility: visible;
 }
 
-#link-logo li {
-  background-color: var(--color-green);
+[href="/"] li {
+  background-color: var(--color-green)!important;
 }
 
-#link-logo li:hover {
-  background-color: var(--color-light-green);
+[href="/"] li:hover {
+  background-color: var(--color-light-green)!important;
 }
 
-#link-logo object {
+[href="/"] object {
   width: 100%;
   height: 100%;
   pointer-events: none;

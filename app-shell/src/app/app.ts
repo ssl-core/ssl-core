@@ -7,10 +7,14 @@ class App {
   private shorcutsHandler: ShortcutsHandler;
   private eventBus: EventBus;
 
-  constructor(routes: Route[]) {
-    this.router = new Router(routes);
+  constructor(
+    routes: Route[],
+    templates: Record<string, string>,
+    shortcuts: Record<string, { eventName: string; data: object }>
+  ) {
+    this.router = new Router(routes, templates);
     this.eventBus = new EventBus();
-    this.shorcutsHandler = new ShortcutsHandler(this.eventBus);
+    this.shorcutsHandler = new ShortcutsHandler(this.eventBus, shortcuts);
   }
 
   initialize() {

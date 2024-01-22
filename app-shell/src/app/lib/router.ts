@@ -1,15 +1,64 @@
-import BaseFragment from "../fragments/base_fragment";
-import IframeFragment from "../fragments/iframe_fragment";
-import WebComponentFragment from "../fragments/web_component_fragment";
+import FragmentFactory from "../fragments/fragment_factory";
 
 class Router {
   private routes: Route[];
+  private templates: Record<string, string>;
 
-  constructor(routes: Route[]) {
+  constructor(routes: Route[], templates: Record<string, string>) {
     this.routes = routes;
+    this.templates = templates;
   }
 
   initialize() {
+    this.renderCurrentPage();
+    this.createTemplates();
+    this.createRoutes();
+  }
+
+  renderCurrentPage() {
+    const path = new URL(window.location.href).pathname;
+
+    if (Object.keys(this.templates).includes(path)) {
+      this.renderTemplate(path);
+      return;
+    }
+
+    const route = this.routes.find((route) => route.path === path);
+    if (route) {
+      this.renderRoute(route);
+      return;
+    }
+
+    history.pushState({}, "", "/");
+    this.renderTemplate("/");
+  }
+
+  createTemplates() {
+    Object.keys(this.templates).forEach((template) => {
+      const page = document.querySelector<HTMLElement>(`[href="${template}"]`)!;
+      page.onclick = (event) => {
+        event.preventDefault();
+        this.renderTemplate(template);
+      };
+    });
+  }
+
+  renderTemplate(template: string) {
+    const app = document.querySelector<HTMLDivElement>("#app")!;
+    app.innerHTML = "";
+
+    window.history.pushState({}, "", template);
+
+    app.style.gridTemplateRows = "1";
+    app.style.gridTemplateColumns = "1";
+
+    const section = document.createElement("section");
+    section.style.gridArea = "1 / 1 / 2 / 2";
+    section.innerHTML = this.templates[template];
+    app.appendChild(section);
+  }
+
+  createRoutes() {
     this.routes.forEach((route) => this.createRoute(route));
   }
 
@@ -25,30 +74,31 @@ class Router {
 
     page.onclick = (event) => {
       event.preventDefault();
-      const app = document.querySelector<HTMLDivElement>("#app")!;
-      app.innerHTML = "";
-
-      Object.values(route.fragments).forEach((routeFragment) => {
-        const section = document.createElement("section");
-        section.style.gridArea = `${routeFragment.rows.start} / ${routeFragment.cols.start} / ${routeFragment.rows.end} / ${routeFragment.cols.end}`;
-        app.appendChild(section);
-
-        const fragment = this.buildFragment(routeFragment, section);
-        fragment.render();
-      });
+      this.renderRoute(route);
     };
 
     document.querySelector<HTMLDivElement>("#pages")!.appendChild(page);
   }
 
-  buildFragment(fragment: RouteFragment, section: HTMLElement): BaseFragment {
-    if (fragment.type === "webcomponent") {
-      return new WebComponentFragment(fragment.url, section, fragment.metadata);
-    } else if (fragment.type === "iframe") {
-      return new IframeFragment(fragment.url, section, fragment.metadata);
-    }
+  renderRoute(route: Route) {
+    const app = document.querySelector<HTMLDivElement>("#app")!;
+    app.innerHTML = "";
 
-    throw new Error(`Unknown fragment type: ${fragment.type}`);
+    window.history.pushState({}, "", route.path);
+
+    app.style.gridTemplateRows = route.rows.toString();
+    app.style.gridTemplateColumns = route.cols.toString();
+
+    Object.values(route.fragments).forEach((routeFragment) => {
+      const section = document.createElement("section");
+      section.style.gridArea = `${routeFragment.rows.start} / ${routeFragment.cols.start} / ${routeFragment.rows.end} / ${routeFragment.cols.end}`;
+      app.appendChild(section);
+
+      const fragmentFactory = new FragmentFactory();
+
+      const fragment = fragmentFactory.createFragment(section, routeFragment);
+      fragment.render();
+    });
   }
 }
 
