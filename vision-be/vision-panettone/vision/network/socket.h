@@ -8,10 +8,8 @@ namespace vision {
 class ISocketSender {
  public:
   virtual ~ISocketSender() = default;
-  // virtual void bind() = 0;
-  virtual void send(std::string_view message) = 0;
+  virtual void send(std::string_view topic, std::string_view message) = 0;
   virtual void close() = 0;
-  [[nodiscard]] virtual int fileDescriptor() const = 0;
 };
 
 class ISocketReceiver {
