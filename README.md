@@ -1,5 +1,6 @@
 [![RobôCIn](https://img.shields.io/badge/🇧🇷-RobôCIn-009B3A)](https://robocin.com.br)
 [![Issues](https://img.shields.io/github/issues/robocin/ssl-core)](https://github.com/robocin/ssl-core/issues)
+[![Lint and Formatting Checker](https://github.com/robocin/ssl-core/actions/workflows/lint-and-formatting-checker.yaml/badge.svg?branch=main)](https://github.com/robocin/ssl-core/actions/workflows/lint-and-formatting-checker.yaml?query=branch%3Amain)
 [![Pull Requests](https://img.shields.io/github/issues-pr/robocin/ssl-core)](https://github.com/robocin/ssl-core/pulls)
 [![C++](https://img.shields.io/badge/C%2B%2B-20%2B-darkblue.svg)](https://en.cppreference.com/w/cpp/20)
 [![CMake](https://img.shields.io/badge/CMake-3.28%2B-blue.svg)](https://cmake.org/cmake/help/latest/release/3.28.html)
