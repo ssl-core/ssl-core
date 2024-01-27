@@ -2,13 +2,13 @@
 
 namespace vision {
 
-ZmqPublisherSocket::ZmqPublisherSocket(int n_threads, const std::string& address) :
+ZmqPublisherSocket::ZmqPublisherSocket(int n_threads) :
     context_(n_threads),
-    socket_(context_, ZMQ_PUB) {
-  socket_.bind(address);
-}
+    socket_(context_, ZMQ_PUB) {}
 
-void ZmqPublisherSocket::send(std::string_view topic, std::string_view message) {
+void ZmqPublisherSocket::bind(const std::string& address) { socket_.bind(address); }
+
+void ZmqPublisherSocket::send(std::string_view topic, std::string_view message) { // NOLINT
   zmq::message_t zmq_topic(topic);
   socket_.send(zmq_topic, zmq::send_flags::sndmore);
 

@@ -16,13 +16,20 @@
 
 namespace vision {
 
-UdpMulticastSocketReceiver::UdpMulticastSocketReceiver(const std::string& ip_address,
-                                                       const std::string& inet_address,
-                                                       int port) :
-    socket_(socket(AF_INET, SOCK_DGRAM, 0)) {
+UdpMulticastSocketReceiver::UdpMulticastSocketReceiver() :
+    socket_(socket(AF_INET, SOCK_DGRAM, 0)) {}
 
+void UdpMulticastSocketReceiver::connect(const std::string& ip_address,
+                                         const std::string& inet_address,
+                                         int port) const {
   int reuse = 1;
   ::setsockopt(socket_, SOL_SOCKET, SO_REUSEADDR, &reuse, sizeof(reuse));
+
+  ip_mreqn membership{
+      .imr_multiaddr = {.s_addr = ::inet_addr(ip_address.data())},
+      .imr_address = {.s_addr = ::inet_addr(inet_address.data())},
+  };
+  ::setsockopt(socket_, IPPROTO_IP, IP_ADD_MEMBERSHIP, &membership, sizeof(membership));
 
   sockaddr_in udp_addr{
       .sin_family = AF_INET,
@@ -35,12 +42,6 @@ UdpMulticastSocketReceiver::UdpMulticastSocketReceiver(const std::string& ip_add
                 sizeof(udp_addr))
          != -1);
 
-  ip_mreqn membership{
-      .imr_multiaddr = {.s_addr = ::inet_addr(ip_address.data())},
-      .imr_address = {.s_addr = ::inet_addr(inet_address.data())},
-  };
-  ::setsockopt(socket_, IPPROTO_IP, IP_ADD_MEMBERSHIP, &membership, sizeof(membership));
-
   int flags = fcntl(socket_, F_GETFL, 0);
   assert(flags != -1);
   assert(fcntl(socket_, F_SETFL, flags | O_NONBLOCK) != -1);
@@ -48,9 +49,9 @@ UdpMulticastSocketReceiver::UdpMulticastSocketReceiver(const std::string& ip_add
 
 int UdpMulticastSocketReceiver::fileDescriptor() const { return socket_; }
 
-void UdpMulticastSocketReceiver::close() { ::close(socket_); }
+void UdpMulticastSocketReceiver::close() const { ::close(socket_); }
 
-std::string UdpMulticastSocketReceiver::receive() {
+std::string UdpMulticastSocketReceiver::receive() const {
   std::string message(2048, '\0');
   ssize_t recv_message = ::recvfrom(socket_, message.data(), 2048, 0, nullptr, nullptr);
   if (recv_message == -1) {
