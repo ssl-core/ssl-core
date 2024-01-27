@@ -2,15 +2,15 @@ syntax = "proto3";
 
 package protocols.vision;
 
+import "google/protobuf/timestamp.proto";
 import "protocols/common/geometry.proto";
 import "protocols/common/robot_id.proto";
-import "google/protobuf/timestamp.proto";
 
 // Frame is the message sent by the vision service to the rest of the system.
 message Frame {
   // Properties is the message describing the properties of the frame.
   message Properties {
-  // serial_id: is the incremental unique id of the frame.
+    // serial_id: is the incremental unique id of the frame.
     uint64 serial_id = 1;
     // created_at: is the unix timestamp of the frame creation.
     google.protobuf.Timestamp created_at = 2;
