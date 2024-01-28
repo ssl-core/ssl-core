@@ -1,12 +1,9 @@
 #ifndef VISION_NETWORK_POLLER_H
 #define VISION_NETWORK_POLLER_H
 
-#include "socket.h"
-
 #include <memory>
-#include <string>
+#include <span>
 #include <sys/poll.h>
-#include <unordered_map>
 #include <vector>
 
 namespace vision {
@@ -14,22 +11,27 @@ namespace vision {
 class Poller {
  public:
   Poller() = default;
+  explicit Poller(std::span<const int> file_descriptors);
 
-  void add(std::unique_ptr<ISocketReceiver>& socket);
-
+  void push(int file_descriptor);
   void poll(int timeout);
 
-  std::string recvFrom(std::unique_ptr<ISocketReceiver>& socket);
-
-  // void remove(std::unique_ptr<ISocketReceiver>& socket);
-
-  void close();
+  template <class Socket>
+  Socket::receive_type recvFrom(Socket& socket) const {
+    for (const ::pollfd& pollfd : pollfds_) {
+      if (pollfd.fd == socket.fd()) {
+        if (pollfd.revents & POLLIN) { // NOLINT(*bitwise*)
+          return socket.receive();
+        }
+      }
+    }
+    return {};
+  }
 
  private:
-  // TODO(aalmds): improve mapping to optimize remove complexity.
-  std::unordered_map<ISocketReceiver*, int> sockets_;
-  std::vector<pollfd> fds_;
+  std::vector<::pollfd> pollfds_;
 };
+
 } // namespace vision
 
 #endif // VISION_NETWORK_POLLER_H
