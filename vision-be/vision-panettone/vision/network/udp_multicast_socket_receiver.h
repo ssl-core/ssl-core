@@ -7,20 +7,32 @@
 
 namespace vision {
 
-class UdpMulticastSocketReceiver {
+class IUdpMulticastSocketReceiver {
  public:
+  virtual ~IUdpMulticastSocketReceiver() = default;
+
+  virtual void connect(std::string_view ip_address, std::string_view inet_address, int port) const
+      = 0;
+  [[nodiscard]] virtual std::string receive() const = 0;
+  virtual void close() const = 0;
+
+  [[nodiscard]] virtual int fd() const = 0;
+};
+
+class UdpMulticastSocketReceiver : public IUdpMulticastSocketReceiver {
+ public:
+  using receive_type = std::string;
+
   UdpMulticastSocketReceiver();
 
-  void connect(const std::string& ip_address, const std::string& inet_address, int port) const;
+  void connect(std::string_view ip_address, std::string_view inet_address, int port) const override;
+  [[nodiscard]] std::string receive() const override;
+  void close() const override;
 
-  [[nodiscard]] std::string receive() const;
-
-  void close() const;
-
-  [[nodiscard]] int fileDescriptor() const;
+  [[nodiscard]] int fd() const override;
 
  private:
-  int socket_;
+  int fd_;
 };
 
 } // namespace vision

@@ -6,7 +6,7 @@ ZmqPublisherSocket::ZmqPublisherSocket(int n_threads) :
     context_(n_threads),
     socket_(context_, ZMQ_PUB) {}
 
-void ZmqPublisherSocket::bind(const std::string& address) { socket_.bind(address); }
+void ZmqPublisherSocket::bind(std::string_view address) { socket_.bind(std::string{address}); }
 
 void ZmqPublisherSocket::send(std::string_view topic, std::string_view message) { // NOLINT
   zmq::message_t zmq_topic(topic);
@@ -17,4 +17,5 @@ void ZmqPublisherSocket::send(std::string_view topic, std::string_view message) 
 }
 
 void ZmqPublisherSocket::close() { zmq_close(socket_); }
+
 } // namespace vision

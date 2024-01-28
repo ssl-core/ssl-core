@@ -2,29 +2,30 @@
 
 namespace vision {
 
+// void IZmqSubscriberSocket::connect(std::string_view address, std::string_view topic) {
+//   connect(address, std::span<std::string_view>(&topic, 1));
+// }
+
 ZmqSubscriberSocket::ZmqSubscriberSocket(int n_threads) :
     context_(n_threads),
-    socket_(context_, ZMQ_SUB) {
-  size_t fd_size = sizeof(file_descriptor_);
-  socket_.getsockopt(ZMQ_FD, &file_descriptor_, &fd_size);
-}
+    socket_(context_, ZMQ_SUB),
+    fd_(socket_.get(zmq::sockopt::fd)) {}
 
-void ZmqSubscriberSocket::connect(const std::string& address, std::span<const std::string> topics) {
-  socket_.connect(address);
+void ZmqSubscriberSocket::connect(std::string_view address, std::span<std::string_view> topics) {
+  socket_.connect(std::string{address});
   for (const auto& topic : topics) {
     socket_.set(zmq::sockopt::subscribe, topic);
   }
 }
 
-void ZmqSubscriberSocket::close() { zmq_close(socket_); }
+void ZmqSubscriberSocket::close() { socket_.close(); }
 
-int ZmqSubscriberSocket::fileDescriptor() const { return file_descriptor_; }
+int ZmqSubscriberSocket::fd() const { return fd_; }
 
-ZmqSubscriberSocket::Datagram ZmqSubscriberSocket::receive() {
-  Datagram datagram;
-
+ZmqSubscriberSocket::receive_type ZmqSubscriberSocket::receive() {
   if (zmq::message_t zmq_topic; socket_.recv(zmq_topic, zmq::recv_flags::dontwait)) {
     if (zmq::message_t zmq_result; socket_.recv(zmq_result, zmq::recv_flags::dontwait)) {
+      ZmqDatagram datagram;
       datagram.topic.assign(zmq_topic.to_string());
       datagram.message.assign(zmq_result.to_string());
       return datagram;
@@ -33,4 +34,5 @@ ZmqSubscriberSocket::Datagram ZmqSubscriberSocket::receive() {
 
   return {};
 }
+
 } // namespace vision

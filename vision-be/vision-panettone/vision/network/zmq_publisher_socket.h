@@ -8,13 +8,22 @@
 
 namespace vision {
 
-class ZmqPublisherSocket {
+class IZmqPublisherSocket {
  public:
-  explicit ZmqPublisherSocket(int n_threads);
+  virtual ~IZmqPublisherSocket() = default;
 
-  void bind(const std::string& address);
-  void send(std::string_view topic, std::string_view message);
-  void close();
+  virtual void bind(std::string_view address) = 0;
+  virtual void send(std::string_view topic, std::string_view message) = 0;
+  virtual void close() = 0;
+};
+
+class ZmqPublisherSocket : public IZmqPublisherSocket {
+ public:
+  explicit ZmqPublisherSocket(int n_threads = 1);
+
+  void bind(std::string_view address) override;
+  void send(std::string_view topic, std::string_view message) override;
+  void close() override;
 
  private:
   zmq::context_t context_;
