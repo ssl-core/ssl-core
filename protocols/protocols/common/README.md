@@ -21,7 +21,7 @@ A collection of geometry-related messages.
   
   As Point2Df, it should be preferred over 3D points with integer coordinates or double precision coordinates. Also, it should be used only when the third coordinate is needed, as in the case of a ball position due chip kicks, for example.
 
-[![](.images/point2d-robot-and-point3d-ball.svg)](geometry.proto)
+![](.images/point2d-robot-and-point3d-ball.svg)
 
 ## [`robot_id`](robot_id.proto)
 
@@ -32,6 +32,8 @@ _It is defined as a separate message to be reused for all the messages that need
 - `RobotId`: a robot id;
 - `RobotId.Color`: a robot color;
 
-[![](.images/blue-tags.svg)](https://github.com/RoboCup-SSL/ssl-rules)
+![](.images/blue-tags.svg)
 
-> **Note**: In the image above, `color` is the primary color <span style="color:blue">**blue**</span>, and `number` is equivalent to the `id`.
+The standard vision pattern colors: `color` is the primary color (<span style="color:blue">**blue**</span>, in the image above), and `number` is equivalent to the `id`.
+
+> See [Vision Pattern at Rules of the RoboCup Small Size League](https://robocup-ssl.github.io/ssl-rules/sslrules.html#_vision_pattern) for more information about the vision pattern.

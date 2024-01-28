@@ -18,4 +18,6 @@ A collection of messages that compose the frame.
 - `Robot`: a message containing the robot's identification and kinematic properties.
 - `Field`: a message containing the field's dimensions.
 
-[![](.images/field-dimensions.svg)](https://github.com/RoboCup-SSL/ssl-vision/wiki/camera-calibration#field-markings)
+![](.images/field-dimensions.svg)
+
+> See [Dimensions at Rules of the RoboCup Small Size League](https://robocup-ssl.github.io/ssl-rules/sslrules.html#_dimensions) for more information about the field dimensions.
