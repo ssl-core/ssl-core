@@ -4,18 +4,18 @@ package protocols.common;
 
 // Point2Df is a (float) 2D point in the plane.
 message Point2Df {
-  // x: is the x coordinate of the point in the plane (in millimeters).
+  // The x coordinate of the point in the plane (in millimeters).
   float x = 1;
-  // y: is the y coordinate of the point in the plane (in millimeters).
+  // The y coordinate of the point in the plane (in millimeters).
   float y = 2;
 }
 
 // Point3Df is a (float) 3D point in space.
 message Point3Df {
-  // x: is the x coordinate of the point in space (in millimeters).
+  // The x coordinate of the point in space (in millimeters).
   float x = 1;
-  // y: is the y coordinate of the point in space (in millimeters).
+  // The y coordinate of the point in space (in millimeters).
   float y = 2;
-  // z: is the z coordinate (height) of the point in space (in millimeters).
+  // The z coordinate (height) of the point in space (in millimeters).
   float z = 3;
 }

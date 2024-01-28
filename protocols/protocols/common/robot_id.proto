@@ -11,8 +11,8 @@ message RobotId {
     COLOR_BLUE = 2;
   }
 
-  // color: is the color of the robot.
+  // The color of the robot.
   Color color = 1;
-  // number: is the number of the robot.
+  // The number of the robot.
   int32 number = 2;
 }

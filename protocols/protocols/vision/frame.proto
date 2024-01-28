@@ -10,22 +10,22 @@ import "protocols/common/robot_id.proto";
 message Frame {
   // Properties is the message describing the properties of the frame.
   message Properties {
-    // serial_id: is the incremental unique id of the frame.
+    // The incremental unique id of the frame.
     uint64 serial_id = 1;
-    // created_at: is the unix timestamp of the frame creation.
+    // The unix timestamp of the frame creation.
     google.protobuf.Timestamp created_at = 2;
-    // fps: is the expected rate of frames generated.
+    // The expected rate of frames generated.
     float fps = 3;
   }
 
-  // properties: is the generation properties of the frame.
+  // The generation properties of the frame.
   Properties properties = 1;
 
-  // balls: is the list of detected balls, in order of confidence.
+  // The list of detected balls, in order of confidence.
   repeated Ball balls = 2;
-  // robots: is the list of detected robots (both teams).
+  // The list of detected robots (both teams).
   repeated Robot robots = 3;
-  // field: is the field information (sent periodically).
+  // The field information (sent periodically).
   optional Field field = 4;
 }
 
@@ -35,12 +35,12 @@ message Ball {
   reserved 1;
   reserved "source";
 
-  // confidence: is the confidence of the ball detection.
+  // The confidence of the ball detection.
   float confidence = 2;
 
-  // position: is the 3D position of the ball in the field (in millimeters).
+  // The 3D position of the ball in the field (in millimeters).
   common.Point3Df position = 3;
-  // velocity: is the 3D velocity of the ball in the field (in millimeters per second).
+  // The 3D velocity of the ball in the field (in millimeters per second).
   common.Point3Df velocity = 4;
   // TODO(#32): add ball acceleration.
   reserved 5;
@@ -53,20 +53,20 @@ message Robot {
   reserved 1;
   reserved "source";
 
-  // confidence: is the confidence of the robot detection.
+  // The confidence of the robot detection.
   float confidence = 2;
 
-  // robot_id: is the id of the robot.
+  // The id of the robot.
   common.RobotId robot_id = 3;
 
-  // position: is the 2D position of the robot in the field (in millimeters).
+  // The 2D position of the robot in the field (in millimeters).
   common.Point2Df position = 4;
-  // angle: is the angle pointing in the direction the robot is facing, i.e. the robot's orientation (in radians).
+  // The angle pointing in the direction the robot is facing, i.e. the robot's orientation (in radians).
   float angle = 5;
 
-  // velocity: is the 2D velocity of the robot in the field (in millimeters per second).
+  // The 2D velocity of the robot in the field (in millimeters per second).
   common.Point2Df velocity = 6;
-  // angular_velocity: is the angular velocity of the robot (in radians per second).
+  // The angular velocity of the robot (in radians per second).
   float angular_velocity = 7;
 
   // TODO(#32): add robot acceleration.
@@ -75,14 +75,15 @@ message Robot {
 
   // PhysicalAttributes is the message describing the physical attributes of the robot.
   message PhysicalAttributes {
-    // radius: is the radius of the robot (in millimeters).
+    // The radius of the robot (in millimeters).
     float radius = 1;
-    // height: is the height of the robot (in millimeters).
+    // The height of the robot (in millimeters).
     float height = 2;
-    // dribbler_width: is the width of the dribbler (in millimeters).
+    // The width of the dribbler (in millimeters).
     float dribbler_width = 3;
   }
-  // physical_attributes: is the physical attributes of the robot.
+
+  // The physical attributes of the robot.
   PhysicalAttributes physical_attributes = 9;
 
   // TODO(#34): add robot feedback.
@@ -92,23 +93,23 @@ message Robot {
 
 // Field is the message describing the game field.
 message Field {
-  // serial_id: is the incremental unique id of the field.
+  // The incremental unique id of the field.
   uint64 serial_id = 1;
 
-  // length: is the length of the field (in millimeters).
+  // The length of the field (in millimeters).
   float length = 2;
-  // width: is the width of the field (in millimeters).
+  // The width of the field (in millimeters).
   float width = 3;
-  // goal_depth: is the depth of the goal (in millimeters).
+  // The depth of the goal (in millimeters).
   float goal_depth = 4;
-  // goal_width: is the width of the goal (in millimeters).
+  // The width of the goal (in millimeters).
   float goal_width = 5;
-  // penalty_area_depth: is the depth of the penalty area (in millimeters).
+  // The depth of the penalty area (in millimeters).
   float penalty_area_depth = 6;
-  // penalty_area_width: is the width of the penalty area (in millimeters).
+  // The width of the penalty area (in millimeters).
   float penalty_area_width = 7;
-  // boundary_width: is the width of the boundary (in millimeters).
+  // The width of the boundary (in millimeters).
   float boundary_width = 8;
-  // goal_center_to_penalty_mark: is the distance from the goal center to the penalty mark (in millimeters).
+  // The distance from the goal center to the penalty mark (in millimeters).
   float goal_center_to_penalty_mark = 9;
 }

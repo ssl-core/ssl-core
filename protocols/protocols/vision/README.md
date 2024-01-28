@@ -1,6 +1,6 @@
 # vision
 
-A collection of messages related to RobôCIn's vision system.
+This directory contains the output of the vision service.
 
 ## Table of Contents
 
@@ -10,8 +10,12 @@ A collection of messages related to RobôCIn's vision system.
 
 ## [`frame`](frame.proto)
 
-- `Frame`: a message containing the frame's timestamp, optionally the field's dimensions, and the robots and ball detected in the frame.
-- `Ball`: a message containing the ball's position and velocity. Also contains the ball's kick status when it is
-  detected.
+A collection of messages that compose the frame.
+
+- `Frame`: the output of the vision service. It contains properties of its generation &#8211; such as unique id and generated time &#8211;, ball and robots &#8211; the main entities of the game &#8211;, and also contains the field dimensions which are sent periodically.
+
+- `Ball`: a message containing the ball's kinematic properties.
+- `Robot`: a message containing the robot's identification and kinematic properties.
 - `Field`: a message containing the field's dimensions.
-- `Robot`: a message containing the robot's id, color, position, orientation, and velocity.
+
+[![](.images/field-dimensions.svg)](https://github.com/RoboCup-SSL/ssl-vision/wiki/camera-calibration#field-markings)
