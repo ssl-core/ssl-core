@@ -1,0 +1,14 @@
+version: v1
+lint:
+  use:
+    - DEFAULT
+
+  except:
+    - PACKAGE_VERSION_SUFFIX
+
+  ignore:
+    - protocols/third_party
+
+breaking:
+  use:
+    - FILE

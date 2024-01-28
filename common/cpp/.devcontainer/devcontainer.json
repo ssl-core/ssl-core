@@ -25,8 +25,8 @@
         "streetsidesoftware.code-spell-checker",
         // YAML
         "redhat.vscode-yaml",
-        // Protobuf Language Support
-        "zxh404.vscode-proto3",
+        // Buf - Protobuf Language Support
+        "bufbuild.vscode-buf",
         // Python
         "ms-python.python"
       ],
