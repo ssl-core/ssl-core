@@ -30,7 +30,7 @@ A collection of Robot Id-related messages.
 _It is defined as a separate message to be reused for all the messages that need to identify a robot._
 
 - `RobotId`: the robot id;
-- `RobotId.Color`: the robot color;
+- `RobotId.Color`: the robot color enum;
 
 ![](.images/blue-tags.svg)
 
