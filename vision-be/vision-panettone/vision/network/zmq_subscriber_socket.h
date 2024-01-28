@@ -17,8 +17,6 @@ class IZmqSubscriberSocket {
   virtual ~IZmqSubscriberSocket() = default;
 
   virtual void connect(std::string_view address, std::span<std::string_view> topics) = 0;
-  // void connect(std::string_view address, std::string_view topic);
-
   virtual ZmqDatagram receive() = 0;
   virtual void close() = 0;
 

@@ -2,10 +2,6 @@
 
 namespace vision {
 
-// void IZmqSubscriberSocket::connect(std::string_view address, std::string_view topic) {
-//   connect(address, std::span<std::string_view>(&topic, 1));
-// }
-
 ZmqSubscriberSocket::ZmqSubscriberSocket(int n_threads) :
     context_(n_threads),
     socket_(context_, ZMQ_SUB),
