@@ -3,33 +3,31 @@
 #include <gtest/gtest.h>
 
 namespace robocin {
-namespace {
 
 TEST(ConceptsTest, IsProtobufish) {
   struct Protobufish : ::google::protobuf::MessageLite {};
 
-  EXPECT_TRUE(protobufish<Protobufish&> &&                //
-              protobufish<const Protobufish&> &&          //
-              protobufish<Protobufish&&> &&               //
-              protobufish<const Protobufish&&> &&         //
-              protobufish<volatile Protobufish&> &&       //
-              protobufish<const volatile Protobufish&> && //
-              protobufish<Protobufish volatile&&> &&      //
-              protobufish<const volatile Protobufish&&>);
+  EXPECT_TRUE(protobufish<Protobufish&>);
+  EXPECT_TRUE(protobufish<const Protobufish&>);
+  EXPECT_TRUE(protobufish<Protobufish&&>);
+  EXPECT_TRUE(protobufish<const Protobufish&&>);
+  EXPECT_TRUE(protobufish<volatile Protobufish&>);
+  EXPECT_TRUE(protobufish<const volatile Protobufish&>);
+  EXPECT_TRUE(protobufish<Protobufish volatile&&>);
+  EXPECT_TRUE(protobufish<const volatile Protobufish&&>);
 }
 
 TEST(ConceptsTest, IsNotProtobufish) {
   struct NotProtobufish {};
 
-  EXPECT_FALSE(protobufish<NotProtobufish&> ||                //
-               protobufish<const NotProtobufish&> ||          //
-               protobufish<NotProtobufish&&> ||               //
-               protobufish<const NotProtobufish&&> ||         //
-               protobufish<volatile NotProtobufish&> ||       //
-               protobufish<const volatile NotProtobufish&> || //
-               protobufish<NotProtobufish volatile&&> ||      //
-               protobufish<const volatile NotProtobufish&&>);
+  EXPECT_FALSE(protobufish<NotProtobufish&>);
+  EXPECT_FALSE(protobufish<const NotProtobufish&>);
+  EXPECT_FALSE(protobufish<NotProtobufish&&>);
+  EXPECT_FALSE(protobufish<const NotProtobufish&&>);
+  EXPECT_FALSE(protobufish<volatile NotProtobufish&>);
+  EXPECT_FALSE(protobufish<const volatile NotProtobufish&>);
+  EXPECT_FALSE(protobufish<NotProtobufish volatile&&>);
+  EXPECT_FALSE(protobufish<const volatile NotProtobufish&&>);
 }
 
-} // namespace
 } // namespace robocin
