@@ -17,7 +17,7 @@
 
 namespace vision {
 
-UdpMulticastSocketReceiver::UdpMulticastSocketReceiver() : fd_(socket(AF_INET, SOCK_DGRAM, 0)) {}
+UdpMulticastSocketReceiver::UdpMulticastSocketReceiver(size_t size) : fd_(socket(AF_INET, SOCK_DGRAM, 0)), size_(size) {}
 
 void UdpMulticastSocketReceiver::connect(std::string_view ip_address,
                                          std::string_view inet_address,
@@ -66,8 +66,8 @@ int UdpMulticastSocketReceiver::fd() const { return fd_; }
 void UdpMulticastSocketReceiver::close() const { ::close(fd_); }
 
 std::string UdpMulticastSocketReceiver::receive() const {
-  std::string message(2048, '\0');
-  ssize_t recv_message = ::recvfrom(fd_, message.data(), 2048, 0, nullptr, nullptr);
+  std::string message(size_, '\0');
+  ssize_t recv_message = ::recvfrom(fd_, message.data(), size_, 0, nullptr, nullptr);
   if (recv_message == -1) {
     if (errno == EAGAIN || errno == EWOULDBLOCK) {
       return std::string{};

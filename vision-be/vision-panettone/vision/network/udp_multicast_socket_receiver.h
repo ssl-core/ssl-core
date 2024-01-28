@@ -23,7 +23,7 @@ class UdpMulticastSocketReceiver : public IUdpMulticastSocketReceiver {
  public:
   using receive_type = std::string;
 
-  UdpMulticastSocketReceiver();
+  explicit UdpMulticastSocketReceiver(size_t size = 1024);
 
   void connect(std::string_view ip_address, std::string_view inet_address, int port) const override;
   [[nodiscard]] std::string receive() const override;
@@ -33,6 +33,7 @@ class UdpMulticastSocketReceiver : public IUdpMulticastSocketReceiver {
 
  private:
   int fd_;
+  size_t size_;
 };
 
 } // namespace vision
