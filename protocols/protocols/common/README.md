@@ -29,8 +29,8 @@ A collection of Robot Id-related messages.
 
 _It is defined as a separate message to be reused for all the messages that need to identify a robot._
 
-- `RobotId`: a robot id;
-- `RobotId.Color`: a robot color;
+- `RobotId`: the robot id;
+- `RobotId.Color`: the robot color;
 
 ![](.images/blue-tags.svg)
 
