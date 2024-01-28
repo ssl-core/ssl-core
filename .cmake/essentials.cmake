@@ -119,13 +119,14 @@ message(STATUS "Using cppzmq: ${cppzmq_VERSION}")
 #  MACROS: macros
 #  CONFIGS: CMake configurable header files
 #  COMPILE_OPTIONS: compile options
+#  COMPILE_FEATURES: compile features
 function(robocin_cpp_library)
   cmake_parse_arguments(
-          ARG                                                    # prefix of output variables
-          ""                                                     # list of names of the boolean arguments
-          "NAME"                                                 # list of names of mono-valued arguments
-          "HDRS;SRCS;MODS;DEPS;MACROS;CONFIGS;COMPILE_OPTIONS"   # list of names of multi-valued arguments
-          ${ARGN}                                                # arguments of the function to parse (ARGN contains all the arguments after the function name)
+          ARG                                                                     # prefix of output variables
+          ""                                                                      # list of names of the boolean arguments
+          "NAME"                                                                  # list of names of mono-valued arguments
+          "HDRS;SRCS;MODS;DEPS;MACROS;CONFIGS;COMPILE_OPTIONS;COMPILE_FEATURES"   # list of names of multi-valued arguments
+          ${ARGN}                                                                 # arguments of the function to parse (ARGN contains all the arguments after the function name)
   )
 
   # if there isn't at least one module file, then should be at least one header file and one source file
@@ -166,13 +167,32 @@ function(robocin_cpp_library)
   add_library(${ARG_NAME} ${ARG_HDRS} ${ARG_SRCS} ${ARG_MODS} ${CONFIG_HDRS}) # add library with given name, headers, sources and modules
   target_link_libraries(${ARG_NAME} PUBLIC ${ARG_DEPS}) # link library with given dependencies
 
+  if (ARG_MODS)
+    if (CMAKE_CXX_STANDARD)
+      if (CMAKE_CXX_STANDARD GREATER_EQUAL 20)
+        target_compile_features(${ARG_NAME} PUBLIC cxx_std_${CMAKE_CXX_STANDARD})
+      else ()
+        message(FATAL_ERROR "robocin_cpp_library: modules are only supported with C++20 or newer.")
+      endif ()
+    else ()
+      message(WARNING "robocin_cpp_library: CMAKE_CXX_STANDARD is not defined when adding modules to library '${ARG_NAME}'. Using C++20 as default.")
+      target_compile_features(${ARG_NAME} PUBLIC cxx_std_20)
+    endif ()
+  endif ()
+
   target_include_directories(${ARG_NAME} PRIVATE ${ROBOCIN_PROJECT_PATH})
   target_include_directories(${ARG_NAME} PRIVATE ${CMAKE_BINARY_DIR})
+
+  # add include directories of dependencies to the library (required for modules installation)
+  foreach (DEP ${ARG_DEPS})
+    get_target_property(dep_include_dirs ${DEP} INTERFACE_INCLUDE_DIRECTORIES)
+    target_include_directories(${ARG_NAME} PRIVATE ${dep_include_dirs})
+  endforeach ()
 
   target_compile_definitions(${ARG_NAME} PRIVATE ROBOCIN_PROJECT_NAME="${ROBOCIN_PROJECT_NAME}")
   target_compile_definitions(${ARG_NAME} PRIVATE ROBOCIN_PROJECT_PATH="${ROBOCIN_PROJECT_PATH}")
 
-  # target_sources(${ARG_NAME} PUBLIC FILE_SET cxx_modules TYPE CXX_MODULES FILES ${ARG_MODS})
+  target_sources(${ARG_NAME} PUBLIC FILE_SET CXX_MODULES FILES ${ARG_MODS})
 
   if (ARG_MACROS)
     target_compile_definitions(${ARG_NAME} ${ARG_MACROS})
@@ -180,6 +200,10 @@ function(robocin_cpp_library)
 
   if (ARG_COMPILE_OPTIONS)
     target_compile_options(${ARG_NAME} ${ARG_COMPILE_OPTIONS})
+  endif ()
+
+  if (ARG_COMPILE_FEATURES)
+    target_compile_features(${ARG_NAME} ${ARG_COMPILE_FEATURES})
   endif ()
 
   # installing steps:
@@ -219,7 +243,8 @@ function(robocin_cpp_library)
     install(FILES ${CONFIG_HDR} DESTINATION "${config_install_path}")
   endforeach ()
   #  - install library
-  install(TARGETS ${ARG_NAME} EXPORT "${PROJECT_NAME}Targets" FILE_SET HEADERS DESTINATION include
+  install(TARGETS ${ARG_NAME} EXPORT "${PROJECT_NAME}Targets" CXX_MODULES_BMI DESTINATION modules
+                                                              FILE_SET HEADERS DESTINATION include
                                                               FILE_SET CXX_MODULES DESTINATION modules)
   #  - install CMake configuration files
   install(
@@ -227,6 +252,7 @@ function(robocin_cpp_library)
           NAMESPACE "${PROJECT_NAME}::"
           FILE "${PROJECT_NAME}Config.cmake"
           DESTINATION "${CMAKE_INSTALL_LIBDIR}/cmake/${PROJECT_NAME}"
+          CXX_MODULES_DIRECTORY cxx_modules
   )
 
 endfunction(robocin_cpp_library)
@@ -242,13 +268,14 @@ endfunction(robocin_cpp_library)
 #  DEPS: dependencies
 #  MACROS: macros
 #  COMPILE_OPTIONS: compile options
+#  COMPILE_FEATURES: compile features
 function(robocin_cpp_test)
   cmake_parse_arguments(
-          ARG                                            # prefix of output variables
-          ""                                             # list of names of the boolean arguments
-          "NAME"                                         # list of names of mono-valued arguments
-          "HDRS;SRCS;MODS;DEPS;MACROS;COMPILE_OPTIONS"   # list of names of multi-valued arguments
-          ${ARGN}                                        # arguments of the function to parse (ARGN contains all the arguments after the function name)
+          ARG                                                             # prefix of output variables
+          ""                                                              # list of names of the boolean arguments
+          "NAME"                                                          # list of names of mono-valued arguments
+          "HDRS;SRCS;MODS;DEPS;MACROS;COMPILE_OPTIONS;COMPILE_FEATURES"   # list of names of multi-valued arguments
+          ${ARGN}                                                         # arguments of the function to parse (ARGN contains all the arguments after the function name)
   )
 
   # check if at least one source file is given with suffix '_test.cpp'
@@ -272,7 +299,7 @@ function(robocin_cpp_test)
   target_compile_definitions(${ARG_NAME} PRIVATE ROBOCIN_PROJECT_NAME="${ROBOCIN_PROJECT_NAME}")
   target_compile_definitions(${ARG_NAME} PRIVATE ROBOCIN_PROJECT_PATH="${ROBOCIN_PROJECT_PATH}")
 
-  # target_sources(${ARG_NAME} PUBLIC FILE_SET cxx_modules TYPE CXX_MODULES FILES ${ARG_MODS})
+  target_sources(${ARG_NAME} PUBLIC FILE_SET CXX_MODULES FILES ${ARG_MODS})
 
   if (ARG_MACROS)
     target_compile_definitions(${ARG_NAME} ${ARG_MACROS})
@@ -280,6 +307,10 @@ function(robocin_cpp_test)
 
   if (ARG_COMPILE_OPTIONS)
     target_compile_options(${ARG_NAME} ${ARG_COMPILE_OPTIONS})
+  endif ()
+
+  if (ARG_COMPILE_FEATURES)
+    target_compile_features(${ARG_NAME} ${ARG_COMPILE_FEATURES})
   endif ()
 
   gtest_discover_tests(${ARG_NAME})
@@ -297,13 +328,14 @@ endfunction(robocin_cpp_test)
 #  DEPS: dependencies
 #  MACROS: macros
 #  COMPILE_OPTIONS: compile options
+#  COMPILE_FEATURES: compile features
 function(robocin_cpp_benchmark_test)
   cmake_parse_arguments(
-          ARG                                            # prefix of output variables
-          ""                                             # list of names of the boolean arguments
-          "NAME"                                         # list of names of mono-valued arguments
-          "HDRS;SRCS;MODS;DEPS;MACROS;COMPILE_OPTIONS"   # list of names of multi-valued arguments
-          ${ARGN}                                        # arguments of the function to parse (ARGN contains all the arguments after the function name)
+          ARG                                                             # prefix of output variables
+          ""                                                              # list of names of the boolean arguments
+          "NAME"                                                          # list of names of mono-valued arguments
+          "HDRS;SRCS;MODS;DEPS;MACROS;COMPILE_OPTIONS;COMPILE_FEATURES"   # list of names of multi-valued arguments
+          ${ARGN}                                                         # arguments of the function to parse (ARGN contains all the arguments after the function name)
   )
 
   # check if at least one source file is given with suffix '_benchmark.cpp'
@@ -327,7 +359,7 @@ function(robocin_cpp_benchmark_test)
   target_compile_definitions(${ARG_NAME} PRIVATE ROBOCIN_PROJECT_NAME="${ROBOCIN_PROJECT_NAME}")
   target_compile_definitions(${ARG_NAME} PRIVATE ROBOCIN_PROJECT_PATH="${ROBOCIN_PROJECT_PATH}")
 
-  # target_sources(${ARG_NAME} PUBLIC FILE_SET cxx_modules TYPE CXX_MODULES FILES ${ARG_MODS})
+  target_sources(${ARG_NAME} PUBLIC FILE_SET CXX_MODULES FILES ${ARG_MODS})
 
   if (ARG_MACROS)
     target_compile_definitions(${ARG_NAME} ${ARG_MACROS})
@@ -335,6 +367,10 @@ function(robocin_cpp_benchmark_test)
 
   if (ARG_COMPILE_OPTIONS)
     target_compile_options(${ARG_NAME} ${ARG_COMPILE_OPTIONS})
+  endif ()
+
+  if (ARG_COMPILE_FEATURES)
+    target_compile_features(${ARG_NAME} ${ARG_COMPILE_FEATURES})
   endif ()
 
 endfunction(robocin_cpp_benchmark_test)
@@ -350,13 +386,14 @@ endfunction(robocin_cpp_benchmark_test)
 #  DEPS: dependencies
 #  MACROS: macros
 #  COMPILE_OPTIONS: compile options
+#  COMPILE_FEATURES: compile features
 function(robocin_cpp_executable)
   cmake_parse_arguments(
-          ARG                                            # prefix of output variables
-          ""                                             # list of names of the boolean arguments
-          "NAME"                                         # list of names of mono-valued arguments
-          "HDRS;SRCS;MODS;DEPS;MACROS;COMPILE_OPTIONS"   # list of names of multi-valued arguments
-          ${ARGN}                                        # arguments of the function to parse (ARGN contains all the arguments after the function name)
+          ARG                                                             # prefix of output variables
+          ""                                                              # list of names of the boolean arguments
+          "NAME"                                                          # list of names of mono-valued arguments
+          "HDRS;SRCS;MODS;DEPS;MACROS;COMPILE_OPTIONS;COMPILE_FEATURES"   # list of names of multi-valued arguments
+          ${ARGN}                                                         # arguments of the function to parse (ARGN contains all the arguments after the function name)
   )
 
   # check if at least one source file is given with suffix '_main.cpp'
@@ -380,7 +417,7 @@ function(robocin_cpp_executable)
   target_compile_definitions(${ARG_NAME} PRIVATE ROBOCIN_PROJECT_NAME="${ROBOCIN_PROJECT_NAME}")
   target_compile_definitions(${ARG_NAME} PRIVATE ROBOCIN_PROJECT_PATH="${ROBOCIN_PROJECT_PATH}")
 
-  # target_sources(${ARG_NAME} PUBLIC FILE_SET cxx_modules TYPE CXX_MODULES FILES ${ARG_MODS})
+  target_sources(${ARG_NAME} PUBLIC FILE_SET CXX_MODULES FILES ${ARG_MODS})
 
   if (ARG_MACROS)
     target_compile_definitions(${ARG_NAME} ${ARG_MACROS})
@@ -388,6 +425,10 @@ function(robocin_cpp_executable)
 
   if (ARG_COMPILE_OPTIONS)
     target_compile_options(${ARG_NAME} ${ARG_COMPILE_OPTIONS})
+  endif ()
+
+  if (ARG_COMPILE_FEATURES)
+    target_compile_features(${ARG_NAME} ${ARG_COMPILE_FEATURES})
   endif ()
 
 endfunction(robocin_cpp_executable)
@@ -401,13 +442,14 @@ endfunction(robocin_cpp_executable)
 #  DEPS: dependencies
 #  MACROS: macros
 #  COMPILE_OPTIONS: compile options
+#  COMPILE_FEATURES: compile features
 function(robocin_cpp_proto_library)
   cmake_parse_arguments(
-          ARG                                    # prefix of output variables
-          ""                                     # list of names of the boolean arguments
-          "NAME"                                 # list of names of mono-valued arguments
-          "PROTOS;DEPS;MACROS;COMPILE_OPTIONS"   # list of names of multi-valued arguments
-          ${ARGN}                                # arguments of the function to parse
+          ARG                                                     # prefix of output variables
+          ""                                                      # list of names of the boolean arguments
+          "NAME"                                                  # list of names of mono-valued arguments
+          "PROTOS;DEPS;MACROS;COMPILE_OPTIONS;COMPILE_FEATURES"   # list of names of multi-valued arguments
+          ${ARGN}                                                 # arguments of the function to parse
   )
 
   # if there isn't at least one proto file, then the library is not created
