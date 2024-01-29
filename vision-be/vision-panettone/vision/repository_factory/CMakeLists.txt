@@ -3,5 +3,6 @@ add_subdirectory(repository_factory_mongo_db)
 
 robocin_cpp_library(
   NAME repository_factory
-  DEPS repository_abstract_factory.h repository_type.h
+  HDRS repository_abstract_factory.h repository_type.h
+  DEPS frame_repository
 )

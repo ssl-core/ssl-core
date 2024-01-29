@@ -2,7 +2,6 @@
 #ifndef FRAME_REPOSITORY_MONGODB_H
 #define FRAME_REPOSITORY_MONGODB_H
 
-#include "../../../src/frame/frame.h"
 #include "../i_frame_repository.h"
 
 #include <mongocxx/client.hpp>

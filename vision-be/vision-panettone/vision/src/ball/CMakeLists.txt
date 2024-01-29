@@ -1,5 +1,6 @@
 robocin_cpp_library(
   NAME ball
   SRCS ball.cpp
-  DEPS ball.h
+  HDRS ball.h
+  DEPS point_2df point_3df source
 )

@@ -1,5 +1,6 @@
 robocin_cpp_library(
   NAME frame
   SRCS frame.cpp
-  DEPS frame.h
+  HDRS frame.h
+  DEPS ball field robot
 )
