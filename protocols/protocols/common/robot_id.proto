@@ -1,0 +1,18 @@
+syntax = "proto3";
+
+package protocols.common;
+
+// RobotId is the message describing the id of a robot.
+message RobotId {
+  // Color is the enum describing the color of the robot.
+  enum Color {
+    COLOR_UNSPECIFIED = 0;
+    COLOR_YELLOW = 1;
+    COLOR_BLUE = 2;
+  }
+
+  // The color of the robot.
+  Color color = 1;
+  // The number of the robot.
+  int32 number = 2;
+}

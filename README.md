@@ -1,3 +1,12 @@
+[![RobôCIn](https://img.shields.io/badge/🇧🇷-RobôCIn-009B3A)](https://robocin.com.br)
+[![Issues](https://img.shields.io/github/issues/robocin/ssl-core)](https://github.com/robocin/ssl-core/issues)
+[![Lint and Formatting Checker](https://github.com/robocin/ssl-core/actions/workflows/lint-and-formatting-checker.yaml/badge.svg?branch=main)](https://github.com/robocin/ssl-core/actions/workflows/lint-and-formatting-checker.yaml?query=branch%3Amain)
+[![Pull Requests](https://img.shields.io/github/issues-pr/robocin/ssl-core)](https://github.com/robocin/ssl-core/pulls)
+[![C++](https://img.shields.io/badge/C%2B%2B-20%2B-darkblue.svg)](https://en.cppreference.com/w/cpp/20)
+[![CMake](https://img.shields.io/badge/CMake-3.28%2B-blue.svg)](https://cmake.org/cmake/help/latest/release/3.28.html)
+[![VS Code Dev Containers](https://img.shields.io/static/v1?label=VS+Code&message=Dev+Containers&logo=visualstudiocode&color=007ACC&labelColor=2C2C32&logoColor=007ACC)](https://code.visualstudio.com/docs/devcontainers/containers)
+[![License: MIT](https://img.shields.io/badge/License-MIT-orange.svg)](LICENSE)
+
 # ssl-core
 
 This repository contains RobôCIn's next yet-to-be-developed software for the RoboCup Small Size Soccer.
@@ -13,7 +22,7 @@ Its conception consists of a long-term project that tries to apply the concept o
   - [Codemap](#codemap)
   - [How to Contribute](#how-to-contribute)
   - [License](#license)
-  - [Links](#links)
+  - [Acknowledgements](#acknowledgements)
 
 ## About
 
@@ -41,14 +50,33 @@ All the code developed was done in [Visual Studio Code](https://code.visualstudi
 
   Contains common [CMake](https://cmake.org) rules and utilities used across the project.
 
+* [`protocols`](protocols/README.md)
+
+  Contains the [Protocol Buffers](https://developers.google.com/protocol-buffers) definitions used across the project.
+
+* [`docs`](docs/README.md)
+
+  Contains documentation pages as guides, tutorials, and other useful information.
+
 ## How to Contribute
 
-TODO.
+There are many ways in which you can participate in this project, for example:
+
+* [Reporting bugs, suggesting new features](https://github.com/robocin/ssl-core/issues) and contributing to the validation while they are being checked in
+* Reviewing our [pull requests](https://github.com/robocin/ssl-core/pulls)
+* Reviewing our documentation within this repository and making pull requests for anything from typos to additional new content
+
+If you are interested in fixing issues and contributing directly to the code base,
+please see [How to Contribute](docs/how-to-contribute.md).
 
 ## License
 
 The `ssl-core` repository is licensed under the terms of the MIT license. See [LICENSE](LICENSE) for more information.
 
-## Links
+## Acknowledgements
 
-TODO.
+We would like to express our gratitude to the following open-source projects that have inspired and influenced us in the development of `ssl-core`:
+
+* [`abseil-cpp`](https://github.com/abseil/abseil-cpp), from Google
+* [`vscode`](https://github.com/microsoft/vscode), from Microsoft
+* [`Sumatra`](https://github.com/TIGERs-Mannheim/Sumatra), from TIGERs Mannheim
