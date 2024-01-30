@@ -1,10 +1,10 @@
 // Robot.h
-#ifndef ROBOT_H
-#define ROBOT_H
+#ifndef VISION_SRC_ROBOT_H
+#define VISION_SRC_ROBOT_H
 
-#include "../point/point_2df/point_2df.h"
-#include "../source/source.h"
-#include "color/color.h"
+#include "vision/src/point/point_2df/point_2df.h"
+#include "vision/src/robot/color/color.h"
+#include "vision/src/source/source.h"
 
 class Robot {
  public:
@@ -30,4 +30,4 @@ class Robot {
   Source source_;
 };
 
-#endif // ROBOT_H
+#endif // VISION_SRC_ROBOT_H

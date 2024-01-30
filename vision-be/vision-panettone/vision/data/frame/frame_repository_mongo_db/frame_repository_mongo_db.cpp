@@ -1,5 +1,5 @@
 // FrameRepositoryMongoDB.cpp
-#include "frame_repository_mongo_db.h"
+#include "vision/data/frame/frame_repository_mongo_db/frame_repository_mongo_db.h"
 
 #include <bsoncxx/builder/basic/document.hpp>
 #include <bsoncxx/builder/basic/kvp.hpp>

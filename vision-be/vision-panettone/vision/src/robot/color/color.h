@@ -1,6 +1,6 @@
 // Color.h
-#ifndef COLOR_H
-#define COLOR_H
+#ifndef VISION_SRC_COLOR_H
+#define VISION_SRC_COLOR_H
 
 #include <iostream>
 
@@ -10,4 +10,5 @@ enum class Color {
 };
 
 std::ostream& operator<<(std::ostream& os, const Color& color);
-#endif // COLOR_H
+
+#endif // VISION_SRC_COLOR_H

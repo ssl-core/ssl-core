@@ -1,6 +1,6 @@
 // Point2Df.h
-#ifndef POINT2DF_H
-#define POINT2DF_H
+#ifndef VISION_SRC_POINT2DF_H
+#define VISION_SRC_POINT2DF_H
 
 #include <iostream>
 
@@ -15,4 +15,4 @@ class Point2Df {
   double y_;
 };
 
-#endif // POINT2DF_H
+#endif // VISION_SRC_POINT2DF_H

@@ -1,10 +1,10 @@
 // Ball.h
-#ifndef BALL_H
-#define BALL_H
+#ifndef VISION_SRC_BALL_H
+#define VISION_SRC_BALL_H
 
-#include "../point/point_2df/point_2df.h"
-#include "../point/point_3df/point_3df.h"
-#include "../source/source.h"
+#include "vision/src/point/point_2df/point_2df.h"
+#include "vision/src/point/point_3df/point_3df.h"
+#include "vision/src/source/source.h"
 
 class Ball {
  public:
@@ -19,4 +19,4 @@ class Ball {
   Point3Df velocity_;
 };
 
-#endif // BALL_H
+#endif // VISION_SRC_BALL_H

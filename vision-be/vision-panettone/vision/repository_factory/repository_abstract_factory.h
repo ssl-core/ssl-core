@@ -1,10 +1,14 @@
 // RepositoryAbstractFactory.h
-#ifndef REPOSITORY_ABSTRACT_FACTORY_H
-#define REPOSITORY_ABSTRACT_FACTORY_H
+#ifndef VISION_REPOSITORY_FACTORY_REPOSITORY_ABSTRACT_FACTORY_H
+#define VISION_REPOSITORY_FACTORY_REPOSITORY_ABSTRACT_FACTORY_H
 
-#include "../data/frame/i_frame_repository.h"
+#include "vision/data/frame/i_frame_repository.h"
 
 #include <memory>
+
+enum class RepositoryType {
+  MONGODB
+};
 
 class RepositoryAbstractFactory {
  public:
@@ -19,4 +23,4 @@ class RepositoryAbstractFactory {
   RepositoryAbstractFactory& operator=(RepositoryAbstractFactory&&) = default;
 };
 
-#endif // REPOSITORY_ABSTRACT_FACTORY_H
+#endif // VISION_REPOSITORY_FACTORY_REPOSITORY_ABSTRACT_FACTORY_H

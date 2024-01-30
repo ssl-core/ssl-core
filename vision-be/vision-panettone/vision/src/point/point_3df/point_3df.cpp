@@ -1,5 +1,5 @@
 // Point3Df.cpp
-#include "point_3df.h"
+#include "vision/src/point/point_3df/point_3df.h"
 
 // NOLINTBEGIN(bugprone-easily-swappable-parameters)
 Point3Df::Point3Df(double x, double y, double z) : x_(x), y_(y), z_(z) {}

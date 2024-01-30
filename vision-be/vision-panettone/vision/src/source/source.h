@@ -1,6 +1,6 @@
 // Source.h
-#ifndef SOURCE_H
-#define SOURCE_H
+#ifndef VISION_SRC_SOURCE_H
+#define VISION_SRC_SOURCE_H
 
 #include <iostream>
 
@@ -11,4 +11,4 @@ enum class Source {
 
 std::ostream& operator<<(std::ostream& os, const Source& source);
 
-#endif // SOURCE_H
+#endif // VISION_SRC_SOURCE_H

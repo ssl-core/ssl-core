@@ -1,6 +1,6 @@
 // Point3Df.h
-#ifndef POINT3DF_H
-#define POINT3DF_H
+#ifndef VISION_SRC_POINT3DF_H
+#define VISION_SRC_POINT3DF_H
 
 #include <iostream>
 
@@ -16,4 +16,4 @@ class Point3Df {
   double z_;
 };
 
-#endif // POINT3DF_H
+#endif // VISION_SRC_POINT3DF_H

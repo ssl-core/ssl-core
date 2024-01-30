@@ -1,7 +1,7 @@
 // ThreadPool.h
 
-#ifndef THREAD_POOL_H
-#define THREAD_POOL_H
+#ifndef VISION_SRC_THREAD_POOL_H
+#define VISION_SRC_THREAD_POOL_H
 
 #include <condition_variable>
 #include <functional>
@@ -32,4 +32,4 @@ class ThreadPool {
   bool stop_;
 };
 
-#endif // THREAD_POOL_H
+#endif // VISION_SRC_THREAD_POOL_H

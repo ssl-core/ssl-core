@@ -1,9 +1,8 @@
 // RepositoryFactoryMapping.h
-#ifndef REPOSITORY_FACTORY_MAPPING_H
-#define REPOSITORY_FACTORY_MAPPING_H
+#ifndef VISION_REPOSITORY_FACTORY_REPOSITORY_FACTORY_MAPPING_REPOSITORY_FACTORY_MAPPING_H
+#define VISION_REPOSITORY_FACTORY_REPOSITORY_FACTORY_MAPPING_REPOSITORY_FACTORY_MAPPING_H
 
-#include "../repository_abstract_factory.h"
-#include "../repository_type.h"
+#include "vision/repository_factory/repository_abstract_factory.h"
 
 #include <memory>
 #include <unordered_map>
@@ -18,4 +17,4 @@ class RepositoryFactoryMapping {
   std::unordered_map<RepositoryType, std::shared_ptr<RepositoryAbstractFactory>> factoryMapping_;
 };
 
-#endif // REPOSITORY_FACTORY_MAPPING_H
+#endif // VISION_REPOSITORY_FACTORY_REPOSITORY_FACTORY_MAPPING_REPOSITORY_FACTORY_MAPPING_H

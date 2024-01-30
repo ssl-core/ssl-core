@@ -1,8 +1,8 @@
 // IFrameRepository.h
-#ifndef IFRAME_REPOSITORY_H
-#define IFRAME_REPOSITORY_H
+#ifndef VISION_DATA_FRAME_IFRAME_REPOSITORY_H
+#define VISION_DATA_FRAME_IFRAME_REPOSITORY_H
 
-#include "../../src/frame/frame.h"
+#include "vision/src/frame/frame.h"
 
 #include <mongocxx/collection.hpp>
 #include <optional>
@@ -24,4 +24,4 @@ class IFrameRepository {
   virtual void remove(const std::string& frame_id) = 0;
 };
 
-#endif // IFRAME_REPOSITORY_H
+#endif // VISION_DATA_FRAME_IFRAME_REPOSITORY_H

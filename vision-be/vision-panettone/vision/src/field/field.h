@@ -1,6 +1,6 @@
 // Field.h
-#ifndef FIELD_H
-#define FIELD_H
+#ifndef VISION_SRC_FIELD_H
+#define VISION_SRC_FIELD_H
 
 #include <ostream>
 
@@ -38,4 +38,4 @@ static const Field kDefaultField = Field(/*length=*/9.0,
                                          /*boundary_width=*/0.3,
                                          /*goal_center_to_penalty_mark=*/1.0);
 
-#endif // FIELD_H
+#endif // VISION_SRC_FIELD_H

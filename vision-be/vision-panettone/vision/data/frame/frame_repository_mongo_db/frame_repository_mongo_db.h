@@ -1,8 +1,8 @@
 // FrameRepositoryMongoDB.h
-#ifndef FRAME_REPOSITORY_MONGODB_H
-#define FRAME_REPOSITORY_MONGODB_H
+#ifndef VISION_DATA_FRAME_FRAME_REPOSITORY_MONGO_DB_FRAME_REPOSITORY_MONGO_DB_H
+#define VISION_DATA_FRAME_FRAME_REPOSITORY_MONGO_DB_FRAME_REPOSITORY_MONGO_DB_H
 
-#include "../i_frame_repository.h"
+#include "vision/data/frame/i_frame_repository.h"
 
 #include <mongocxx/client.hpp>
 
@@ -22,4 +22,4 @@ class FrameRepositoryMongoDB : public IFrameRepository {
   mongocxx::collection collection_;
 };
 
-#endif // FRAME_REPOSITORY_MONGODB_H
+#endif // VISION_DATA_FRAME_FRAME_REPOSITORY_MONGO_DB_FRAME_REPOSITORY_MONGO_DB_H

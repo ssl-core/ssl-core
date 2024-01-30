@@ -1,10 +1,10 @@
 // Frame.h
-#ifndef FRAME_H
-#define FRAME_H
+#ifndef VISION_SRC_FRAME_H
+#define VISION_SRC_FRAME_H
 
-#include "../ball/ball.h"
-#include "../field/field.h"
-#include "../robot/robot.h"
+#include "vision/src/ball/ball.h"
+#include "vision/src/field/field.h"
+#include "vision/src/robot/robot.h"
 
 #include <iostream>
 #include <vector>
@@ -35,4 +35,4 @@ class Frame {
   Field field_;
 };
 
-#endif // FRAME_H
+#endif // VISION_SRC_FRAME_H

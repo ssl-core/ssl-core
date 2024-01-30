@@ -1,5 +1,5 @@
 // Color.cpp
-#include "color.h"
+#include "vision/src/robot/color/color.h"
 
 #include <ostream>
 
