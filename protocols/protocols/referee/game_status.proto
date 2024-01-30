@@ -1,0 +1,159 @@
+syntax = "proto3";
+
+package protocols.referee;
+
+import "google/protobuf/timestamp.proto";
+import "protocols/common/robot_id.proto";
+import "protocols/common/time.proto";
+
+enum Team {
+  TEAM_UNKNOWN = 0;
+  TEAM_HOME = 1;
+  TEAM_AWAY = 2;
+}
+
+message GameStatus {
+  // utility.Timestamp timestamp = 1;
+
+  // uint64 total_commands_issued = 2;
+  // utility.Time stage_time_left = 3;
+  // utility.Timestamp command_timestamp = 4;
+
+  message Stage {
+    enum Type {
+      TYPE_UNKNOWN = 0;
+      TYPE_NORMAL_FIRST_HALF_PRE = 1;
+      // time_left
+      TYPE_NORMAL_FIRST_HALF = 2;
+      // time_left
+      TYPE_NORMAL_HALF_TIME = 3;
+      TYPE_NORMAL_SECOND_HALF_PRE = 4;
+      // time_left
+      TYPE_NORMAL_SECOND_HALF = 5;
+      // time_left
+      TYPE_EXTRA_TIME_BREAK = 6;
+      TYPE_EXTRA_FIRST_HALF_PRE = 7;
+      // time_left
+      TYPE_EXTRA_FIRST_HALF = 8;
+      // time_left
+      TYPE_EXTRA_HALF_TIME = 9;
+      TYPE_EXTRA_SECOND_HALF_PRE = 10;
+      // time_left
+      TYPE_EXTRA_SECOND_HALF = 11;
+      // time_left
+      TYPE_PENALTY_SHOOTOUT_BREAK = 12;
+      TYPE_PENALTY_SHOOTOUT = 13;
+      TYPE_POST_GAME = 14;
+    }
+    Type type = 1;
+    optional common.Duration time_left = 2;
+  }
+  Stage stage;
+
+  message Team {
+    string name = 1; // The team's name (empty string if operator has not typed anything).
+    uint32 score = 2; // The number of goals scored by the team during normal play and overtime.
+    uint32 yellow_cards = 3; // The total number of yellow cards ever issued to the team.
+
+    repeated utility.Time time_to_expire_active_yellow_cards = 4; // If no yellow cards are issued, this array has no elements.
+
+    uint32 red_cards = 5; // The number of red cards issued to the team since the beginning of the game.
+
+    uint32 timeouts_left = 6;
+    utility.Time total_timeout_time_left = 7; // ???
+
+    int32 goalkeeper_id = 8;
+
+    uint32 total_fouls_committed = 9;
+
+    uint32 consecutive_ball_placement_failures = 10;
+    bool is_ball_placement_enabled = 11;
+    // bool (has_)?ball_placement_failures_reached = 12;
+
+    uint32 max_allowed_robots = 13;
+
+    // bool (is_|has_)?robot_substitution_requested = 14;
+
+    oneof players {
+      common.RobotId.Color color;
+      repeated common.RobotId robots;
+    }
+  }
+
+  Team home_team;
+  Team away_team;
+
+  bool is_home_team_on_positive_half;
+
+  message Command {
+    message Halt {}
+    message InGame {}
+    message Stop {}
+
+    message BallPlacement {
+      Point2D position = 1;
+      google.protobuf.Duration remaining_time = 2;
+    } // H/A
+
+    message PrepareKickoff {} // H/A
+    message Kickoff {
+      google.protobuf.Duration remaining_time = 1;
+    } // H/A
+
+    message PreparePenalty {} // H/A
+    message Penalty {
+      google.protobuf.Duration remaining_time = 1;
+    } // H/A
+
+    message PrepareDirectFreeKick {} // H/A
+    message DirectFreeKick {
+      google.protobuf.Duration remaining_time = 1;
+    } // H/A
+
+    message PrepareIndirectFreeKick {} // H/A
+    message IndirectFreeKick {
+      google.protobuf.Duration remaining_time = 1;
+    } // H/A
+
+    message Timeout {} // H/A
+
+    message Interval {}
+
+    oneof command {
+      Halt halt = 1;
+      InGame in_game = 2;
+      Stop stop = 3;
+
+      BallPlacement home_ball_placement = 4;
+      BallPlacement away_ball_placement = 5;
+
+      PrepareKickoff home_prepare_kickoff = 6;
+      PrepareKickoff away_prepare_kickoff = 7;
+
+      Kickoff home_kickoff = 8;
+      Kickoff away_kickoff = 9;
+
+      PreparePenalty home_prepare_penalty = 10;
+      PreparePenalty away_prepare_penalty = 11;
+      Penalty home_penalty = 12;
+      Penalty away_penalty = 13;
+
+      PrepareDirectFreeKick home_prepare_direct_free_kick = 14;
+      PrepareDirectFreeKick away_prepare_direct_free_kick = 15;
+
+      DirectFreeKick home_direct_free_kick = 16;
+      DirectFreeKick away_direct_free_kick = 17;
+
+      PrepareIndirectFreeKick home_prepare_indirect_free_kick = 18;
+      PrepareIndirectFreeKick away_prepare_indirect_free_kick = 19;
+
+      IndirectFreeKick home_indirect_free_kick = 20;
+      IndirectFreeKick away_indirect_free_kick = 21;
+
+      Timeout home_timeout = 22;
+      Timeout away_timeout = 23;
+
+      Interval interval = 24;
+    }
+  }
+}
