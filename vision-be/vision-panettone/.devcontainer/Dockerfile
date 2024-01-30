@@ -9,7 +9,7 @@ RUN git clone https://github.com/mongodb/mongo-cxx-driver.git --branch releases/
 # 2. Build and install the MongoDB C++ driver
 RUN cd /mongo-cxx-driver && rm -rf build && mkdir build && cd build && cmake -DCMAKE_BUILD_TYPE=Release -DMONGOCXX_OVERRIDE_DEFAULT_INSTALL_PREFIX=OFF .. && sudo cmake --build . --target install
 
-RUN cd /tmp/common/cpp && rm -rf build && mkdir build && cd build && cmake .. && make -j$(nproc) && make install -j$(nproc)
+RUN cd /tmp/common/cpp && rm -rf build && mkdir build && cd build && cmake .. -G "Ninja" -DCMAKE_CXX_COMPILER=clang++-17 && cmake --build . && cmake --install .
 RUN rm -rf /tmp/.cmake/
 RUN rm -rf /tmp/common/
 
