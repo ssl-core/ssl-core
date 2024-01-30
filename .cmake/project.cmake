@@ -53,11 +53,12 @@ macro(robocin_cpp_project_setup)
       set(SOURCE_DIRECTORY ${ROBOCIN_PROJECT_NAME})
     endif ()
 
-    if (EXISTS ${CMAKE_CURRENT_LIST_DIR}/${SOURCE_DIRECTORY}/CMakeLists.txt)
+    # add all subdirectories of the source directory recursively
+    file(GLOB_RECURSE CMAKELISTS_FILES ${CMAKE_CURRENT_LIST_DIR}/${SOURCE_DIRECTORY}/CMakeLists.txt ${CMAKE_CURRENT_LIST_DIR}/${SOURCE_DIRECTORY}/**/CMakeLists.txt)
+
+    if (CMAKELISTS_FILES)
       message(STATUS "Source directory: '${CMAKE_CURRENT_LIST_DIR}/${SOURCE_DIRECTORY}'")
 
-      # add all subdirectories of the source directory recursively
-      file(GLOB_RECURSE CMAKELISTS_FILES ${CMAKE_CURRENT_LIST_DIR}/${SOURCE_DIRECTORY}/CMakeLists.txt ${CMAKE_CURRENT_LIST_DIR}/${SOURCE_DIRECTORY}/**/CMakeLists.txt)
       foreach (CMAKELISTS_FILE ${CMAKELISTS_FILES})
         get_filename_component(CMAKELISTS_FILE_PATH ${CMAKELISTS_FILE} DIRECTORY)
         add_subdirectory(${CMAKELISTS_FILE_PATH})
