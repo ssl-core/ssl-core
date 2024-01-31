@@ -9,8 +9,8 @@ class App {
 
   constructor(
     routes: Route[],
-    templates: Record<string, string>,
-    shortcuts: Record<string, { eventName: string; data: object }>
+    templates: Record<string, Template>,
+    shortcuts: Record<string, Shortcut>
   ) {
     this.router = new Router(routes, templates);
     this.eventBus = new EventBus();

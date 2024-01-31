@@ -23,3 +23,10 @@ type Route = {
   cols: number;
   fragments: RouteFragment[];
 };
+
+type Shortcut = {
+  eventName: string;
+  data: Record<string, any>;
+};
+
+type Template = string;

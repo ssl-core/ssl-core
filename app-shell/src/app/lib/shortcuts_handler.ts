@@ -2,12 +2,9 @@ import EventBus from "./event_bus";
 
 class ShortcutsHandler {
   private eventBus: EventBus;
-  private shortcuts: { [key: string]: { eventName: string; data: object } };
+  private shortcuts: Record<string, Shortcut>;
 
-  constructor(
-    eventBus: EventBus,
-    shortcuts: Record<string, { eventName: string; data: object }>
-  ) {
+  constructor(eventBus: EventBus, shortcuts: Record<string, Shortcut>) {
     this.eventBus = eventBus;
     this.shortcuts = shortcuts;
   }

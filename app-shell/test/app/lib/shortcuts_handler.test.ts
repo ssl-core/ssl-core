@@ -5,9 +5,11 @@ import EventBus from "../../../src/app/lib/event_bus";
 
 describe("ShortcurtsHandler", () => {
   let shortcutsHandler: ShortcurtsHandler;
-  let eventBus: any;
-  let events: any = {};
-  let shortcuts: any = { t: { eventName: "test", data: {} } };
+  let eventBus: EventBus;
+  let events: Record<string, (...args: any[]) => void> = {};
+  let shortcuts: Record<string, Shortcut> = {
+    t: { eventName: "test", data: {} },
+  };
 
   beforeAll(() => {
     vi.stubGlobal("BroadcastChannel", vi.fn());

@@ -2,9 +2,9 @@ import FragmentFactory from "../fragments/fragment_factory";
 
 class Router {
   private routes: Route[];
-  private templates: Record<string, string>;
+  private templates: Record<string, Template>;
 
-  constructor(routes: Route[], templates: Record<string, string>) {
+  constructor(routes: Route[], templates: Record<string, Template>) {
     this.routes = routes;
     this.templates = templates;
   }
