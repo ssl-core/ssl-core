@@ -84,4 +84,27 @@ describe("Router", () => {
     expect(navLink.querySelector("i")?.dataset.lucide).toBe("heart");
     expect(navLink.querySelector("span")?.innerHTML).toBe("Another");
   });
+
+  it("should render /another page when nav item is clicked", () => {
+    router.initialize();
+
+    const navLink =
+      document.querySelector<HTMLAnchorElement>('[href="/another"]')!;
+    navLink.click();
+
+    expect(document.querySelector("iframe")).not.toBeNull();
+    expect(
+      document.querySelector('script[src="https://second.example"]')
+    ).not.toBeNull();
+  });
+
+  it("should render /settings page when nav item is clicked", () => {
+    router.initialize();
+
+    const navLink =
+      document.querySelector<HTMLAnchorElement>('[href="/settings"]')!;
+    navLink.click();
+
+    expect(document.querySelector("#settings-template")).not.toBeNull();
+  });
 });
