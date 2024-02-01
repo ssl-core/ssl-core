@@ -21,7 +21,7 @@ type Route = {
   icon: string;
   rows: number;
   cols: number;
-  fragments: RouteFragment[];
+  fragments: Record<string, RouteFragment>;
 };
 
 type Shortcut = {
