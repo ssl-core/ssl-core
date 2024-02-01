@@ -21,10 +21,11 @@ FrameRepositoryMongoDB::FrameRepositoryMongoDB() :
 void FrameRepositoryMongoDB::save(const Frame& frame) {
   auto frame_id = frame.getId();
   try {
-    auto document = make_document(kvp("_id", frame.getId()),
-                                  kvp("balls", frame.getBalls()),
-                                  kvp("robots", frame.getRobots()),
-                                  kvp("field", frame.getField()));
+    auto document = make_document(kvp("_id", frame.getId()));
+    // TODO(aqb): add the rest of the frame data to the document.
+    // kvp("balls", frame.getBalls()),
+    // kvp("robots", frame.getRobots()),
+    // kvp("field", frame.getField()));
     auto insert_one_result = collection_.insert_one(document.view());
     assert(insert_one_result);
   } catch (const std::exception& e) {

@@ -16,10 +16,10 @@ class ThreadPool {
   explicit ThreadPool(size_t num_threads);
   ~ThreadPool();
 
-  ThreadPool(const ThreadPool& other) = delete;
-  ThreadPool& operator=(const ThreadPool& other) = delete;
-  ThreadPool(ThreadPool&& other) = delete;
-  ThreadPool& operator=(ThreadPool&& other) = delete;
+  ThreadPool(const ThreadPool&) = delete;
+  ThreadPool& operator=(const ThreadPool&) = delete;
+  ThreadPool(ThreadPool&&) = delete;
+  ThreadPool& operator=(ThreadPool&&) = delete;
 
   template <typename F, typename... Args>
   auto enqueue(F&& f, Args&&... args) -> std::future<std::result_of_t<F(Args...)>>;
@@ -27,7 +27,7 @@ class ThreadPool {
  private:
   std::vector<std::thread> workers_;
   std::queue<std::function<void()>> tasks_;
-  std::mutex queue_mutex_;
+  std::mutex queueMutex_;
   std::condition_variable condition_;
   bool stop_;
 };

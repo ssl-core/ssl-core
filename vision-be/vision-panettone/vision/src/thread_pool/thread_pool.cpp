@@ -9,7 +9,7 @@ ThreadPool::ThreadPool(size_t num_threads) : stop_(false) {
         std::function<void()> task;
 
         {
-          std::unique_lock<std::mutex> lock(this->queue_mutex_);
+          std::unique_lock<std::mutex> lock(this->queueMutex_);
           this->condition_.wait(lock, [this] { return this->stop_ || !this->tasks_.empty(); });
 
           if (this->stop_ && this->tasks_.empty()) {
@@ -28,7 +28,7 @@ ThreadPool::ThreadPool(size_t num_threads) : stop_(false) {
 
 ThreadPool::~ThreadPool() {
   {
-    std::unique_lock<std::mutex> lock(queue_mutex_);
+    std::unique_lock<std::mutex> lock(queueMutex_);
     stop_ = true;
   }
 
@@ -49,7 +49,7 @@ auto ThreadPool::enqueue(F&& f, Args&&... args) -> std::future<std::result_of_t<
   auto result = task->get_future();
 
   {
-    std::unique_lock<std::mutex> lock(queue_mutex_);
+    std::unique_lock<std::mutex> lock(queueMutex_);
 
     if (stop_) {
       throw std::runtime_error("enqueue on stopped ThreadPool");

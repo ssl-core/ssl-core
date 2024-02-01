@@ -1,6 +1,5 @@
 robocin_cpp_executable(
   NAME vision_main
   SRCS vision_main.cpp
-  # TODO: Use static libraries instead.
-  DEPS mongo::mongoc_shared mongo::bson_shared mongo::mongocxx_shared mongo::bsoncxx_shared
+  DEPS thread_pool
 )

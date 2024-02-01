@@ -1,41 +1,29 @@
-// #include <format>
-// #include <cstdio>
+#include "vision/src/thread_pool/thread_pool.h"
 
-// int main() {
-//   std::puts(std::format("Hello, {}!", "panettone").c_str());
-//   return 0;
-// }
+#include <iostream>
+#include <vector>
 
-#include <bsoncxx/json.hpp>
-#include <mongocxx/client.hpp>
-#include <mongocxx/instance.hpp>
+// Hypothetical database function
+std::string fetchDataFromDatabase(int record_id) {
+  // Simulate some time-consuming database operation
+  std::this_thread::sleep_for(std::chrono::seconds(1));
+  return "Data for record " + std::to_string(record_id);
+}
 
 int main() {
-  try {
-    // Create an instance.
-    mongocxx::instance inst{};
+  const size_t num_threads = 4;
+  ThreadPool pool(num_threads);
 
-    // Replace the connection string with your MongoDB deployment's connection string.
-    const auto uri = mongocxx::uri{"<connection string>"};
+  std::vector<std::future<std::string>> results;
 
-    // Set the version of the Stable API on the client.
-    mongocxx::options::client client_options;
-    const auto api
-        = mongocxx::options::server_api{mongocxx::options::server_api::version::k_version_1};
-    client_options.server_api_opts(api);
+  results.reserve(8);
+  for (int i = 0; i < 8; ++i) {
+    results.push_back(pool.enqueue(fetchDataFromDatabase, i));
+  }
 
-    // Setup the connection and get a handle on the "admin" database.
-    mongocxx::client conn{uri, client_options};
-    mongocxx::database db = conn["admin"];
-
-    // Ping the database.
-    const auto ping_cmd
-        = bsoncxx::builder::basic::make_document(bsoncxx::builder::basic::kvp("ping", 1));
-    db.run_command(ping_cmd.view());
-    std::cout << "Pinged your deployment. You successfully connected to MongoDB!" << '\n';
-  } catch (const std::exception& e) {
-    // Handle errors.
-    std::cout << "Exception: " << e.what() << '\n';
+  // Wait for all tasks to complete and retrieve results
+  for (auto& result : results) {
+    std::cout << "Result: " << result.get() << '\n';
   }
 
   return 0;
