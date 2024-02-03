@@ -291,7 +291,7 @@ function(robocin_cpp_test)
   endif ()
 
   add_executable(${ARG_NAME} ${ARG_HDRS} ${ARG_SRCS} ${ARG_MODS}) # add test with given name, headers, sources and modules
-  target_link_libraries(${ARG_NAME} PRIVATE GTest::gtest GTest::gtest_main ${ARG_DEPS}) # link library with given dependencies
+  target_link_libraries(${ARG_NAME} PRIVATE GTest::gtest GTest::gtest_main GTest::gmock GTest::gmock_main ${ARG_DEPS}) # link library with given dependencies
 
   target_include_directories(${ARG_NAME} PRIVATE ${ROBOCIN_PROJECT_PATH})
   target_include_directories(${ARG_NAME} PRIVATE ${CMAKE_BINARY_DIR})
