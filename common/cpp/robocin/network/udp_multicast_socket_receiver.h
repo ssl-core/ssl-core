@@ -1,13 +1,13 @@
 
 
-#ifndef VISION_NETWORK_UPD_MULTICAST_SOCKET_RECEIVER_H
-#define VISION_NETWORK_UPD_MULTICAST_SOCKET_RECEIVER_H
+#ifndef ROBOCIN_NETWORK_UPD_MULTICAST_SOCKET_RECEIVER_H
+#define ROBOCIN_NETWORK_UPD_MULTICAST_SOCKET_RECEIVER_H
 
 #include <string>
 
-namespace vision {
+namespace robocin {
 
-class IUdpMulticastSocketReceiver {
+class IUdpMulticastSocketReceiver { // NOLINT
  public:
   virtual ~IUdpMulticastSocketReceiver() = default;
 
@@ -36,6 +36,6 @@ class UdpMulticastSocketReceiver : public IUdpMulticastSocketReceiver {
   size_t size_;
 };
 
-} // namespace vision
+} // namespace robocin
 
-#endif // VISION_NETWORK_UPD_MULTICAST_SOCKET_RECEIVER_H
+#endif // ROBOCIN_NETWORK_UPD_MULTICAST_SOCKET_RECEIVER_H

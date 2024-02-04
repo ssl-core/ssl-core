@@ -15,7 +15,7 @@
 #include <type_traits>
 #include <unistd.h>
 
-namespace vision {
+namespace robocin {
 
 UdpMulticastSocketReceiver::UdpMulticastSocketReceiver(size_t size) :
     fd_(socket(AF_INET, SOCK_DGRAM, 0)),
@@ -78,4 +78,4 @@ std::string UdpMulticastSocketReceiver::receive() const {
   return message;
 }
 
-} // namespace vision
+} // namespace robocin
