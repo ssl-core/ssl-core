@@ -19,8 +19,8 @@ jobs:
       - uses: actions/setup-node@v3
         with:
           node-version: 18
-      - run: npm ci
-      - run: npm run test
+      - run: npm install -g yarn && yarn
+      - run: yarn test
       - uses: davelosert/vitest-coverage-report-action@v2
 
   playwright-e2e:
@@ -57,6 +57,6 @@ jobs:
       - uses: actions/setup-node@v3
         with:
           node-version: 18
-      - run: npm ci && npm install -g @lhci/cli@0.13.x
-      - run: npm run build
+      - run: npm install -g yarn @lhci/cli@0.13.x && yarn
+      - run: yarn build
       - run: lhci autorun
