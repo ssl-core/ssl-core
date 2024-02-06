@@ -1,5 +1,6 @@
 import { beforeAll, describe, expect, it } from "vitest";
-import IframeFragment from "../../../src/app/fragments/iframe_fragment";
+
+import IframeFragment from "../../../src/app/fragments/iframe-fragment";
 
 describe("IframeFragment", () => {
   let iframeFragment: IframeFragment;

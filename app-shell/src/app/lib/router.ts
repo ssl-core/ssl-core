@@ -1,4 +1,4 @@
-import FragmentFactory from "../fragments/fragment_factory";
+import FragmentFactory from "../fragments/fragment-factory";
 
 class Router {
   private routes: Route[];

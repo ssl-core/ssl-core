@@ -1,4 +1,4 @@
-import EventBus from "./event_bus";
+import EventBus from "./event-bus";
 
 class ShortcutsHandler {
   private eventBus: EventBus;

@@ -1,4 +1,4 @@
-import BaseFragment from "./base_fragment";
+import BaseFragment from "./base-fragment";
 
 class WebComponentFragment extends BaseFragment {
   render(): void {

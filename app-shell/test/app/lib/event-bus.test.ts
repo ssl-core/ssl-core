@@ -1,6 +1,6 @@
 import { Mock, afterEach, beforeAll, describe, expect, it, vi } from "vitest";
 
-import EventBus from "../../../src/app/lib/event_bus";
+import EventBus from "../../../src/app/lib/event-bus";
 
 describe("EventBus", () => {
   let BroadcastChannelMock: Mock;

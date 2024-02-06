@@ -1,6 +1,6 @@
 import { beforeAll, describe, expect, it } from "vitest";
 
-import FragmentFactory from "../../../src/app/fragments/fragment_factory";
+import FragmentFactory from "../../../src/app/fragments/fragment-factory";
 
 describe("FragmentFactory", () => {
   let fragmentFactory: FragmentFactory;

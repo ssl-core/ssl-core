@@ -1,5 +1,6 @@
 import { beforeAll, describe, expect, it } from "vitest";
-import WebComponentFragment from "../../../src/app/fragments/web_component_fragment";
+
+import WebComponentFragment from "../../../src/app/fragments/web-component-fragment";
 
 describe("WebComponentFragment", () => {
   let webComponentFragment: WebComponentFragment;

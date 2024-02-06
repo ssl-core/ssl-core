@@ -1,7 +1,7 @@
 import { afterAll, beforeAll, describe, expect, it, vi } from "vitest";
 
-import ShortcurtsHandler from "../../../src/app/lib/shortcuts_handler";
-import EventBus from "../../../src/app/lib/event_bus";
+import ShortcurtsHandler from "../../../src/app/lib/shortcuts-handler";
+import EventBus from "../../../src/app/lib/event-bus";
 
 describe("ShortcurtsHandler", () => {
   let shortcutsHandler: ShortcurtsHandler;

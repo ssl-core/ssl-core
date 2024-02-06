@@ -1,6 +1,6 @@
-import BaseFragment from "./base_fragment";
-import IframeFragment from "./iframe_fragment";
-import WebComponentFragment from "./web_component_fragment";
+import BaseFragment from "./base-fragment";
+import IframeFragment from "./iframe-fragment";
+import WebComponentFragment from "./web-component-fragment";
 
 class FragmentFactory {
   createFragment(

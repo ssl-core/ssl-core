@@ -1,6 +1,6 @@
 import Router from "./lib/router";
-import EventBus from "./lib/event_bus";
-import ShortcutsHandler from "./lib/shortcuts_handler";
+import EventBus from "./lib/event-bus";
+import ShortcutsHandler from "./lib/shortcuts-handler";
 
 class App {
   private router: Router;

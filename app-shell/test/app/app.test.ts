@@ -1,8 +1,9 @@
 import { Mock, afterAll, beforeAll, describe, expect, it, vi } from "vitest";
+
 import App from "../../src/app/app";
 import Router from "../../src/app/lib/router";
-import EventBus from "../../src/app/lib/event_bus";
-import ShortcutsHandler from "../../src/app/lib/shortcuts_handler";
+import EventBus from "../../src/app/lib/event-bus";
+import ShortcutsHandler from "../../src/app/lib/shortcuts-handler";
 
 describe("App", () => {
   let app: App;

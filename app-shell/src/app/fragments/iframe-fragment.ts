@@ -1,4 +1,4 @@
-import BaseFragment from "./base_fragment";
+import BaseFragment from "./base-fragment";
 
 class IframeFragment extends BaseFragment {
   render(): void {
