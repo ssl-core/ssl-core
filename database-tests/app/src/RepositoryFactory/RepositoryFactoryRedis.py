@@ -1,7 +1,12 @@
-from src.data.Frame.IFrameRepository import IFrameRepository
+from src.data.Frame.IFrameRepositoryKeyValue import IFrameRepositoryKeyValue
+from src.data.Frame.IFrameRepositoryDocument import IFrameRepositoryDocument
 from .RepositoryAbstractFactory import RepositoryAbstractFactory
-from src.data.Frame.FrameRepositoryRedis.FrameRepositoryRedis import FrameRepositoryRedis
+from src.data.Frame.FrameRepositoryRedis.FrameRepositoryRedisKeyValue import FrameRepositoryRedisKeyValue
+from src.data.Frame.FrameRepositoryRedis.FrameRepositoryRedisDocument import FrameRepositoryRedisDocument
 
 class RepositoryFactoryRedis(RepositoryAbstractFactory):
-  def createFrameRepository(self) -> IFrameRepository:
-    return FrameRepositoryRedis()
+  def createFrameRepositoryKeyValue(self) -> IFrameRepositoryKeyValue:
+    return FrameRepositoryRedisKeyValue()
+  
+  def createFrameRepositoryDocument(self) -> IFrameRepositoryDocument:
+    return FrameRepositoryRedisDocument()

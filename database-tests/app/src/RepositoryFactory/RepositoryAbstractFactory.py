@@ -1,8 +1,13 @@
 from __future__ import annotations
-from src.data.Frame.IFrameRepository import IFrameRepository
+from src.data.Frame.IFrameRepositoryKeyValue import IFrameRepositoryKeyValue
+from src.data.Frame.IFrameRepositoryDocument import IFrameRepositoryDocument
 from abc import ABC, abstractmethod
 
 class RepositoryAbstractFactory(ABC):
     @abstractmethod
-    def createFrameRepository(self) -> IFrameRepository:
+    def createFrameRepositoryKeyValue(self) -> IFrameRepositoryKeyValue:
+        pass
+
+    @abstractmethod
+    def createFrameRepositoryDocument(self) -> IFrameRepositoryDocument:
         pass

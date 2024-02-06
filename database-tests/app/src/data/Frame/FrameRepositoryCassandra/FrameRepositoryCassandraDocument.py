@@ -3,11 +3,11 @@ from cassandra.cluster import Cluster
 from cassandra.query import SimpleStatement, ConsistencyLevel
 from cassandra.auth import PlainTextAuthProvider
 import json
-from src.data.Frame.IFrameRepository import IFrameRepository
+from src.data.Frame.IFrameRepositoryDocument import IFrameRepositoryDocument
 from src.business.Frame.Frame import Frame
 
 
-class FrameRepositoryCassandra(IFrameRepository):
+class FrameRepositoryCassandraDocument(IFrameRepositoryDocument):
     def __init__(self):
         super().__init__()
         try:
@@ -43,17 +43,6 @@ class FrameRepositoryCassandra(IFrameRepository):
             query = "INSERT INTO frames_table (frame_id, frame_data) VALUES (%s, %s)"
             statement = SimpleStatement(query, consistency_level=ConsistencyLevel.ONE)
             self.session.execute(statement, (str(frame_id), str(frame_data)))
-
-    def save_serialized(self, frame: Frame) -> None:
-        frame_id = frame.id
-        try:
-            frame = str(frame)
-        except TypeError:
-            print("Frame object contains non-serializable attributes.")
-        else:
-            query = "INSERT INTO frames_table (frame_id, frame) VALUES (%s, %s)"
-            statement = SimpleStatement(query, consistency_level=ConsistencyLevel.ONE)
-            self.session.execute(statement, (str(frame_id), str(frame)))
 
     def find(self, frame_id: str) -> Frame:
         query = "SELECT * FROM frames_table WHERE frame_id = ?"

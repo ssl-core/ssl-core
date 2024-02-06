@@ -1,13 +1,13 @@
 import redis
 import json
-from src.data.Frame.IFrameRepository import IFrameRepository
+from src.data.Frame.IFrameRepositoryDocument import IFrameRepositoryDocument
 from src.business.Frame.Frame import Frame
 
-class FrameRepositoryRedis(IFrameRepository):
+class FrameRepositoryRedisDocument(IFrameRepositoryDocument):
     def __init__(self):
         super().__init__()
         try:
-            self._name = "redis"
+            self._name = "redis - Key Value"
 
             self.redis = redis.Redis(host='redis', port=6379, db=0)
 
@@ -18,6 +18,14 @@ class FrameRepositoryRedis(IFrameRepository):
 
     def repository_name(self) -> str:
         return self._name
+
+    def delete_all(self) -> None:
+        print("Flush the database. (redis)")
+        self.redis.flushdb()
+
+    def get_data_size(self):
+        # get the data size used by the database
+        return self.redis.dbsize()
 
     def save(self, frame: Frame) -> None:
         raise NotImplementedError
@@ -43,11 +51,3 @@ class FrameRepositoryRedis(IFrameRepository):
 
     def delete(self, frame: Frame) -> None:
         pass
-
-    def delete_all(self) -> None:
-        print("Flush the database. (redis)")
-        self.redis.flushdb()
-
-    def get_data_size(self):
-        # get the data size used by the database
-        return self.redis.dbsize()
