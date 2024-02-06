@@ -2,6 +2,7 @@ FROM robocin/clang-cpp23-ubuntu-latest:manual-experimental-v7
 
 COPY .cmake/ /tmp/.cmake/
 COPY common/ /tmp/common/
+COPY . .
 
 # - MARK: Install MongoDB C++ driver
 # 1. Clone the MongoDB C++ driver repository
@@ -12,4 +13,3 @@ RUN cd /mongo-cxx-driver && rm -rf build && mkdir build && cd build && cmake -DC
 RUN cd /tmp/common/cpp && rm -rf build && mkdir build && cd build && cmake .. -G "Ninja" -DCMAKE_CXX_COMPILER=clang++-17 && cmake --build . && cmake --install .
 RUN rm -rf /tmp/.cmake/
 RUN rm -rf /tmp/common/
-

@@ -2,6 +2,7 @@ version: '3'
 services:
   mongodb:
     image: mongo
+    container_name: mongodb
     ports:
       - 27017:27017
     volumes:
@@ -10,8 +11,9 @@ services:
   vision:
     build:
       context: .
-      dockerfile: vision.Dockerfile
-    command: ["bin/vision"]
+      dockerfile: ./vision-be/vision-panettone/.devcontainer/Dockerfile
+    container_name: vision
+    command: ["./vision-be/vision-panettone/bin/vision_main"]
     volumes:
       - /tmp:/tmp
     ports:
