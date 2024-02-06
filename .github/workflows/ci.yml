@@ -10,6 +10,9 @@ on:
 
 jobs:
   vitest:
+    defaults:
+      run:
+        working-directory: ./app-shell
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
@@ -21,6 +24,9 @@ jobs:
       - uses: davelosert/vitest-coverage-report-action@v2
 
   playwright-e2e:
+    defaults:
+      run:
+        working-directory: ./app-shell
     timeout-minutes: 60
     runs-on: ubuntu-latest
     steps:
@@ -42,6 +48,9 @@ jobs:
           retention-days: 30
 
   lighthouse-ci:
+    defaults:
+      run:
+        working-directory: ./app-shell
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
