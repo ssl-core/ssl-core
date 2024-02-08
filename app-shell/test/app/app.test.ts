@@ -4,15 +4,18 @@ import App from "../../src/app/app";
 import Router from "../../src/app/lib/router";
 import EventBus from "../../src/app/lib/event-bus";
 import ShortcutsHandler from "../../src/app/lib/shortcuts-handler";
+import IconsHandler from "../../src/app/lib/icons-handler";
 
 describe("App", () => {
   let app: App;
   let routes: Route[] = [];
   let templates: Record<string, Template> = {};
   let shortcuts: Record<string, Shortcut> = {};
+  let icons: Record<string, Icon> = {};
   let routerMock: Mock = vi.fn();
   let eventBusMock: Mock = vi.fn();
   let shortcutsHandlerMock: Mock = vi.fn();
+  let iconsHandlerMock: Mock = vi.fn();
 
   beforeAll(() => {
     vi.stubGlobal("BroadcastChannel", vi.fn());
@@ -21,8 +24,11 @@ describe("App", () => {
     vi.spyOn(ShortcutsHandler.prototype, "initialize").mockImplementation(
       shortcutsHandlerMock
     );
+    vi.spyOn(IconsHandler.prototype, "initialize").mockImplementation(
+      iconsHandlerMock
+    );
 
-    app = new App(routes, templates, shortcuts);
+    app = new App(routes, templates, shortcuts, icons);
   });
 
   afterAll(() => {

@@ -21,4 +21,9 @@ test.describe("App", () => {
     const count = await page.locator("nav").locator("a").count();
     expect(count).toBeGreaterThan(2);
   });
+
+  test("should render at least 3 svg icons", async ({ page }) => {
+    const count = await page.locator("nav").locator("svg").count();
+    expect(count).toBeGreaterThan(2);
+  });
 });

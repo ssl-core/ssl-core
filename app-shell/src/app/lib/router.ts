@@ -44,7 +44,7 @@ class Router {
   }
 
   renderTemplate(template: string) {
-    const app = document.querySelector<HTMLDivElement>("#app")!;
+    const app = document.getElementById("app")!;
     app.innerHTML = "";
 
     window.history.pushState({}, "", template);
@@ -67,7 +67,7 @@ class Router {
     page.href = route.path;
     page.innerHTML = `
       <li>
-        <i data-lucide="${route.icon}"></i>
+        <i data-icon="${route.icon}"></i>
         <span class="tooltip">${route.label}</span>
       </li>
     `;
@@ -77,11 +77,11 @@ class Router {
       this.renderRoute(route);
     };
 
-    document.querySelector<HTMLDivElement>("#pages")!.appendChild(page);
+    document.getElementById("pages")!.appendChild(page);
   }
 
   renderRoute(route: Route) {
-    const app = document.querySelector<HTMLDivElement>("#app")!;
+    const app = document.getElementById("app")!;
     app.innerHTML = "";
 
     window.history.pushState({}, "", route.path);

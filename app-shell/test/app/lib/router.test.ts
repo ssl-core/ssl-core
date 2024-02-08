@@ -81,7 +81,7 @@ describe("Router", () => {
     const navLink = document.querySelector('[href="/another"]')!;
 
     expect(navLink).not.toBeNull();
-    expect(navLink.querySelector("i")?.dataset.lucide).toBe("heart");
+    expect(navLink.querySelector("i")?.dataset.icon).toBe("heart");
     expect(navLink.querySelector("span")?.innerHTML).toBe("Another");
   });
 

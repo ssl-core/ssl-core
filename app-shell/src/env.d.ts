@@ -30,3 +30,5 @@ type Shortcut = {
 };
 
 type Template = string;
+
+type Icon = string;
