@@ -35,8 +35,10 @@ class Router {
 
   createTemplates() {
     Object.keys(this.templates).forEach((template) => {
-      const page = document.querySelector<HTMLElement>(`[href="${template}"]`)!;
-      page.onclick = (event) => {
+      const anchor = document.querySelector<HTMLElement>(
+        `[href="${template}"]`
+      )!;
+      anchor.onclick = (event) => {
         event.preventDefault();
         this.renderTemplate(template);
       };
@@ -65,21 +67,28 @@ class Router {
   }
 
   createRoute(route: Route) {
-    const page = document.createElement("a");
-    page.href = route.path;
-    page.innerHTML = `
-      <li>
-        <i data-icon="${route.icon}"></i>
-        <span class="tooltip">${route.label}</span>
-      </li>
-    `;
+    const item = document.createElement("li");
 
-    page.onclick = (event) => {
+    const anchor = document.createElement("a");
+    anchor.href = route.path;
+    anchor.ariaLabel = route.label;
+    anchor.onclick = (event) => {
       event.preventDefault();
       this.renderRoute(route);
     };
 
-    document.getElementById("pages")!.appendChild(page);
+    const icon = document.createElement("i");
+    icon.dataset.icon = route.icon;
+
+    const tooltip = document.createElement("span");
+    tooltip.innerHTML = route.label;
+    tooltip.className = "tooltip";
+
+    item.appendChild(anchor);
+    anchor.appendChild(icon);
+    anchor.appendChild(tooltip);
+
+    document.querySelector("#routes > ul")!.appendChild(item);
   }
 
   renderRoute(route: Route, pushState = true) {

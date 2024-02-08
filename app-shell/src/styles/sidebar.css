@@ -16,7 +16,7 @@
   margin: 0.75rem;
 }
 
-#sidebar li {
+#sidebar a {
   position: relative;
   display: flex;
   align-items: center;
@@ -30,11 +30,16 @@
   line-height: 1;
 }
 
-#sidebar li:hover {
+#sidebar a:hover {
   background-color: var(--color-gray);
 }
 
-#sidebar li .tooltip {
+#sidebar a svg {
+  width: 1.5rem;
+  height: 1.5rem;
+}
+
+#sidebar a .tooltip {
   visibility: hidden;
   background-color: var(--color-gray);
   white-space: nowrap;
@@ -49,26 +54,29 @@
   transform: translateY(-50%);
 }
 
-#sidebar li:hover .tooltip {
+#sidebar a:hover .tooltip {
   visibility: visible;
 }
 
-[href="/"] li {
+[href="/"] {
   background-color: var(--color-green)!important;
 }
 
-[href="/"] li:hover {
+[href="/"]:hover {
   background-color: var(--color-light-green)!important;
 }
 
-[href="/"] object {
-  width: 100%;
-  height: 100%;
-  pointer-events: none;
+[href="/"] svg {
+  width: 3rem!important;
+  height: 3rem!important;
 }
 
-#pages {
+#routes {
   display: flex;
   flex-direction: column;
   flex: 1;
+}
+
+#routes ul {
+  margin: 0;
 }
