@@ -7,11 +7,8 @@ class EventBus {
   }
 
   initialize() {
-    this.channel.onmessage = (message) => {
-      if (this.subscriptions[message.data.event]) {
-        this.subscriptions[message.data.event](message.data.data);
-      }
-    };
+    this.addMessageListener();
+    this.addPageHideListener();
   }
 
   publish(event: string, data: any) {
@@ -28,6 +25,21 @@ class EventBus {
 
   unsubscribeAll() {
     this.channel.close();
+  }
+
+  addMessageListener() {
+    this.channel.onmessage = (message) => {
+      const { event, data } = message.data;
+      if (this.subscriptions[event]) {
+        this.subscriptions[event](data);
+      }
+    };
+  }
+
+  addPageHideListener() {
+    window.addEventListener("pagehide", () => {
+      this.unsubscribeAll();
+    });
   }
 }
 

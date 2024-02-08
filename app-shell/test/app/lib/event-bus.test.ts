@@ -3,6 +3,7 @@ import { Mock, afterEach, beforeAll, describe, expect, it, vi } from "vitest";
 import EventBus from "../../../src/app/lib/event-bus";
 
 describe("EventBus", () => {
+  let events: Record<string, (...args: any[]) => void> = {};
   let BroadcastChannelMock: Mock;
   let postMessageMock: Mock;
   let onmessageMock: Mock;
@@ -21,6 +22,10 @@ describe("EventBus", () => {
       close: closeMock,
     }));
     vi.stubGlobal("BroadcastChannel", BroadcastChannelMock);
+
+    window.addEventListener = vi.fn().mockImplementationOnce((event, cb) => {
+      events[event] = cb;
+    });
 
     eventBus = new EventBus();
     eventBus.initialize();
@@ -62,6 +67,12 @@ describe("EventBus", () => {
 
   it("should unsubscribe from all events", () => {
     eventBus.unsubscribeAll();
+
+    expect(closeMock).toHaveBeenCalled();
+  });
+
+  it("should close connection on page hide", () => {
+    events.pagehide();
 
     expect(closeMock).toHaveBeenCalled();
   });

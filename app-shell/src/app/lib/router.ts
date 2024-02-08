@@ -13,24 +13,24 @@ class Router {
     this.renderCurrentPage();
     this.createTemplates();
     this.createRoutes();
+    this.addPopStateListener();
   }
 
-  renderCurrentPage() {
+  renderCurrentPage(pushState = true) {
     const path = new URL(window.location.href).pathname;
 
     if (Object.keys(this.templates).includes(path)) {
-      this.renderTemplate(path);
+      this.renderTemplate(path, pushState);
       return;
     }
 
     const route = this.routes.find((route) => route.path === path);
     if (route) {
-      this.renderRoute(route);
+      this.renderRoute(route, pushState);
       return;
     }
 
-    history.pushState({}, "", "/");
-    this.renderTemplate("/");
+    this.renderTemplate("/", pushState);
   }
 
   createTemplates() {
@@ -43,11 +43,13 @@ class Router {
     });
   }
 
-  renderTemplate(template: string) {
+  renderTemplate(template: string, pushState = true) {
     const app = document.getElementById("app")!;
     app.innerHTML = "";
 
-    window.history.pushState({}, "", template);
+    if (pushState) {
+      window.history.pushState({}, "", template);
+    }
 
     app.style.gridTemplateRows = "1";
     app.style.gridTemplateColumns = "1";
@@ -80,11 +82,13 @@ class Router {
     document.getElementById("pages")!.appendChild(page);
   }
 
-  renderRoute(route: Route) {
+  renderRoute(route: Route, pushState = true) {
     const app = document.getElementById("app")!;
     app.innerHTML = "";
 
-    window.history.pushState({}, "", route.path);
+    if (pushState) {
+      window.history.pushState({}, "", route.path);
+    }
 
     app.style.gridTemplateRows = route.rows.toString();
     app.style.gridTemplateColumns = route.cols.toString();
@@ -98,6 +102,12 @@ class Router {
 
       const fragment = fragmentFactory.createFragment(section, routeFragment);
       fragment.render();
+    });
+  }
+
+  addPopStateListener() {
+    window.addEventListener("popstate", () => {
+      this.renderCurrentPage(false);
     });
   }
 }

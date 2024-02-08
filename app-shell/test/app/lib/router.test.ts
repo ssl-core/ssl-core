@@ -107,4 +107,23 @@ describe("Router", () => {
 
     expect(document.querySelector("#settings-template")).not.toBeNull();
   });
+
+  it("should go back to /another page when back button is clicked", () => {
+    let events: Record<string, (...args: any[]) => void> = {};
+    window.addEventListener = vi.fn().mockImplementationOnce((event, cb) => {
+      events[event] = cb;
+    });
+
+    router.initialize();
+
+    const navLink =
+      document.querySelector<HTMLAnchorElement>('[href="/settings"]')!;
+    navLink.click();
+
+    window.history.back();
+    vi.stubGlobal("location", { href: "https://www.example.com/" });
+    events.popstate({});
+
+    expect(document.querySelector("#root-template")).not.toBeNull();
+  });
 });
