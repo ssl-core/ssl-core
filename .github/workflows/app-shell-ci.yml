@@ -1,4 +1,4 @@
-name: CI
+name: App Shell CI
 
 on:
   pull_request:
@@ -59,6 +59,6 @@ jobs:
       - uses: actions/setup-node@v3
         with:
           node-version: 18
-      - run: npm install -g yarn @lhci/cli@0.13.x && yarn
+      - run: npm install -g yarn @lhci/cli@0.11.x && yarn
       - run: yarn build
       - run: lhci autorun
