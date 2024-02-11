@@ -11,9 +11,9 @@ services:
   vision:
     build:
       context: .
-      dockerfile: ./vision-be/vision-panettone/.devcontainer/Dockerfile
+      dockerfile: vision.Dockerfile
     container_name: vision
-    command: ["./vision-be/vision-panettone/bin/vision_main"]
+    command: ["bin/vision_main"]
     volumes:
       - /tmp:/tmp
     ports:
