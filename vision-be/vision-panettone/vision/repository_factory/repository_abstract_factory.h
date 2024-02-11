@@ -15,6 +15,7 @@ class RepositoryAbstractFactory {
   [[nodiscard]] virtual std::unique_ptr<IFrameRepository> createFrameRepository() const = 0;
   // TODO(repositories): Create other repositories for Ball, Robot, etc.
 
+  RepositoryAbstractFactory() = default;
   virtual ~RepositoryAbstractFactory() = default;
 
   RepositoryAbstractFactory(const RepositoryAbstractFactory&) = default;

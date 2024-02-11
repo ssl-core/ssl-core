@@ -7,7 +7,7 @@
 
 class RepositoryFactoryMongoDB : public RepositoryAbstractFactory {
  public:
-  RepositoryFactoryMongoDB();
+  RepositoryFactoryMongoDB() = default;
 
   [[nodiscard]] std::unique_ptr<IFrameRepository> createFrameRepository() const override;
 };

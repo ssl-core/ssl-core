@@ -13,7 +13,6 @@ services:
       context: .
       dockerfile: vision.Dockerfile
     container_name: vision
-    command: ["bin/vision_main"]
     volumes:
       - /tmp:/tmp
     ports:

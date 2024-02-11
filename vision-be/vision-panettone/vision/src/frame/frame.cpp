@@ -31,3 +31,7 @@ Frame Frame::fromJson([[maybe_unused]] const std::string& json) {
   // TODO(protobuf): Use Protobuf to parse.
   return Frame{/*id=*/0, {}, {}, kDefaultField};
 }
+
+int Frame::getId() const {
+  return id_;
+}
