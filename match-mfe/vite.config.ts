@@ -5,8 +5,15 @@ export default defineConfig({
     rollupOptions: {
       input: {
         "match-mfe": "./index.html",
-        "three-worker": "./src/app/engines/three/worker/three-worker.ts",
       },
+      output: {
+        entryFileNames: "[name].js",
+      },
+    },
+  },
+  worker: {
+    format: "es",
+    rollupOptions: {
       output: {
         entryFileNames: "[name].js",
       },

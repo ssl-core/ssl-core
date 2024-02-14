@@ -1,30 +1,31 @@
 import BaseRenderEngine from "./lib/base-render-engine";
 import RenderEngineFactory from "./lib/render-engine-factory";
+import SocketHandler from "./socket/socket-handler";
 import environment from "../config/environment";
 
 class MatchMFE extends HTMLElement {
   private root: ShadowRoot;
-  private renderer: BaseRenderEngine;
+  private renderEngine: BaseRenderEngine;
+  private socketHandler: SocketHandler;
 
   constructor() {
     super();
     this.root = this.attachShadow({ mode: "open" });
-    this.renderer = RenderEngineFactory.createEngine(
+    this.renderEngine = RenderEngineFactory.createEngine(
       environment.engine,
       this.root
     );
+    this.socketHandler = new SocketHandler(this.renderEngine);
   }
 
   public connectedCallback() {
-    this.initialize();
+    this.renderEngine.initialize();
+    this.socketHandler.initialize();
   }
 
-  private initialize() {
-    this.renderer.initialize();
-
-    window.setInterval(() => {
-      this.renderer.render({ id: "1" });
-    }, 10);
+  public disconnectedCallback() {
+    this.socketHandler.terminate();
+    this.renderEngine.terminate();
   }
 }
 

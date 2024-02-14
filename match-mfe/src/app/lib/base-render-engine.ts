@@ -6,6 +6,7 @@ abstract class BaseRenderEngine {
   }
 
   public abstract initialize(): void;
+  public abstract terminate(): void;
   public abstract render(match: Match): void;
 }
 

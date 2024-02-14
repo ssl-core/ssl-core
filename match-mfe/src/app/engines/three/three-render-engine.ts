@@ -12,7 +12,7 @@ class ThreeRenderEngine extends BaseRenderEngine {
     this.worker = new ThreeWorker();
   }
 
-  public initialize(): void {
+  public initialize() {
     this.canvas.width = window.innerWidth;
     this.canvas.height = window.innerHeight;
     this.root.appendChild(this.canvas);
@@ -25,7 +25,11 @@ class ThreeRenderEngine extends BaseRenderEngine {
     this.addResizeListener();
   }
 
-  public render(match: Match): void {
+  public terminate() {
+    this.worker.terminate();
+  }
+
+  public render(match: Match) {
     this.worker.postMessage({ type: "frame", payload: match });
   }
 
