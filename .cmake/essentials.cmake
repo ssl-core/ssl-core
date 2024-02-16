@@ -185,8 +185,7 @@ function(robocin_cpp_library)
 
   # add include directories of dependencies to the library (required for modules installation)
   foreach (DEP ${ARG_DEPS})
-    get_target_property(dep_include_dirs ${DEP} INTERFACE_INCLUDE_DIRECTORIES)
-    target_include_directories(${ARG_NAME} PRIVATE ${dep_include_dirs})
+    target_include_directories(${ARG_NAME} PRIVATE $<TARGET_PROPERTY:${DEP},INTERFACE_INCLUDE_DIRECTORIES>)
   endforeach ()
 
   target_compile_definitions(${ARG_NAME} PRIVATE ROBOCIN_PROJECT_NAME="${ROBOCIN_PROJECT_NAME}")
