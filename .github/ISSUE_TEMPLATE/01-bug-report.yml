@@ -5,28 +5,28 @@ body:
   - type: textarea
     id: what-happened
     attributes:
-      label: Describe the issue
+      label: Describe the issue.
       description: What happened, and what did you expect to happen?
     validations:
       required: true
   - type: textarea
     id: steps
     attributes:
-      label: Steps to reproduce the problem
+      label: Describe the needed steps to reproduce the problem.
       description: It is important that we are able to reproduce the problem that you are experiencing. Please provide all code and relevant steps to reproduce the problem, including your build configuration file and build commands. Links to a GitHub branch that demonstrate the problem are also helpful.
     validations:
       required: true
   - type: textarea
     id: os
     attributes:
-      label: Docker image name and tag
+      label: Describe the used docker image name and tag.
       description: If you are using a custom docker image, please provide your Dockerfile.
     validations:
       required: false
   - type: textarea
     id: additional
     attributes:
-      label: Additional context
+      label: Describe additional context.
       description: Add any other context about the problem here.
     validations:
       required: false
