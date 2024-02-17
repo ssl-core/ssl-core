@@ -6,7 +6,7 @@ body:
   - type: markdown
     attributes:
       value: |
-        :warning **Before submitting your request, please review past submissions to ensure that it is not a duplicate of a known feature request.**
+        :warning: **Before submitting your request, please review past submissions to ensure that it is not a duplicate of a known feature request.**
   - type: textarea
     id: fr-descrip
     attributes:
