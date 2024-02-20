@@ -21,7 +21,7 @@ describe("FragmentFactory", () => {
     };
     const fragment = fragmentFactory.createFragment(container, routeFragment);
 
-    expect(fragment.constructor.name).toBe("IframeFragment");
+    expect(fragment.constructor.name).toBe("IFrameFragment");
   });
 
   it("should create a web component fragment", () => {

@@ -1,5 +1,5 @@
 import BaseFragment from "./base-fragment";
-import IframeFragment from "./iframe-fragment";
+import IFrameFragment from "./iframe-fragment";
 import WebComponentFragment from "./web-component-fragment";
 
 class FragmentFactory {
@@ -15,7 +15,7 @@ class FragmentFactory {
           routeFragment.metadata
         );
       case "iframe":
-        return new IframeFragment(
+        return new IFrameFragment(
           routeFragment.url,
           container,
           routeFragment.metadata

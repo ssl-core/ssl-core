@@ -1,6 +1,6 @@
 import BaseFragment from "./base-fragment";
 
-class IframeFragment extends BaseFragment {
+class IFrameFragment extends BaseFragment {
   render(): void {
     const iframe = document.createElement("iframe");
     iframe.src = this.url;
@@ -8,4 +8,4 @@ class IframeFragment extends BaseFragment {
   }
 }
 
-export default IframeFragment;
+export default IFrameFragment;
