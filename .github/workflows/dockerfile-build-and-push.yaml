@@ -20,11 +20,11 @@ jobs:
         uses: actions/checkout@v3
       - name: Assert that arguments are valid
         run: |
-          if [[ "${{ github.event.inputs.full-name }}" == "" ]]; then
+          if [[ -z "${{ github.event.inputs.full-name }}" ]]; then
             echo "Dockerfile name cannot be empty."
             exit 1
           fi
-          if [[ "${{ github.event.inputs.tag }}" == "" ]]; then
+          if [[ -z "${{ github.event.inputs.tag }}" ]]; then
             echo "Tag cannot be empty."
             exit 1
           fi
@@ -62,5 +62,4 @@ jobs:
           context: ${{ env.dir-name }}
           file: ${{ github.event.inputs.full-name }}
           push: true
-          tags: |
-            ${{ secrets.DOCKER_HUB_ID }}/${{ env.file-name }}:${{ env.tag-name }}
+          tags: "${{ secrets.DOCKER_HUB_ID }}/${{ env.file-name }}:${{ env.tag-name }}"
