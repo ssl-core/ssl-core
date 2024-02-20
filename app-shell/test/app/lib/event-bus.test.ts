@@ -23,9 +23,11 @@ describe("EventBus", () => {
     }));
     vi.stubGlobal("BroadcastChannel", BroadcastChannelMock);
 
-    window.addEventListener = vi.fn().mockImplementationOnce((event, cb) => {
-      events[event] = cb;
-    });
+    window.addEventListener = vi
+      .fn()
+      .mockImplementationOnce((event, callback) => {
+        events[event] = callback;
+      });
 
     eventBus = new EventBus();
     eventBus.initialize();

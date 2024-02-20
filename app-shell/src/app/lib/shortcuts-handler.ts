@@ -10,10 +10,10 @@ class ShortcutsHandler {
   }
 
   initialize() {
-    document.addEventListener("keydown", (e) => {
-      if (e.ctrlKey && Object.keys(this.shortcuts).includes(e.key)) {
-        e.preventDefault();
-        const { eventName, data } = this.shortcuts[e.key];
+    document.addEventListener("keydown", (event) => {
+      if (event.ctrlKey && Object.keys(this.shortcuts).includes(event.key)) {
+        event.preventDefault();
+        const { eventName, data } = this.shortcuts[event.key];
         this.eventBus.publish(eventName, data);
       }
     });
