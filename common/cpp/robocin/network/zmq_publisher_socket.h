@@ -19,13 +19,13 @@ class IZmqPublisherSocket {
   void bind(std::string_view address) { socket_.bind(std::string{address}); }
 
   void send(std::string_view topic, std::string_view message) { // NOLINT
-    zmq::message_t zmq_topic(topic);
-    if (socket_.send(zmq_topic, zmq::send_flags::sndmore) == std::nullopt) {
+    if (zmq::message_t zmq_topic(topic);
+        socket_.send(zmq_topic, zmq::send_flags::sndmore) == std::nullopt) {
       throw std::runtime_error("failed to send topic.");
     }
 
-    zmq::message_t zmq_message(message);
-    if (socket_.send(zmq_message, zmq::send_flags::dontwait) == std::nullopt) {
+    if (zmq::message_t zmq_message(message);
+        socket_.send(zmq_message, zmq::send_flags::dontwait) == std::nullopt) {
       throw std::runtime_error("failed to send message.");
     }
   }
