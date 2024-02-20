@@ -46,6 +46,6 @@ describe("ShortcurtsHandler", () => {
     shortcutsHandler.registerShortcut("n", "new_shortcut", {});
     events.keydown({ ctrlKey: true, key: "n", preventDefault: () => {} });
 
-    expect(spy).toHaveBeenCalled();
+    expect(spy).toHaveBeenCalledWith("new_shortcut", {});
   });
 });
