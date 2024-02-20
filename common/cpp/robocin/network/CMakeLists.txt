@@ -10,3 +10,9 @@ robocin_cpp_test(
   SRCS zmq_publisher_socket_test.cpp
   DEPS network
 )
+
+robocin_cpp_test(
+  NAME zmq_subscriber_socket_test
+  SRCS zmq_subscriber_socket_test.cpp
+  DEPS network
+)

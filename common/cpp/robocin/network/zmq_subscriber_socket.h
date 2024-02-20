@@ -1,46 +1,72 @@
-#ifndef VISION_NETWORK_ZMQ_SUBSCRIBER_SOCKET_H
-#define VISION_NETWORK_ZMQ_SUBSCRIBER_SOCKET_H
+#ifndef ROBOCIN_NETWORK_ZMQ_SUBSCRIBER_SOCKET_H
+#define ROBOCIN_NETWORK_ZMQ_SUBSCRIBER_SOCKET_H
 
+#include <gtest/gtest_prod.h>
+#include <span>
 #include <string>
+#include <string_view>
 #include <zmq.h>
 #include <zmq.hpp>
 
-namespace vision {
+namespace robocin {
 
 struct ZmqDatagram {
   std::string topic;
   std::string message;
+
+  friend inline bool operator==(const ZmqDatagram& lhs, const ZmqDatagram& rhs) = default;
 };
 
+template <class ZmqContext, class ZmqSocket>
 class IZmqSubscriberSocket {
- public:
-  virtual ~IZmqSubscriberSocket() = default;
-
-  virtual void connect(std::string_view address, std::span<std::string_view> topics) = 0;
-  virtual ZmqDatagram receive() = 0;
-  virtual void close() = 0;
-
-  [[nodiscard]] virtual int fd() const = 0;
-};
-
-class ZmqSubscriberSocket : public IZmqSubscriberSocket {
  public:
   using receive_type = ZmqDatagram;
 
-  explicit ZmqSubscriberSocket(int n_threads = 1);
+  explicit IZmqSubscriberSocket(int n_threads = 1) :
+      context_(n_threads),
+      socket_(context_, ZMQ_SUB) {}
 
-  void connect(std::string_view address, std::span<std::string_view> topics) override;
-  receive_type receive() override;
-  void close() override;
+  void connect(std::string_view address, std::span<const std::string_view> topics) {
+    socket_.connect(std::string{address});
+    for (const auto& topic : topics) {
+      socket_.set(zmq::sockopt::subscribe, topic);
+    }
+  }
 
-  [[nodiscard]] int fd() const override;
+  receive_type receive() {
+    if (zmq::message_t zmq_topic;
+        socket_.recv(zmq_topic, zmq::recv_flags::dontwait) != std::nullopt) {
+      if (zmq::message_t zmq_result;
+          socket_.recv(zmq_result, zmq::recv_flags::dontwait) != std::nullopt) {
+        return {.topic = zmq_topic.to_string(), .message = zmq_result.to_string()};
+      }
+    }
+
+    return {};
+  }
+
+  void close() { socket_.close(); }
+
+  [[nodiscard]] int fd() const { return socket_.get(zmq::sockopt::fd); }
 
  private:
-  zmq::context_t context_;
-  zmq::socket_t socket_;
-  int fd_{};
+  ZmqContext context_;
+  ZmqSocket socket_;
+
+  FRIEND_TEST(ZmqSubscriberSocketTest, WhenConnectIsSucceeded);
+  FRIEND_TEST(ZmqSubscriberSocketTest, WhenConnectThrowsZmqErrorForAddress);
+  FRIEND_TEST(ZmqSubscriberSocketTest, WhenConnectThrowsZmqErrorForTopic);
+  FRIEND_TEST(ZmqSubscriberSocketTest, WhenReceiveIsSucceeded);
+  FRIEND_TEST(ZmqSubscriberSocketTest, WhenReceiveThrowsZmqErrorForTopic);
+  FRIEND_TEST(ZmqSubscriberSocketTest, WhenReceiveThrowsZmqErrorForMessage);
+  FRIEND_TEST(ZmqSubscriberSocketTest, WhenReceiveTopicIsNullopt);
+  FRIEND_TEST(ZmqSubscriberSocketTest, WhenReceiveMessageIsNullopt);
+  FRIEND_TEST(ZmqSubscriberSocketTest, WhenFileDescriptionGetterIsSucceeded);
+  FRIEND_TEST(ZmqSubscriberSocketTest, WhenCloseIsSucceeded);
 };
 
-} // namespace vision
+using ZmqSubscriberSocket = IZmqSubscriberSocket<zmq::context_t, zmq::socket_t>;
 
-#endif // VISION_NETWORK_ZMQ_SUBSCRIBER_SOCKET_H
+} // namespace robocin
+
+#endif // ROBOCIN_NETWORK_ZMQ_SUBSCRIBER_SOCKET_H
