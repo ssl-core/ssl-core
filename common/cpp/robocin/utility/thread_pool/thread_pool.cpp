@@ -1,5 +1,6 @@
 #include "robocin/utility/thread_pool/thread_pool.h"
 
+namespace robocin {
 ThreadPool::ThreadPool(size_t num_threads) : stop_(false) {
   for (size_t i = 0; i < num_threads; ++i) {
     workers_.emplace_back([this] {
@@ -36,3 +37,4 @@ ThreadPool::~ThreadPool() {
     worker.join();
   }
 }
+} // namespace robocin

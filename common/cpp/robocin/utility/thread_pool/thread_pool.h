@@ -9,6 +9,7 @@
 #include <thread>
 #include <vector>
 
+namespace robocin {
 class ThreadPool {
  public:
   explicit ThreadPool(size_t num_threads);
@@ -53,5 +54,6 @@ auto ThreadPool::enqueue(F&& f, Args&&... args) -> std::future<std::result_of_t<
 
   return result;
 }
+} // namespace robocin
 
 #endif // ROBOCIN_UTILITY_THREAD_POOL_H
