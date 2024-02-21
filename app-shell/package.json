@@ -1,0 +1,25 @@
+{
+  "name": "app-shell",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc && vite build",
+    "preview": "vite preview",
+    "test": "yarn run test:unit --coverage.enabled=true",
+    "test:unit": "vitest",
+    "test:e2e": "playwright test"
+  },
+  "devDependencies": {
+    "@modyfi/vite-plugin-yaml": "^1.0.4",
+    "@playwright/test": "^1.41.2",
+    "@types/node": "^20.11.16",
+    "@vitest/coverage-v8": "^1.2.1",
+    "jsdom": "^23.2.0",
+    "typescript": "^5.2.2",
+    "vite": "^5.0.8",
+    "vitest": "^1.2.0"
+  },
+  "dependencies": {}
+}
