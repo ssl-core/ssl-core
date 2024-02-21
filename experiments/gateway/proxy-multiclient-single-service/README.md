@@ -8,7 +8,7 @@ This experiments aims to validate the behavior of multiple clients that simulate
 - [Service](#Service)
 - [Testing](#Testing)
 
-## [Client](gateway/client_main.cpp)
+## [Client](/gateway/client_main.cpp)
 
 The client is a standard client implementation that uses a inter-process communication and a ZMQ_REQ socket, one type of socket made for client-server communication, allowing the client to send requests and receive replies.
 
@@ -16,7 +16,7 @@ The client is a standard client implementation that uses a inter-process communi
 
 The gateway implements a frontend socket (ZMQ_ROUTER) and a backend socket (ZMQ_DEALER) to properly route the requests made from some client to the service and the response given by the service to the client. 
 
-It is based on the [extended reply envelope](/gateway/gateway_main.cpp), where each client connected with the frontend socket receive a random identity that allows the gateway to recognize which client is waiting for a specific response.
+It is based on the [extended reply envelope]( https://zguide.zeromq.org/docs/chapter3/#The-Extended-Reply-Envelope), where each client connected with the frontend socket receive a random identity that allows the gateway to recognize which client is waiting for a specific response.
 
 The [proxy implementation](https://libzmq.readthedocs.io/en/zeromq3-x/zmq_proxy.html) provided by the ZeroMQ library creates a similar behavior of adding a poller responsible to track events from both ZMQ_ROUTER and ZMQ_DEALER socket. When receiving a request from a client in the frontend socket, it sends to the service using the backend socket. Similarly, when receiving a response in the backend socket, it sends to the appropriate client using the frontend socket (see code below).
 
