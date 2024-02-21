@@ -1,0 +1,21 @@
+syntax = "proto3";
+
+package protocols.common;
+
+// Point2Df is a (float) 2D point in the plane.
+message Point2Df {
+  // The x coordinate of the point in the plane (in millimeters).
+  float x = 1;
+  // The y coordinate of the point in the plane (in millimeters).
+  float y = 2;
+}
+
+// Point3Df is a (float) 3D point in space.
+message Point3Df {
+  // The x coordinate of the point in space (in millimeters).
+  float x = 1;
+  // The y coordinate of the point in space (in millimeters).
+  float y = 2;
+  // The z coordinate (height) of the point in space (in millimeters).
+  float z = 3;
+}

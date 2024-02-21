@@ -1,0 +1,27 @@
+match:
+  path: /match
+  label: Partidas
+  icon: radio
+  rows: 3
+  cols: 1
+  fragments:
+    player:
+      url: https://1.www.s81c.com/common/carbon/web-components/tag/v2/latest/skeleton-placeholder.min.js
+      type: webcomponent
+      metadata:
+        tag: cds-skeleton-placeholder
+      rows:
+        start: 1
+        end: 3
+      cols:
+        start: 1
+        end: 2
+    parameters:
+      url: https://open.spotify.com/embed/track/23n4YuEtkZuALpk0wG3ZMT?utm_source=generator
+      type: iframe
+      rows:
+        start: 3
+        end: 4
+      cols:
+        start: 1
+        end: 2

@@ -1,0 +1,34 @@
+name: "Buf: Lint and Formatting Checker"
+on: [pull_request]
+
+jobs:
+  lint-check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: bufbuild/buf-setup-action@v1
+        with:
+          github_token: ${{ github.token }}
+          version: "1.20.0"
+      - uses: bufbuild/buf-lint-action@v1
+        with:
+          input: "protocols"
+      - uses: bufbuild/buf-breaking-action@v1
+        with:
+          input: "protocols"
+          against: "https://github.com/${GITHUB_REPOSITORY}.git#branch=main,subdir=protocols"
+
+  formatting-check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: bufbuild/buf-setup-action@v1
+        with:
+          github_token: ${{ github.token }}
+          version: "1.20.0"
+      - run: |
+          buf format -d --exit-code
+          if [ $? -ne 0 ]; then
+            echo "buf format failed, please run 'buf format protocols -w' locally in the project root and commit the changes."
+            exit 1
+          fi

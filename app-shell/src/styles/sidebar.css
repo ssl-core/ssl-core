@@ -1,0 +1,82 @@
+#sidebar {
+  width: 5rem;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+#sidebar ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  height: 100%;
+  margin: 0.75rem;
+}
+
+#sidebar a {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 3.5rem;
+  height: 3.5rem;
+  cursor: pointer;
+  transition: background-color 0.1s ease-in-out;
+  background-color: var(--color-dark-gray);
+  border-radius: 0.5rem;
+  line-height: 1;
+}
+
+#sidebar a:hover {
+  background-color: var(--color-gray);
+}
+
+#sidebar a svg {
+  width: 1.5rem;
+  height: 1.5rem;
+}
+
+#sidebar a .tooltip {
+  visibility: hidden;
+  background-color: var(--color-gray);
+  white-space: nowrap;
+  color: #fff;
+  padding: 0.5rem;
+  border-radius: 0.25rem;
+  position: absolute;
+  z-index: 1;
+  top: 50%;
+  left: 100%;
+  margin-left: 0.5rem;
+  transform: translateY(-50%);
+}
+
+#sidebar a:hover .tooltip {
+  visibility: visible;
+}
+
+[href="/"] {
+  background-color: var(--color-green)!important;
+}
+
+[href="/"]:hover {
+  background-color: var(--color-light-green)!important;
+}
+
+[href="/"] svg {
+  width: 3rem!important;
+  height: 3rem!important;
+}
+
+#routes {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+}
+
+#routes ul {
+  margin: 0;
+}

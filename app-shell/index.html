@@ -1,0 +1,39 @@
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="/robocin.svg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content="Aplicação do RobôCIn para a Small Size League da RoboCup">
+    <title>RobôCIn-INES</title>
+  </head>
+  <body>
+    <nav id="sidebar">
+      <ul>
+        <li>
+          <a href="/" aria-label="Página Inicial">
+            <i data-icon="robocin"></i>
+            <span class="tooltip">SSL | RobôCIn</span>
+          </a>
+        </li>
+        <li id="routes">
+          <ul></ul>
+        </li>
+        <li>
+          <a href="/shortcuts" aria-label="Atalhos">
+            <i data-icon="keyboard"></i>
+            <span class="tooltip">Atalhos</span>
+          </a>
+        </li>
+        <li>
+          <a href="/settings" aria-label="Configurações">
+            <i data-icon="settings"></i>
+            <span class="tooltip">Configurações</span>
+          </a>
+        </li>
+      </ul>
+    </nav>
+    <main id="app"></main>
+    <script type="module" src="/src/main.ts"></script>
+  </body>
+</html>

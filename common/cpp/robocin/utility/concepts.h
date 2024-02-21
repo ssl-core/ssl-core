@@ -7,7 +7,7 @@
 namespace robocin {
 
 template <class T>
-concept protobuf = std::derived_from<std::decay_t<T>, ::google::protobuf::MessageLite>;
+concept protobufish = std::derived_from<std::remove_cvref_t<T>, ::google::protobuf::MessageLite>;
 
 } // namespace robocin
 
