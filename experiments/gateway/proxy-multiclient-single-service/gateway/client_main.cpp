@@ -1,10 +1,13 @@
 #include <format>
 #include <iostream>
+#include <thread>
 #include <zmq.hpp>
 #include <zmq_addon.hpp>
 
+using namespace std::chrono_literals;
+
 constexpr int kRequest = 10;
-constexpr int kSleep = 2;
+constexpr auto kSleep = 2s;
 
 int main(int argc, char* argv[]) {
   auto args = std::span(argv, static_cast<size_t>(argc));
@@ -25,7 +28,7 @@ int main(int argc, char* argv[]) {
     auto _ = socket.recv(reply, zmq::recv_flags::none);
     std::cout << "Response in " << reply.to_string() << "\n";
 
-    sleep(kSleep);
+    std::this_thread::sleep_for(kSleep);
   }
 
   return 0;
