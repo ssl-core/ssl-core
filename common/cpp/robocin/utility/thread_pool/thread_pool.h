@@ -1,5 +1,3 @@
-// ThreadPool.h
-
 #ifndef ROBOCIN_UTILITY_THREAD_POOL_H
 #define ROBOCIN_UTILITY_THREAD_POOL_H
 
@@ -27,7 +25,7 @@ class ThreadPool {
  private:
   std::vector<std::thread> workers_;
   std::queue<std::function<void()>> tasks_;
-  std::mutex queueMutex_;
+  std::mutex queue_mutex_;
   std::condition_variable condition_;
   bool stop_;
 };
@@ -45,7 +43,7 @@ auto ThreadPool::enqueue(F&& f, Args&&... args) -> std::future<std::result_of_t<
     std::unique_lock<std::mutex> lock(queueMutex_);
 
     if (stop_) {
-      throw std::runtime_error("enqueue on stopped ThreadPool");
+      throw std::runtime_error("enqueue on stopped ThreadPool.");
     }
 
     tasks_.emplace([task]() { (*task)(); });

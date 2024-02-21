@@ -1,5 +1,3 @@
-// ThreadPool.cpp
-
 #include "robocin/utility/thread_pool/thread_pool.h"
 
 ThreadPool::ThreadPool(size_t num_threads) : stop_(false) {
