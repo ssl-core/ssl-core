@@ -60,3 +60,17 @@ robocin_cpp_test(
   SRCS fuzzy_compare_test.cpp
   DEPS fuzzy_compare
 )
+
+robocin_cpp_library(
+  NAME angular
+  HDRS angular.h
+  SRCS angular.cpp
+  DEPS concepts
+)
+
+robocin_cpp_test(
+  NAME angular_test
+  HDRS internal/test/epsilon_injector.h
+  SRCS angular_test.cpp
+  DEPS angular
+)
