@@ -1,6 +1,6 @@
 # experiments
 
-This folder provides a collection os experiments made for validation of specific architecture requirements.
+This folder provides a collection of experiments made for validation of specific architecture requirements.
 
 ## Gateway
 
