@@ -18,14 +18,15 @@ fi
 
 echo -e "\x1B[01;93mInstalling or updating cmake...\n\u001b[0m"
 
-wget https://github.com/Kitware/CMake/releases/download/v$VERSION/cmake-$VERSION.tar.gz -O /tmp/cmake.tar.gz
+TMP_DIR="/tmp/cmake"
 
-tar -xvf /tmp/cmake.tar.gz -C /tmp
+wget "https://github.com/Kitware/CMake/releases/download/v${VERSION}/cmake-${VERSION}.tar.gz" -O "${TMP_DIR}/cmake.tar.gz"
+tar -xvf "${TMP_DIR}/cmake.tar.gz" -C "${TMP_DIR}"
 
-pushd /tmp/cmake-$VERSION || exit 1
+pushd "${TMP_DIR}/cmake-${VERSION}" || exit 1
 ./bootstrap
 make -j$(nproc)
 make install -j$(nproc)
 popd || exit 1
 
-rm -rf /tmp/cmake-$VERSION /tmp/cmake.tar.gz
+rm -rf "${TMP_DIR}"

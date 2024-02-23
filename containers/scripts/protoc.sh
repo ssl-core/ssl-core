@@ -19,19 +19,21 @@ if [ -z "${VERSION}" ]; then
 fi
 
 if [ -z "${PARENT_DIR}" ]; then
-  PARENT_DIR="/usr/local/bin"
+  PARENT_DIR="/usr/local"
 fi
 
-TMP_DIR=/tmp/protoc
+TMP_DIR="/tmp/protoc"
 
 rm -rf "${TMP_DIR}"
 mkdir -p "${TMP_DIR}"
 
 curl -sSL "https://github.com/protocolbuffers/protobuf/releases/download/v${VERSION}/protoc-${VERSION}-linux-x86_64.zip" -o "${TMP_DIR}/protoc-${VERSION}.zip"
-unzip -qo "${TMP_DIR}/protoc-${VERSION}.zip" -d "${TMP_DIR}"
+unzip -qo "${TMP_DIR}/protoc-${VERSION}.zip" -d "${TMP_DIR}/protoc-${VERSION}"
 
-mv "${TMP_DIR}/bin/protoc" "${PARENT_DIR}/protoc"
+rsync -a "${TMP_DIR}/protoc-${VERSION}/" "${PARENT_DIR}/"
 
-chmod +x "${PARENT_DIR}/protoc"
+rm -rf "${TMP_DIR}"
 
-chown "${CURRENT_USER}":"${CURRENT_USER}" "${PARENT_DIR}/protoc" # changes the owner of the directory to the current user
+chmod +x "${PARENT_DIR}/bin/protoc"
+
+chown "${CURRENT_USER}":"${CURRENT_USER}" "${PARENT_DIR}" -R # changes the owner of the directory to the current user

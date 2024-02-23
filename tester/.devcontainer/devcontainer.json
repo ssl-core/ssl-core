@@ -24,6 +24,19 @@
       //   "python.linting.pylintPath": "/usr/local/py-utils/bin/pylint"
       // },
       // Add the IDs of extensions you want installed when the container is created.
+      "[python]": {
+        "linting.enabled": true,
+        "linting.pylintEnabled": true,
+        "editor.insertSpaces": true,
+        "editor.tabSize": 4,
+        "editor.formatOnSave": true,
+        "editor.defaultFormatter": "ms-python.python",
+        "analysis.inlayHints.functionReturnTypes": true,
+        "analysis.inlayHints.pytestParameters": true,
+        "analysis.inlayHints.variableTypes": true,
+        "analysis.autoImportCompletions": true,
+        "analysis.completeFunctionParens": true
+      },
       "extensions": [
         "ms-python.python",
         "ms-python.vscode-pylance"
