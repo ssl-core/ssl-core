@@ -10,11 +10,17 @@ The Dockerfiles here must be manually published to Docker Hub so that they can b
 
 > **Note**: Stable images are labeled with the `latest` tag, and development images are labeled with the `manual-` prefix.
 
+> **Note**: The `context` for the workflow is the **root** of the repository.
+
 > **See**: RobôCIn's [Docker Hub](https://hub.docker.com/u/robocin) for the published images.
 
 ### [ssl-core-cpp-base.Dockerfile](ssl-core-cpp-base.Dockerfile)
 
 _The base image for C++ development with `ssl-core`_.
+
+### [ssl-core-python-base.Dockerfile](ssl-core-python-base.Dockerfile)
+
+_The base image for Python development with `ssl-core`_.
 
 ## Scripts
 

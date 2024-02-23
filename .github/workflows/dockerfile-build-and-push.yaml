@@ -59,7 +59,7 @@ jobs:
       - name: Build and Push Dockerfile
         uses: docker/build-push-action@v3
         with:
-          context: ${{ env.dir-name }}
+          context: .
           file: ${{ github.event.inputs.full-name }}
           push: true
           tags: "${{ secrets.DOCKER_HUB_ID }}/${{ env.file-name }}:${{ env.tag-name }}"
