@@ -1,8 +1,8 @@
-import ThreeRenderer from "./three-renderer";
+import ThreeSceneManager from "./three-scene-manager";
 import ThreeEventHandler from "./three-event-handler";
 
-const renderer = new ThreeRenderer();
-const handler = new ThreeEventHandler(renderer);
+const sceneManager = new ThreeSceneManager();
+const handler = new ThreeEventHandler(sceneManager);
 
 self.onmessage = (event) => {
   const { data } = event;

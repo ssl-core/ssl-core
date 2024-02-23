@@ -1,22 +1,22 @@
-import ThreeRenderer from "./three-renderer";
+import ThreeSceneManager from "./three-scene-manager";
 
 class ThreeEventHandler {
-  private renderer: ThreeRenderer;
+  private sceneManager: ThreeSceneManager;
 
-  constructor(renderer: ThreeRenderer) {
-    this.renderer = renderer;
+  constructor(sceneManager: ThreeSceneManager) {
+    this.sceneManager = sceneManager;
   }
 
   public handleEvent(type: string, payload: any) {
     switch (type) {
       case "initialize":
-        this.renderer.initialize(payload as OffscreenCanvas);
+        this.sceneManager.initialize(payload as OffscreenCanvas);
         break;
       case "resize":
-        this.renderer.resize(payload.width, payload.height);
+        this.sceneManager.resize(payload.width, payload.height);
         break;
       case "frame":
-        this.renderer.renderFrame(payload as Match);
+        this.sceneManager.renderFrame(payload as Match);
         break;
       default:
         throw new Error(`Unknown event type: ${type}`);
