@@ -168,3 +168,13 @@ Install [Protocol Buffers](https://developers.google.com/protocol-buffers) libra
 ```bash
 bash protobuf.sh <library_directory>
 ```
+
+### [protoc](scripts/protoc.sh)
+
+Install [Protocol Buffers](https://developers.google.com/protocol-buffers) compiler.
+
+- **Arguments:**
+
+  1. `version`: The version of Protoc to install
+  2. `directory`: The directory where the `bin` and `include` directories will be installed
+       * *default*: `/usr/local`

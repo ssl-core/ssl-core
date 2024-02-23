@@ -28,7 +28,7 @@ echo -e "\x1B[01;93m\nInstalling or updating protobuf...\n\u001b[0m"
 rm -rf "${TMP_GIT_REPO_DIR}"
 mkdir -p "${TMP_GIT_REPO_DIR}"
 
-git clone --recurse-submodules https://github.com/protocolbuffers/protobuf.git -o protobuf "${TMP_GIT_REPO_DIR}"
+git clone --recurse-submodules "https://github.com/protocolbuffers/protobuf.git" -o protobuf "${TMP_GIT_REPO_DIR}"
 
 mkdir -p "${TMP_GIT_REPO_DIR}"
 

@@ -28,7 +28,7 @@ echo -e "\x1B[01;93m\nInstalling or updating Google benchmark...\n\u001b[0m"
 rm -rf "${TMP_GIT_REPO_DIR}"
 mkdir -p "${TMP_GIT_REPO_DIR}"
 
-git clone https://github.com/google/benchmark.git -o benchmark "${TMP_GIT_REPO_DIR}"
+git clone "https://github.com/google/benchmark.git" -o benchmark "${TMP_GIT_REPO_DIR}"
 
 mkdir -p "${TMP_GIT_REPO_DIR}"
 

@@ -28,11 +28,11 @@ TMP_CPPZMQ="/tmp/cppzmq"
 rm -rf "${TMP_CPPZMQ}"
 mkdir -p "${TMP_CPPZMQ}"
 
-wget https://github.com/zeromq/cppzmq/archive/refs/tags/v$VERSION.tar.gz -O "${TMP_CPPZMQ}/cppzmq-$VERSION.tar.gz"
-tar -xvf "${TMP_CPPZMQ}/cppzmq-$VERSION.tar.gz" -C "${TMP_CPPZMQ}"
-rm -rf "${TMP_CPPZMQ}/cppzmq-$VERSION.tar.gz"
+wget "https://github.com/zeromq/cppzmq/archive/refs/tags/v${VERSION}.tar.gz" -O "${TMP_CPPZMQ}/cppzmq-${VERSION}.tar.gz"
+tar -xvf "${TMP_CPPZMQ}/cppzmq-${VERSION}.tar.gz" -C "${TMP_CPPZMQ}"
+rm -rf "${TMP_CPPZMQ}/cppzmq-${VERSION}.tar.gz"
 
-pushd "${TMP_CPPZMQ}/cppzmq-$VERSION" || exit 1
+pushd "${TMP_CPPZMQ}/cppzmq-${VERSION}" || exit 1
 cmake -B build \
       -S . \
       -DCPPZMQ_BUILD_TESTS=OFF \

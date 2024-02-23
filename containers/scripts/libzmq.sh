@@ -28,11 +28,11 @@ TMP_LIBZMQ="/tmp/libzmq"
 rm -rf "${TMP_LIBZMQ}"
 mkdir -p "${TMP_LIBZMQ}"
 
-wget https://github.com/zeromq/libzmq/releases/download/v$VERSION/zeromq-$VERSION.tar.gz -O "${TMP_LIBZMQ}/zeromq-$VERSION.tar.gz"
-tar -xvf "${TMP_LIBZMQ}/zeromq-$VERSION.tar.gz" -C "${TMP_LIBZMQ}"
-rm -rf "${TMP_LIBZMQ}/zeromq-$VERSION.tar.gz"
+wget "https://github.com/zeromq/libzmq/releases/download/v${VERSION}/zeromq-${VERSION}.tar.gz" -O "${TMP_LIBZMQ}/zeromq-${VERSION}.tar.gz"
+tar -xvf "${TMP_LIBZMQ}/zeromq-${VERSION}.tar.gz" -C "${TMP_LIBZMQ}"
+rm -rf "${TMP_LIBZMQ}/zeromq-${VERSION}.tar.gz"
 
-pushd "${TMP_LIBZMQ}/zeromq-$VERSION" || exit 1
+pushd "${TMP_LIBZMQ}/zeromq-${VERSION}" || exit 1
 cmake -B build \
       -S . \
       -DZMQ_BUILD_TESTS=OFF \

@@ -28,7 +28,7 @@ echo -e "\x1B[01;93m\nInstalling or updating googletest...\n\u001b[0m"
 rm -rf "${TMP_GIT_REPO_DIR}"
 mkdir -p "${TMP_GIT_REPO_DIR}"
 
-git clone --recurse-submodules https://github.com/google/googletest.git -o googletest "${TMP_GIT_REPO_DIR}"
+git clone --recurse-submodules "https://github.com/google/googletest.git" -o googletest "${TMP_GIT_REPO_DIR}"
 
 mkdir -p "${TMP_GIT_REPO_DIR}"
 
