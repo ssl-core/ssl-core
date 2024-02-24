@@ -24,7 +24,7 @@ class IZmqSubscriberSocket {
 
   explicit IZmqSubscriberSocket(int n_threads = 1) :
       context_(n_threads),
-      socket_(context_, ZMQ_SUB) {}
+      socket_(context_, zmq::socket_type::sub) {}
 
   void connect(std::string_view address, std::span<const std::string_view> topics) {
     socket_.connect(std::string{address});
@@ -34,10 +34,8 @@ class IZmqSubscriberSocket {
   }
 
   receive_type receive() {
-    if (zmq::message_t zmq_topic;
-        socket_.recv(zmq_topic, zmq::recv_flags::dontwait)) {
-      if (zmq::message_t zmq_result;
-          socket_.recv(zmq_result, zmq::recv_flags::dontwait)) {
+    if (zmq::message_t zmq_topic; socket_.recv(zmq_topic, zmq::recv_flags::dontwait)) {
+      if (zmq::message_t zmq_result; socket_.recv(zmq_result, zmq::recv_flags::dontwait)) {
         return {.topic = zmq_topic.to_string(), .message = zmq_result.to_string()};
       }
     }

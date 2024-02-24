@@ -13,7 +13,7 @@ class IZmqPublisherSocket {
  public:
   explicit IZmqPublisherSocket(int n_threads = 1) :
       context_(n_threads),
-      socket_(context_, ZMQ_PUB) {}
+      socket_(context_, zmq::socket_type::pub) {}
 
   void bind(std::string_view address) { socket_.bind(std::string{address}); }
 

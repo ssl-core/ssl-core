@@ -29,7 +29,7 @@ class MockZmqContext {
 
 class MockZmqSocket {
  public:
-  MockZmqSocket(MockZmqContext /*unused*/, int /*unused*/) {}
+  MockZmqSocket(MockZmqContext /*unused*/, zmq::socket_type /*unused*/) {}
 
   MOCK_METHOD(void, connect, (const std::string&) );
   MOCK_METHOD(void, set, (decltype(zmq::sockopt::subscribe), std::string_view));
