@@ -40,6 +40,14 @@ class MockZmqSocket {
 
 using MockZmqSubscriberSocket = IZmqSubscriberSocket<MockZmqContext, MockZmqSocket>;
 
+/**
+  @brief Matcher used to match the zmq::sockopt parameters which wraps a static constant of
+  specified type, similar to std::integral_constant.
+
+  Parameters in zmq that use sockopt are, in reality, specializing templates. So it is not
+  necessary to match the value, only the type, and the type provided by the mock is always
+  the same as expected by the implementation.
+*/
 MATCHER(TrueMatcher, "") { return true; }
 
 TEST(ZmqSubscriberSocketTest, WhenConnectIsSucceeded) {
@@ -79,8 +87,8 @@ TEST(ZmqSubscriberSocketTest, WhenReceiveIsSucceeded) {
         return kBytesReceived;
       });
 
-  ZmqDatagram oracle{std::string{kDefaultTopic}, std::string{kDefaultMessage}};
-  ASSERT_EQ(socket.receive(), oracle);
+  ZmqDatagram expected{std::string{kDefaultTopic}, std::string{kDefaultMessage}};
+  ASSERT_EQ(socket.receive(), expected);
 }
 
 TEST(ZmqSubscriberSocketTest, WhenReceiveThrowsZmqErrorForTopic) {
