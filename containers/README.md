@@ -6,15 +6,21 @@ This directory contains the base dockerfiles used for development in containers,
 
 ## Dockerfiles
 
-The Dockerfiles here must be manually published to Docker Hub so that they can be reused in CIs and save time building containers. To publish manually, use the [Dockerfile: Build and Push Manually](https://github.com/robocin/ssl-core/actions/workflows/dockerfile-build-and-push.yaml) workflow.
+The Dockerfiles here must be manually published to Docker Hub so that they can be reused in CIs and save time building containers. To publish manually, use the [Dockerfile: Build and Push Manually](https://github.com/robocin/ssl-core/actions/workflows/dockerfile-build-and-push.yaml) workflow. Stable images must be labeled with the `latest` tag, and development images are always labeled with the `manual-` prefix. The `context` for the workflow is the **root** of the repository; i.e, for an image located in this directory, it is equivalent to running:
 
-> **Note**: Stable images are labeled with the `latest` tag, and development images are labeled with the `manual-` prefix.
+```bash
+  docker build -f containers/<Dockerfile> .
+```
 
-> **See**: RobôCIn's [Docker Hub](https://hub.docker.com/u/robocin) for the published images.
+> **See**: RobôCIn's [Docker Hub](https://hub.docker.com/u/robocin) for the published images and [Development Containers Images](https://github.com/devcontainers/images/tree/main/src) for the standard base images.
 
 ### [ssl-core-cpp-base.Dockerfile](ssl-core-cpp-base.Dockerfile)
 
 _The base image for C++ development with `ssl-core`_.
+
+### [ssl-core-python-base.Dockerfile](ssl-core-python-base.Dockerfile)
+
+_The base image for Python development with `ssl-core`_.
 
 ## Scripts
 
