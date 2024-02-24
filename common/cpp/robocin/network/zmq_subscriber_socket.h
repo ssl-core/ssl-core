@@ -35,9 +35,9 @@ class IZmqSubscriberSocket {
 
   receive_type receive() {
     if (zmq::message_t zmq_topic;
-        socket_.recv(zmq_topic, zmq::recv_flags::dontwait) != std::nullopt) {
+        socket_.recv(zmq_topic, zmq::recv_flags::dontwait)) {
       if (zmq::message_t zmq_result;
-          socket_.recv(zmq_result, zmq::recv_flags::dontwait) != std::nullopt) {
+          socket_.recv(zmq_result, zmq::recv_flags::dontwait)) {
         return {.topic = zmq_topic.to_string(), .message = zmq_result.to_string()};
       }
     }
