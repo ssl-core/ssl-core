@@ -24,3 +24,4 @@ Which significantly saves the compilation time of its components.
 ### Codemap
 
 - [`utility`](cpp/robocin/utility/README.md): a collection of utility and helper code.
+- [`geometry`](cpp/robocin/geometry/README.md): a collection of geometric classes.
