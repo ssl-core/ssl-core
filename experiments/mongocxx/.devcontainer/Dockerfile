@@ -2,6 +2,7 @@ FROM robocin/ssl-core-cpp-mongo:latest
 
 ARG SOURCE_DIRECTORY
 
+# TODO($ISSUE_N): Keep only the necessary files for the final image.
 COPY . /workspaces/service/
 
 RUN \
@@ -12,5 +13,3 @@ RUN \
     cmake -B build -S . -G "Ninja" -DCMAKE_CXX_COMPILER=clang++; \
     cmake --build build; \
   fi
-
-# TODO($ISSUE_N): Keep only the necessary files for the final image.
