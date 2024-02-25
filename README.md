@@ -62,6 +62,10 @@ All the code developed was done in [Visual Studio Code](https://code.visualstudi
 
   Contains documentation pages as guides, tutorials, and other useful information.
 
+* [`containers`](containers/README.md)
+
+  Contains common [Docker](https://www.docker.com) files and scripts used across the project.
+
 ## How to Contribute
 
 There are many ways in which you can participate in this project, for example:
