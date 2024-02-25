@@ -1,6 +1,6 @@
 # Containers
 
-This directory contains the base dockerfiles used for development in containers, and scripts that install the necessary dependencies for these images.
+This directory contains the base dockerfiles used for development in containers and scripts that install the necessary dependencies for these images.
 
 > **See**: [Visual Studio Code: Developing inside a Container](https://code.visualstudio.com/docs/devcontainers/containers).
 
