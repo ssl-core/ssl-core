@@ -14,16 +14,31 @@ robocin_cpp_project_setup(STANDARD 23 NO_SOURCE_DIRECTORY)
 
 ########################################################################################################################
 
-function(get_protobufs prefix_path result)
+function (get_protobufs prefix_path result)
   file(GLOB_RECURSE files "${prefix_path}/*.proto")
   set(${result} ${files} PARENT_SCOPE)
-endfunction()
+endfunction ()
 
 get_protobufs("protocols/third_party" third_party_protos)
 
 robocin_cpp_proto_library(
   NAME third_party
   PROTOS ${third_party_protos}
+)
+
+get_protobufs("protocols/common" common_protos)
+
+robocin_cpp_proto_library(
+  NAME common
+  PROTOS ${common_protos}
+)
+
+get_protobufs("protocols/vision" vision_protos)
+
+robocin_cpp_proto_library(
+  NAME vision
+  PROTOS ${vision_protos}
+  DEPS common
 )
 
 ########################################################################################################################
