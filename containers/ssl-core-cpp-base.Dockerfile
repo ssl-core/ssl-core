@@ -26,6 +26,6 @@ RUN apt update && apt upgrade -y && \
   bash libzmq.sh ${LIBZMQ_VERSION} '/usr/local' && \
   bash cppzmq.sh ${CPPZMQ_VERSION} '/usr/local' && \
   \
-  bash buf.sh ${BUF_VERSION} '/usr/local/bin'
-
-RUN rm -rf /tmp/scripts
+  bash buf.sh ${BUF_VERSION} '/usr/local/bin' && \
+  \
+  rm -rf /tmp/scripts
