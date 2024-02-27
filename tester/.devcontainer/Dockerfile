@@ -1,11 +1,11 @@
-FROM mcr.microsoft.com/vscode/devcontainers/python:latest
+FROM robocin/ssl-core-python-base:latest
 
-ARG PROTOC_VERSION='25.3'
+RUN pip3 install protobuf
 
-COPY containers/scripts /tmp/scripts
-WORKDIR /tmp/scripts
+COPY protocols/ /tmp/protocols
 
-RUN apt update && apt upgrade -y && \
-  bash protoc.sh ${PROTOC_VERSION} '/usr/local/bin'
+RUN cd /tmp/protocols && rm -rf /opt/protocols && mkdir /opt/protocols && \
+  for file in $(find . -type f -name *.proto); do protoc --python_out=/opt/protocols -I. $file; done && \
+  rm -rf /tmp/protocols
 
-RUN rm -rf /tmp/scripts
+ENV PYTHONPATH=$PYTHONPATH:/opt/protocols

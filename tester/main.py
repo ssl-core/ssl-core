@@ -1,9 +1,18 @@
-import re
-import sys
+#!/usr/local/bin/python3
 
-print('Hello, World!')
+from google.protobuf.text_format import Parse as ParseFromText
+from google.protobuf.json_format import Parse as ParseFromJson
 
-def f(a, b):
-  return a + b
+from protocols.common.geometry_pb2 import Point2Df
 
-print(f(1, 2))
+pt = Point2Df()
+
+ParseFromText(
+    """
+      x: 1.0
+      y: 2.0
+    """,
+    pt,
+)
+
+print(pt)
