@@ -4,69 +4,53 @@
 #include <iostream>
 #include <vector>
 
-// Hypothetical database function
-std::string fetchDataFromDatabase(int record_id) {
-  // Simulate some time-consuming database operation
-  std::this_thread::sleep_for(std::chrono::seconds(1));
-  return "Data for record " + std::to_string(record_id);
-}
-
-int fetchDataFromDatabase(const std::string& record_id, IFrameRepository* frame_repository) {
-  std::optional<Frame> frame;
-  frame = frame_repository->find(record_id);
-  if (frame.has_value()) {
-    return frame->getId();
-  }
-  return -1;
-}
-
-int saveDataToDatabase(const std::string& record_id, IFrameRepository* frame_repository) {
-  int id = std::stoi(record_id);
-  frame_repository->save(Frame(id, {}, {}, kDefaultField));
-  return id;
-}
+struct TestInputs {
+  std::string record_id;
+  std::string operation;
+};
 
 int main() {
+  std::cout << __FUNCTION__ << " ENTRY" << "\n";
   const size_t num_threads = 4;
   ThreadPool pool(num_threads);
-
+  
+  std::cout << "Creating factory and frame repository" << "\n";
   auto factory_mapping = std::make_shared<RepositoryFactoryMapping>();
   auto factory = factory_mapping->getFactory(RepositoryType::MONGODB);
   auto* frame_repository = factory->createFrameRepository().release();
 
+  std::cout << "Creating test inputs" << "\n"; 
   std::vector<std::future<int>> results;
 
-  while (true) {
-    std::cout << "Enter operation (fetch, save or quit): ";
-    std::string operation;
-    std::cin >> operation;
+  // test input for the program
+  std::vector<TestInputs> test_inputs = { {"1", "save"}, {"2", "save"}, {"1", "fetch"}, {"2", "fetch"} };
+
+  auto it_tests = test_inputs.begin();
+  while (it_tests != test_inputs.end()) {
+    std::string operation = it_tests->operation;
+    std::cout << "Operation: " << operation << "\n";
 
     if (operation == "quit") {
       break;
     }
 
-    std::cout << "Enter record id: ";
-    std::string record_id;
-    std::cin >> record_id;
-
-    auto save = [id = record_id, frame_repository] -> int {
-      return saveDataToDatabase(id, frame_repository);
-    };
-
-    auto fetch = [id = record_id, frame_repository] -> int {
-      return fetchDataFromDatabase(id, frame_repository);
-    };
+    std::string record_id = it_tests->record_id;
+    std::cout << "Record id is: " << record_id << "\n";
 
     if (operation == "fetch") {
-      results.push_back(pool.enqueue(fetch));
+      std::cout << "fetch\n";
+      auto ret = frame_repository->find(record_id);
+      std::cout << "Retrieved frame with id: " << ret->getId() << "\n";
     } else if (operation == "save") {
-      results.push_back(pool.enqueue(save));
+      std::cout << "save\n";
+      frame_repository->save(Frame(std::stoi(record_id), {}, {}, kDefaultField));
     } else {
       std::cout << "Invalid operation\n";
     }
 
-    std::cout << "NEXT\n";
+    it_tests++;
   }
 
+  std::cout << __FUNCTION__ << " EXIT" << "\n";
   return 0;
 }

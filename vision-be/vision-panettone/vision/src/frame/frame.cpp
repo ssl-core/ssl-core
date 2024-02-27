@@ -35,3 +35,15 @@ Frame Frame::fromJson([[maybe_unused]] const std::string& json) {
 int Frame::getId() const {
   return id_;
 }
+
+std::vector<Ball> Frame::getBalls() const {
+  return balls_;
+}
+
+std::vector<Robot> Frame::getRobots() const {
+  return robots_;
+}
+
+Field Frame::getField() const {
+  return field_;
+}

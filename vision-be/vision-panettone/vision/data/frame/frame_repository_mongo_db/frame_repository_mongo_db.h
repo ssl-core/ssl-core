@@ -5,6 +5,7 @@
 #include "vision/data/frame/i_frame_repository.h"
 
 #include <mongocxx/client.hpp>
+#include <mongocxx/instance.hpp>
 
 class FrameRepositoryMongoDB : public IFrameRepository {
  public:
@@ -17,6 +18,7 @@ class FrameRepositoryMongoDB : public IFrameRepository {
   void remove(const std::string& frame_id) override;
 
  private:
+  mongocxx::instance instance_;
   mongocxx::client client_;
   mongocxx::database db_;
   mongocxx::collection collection_;
