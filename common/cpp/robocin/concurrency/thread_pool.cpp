@@ -1,4 +1,4 @@
-#include "robocin/utility/thread_pool/thread_pool.h"
+#include "robocin/concurrency/thread_pool.h"
 
 #include <thread>
 

@@ -1,4 +1,4 @@
-#include "robocin/utility/thread_pool/thread_pool.h"
+#include "robocin/concurrency/thread_pool.h"
 
 #include <iostream>
 #include <vector>
@@ -12,7 +12,7 @@ std::string fetchDataFromDatabase(int record_id) {
 
 int main() {
   const size_t num_threads = 4;
-  ThreadPool pool(num_threads);
+  robocin::ThreadPool pool(num_threads);
 
   std::vector<std::future<std::string>> results;
 
