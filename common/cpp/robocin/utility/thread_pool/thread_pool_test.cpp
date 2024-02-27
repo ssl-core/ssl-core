@@ -7,7 +7,7 @@ namespace robocin {
  * @brief Enqueue a task and verify its execution.
  */
 TEST(ThreadPoolTest, EnqueueAndExecuteTask) {
-  ThreadPool pool(4);
+  ThreadPool pool(/*num_threads=*/4);
 
   auto future = pool.enqueue([]() { return 42; });
   int result = future.get();
@@ -38,7 +38,7 @@ TEST(ThreadPoolTest, EnqueueMultipleTasks) {
  * @brief Enqueue a task with arguments and verify its execution.
  */
 TEST(ThreadPoolTest, EnqueueTaskWithArguments) {
-  ThreadPool pool(4);
+  ThreadPool pool(/*num_threads=*/4);
 
   auto future = pool.enqueue([](int a, int b) { return a + b; }, 2, 3);
 
@@ -51,7 +51,7 @@ TEST(ThreadPoolTest, EnqueueTaskWithArguments) {
  * @brief Enqueue a task with void return type.
  */
 TEST(ThreadPoolTest, EnqueueTaskWithVoidReturnType) {
-  ThreadPool pool(4);
+  ThreadPool pool(/*num_threads=*/4);
 
   auto future = pool.enqueue([]() {});
 
@@ -65,7 +65,7 @@ TEST(ThreadPoolTest, EnqueueTaskWithVoidReturnType) {
  * @brief Enqueue a task that throws an exception also throws the exception.
  */
 TEST(ThreadPoolTest, EnqueueTaskAndThrowException) {
-  ThreadPool pool(4);
+  ThreadPool pool(/*num_threads=*/4);
 
   // Enqueue a task that throws an exception.
   auto future = pool.enqueue([]() { throw std::runtime_error("Test exception"); });
@@ -77,13 +77,32 @@ TEST(ThreadPoolTest, EnqueueTaskAndThrowException) {
 /**
  * @brief Try to enqueue tasks after the thread pool is stopped and throws exception.
  */
-TEST(ThreadPoolTest, EnqueueTasksAfterThreadPoolStoppedThrowsException) {
-  ThreadPool pool(4);
+TEST(ThreadPoolTest, EnqueueTasksAfterThreadPoolStopped) {
+  ThreadPool pool(/*num_threads=*/4);
 
   // Stop the thread pool.
-  pool.~ThreadPool();
+  pool.stop();
 
-  // Try to enqueue a task after the thread pool is stopped.
+  // Try to enqueue a task after the thread pool is stopped
   EXPECT_THROW(pool.enqueue([]() {}), std::runtime_error);
+}
+
+/**
+ * @brief Try to enqueue tasks after the thread pool is stopped and restarted works.
+ */
+TEST(ThreadPoolTest, EnqueueTasksAfterThreadPoolStoppedAndRestarted) {
+  ThreadPool pool(/*num_threads=*/4);
+
+  // Stop the thread pool.
+  pool.stop();
+
+  // Restart the thread pool.
+  pool.restart();
+
+  auto future = pool.enqueue([](int a, int b) { return a + b; }, 2, 3);
+
+  int result = future.get();
+
+  EXPECT_EQ(result, 5);
 }
 } // namespace robocin
