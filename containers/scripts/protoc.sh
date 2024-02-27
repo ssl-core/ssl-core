@@ -30,7 +30,7 @@ mkdir -p "${TMP_DIR}"
 curl -sSL "https://github.com/protocolbuffers/protobuf/releases/download/v${VERSION}/protoc-${VERSION}-linux-x86_64.zip" -o "${TMP_DIR}/protoc-${VERSION}.zip"
 unzip -qo "${TMP_DIR}/protoc-${VERSION}.zip" -d "${TMP_DIR}/protoc-${VERSION}"
 
-rsync -a "${TMP_DIR}/protoc-${VERSION}/" "${PARENT_DIR}/"
+rsync -a --include="*/***" --exclude="*" "${TMP_DIR}/protoc-${VERSION}/" "${PARENT_DIR}/"
 
 rm -rf "${TMP_DIR}"
 

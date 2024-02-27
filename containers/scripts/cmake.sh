@@ -20,6 +20,9 @@ echo -e "\x1B[01;93mInstalling or updating cmake...\n\u001b[0m"
 
 TMP_DIR="/tmp/cmake"
 
+rm -rf "${TMP_DIR}"
+mkdir -p "${TMP_DIR}"
+
 wget "https://github.com/Kitware/CMake/releases/download/v${VERSION}/cmake-${VERSION}.tar.gz" -O "${TMP_DIR}/cmake.tar.gz"
 tar -xvf "${TMP_DIR}/cmake.tar.gz" -C "${TMP_DIR}"
 

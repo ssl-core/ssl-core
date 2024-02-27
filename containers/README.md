@@ -1,18 +1,18 @@
 # Containers
 
-This directory contains the base dockerfiles used for development in containers, and scripts that install the necessary dependencies for these images.
+This directory contains the base dockerfiles used for development in containers and scripts that install the necessary dependencies for these images.
 
 > **See**: [Visual Studio Code: Developing inside a Container](https://code.visualstudio.com/docs/devcontainers/containers).
 
 ## Dockerfiles
 
-The Dockerfiles here must be manually published to Docker Hub so that they can be reused in CIs and save time building containers. To publish manually, use the [Dockerfile: Build and Push Manually](https://github.com/robocin/ssl-core/actions/workflows/dockerfile-build-and-push.yaml) workflow.
+The Dockerfiles here must be manually published to Docker Hub so that they can be reused in CIs and save time building containers. To publish manually, use the [Dockerfile: Build and Push Manually](https://github.com/robocin/ssl-core/actions/workflows/dockerfile-build-and-push.yaml) workflow. Stable images must be labeled with the `latest` tag, and development images are always labeled with the `manual-` prefix. The `context` for the workflow is the **root** of the repository; i.e, for an image located in this directory, it is equivalent to running:
 
-> **Note**: Stable images are labeled with the `latest` tag, and development images are labeled with the `manual-` prefix.
+```bash
+  docker build -f containers/<Dockerfile> .
+```
 
-> **Note**: The `context` for the workflow is the **root** of the repository.
-
-> **See**: RobôCIn's [Docker Hub](https://hub.docker.com/u/robocin) for the published images.
+> **See**: RobôCIn's [Docker Hub](https://hub.docker.com/u/robocin) for the published images and [Development Containers Images](https://github.com/devcontainers/images/tree/main/src) for the standard base images.
 
 ### [ssl-core-cpp-base.Dockerfile](ssl-core-cpp-base.Dockerfile)
 
@@ -174,3 +174,13 @@ Install [Protocol Buffers](https://developers.google.com/protocol-buffers) libra
 ```bash
 bash protobuf.sh <library_directory>
 ```
+
+### [protoc](scripts/protoc.sh)
+
+Install [Protocol Buffers](https://developers.google.com/protocol-buffers) compiler.
+
+- **Arguments:**
+
+  1. `version`: The version of Protoc to install
+  2. `directory`: The directory where the `bin` and `include` directories will be installed
+       * *default*: `/usr/local`

@@ -1,1 +1,1 @@
-FROM robocin/clang-cpp23-ubuntu-latest:manual-experimental-v7
+FROM robocin/ssl-core-cpp-base:latest

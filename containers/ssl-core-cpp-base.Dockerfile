@@ -2,7 +2,7 @@ FROM mcr.microsoft.com/vscode/devcontainers/base:latest
 
 ARG    GCC_VERSION='13'
 ARG   LLVM_VERSION='18'
-ARG  CMAKE_VERSION='3.28.1'
+ARG  CMAKE_VERSION='3.29.0-rc2'
 ARG  NINJA_VERSION='1.11.1'
 ARG    BUF_VERSION='1.28.1'
 ARG LIBZMQ_VERSION='4.3.5'
@@ -22,9 +22,10 @@ RUN apt update && apt upgrade -y && \
   bash  benchmark.sh '/usr/local' && \
   \
   bash protobuf.sh '/usr/local' && \
-  bash      buf.sh ${BUF_VERSION} '/usr/local/bin' && \
   \
   bash libzmq.sh ${LIBZMQ_VERSION} '/usr/local' && \
-  bash cppzmq.sh ${CPPZMQ_VERSION} '/usr/local'
-
-RUN rm -rf /tmp/scripts
+  bash cppzmq.sh ${CPPZMQ_VERSION} '/usr/local' && \
+  \
+  bash buf.sh ${BUF_VERSION} '/usr/local/bin' && \
+  \
+  rm -rf /tmp/scripts

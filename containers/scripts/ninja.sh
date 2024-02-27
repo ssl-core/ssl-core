@@ -17,7 +17,7 @@ if [ -z "${VERSION}" ]; then
   exit 1
 fi
 
-DEST_DIR="." # "/usr/local/bin"
+DEST_DIR="/usr/bin"
 TMP_DIR="/tmp/ninja"
 
 echo -e "\x1B[01;93mInstalling or updating ninja...\n\u001b[0m"
@@ -28,7 +28,7 @@ mkdir -p "${TMP_DIR}"
 wget "https://github.com/ninja-build/ninja/releases/download/v${VERSION}/ninja-linux.zip" -O "${TMP_DIR}/ninja.zip"
 unzip "${TMP_DIR}/ninja.zip" -d "${TMP_DIR}/ninja-${VERSION}"
 
-rsync -a "${TMP_DIR}/ninja-${VERSION}/" "${DEST_DIR}/"
+mv -f "${TMP_DIR}/ninja-${VERSION}/ninja" "${DEST_DIR}/ninja"
 
 rm -rf "${TMP_DIR}"
 

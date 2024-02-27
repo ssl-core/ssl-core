@@ -2,8 +2,8 @@
 [![Issues](https://img.shields.io/github/issues/robocin/ssl-core)](https://github.com/robocin/ssl-core/issues)
 [![Lint and Formatting Checker](https://github.com/robocin/ssl-core/actions/workflows/lint-and-formatting-checker.yaml/badge.svg?branch=main)](https://github.com/robocin/ssl-core/actions/workflows/lint-and-formatting-checker.yaml?query=branch%3Amain)
 [![Pull Requests](https://img.shields.io/github/issues-pr/robocin/ssl-core)](https://github.com/robocin/ssl-core/pulls)
-[![C++](https://img.shields.io/badge/C%2B%2B-20%2B-darkblue.svg)](https://en.cppreference.com/w/cpp/20)
-[![CMake](https://img.shields.io/badge/CMake-3.28%2B-blue.svg)](https://cmake.org/cmake/help/latest/release/3.28.html)
+[![C++](https://img.shields.io/badge/C%2B%2B-23%2B-darkblue.svg)](https://en.cppreference.com/w/cpp/23)
+[![CMake](https://img.shields.io/badge/CMake-3.29%2B-blue.svg)](https://cmake.org/cmake/help/latest/release/3.29.html)
 [![VS Code Dev Containers](https://img.shields.io/static/v1?label=VS+Code&message=Dev+Containers&logo=visualstudiocode&color=007ACC&labelColor=2C2C32&logoColor=007ACC)](https://code.visualstudio.com/docs/devcontainers/containers)
 [![License: MIT](https://img.shields.io/badge/License-MIT-orange.svg)](LICENSE)
 
@@ -42,6 +42,10 @@ All the code developed was done in [Visual Studio Code](https://code.visualstudi
 
   Contains the vision microservice.
 
+* [`app-shell`](app-shell/README.md)
+
+  Contains the application shell for mounting microfrontends.
+  
 * [`common`](common/README.md)
 
   Contains common code and utilities used across the project.
