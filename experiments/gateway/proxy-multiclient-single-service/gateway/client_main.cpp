@@ -20,8 +20,9 @@ int main(int argc, char* argv[]) {
   zmq::socket_t socket(context, ZMQ_REQ);
   socket.connect("ipc:///tmp/gateway-frontend.ipc");
 
+  std::string client_identifier = args[1];
   for (int i = 0; i < kRequest; ++i) {
-    zmq::message_t request{std::format("{}: Hello {}!", args[1], i)};
+    zmq::message_t request{std::format("{}: Hello {}!", client_identifier, i)};
     socket.send(request, zmq::send_flags::none);
 
     zmq::message_t reply;
