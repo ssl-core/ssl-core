@@ -7,7 +7,7 @@ Checks: >
   cert-*, -cert-err33-c,
   clang-analyzer-*,
   concurrency-*,
-  cppcoreguidelines-*, -cppcoreguidelines-pro-type-vararg, -cppcoreguidelines-avoid-magic-numbers,
+  cppcoreguidelines-*, -cppcoreguidelines-pro-type-vararg, -cppcoreguidelines-avoid-magic-numbers, -cppcoreguidelines-owning-memory,
   darwin-*,
   google-*,
   hicpp-*,
@@ -116,9 +116,17 @@ CheckOptions:
   - key: readability-identifier-naming.GlobalConstantIgnoredRegexp
     value: "^[a-z][a-zA-Z0-9]*_v$"
 
-  # * local:
+  # * local constant:
   - key: readability-identifier-naming.LocalConstantCase
     value: lower_case
+  - key: readability-identifier-naming.LocalConstantIgnoredRegexp
+    value: "^k([A-Z][a-z0-9]+)(([0-9])|([A-Z0-9][a-z0-9]+))*([A-Z])?$"
+
+  # constexpr variable:
+  - key: readability-identifier-naming.ConstexprVariableCase
+    value: CamelCase
+  - key: readability-identifier-naming.ConstexprVariablePrefix
+    value: k
 
   # * macro:
   - key: readability-identifier-naming.MacroDefinitionCase

@@ -51,7 +51,7 @@ find_package(Threads REQUIRED)
 # Find abseil installation
 # It enable the following variables:
 #   absl::...                             the abseil libraries (https://abseil.io/docs/cpp/guides)
-find_package(absl CONFIG REQUIRED HINTS "/opt/grpc")
+find_package(absl CONFIG REQUIRED HINTS "/usr/local/protobuf" "/opt/protobuf")
 message(STATUS "Using absl: ${absl_VERSION}")
 
 ########################################################################################################################
@@ -65,7 +65,7 @@ message(STATUS "Using absl: ${absl_VERSION}")
 
 # find GTest installation
 # looks for GTest cmake config files installed by GTest's cmake installation.
-find_package(GTest CONFIG REQUIRED HINTS "/opt/googletest")
+find_package(GTest CONFIG REQUIRED HINTS "/usr/local/googletest" "/opt/googletest")
 message(STATUS "Using GTest: ${GTest_VERSION}")
 
 include(GoogleTest) # provided by CMake
@@ -81,7 +81,7 @@ enable_testing() # enable testing for the entire project
 
 # find Google Benchmark installation
 # looks for Google Benchmark cmake config files installed by Google Benchmark's cmake installation.
-find_package(benchmark CONFIG HINTS "/opt/benchmark")
+find_package(benchmark CONFIG HINTS "/usr/local/benchmark" "/opt/benchmark")
 message(STATUS "Using Google Benchmark: ${benchmark_VERSION}")
 
 ########################################################################################################################
@@ -91,8 +91,8 @@ message(STATUS "Using Google Benchmark: ${benchmark_VERSION}")
 # It enable the following variables:
 #   protobuf::libprotobuf                 the protobuf library
 #   $<TARGET_FILE:protobuf::protoc>       the protobuf compiler
-find_package(utf8_range CONFIG REQUIRED HINTS "/opt/grpc") # protobuf dependency.
-find_package(Protobuf CONFIG REQUIRED HINTS "/opt/grpc")
+find_package(utf8_range CONFIG REQUIRED HINTS "/usr/local/protobuf" "/opt/protobuf") # protobuf dependency.
+find_package(Protobuf CONFIG REQUIRED HINTS "/usr/local/protobuf" "/opt/protobuf")
 message(STATUS "Using Protobuf: ${Protobuf_VERSION}")
 
 ########################################################################################################################
@@ -103,8 +103,8 @@ message(STATUS "Using Protobuf: ${Protobuf_VERSION}")
 
 # Find cppzmq installation
 # Looks for cppzmq cmake config files installed by cppzmq's cmake installation.
-find_package(ZeroMQ CONFIG REQUIRED HINTS "/opt/libzmq")
-find_package(cppzmq CONFIG REQUIRED HINTS "/opt/cppzmq")
+find_package(ZeroMQ CONFIG REQUIRED HINTS "/usr/local/libzmq" "/opt/libzmq")
+find_package(cppzmq CONFIG REQUIRED HINTS "/usr/local/cppzmq" "/opt/cppzmq")
 message(STATUS "Using cppzmq: ${cppzmq_VERSION}")
 
 ########################################################################################################################
@@ -178,20 +178,15 @@ function(robocin_cpp_library)
       message(WARNING "robocin_cpp_library: CMAKE_CXX_STANDARD is not defined when adding modules to library '${ARG_NAME}'. Using C++20 as default.")
       target_compile_features(${ARG_NAME} PUBLIC cxx_std_20)
     endif ()
+
+    target_sources(${ARG_NAME} PUBLIC FILE_SET CXX_MODULES FILES ${ARG_MODS})
   endif ()
 
   target_include_directories(${ARG_NAME} PRIVATE ${ROBOCIN_PROJECT_PATH})
   target_include_directories(${ARG_NAME} PRIVATE ${CMAKE_BINARY_DIR})
 
-  # add include directories of dependencies to the library (required for modules installation)
-  foreach (DEP ${ARG_DEPS})
-    target_include_directories(${ARG_NAME} PRIVATE $<TARGET_PROPERTY:${DEP},INTERFACE_INCLUDE_DIRECTORIES>)
-  endforeach ()
-
   target_compile_definitions(${ARG_NAME} PRIVATE ROBOCIN_PROJECT_NAME="${ROBOCIN_PROJECT_NAME}")
   target_compile_definitions(${ARG_NAME} PRIVATE ROBOCIN_PROJECT_PATH="${ROBOCIN_PROJECT_PATH}")
-
-  target_sources(${ARG_NAME} PUBLIC FILE_SET CXX_MODULES FILES ${ARG_MODS})
 
   if (ARG_MACROS)
     target_compile_definitions(${ARG_NAME} ${ARG_MACROS})
@@ -298,7 +293,9 @@ function(robocin_cpp_test)
   target_compile_definitions(${ARG_NAME} PRIVATE ROBOCIN_PROJECT_NAME="${ROBOCIN_PROJECT_NAME}")
   target_compile_definitions(${ARG_NAME} PRIVATE ROBOCIN_PROJECT_PATH="${ROBOCIN_PROJECT_PATH}")
 
-  target_sources(${ARG_NAME} PUBLIC FILE_SET CXX_MODULES FILES ${ARG_MODS})
+  if (ARG_MODS)
+    target_sources(${ARG_NAME} PUBLIC FILE_SET CXX_MODULES FILES ${ARG_MODS})
+  endif ()
 
   if (ARG_MACROS)
     target_compile_definitions(${ARG_NAME} ${ARG_MACROS})
@@ -358,7 +355,9 @@ function(robocin_cpp_benchmark_test)
   target_compile_definitions(${ARG_NAME} PRIVATE ROBOCIN_PROJECT_NAME="${ROBOCIN_PROJECT_NAME}")
   target_compile_definitions(${ARG_NAME} PRIVATE ROBOCIN_PROJECT_PATH="${ROBOCIN_PROJECT_PATH}")
 
-  target_sources(${ARG_NAME} PUBLIC FILE_SET CXX_MODULES FILES ${ARG_MODS})
+  if (ARG_MODS)
+    target_sources(${ARG_NAME} PUBLIC FILE_SET CXX_MODULES FILES ${ARG_MODS})
+  endif ()
 
   if (ARG_MACROS)
     target_compile_definitions(${ARG_NAME} ${ARG_MACROS})
@@ -416,7 +415,9 @@ function(robocin_cpp_executable)
   target_compile_definitions(${ARG_NAME} PRIVATE ROBOCIN_PROJECT_NAME="${ROBOCIN_PROJECT_NAME}")
   target_compile_definitions(${ARG_NAME} PRIVATE ROBOCIN_PROJECT_PATH="${ROBOCIN_PROJECT_PATH}")
 
-  target_sources(${ARG_NAME} PUBLIC FILE_SET CXX_MODULES FILES ${ARG_MODS})
+  if (ARG_MODS)
+    target_sources(${ARG_NAME} PUBLIC FILE_SET CXX_MODULES FILES ${ARG_MODS})
+  endif ()
 
   if (ARG_MACROS)
     target_compile_definitions(${ARG_NAME} ${ARG_MACROS})
