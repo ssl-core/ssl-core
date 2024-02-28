@@ -5,7 +5,7 @@
 
 namespace robocin {
 
-class IUdpMulticastSocketReceiver { // NOLINT hicpp-special-member-functions
+class IUdpMulticastSocketReceiver { // NOLINT(*member-functions*)
  public:
   virtual ~IUdpMulticastSocketReceiver() = default;
 
