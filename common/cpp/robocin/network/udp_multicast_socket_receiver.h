@@ -1,5 +1,3 @@
-
-
 #ifndef ROBOCIN_NETWORK_UPD_MULTICAST_SOCKET_RECEIVER_H
 #define ROBOCIN_NETWORK_UPD_MULTICAST_SOCKET_RECEIVER_H
 
@@ -7,7 +5,7 @@
 
 namespace robocin {
 
-class IUdpMulticastSocketReceiver { // NOLINT
+class IUdpMulticastSocketReceiver { // NOLINT(*member-functions*)
  public:
   virtual ~IUdpMulticastSocketReceiver() = default;
 

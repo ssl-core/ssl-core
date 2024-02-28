@@ -29,7 +29,7 @@ class MockZmqContext {
 
 class MockZmqSocket {
  public:
-  MockZmqSocket(MockZmqContext /*unused*/, int /*unused*/) {}
+  MockZmqSocket(MockZmqContext /*unused*/, zmq::socket_type /*unused*/) {}
 
   MOCK_METHOD(void, connect, (const std::string&) );
   MOCK_METHOD(void, set, (decltype(zmq::sockopt::subscribe), std::string_view));
@@ -38,8 +38,29 @@ class MockZmqSocket {
   MOCK_METHOD(void, close, ());
 };
 
+class RecvMockFunctor {
+ public:
+  explicit RecvMockFunctor(std::string_view message_str) : message_str_(message_str) {}
+
+  zmq::recv_result_t operator()(zmq::message_t& message, zmq::recv_flags /*unused*/) const {
+    message = zmq::message_t{message_str_};
+    return kBytesReceived;
+  }
+
+ private:
+  std::string_view message_str_;
+};
+
 using MockZmqSubscriberSocket = IZmqSubscriberSocket<MockZmqContext, MockZmqSocket>;
 
+/**
+  @brief Matcher used to match the zmq::sockopt parameters which wraps a static constant of
+  specified type, similar to std::integral_constant.
+
+  Parameters in zmq that use sockopt are, in reality, specializing templates. So it is not
+  necessary to match the value, only the type, and the type provided by the mock is always
+  the same as expected by the implementation.
+*/
 MATCHER(TrueMatcher, "") { return true; }
 
 TEST(ZmqSubscriberSocketTest, WhenConnectIsSucceeded) {
@@ -70,17 +91,11 @@ TEST(ZmqSubscriberSocketTest, WhenReceiveIsSucceeded) {
   MockZmqSubscriberSocket socket;
 
   EXPECT_CALL(socket.socket_, recv(_, zmq::recv_flags::dontwait))
-      .WillOnce([](zmq::message_t& msg, zmq::recv_flags) {
-        msg = zmq::message_t(kDefaultTopic);
-        return kBytesReceived;
-      })
-      .WillOnce([](zmq::message_t& msg, zmq::recv_flags) {
-        msg = zmq::message_t(kDefaultMessage);
-        return kBytesReceived;
-      });
+      .WillOnce(RecvMockFunctor(kDefaultTopic))
+      .WillOnce(RecvMockFunctor(kDefaultMessage));
 
-  ZmqDatagram oracle{std::string{kDefaultTopic}, std::string{kDefaultMessage}};
-  ASSERT_EQ(socket.receive(), oracle);
+  ZmqDatagram expected{std::string{kDefaultTopic}, std::string{kDefaultMessage}};
+  ASSERT_EQ(socket.receive(), expected);
 }
 
 TEST(ZmqSubscriberSocketTest, WhenReceiveThrowsZmqErrorForTopic) {
@@ -94,10 +109,7 @@ TEST(ZmqSubscriberSocketTest, WhenReceiveThrowsZmqErrorForMessage) {
   MockZmqSubscriberSocket socket;
 
   EXPECT_CALL(socket.socket_, recv(_, zmq::recv_flags::dontwait))
-      .WillOnce([](zmq::message_t& msg, zmq::recv_flags) {
-        msg = zmq::message_t(kDefaultTopic);
-        return kBytesReceived;
-      })
+      .WillOnce(RecvMockFunctor(kDefaultTopic))
       .WillOnce(Throw(zmq::error_t{}));
   ASSERT_THROW(socket.receive(), zmq::error_t);
 }
@@ -113,10 +125,7 @@ TEST(ZmqSubscriberSocketTest, WhenReceiveMessageIsNullopt) {
   MockZmqSubscriberSocket socket;
 
   EXPECT_CALL(socket.socket_, recv(_, zmq::recv_flags::dontwait))
-      .WillOnce([](zmq::message_t& msg, zmq::recv_flags) {
-        msg = zmq::message_t(kDefaultTopic);
-        return kBytesReceived;
-      })
+      .WillOnce(RecvMockFunctor(kDefaultTopic))
       .WillOnce(Return(std::nullopt));
   ASSERT_EQ(socket.receive(), ZmqDatagram{});
 }

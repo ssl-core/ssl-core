@@ -27,7 +27,7 @@ class MockZmqContext {
 
 class MockZmqSocket {
  public:
-  MockZmqSocket(MockZmqContext /*unused*/, int /*unused*/) {}
+  MockZmqSocket(MockZmqContext /*unused*/, zmq::socket_type /*unused*/) {}
 
   MOCK_METHOD(void, bind, (const std::string&) );
   MOCK_METHOD(zmq::send_result_t, send, (zmq::message_t&, zmq::send_flags));
