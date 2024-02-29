@@ -1,5 +1,11 @@
 name: "Buf: Lint and Formatting Checker"
-on: [pull_request]
+on:
+  pull_request:
+    paths: ["protocols/**"]
+  push:
+    branches:
+      - main
+    paths: ["protocols/**"]
 
 jobs:
   lint-check:
