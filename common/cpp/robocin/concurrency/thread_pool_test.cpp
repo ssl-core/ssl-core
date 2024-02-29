@@ -4,15 +4,11 @@
 
 namespace robocin {
 /**
- * @brief Enqueue a task and verify its execution.
- */
-TEST(ThreadPoolTest, EnqueueAndExecuteTask) {
+TEST(ThreadPoolTest, WhenEnqueueIsSucceeded) {
   ThreadPool pool(/*num_threads=*/4);
 
   auto future = pool.enqueue([]() { return 42; });
-  int result = future.get();
-
-  EXPECT_EQ(result, 42);
+  EXPECT_EQ(future.get(), 42);
 }
 
 /**

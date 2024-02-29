@@ -54,8 +54,6 @@ auto ThreadPool::enqueue(F&& f, Args&&... args) -> std::future<std::result_of_t<
   auto result = task->get_future();
 
   {
-    // If the ThreadPool is stopped, there is no way to enqueue any
-    // task and so it throws a runtime error.
     if (stop_) {
       throw std::runtime_error("enqueue on stopped ThreadPool.");
     }

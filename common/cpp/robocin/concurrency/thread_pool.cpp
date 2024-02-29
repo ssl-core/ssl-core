@@ -11,7 +11,6 @@ namespace robocin {
 ThreadPool::ThreadPool(size_t num_threads) : stop_(false) {
   workers_.reserve(num_threads);
 
-  // Creates the worker threads with the work loop.
   for (size_t i = 0; i < num_threads; ++i) {
     workers_.emplace_back(&ThreadPool::workLoop, this);
   }
