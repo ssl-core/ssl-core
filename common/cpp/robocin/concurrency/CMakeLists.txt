@@ -7,5 +7,5 @@ robocin_cpp_library(
 robocin_cpp_test(
   NAME thread_pool_test
   SRCS thread_pool_test.cpp
-  DEPS thread_pool
+  DEPS thread_pool GTest::gtest
 )

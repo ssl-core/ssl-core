@@ -10,10 +10,28 @@
 #include <vector>
 
 namespace robocin {
-class ThreadPool {
+
+class IThreadPool {
+ public:
+  explicit IThreadPool() = default;
+  virtual ~IThreadPool() = default;
+
+  IThreadPool(const IThreadPool&) = delete;
+  IThreadPool& operator=(const IThreadPool&) = delete;
+  IThreadPool(IThreadPool&&) = delete;
+  IThreadPool& operator=(IThreadPool&&) = delete;
+
+  virtual void restart() = 0;
+  virtual void stop() = 0;
+
+  template <typename F, typename... Args>
+  auto enqueue(F&& f, Args&&... args) -> std::future<std::invoke_result_t<F, Args...>>;
+};
+
+class ThreadPool : public IThreadPool {
  public:
   explicit ThreadPool(size_t num_threads);
-  ~ThreadPool();
+  ~ThreadPool() override;
 
   ThreadPool(const ThreadPool&) = delete;
   ThreadPool& operator=(const ThreadPool&) = delete;
@@ -21,9 +39,9 @@ class ThreadPool {
   ThreadPool& operator=(ThreadPool&&) = delete;
 
   template <typename F, typename... Args>
-  auto enqueue(F&& f, Args&&... args) -> std::future<typename std::invoke_result<F, Args...>::type>;
-  void restart();
-  void stop();
+  auto enqueue(F&& f, Args&&... args) -> std::future<std::invoke_result_t<F, Args...>>;
+  void restart() override;
+  void stop() override;
 
  private:
   std::vector<std::thread> workers_;
@@ -32,6 +50,7 @@ class ThreadPool {
   std::condition_variable condition_;
   bool stop_;
 
+  bool workAvailable();
   void workLoop();
 };
 
@@ -44,9 +63,8 @@ class ThreadPool {
  * @return A future representing the result of the function execution.
  */
 template <typename F, typename... Args>
-auto ThreadPool::enqueue(F&& f, Args&&... args)
-    -> std::future<typename std::invoke_result<F, Args...>::type> {
-  using return_type = typename std::invoke_result<F, Args...>::type;
+auto ThreadPool::enqueue(F&& f, Args&&... args) -> std::future<std::invoke_result_t<F, Args...>> {
+  using return_type = std::invoke_result_t<F, Args...>;
 
   auto task
       = std::shared_ptr<std::packaged_task<return_type()>>(new std::packaged_task<return_type()>(
