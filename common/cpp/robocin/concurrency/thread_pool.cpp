@@ -60,6 +60,14 @@ void ThreadPool::stop() {
 ThreadPool::~ThreadPool() { this->stop(); }
 
 /**
+ * @brief Indicates whether the worker can execute tasks.
+ *
+ * It checks if the thread pool is stopped and if there are
+ * tasks available to be executed.
+ */
+bool ThreadPool::workAvailable() { return this->stop_ || !this->tasks_.empty(); }
+
+/**
  * @brief Worker thread loop function.
  *
  * Waits for tasks to be added to the task queue and executes them.
@@ -71,8 +79,7 @@ void ThreadPool::workLoop() {
     {
       std::unique_lock<std::mutex> lock(this->queue_mutex_);
 
-      // Wait until there are tasks to execute or the thread pool is stopped.
-      this->condition_.wait(lock, [this] { return this->stop_ || !this->tasks_.empty(); });
+      this->condition_.wait(lock, [this] { return workAvailable(); });
 
       if (this->stop_ && this->tasks_.empty()) {
         return;
