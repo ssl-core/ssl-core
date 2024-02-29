@@ -3,7 +3,7 @@
 #include <gtest/gtest.h>
 
 namespace robocin {
-/**
+
 TEST(ThreadPoolTest, WhenEnqueueIsSucceeded) {
   ThreadPool pool(/*num_threads=*/4);
 
@@ -15,7 +15,7 @@ TEST(ThreadPoolTest, WhenEnqueueIsSucceeded) {
  * @brief Enqueue multiple tasks and verify their execution.
  */
 TEST(ThreadPoolTest, EnqueueMultipleTasks) {
-  ThreadPool pool(4);
+  ThreadPool pool(/*num_threads=*/4);
 
   auto future1 = pool.enqueue([]() { return 1; });
   auto future2 = pool.enqueue([]() { return 2; });

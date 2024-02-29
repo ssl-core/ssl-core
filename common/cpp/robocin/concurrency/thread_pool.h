@@ -21,7 +21,7 @@ class ThreadPool {
   ThreadPool& operator=(ThreadPool&&) = delete;
 
   template <typename F, typename... Args>
-  auto enqueue(F&& f, Args&&... args) -> std::future<std::result_of_t<F(Args...)>>;
+  auto enqueue(F&& f, Args&&... args) -> std::future<typename std::invoke_result<F, Args...>::type>;
   void restart();
   void stop();
 
@@ -44,12 +44,13 @@ class ThreadPool {
  * @return A future representing the result of the function execution.
  */
 template <typename F, typename... Args>
-auto ThreadPool::enqueue(F&& f, Args&&... args) -> std::future<std::result_of_t<F(Args...)>> {
-  using return_type = std::result_of_t<F(Args...)>;
+auto ThreadPool::enqueue(F&& f, Args&&... args)
+    -> std::future<typename std::invoke_result<F, Args...>::type> {
+  using return_type = typename std::invoke_result<F, Args...>::type;
 
   auto task
       = std::shared_ptr<std::packaged_task<return_type()>>(new std::packaged_task<return_type()>(
-          std::bind(std::forward<F>(f), std::forward<Args>(args)...)));
+          std::bind_front(std::forward<F>(f), std::forward<Args>(args)...)));
 
   auto result = task->get_future();
 

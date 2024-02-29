@@ -1,7 +1,5 @@
 #include "robocin/concurrency/thread_pool.h"
 
-#include <thread>
-
 namespace robocin {
 
 /**
