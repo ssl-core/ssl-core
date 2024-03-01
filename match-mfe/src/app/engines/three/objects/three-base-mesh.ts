@@ -1,12 +1,12 @@
 import { BufferGeometry, Material, Mesh } from "three";
 
-abstract class ThreeBaseMesh extends Mesh {
-  protected metadata: Record<string, any>;
+abstract class ThreeBaseMesh<T extends object = {}> extends Mesh {
+  protected metadata: T;
 
-  constructor(metadata?: Record<string, any>) {
+  constructor(metadata: T = {} as T) {
     super();
 
-    this.metadata = metadata || {};
+    this.metadata = metadata;
     this.geometry = this.buildGeometry();
     this.material = this.buildMaterial();
   }

@@ -7,17 +7,17 @@ class ThreeWheelMesh extends ThreeBaseMesh {
   public setParamsByAngle(angle: number) {
     const radius =
       constants.robot.chassis.radius - constants.robot.wheels.thickness / 2.0;
-    const position_angle = (angle * Math.PI) / 180.0;
-    const x = radius * Math.cos(position_angle);
-    const y = radius * Math.sin(position_angle);
+    const positionAngle = (angle * Math.PI) / 180.0;
+    const x = radius * Math.cos(positionAngle);
+    const y = radius * Math.sin(positionAngle);
     const z =
       constants.robot.chassis.height / 2.0 -
       constants.robot.wheels.radius +
       constants.robot.chassis.bottom_height;
-    const rotation_angle = (angle * Math.PI) / 180.0 + Math.PI / 2.0;
+    const rotationAngle = (angle * Math.PI) / 180.0 + Math.PI / 2.0;
 
     this.position.set(x, y, -z);
-    this.rotation.set(0, 0, rotation_angle);
+    this.rotation.set(0, 0, rotationAngle);
   }
 
   protected buildGeometry() {

@@ -4,7 +4,12 @@ import ThreeWheelMesh from "./meshes/three-wheel-mesh";
 import constants from "../../../../../config/constants";
 import ThreeDotMesh from "./meshes/three-dot-mesh";
 
-class ThreeRobotObject extends ThreeBaseObject {
+type ThreeRobotObjectMetadata = {
+  robotId: number;
+  team: "blue" | "yellow";
+};
+
+class ThreeRobotObject extends ThreeBaseObject<ThreeRobotObjectMetadata> {
   public update() {}
 
   protected buildMeshes() {
