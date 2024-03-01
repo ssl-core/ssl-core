@@ -1,8 +1,15 @@
 import ThreeSceneManager from "./three-scene-manager";
 import ThreeEventHandler from "./three-event-handler";
+import ThreeProxyManager from "./three-proxy-manager";
 
 const sceneManager = new ThreeSceneManager();
-const handler = new ThreeEventHandler(sceneManager);
+const proxyManager = new ThreeProxyManager();
+const handler = new ThreeEventHandler(sceneManager, proxyManager);
+
+// @ts-ignore
+self.document = {
+  addEventListener: () => {},
+};
 
 self.onmessage = (event) => {
   const { data } = event;

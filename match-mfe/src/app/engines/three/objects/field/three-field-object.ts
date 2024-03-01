@@ -1,29 +1,19 @@
-import { Mesh, MeshPhongMaterial, PlaneGeometry } from "three";
-
 import ThreeBaseObject from "../three-base-object";
-import constants from "../../../../../config/constants";
+import ThreeFieldSurfaceMesh from "./meshes/three-field-surface-mesh";
+import ThreeFieldMesh from "./meshes/three-field-mesh";
+import ThreeFieldLinesMesh from "./meshes/three-field-lines-mesh";
 
 class ThreeFieldObject extends ThreeBaseObject {
   public update() {}
 
   protected buildMeshes() {
-    const geometry = this.buildGeometry();
-    const material = this.buildMaterial();
-    const mesh = new Mesh(geometry, material);
-    return [mesh];
-  }
+    const surface = new ThreeFieldSurfaceMesh();
+    const field = new ThreeFieldMesh();
+    const lines = new ThreeFieldLinesMesh();
+    lines.scale.set(1, 1, 1);
+    lines.computeLineDistances();
 
-  private buildGeometry() {
-    return new PlaneGeometry(
-      constants.field.width,
-      constants.field.height,
-      constants.field.segments,
-      constants.field.segments
-    );
-  }
-
-  private buildMaterial() {
-    return new MeshPhongMaterial({ color: constants.field.color });
+    return [surface, field, lines];
   }
 }
 

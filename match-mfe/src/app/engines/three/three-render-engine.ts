@@ -1,48 +1,67 @@
 import BaseRenderEngine from "../../lib/base-render-engine";
+import ElementProxy from "./three-element-proxy";
+import { eventHandlers } from "./utils/proxy-event-handlers";
 import ThreeWorker from "./worker/three-worker?worker";
 
 class ThreeRenderEngine extends BaseRenderEngine {
+  private parentElement: HTMLElement;
   private canvas: HTMLCanvasElement;
   private worker: Worker;
+  private observer?: ResizeObserver;
 
   constructor(root: ShadowRoot) {
     super(root);
 
+    this.parentElement = root.host.parentElement!;
     this.canvas = document.createElement("canvas");
     this.worker = new ThreeWorker();
   }
 
   public initialize() {
-    this.canvas.width = window.innerWidth;
-    this.canvas.height = window.innerHeight;
-    this.root.appendChild(this.canvas);
-
-    const offscreen = this.canvas.transferControlToOffscreen();
-    this.worker.postMessage({ type: "initialize", payload: offscreen }, [
-      offscreen,
-    ]);
-
-    this.addResizeListener();
+    this.appendCanvas();
+    this.initializeWorker();
+    this.addResizeObserver();
   }
 
   public terminate() {
     this.worker.terminate();
+    this.observer?.disconnect();
   }
 
   public render(match: Match) {
     this.worker.postMessage({ type: "frame", payload: match });
   }
 
-  private addResizeListener() {
-    window.addEventListener("resize", () => {
+  private appendCanvas() {
+    this.canvas.width = this.parentElement.clientWidth;
+    this.canvas.height = this.parentElement.clientHeight;
+    this.root.appendChild(this.canvas);
+  }
+
+  private initializeWorker() {
+    const offscreen = this.canvas.transferControlToOffscreen();
+    const proxy = new ElementProxy(this.canvas, this.worker, eventHandlers);
+    proxy.initialize();
+
+    this.worker.postMessage(
+      {
+        type: "initialize",
+        payload: { canvas: offscreen, canvasId: proxy.getId() },
+      },
+      [offscreen]
+    );
+  }
+
+  private addResizeObserver() {
+    const observer = new ResizeObserver((entries) => {
+      const { width, height, top, left } = entries[0].contentRect;
       this.worker.postMessage({
         type: "resize",
-        payload: {
-          width: window.innerWidth,
-          height: window.innerHeight,
-        },
+        payload: { width, height, top, left },
       });
     });
+
+    observer.observe(this.parentElement);
   }
 }
 

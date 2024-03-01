@@ -11,10 +11,31 @@
         margin: 0;
         padding: 0;
         background-color: #000000;
+        height: 100%;
+        width: 100%;
+        overflow: hidden;
+      }
+
+      main {
+        height: calc(100% - 2rem);
+        width: calc(100% - 2rem);
+        padding: 1rem;
+      }
+
+      .fragment {
+        height: 100%;
+        width: 100%;
+        border-radius: 0.75rem;
+        overflow: hidden;
+        background-color: #1a1a1a;
       }
     </style>
   </head>
   <body>
-    <match-mfe></match-mfe>
+    <main>
+      <section class="fragment">
+        <match-mfe></match-mfe>
+      </section>
+    </main>
   </body>
 </html>

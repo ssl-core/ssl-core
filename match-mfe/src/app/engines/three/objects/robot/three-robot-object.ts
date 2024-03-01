@@ -1,5 +1,3 @@
-import { Vector3 } from "three";
-
 import ThreeBaseObject from "../three-base-object";
 import ThreeChassisMesh from "./meshes/three-chassis-mesh";
 import ThreeWheelMesh from "./meshes/three-wheel-mesh";
@@ -7,9 +5,7 @@ import constants from "../../../../../config/constants";
 import ThreeDotMesh from "./meshes/three-dot-mesh";
 
 class ThreeRobotObject extends ThreeBaseObject {
-  public update() {
-    this.rotateOnWorldAxis(new Vector3(0, 1, 0.3), 0.01);
-  }
+  public update() {}
 
   protected buildMeshes() {
     const chassis = new ThreeChassisMesh();
