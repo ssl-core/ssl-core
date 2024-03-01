@@ -59,4 +59,4 @@ int main() {
 
 To test the behavior, build the container and run the `thread_pool_main` executable located in bin folder. 
 
-TODO: This testing code should be updated to a valid integration with a database after the PR [MongoDB Experiment with C++ #26](https://github.com/robocin/ssl-core/pull/26) is being merged.
+TODO(https://github.com/robocin/ssl-core/issues/69): This testing code should be updated to a valid integration with a database after the PR [MongoDB Experiment with C++ #26](https://github.com/robocin/ssl-core/pull/26) is being merged.
