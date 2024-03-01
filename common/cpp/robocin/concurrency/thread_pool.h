@@ -55,7 +55,8 @@ class ThreadPool : public IThreadPool {
 };
 
 /**
- * @brief Enqueues a task to be executed by a thread in the pool.
+ * @brief Enqueues a task to be executed by a thread in the pool when
+    the ThreadPool is not stopped.
  * @tparam F Type of the function to be executed.
  * @tparam Args Types of the arguments to be passed to the function.
  * @param f Function to be executed.
