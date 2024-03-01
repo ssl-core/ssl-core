@@ -7,13 +7,11 @@ class ThreeFieldObject extends ThreeBaseObject {
   public update() {}
 
   protected buildMeshes() {
-    const surface = new ThreeFieldSurfaceMesh();
-    const field = new ThreeFieldMesh();
     const lines = new ThreeFieldLinesMesh();
-    lines.scale.set(1, 1, 1);
-    lines.computeLineDistances();
+    const field = new ThreeFieldMesh();
+    const surface = new ThreeFieldSurfaceMesh();
 
-    return [surface, field, lines];
+    return [lines, field, surface];
   }
 }
 

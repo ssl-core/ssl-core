@@ -1,8 +1,12 @@
 import { Group, Mesh } from "three";
 
 abstract class ThreeBaseObject extends Group {
-  constructor() {
+  protected metadata: Record<string, any>;
+
+  constructor(metadata?: Record<string, any>) {
     super();
+
+    this.metadata = metadata || {};
     this.buildMeshes().forEach((mesh) => this.add(mesh));
   }
 

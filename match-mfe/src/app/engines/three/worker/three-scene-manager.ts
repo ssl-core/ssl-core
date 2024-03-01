@@ -71,25 +71,58 @@ class ThreeSceneManager {
   }
 
   private addObjects() {
-    const robot = new ThreeRobotObject();
-    robot.position.set(-2, 0, 0);
-    this.scene.add(robot);
-
     const field = new ThreeFieldObject();
     field.position.set(0, 0, -0.1);
     this.scene.add(field);
 
     const goal1 = new ThreeGoalObject();
-    goal1.position.set(-constants.field.width / 2, 0, 0);
+    goal1.position.set(
+      -(constants.field.width + constants.goal.depth) / 2,
+      0,
+      0
+    );
+    goal1.rotation.set(0, Math.PI, 0);
     this.scene.add(goal1);
 
     const goal2 = new ThreeGoalObject();
-    goal2.position.set(constants.field.width / 2, 0, 0);
+    goal2.position.set(
+      (constants.field.width + constants.goal.depth) / 2,
+      0,
+      0
+    );
     this.scene.add(goal2);
 
     const ball = new ThreeBallObject();
     ball.position.set(0, 0, 0);
     this.scene.add(ball);
+
+    for (let i = 0; i < 11; i++) {
+      const robot = new ThreeRobotObject({ robotId: i, team: "blue" });
+
+      if (i === 0) {
+        robot.position.set(-constants.field.width / 2, 0, 0);
+      } else if (i < 6) {
+        robot.position.set(-3.5, (i - 3) * 1.5, 0);
+      } else {
+        robot.position.set(-1.5, i - 8, 0);
+      }
+
+      this.scene.add(robot);
+    }
+
+    for (let i = 0; i < 11; i++) {
+      const robot = new ThreeRobotObject({ robotId: i, team: "yellow" });
+
+      if (i === 0) {
+        robot.position.set(constants.field.width / 2, 0, 0);
+      } else if (i < 6) {
+        robot.position.set(3.5, (i - 3) * 1.5, 0);
+      } else {
+        robot.position.set(1.5, i - 8, 0);
+      }
+
+      this.scene.add(robot);
+    }
   }
 
   private addLight() {

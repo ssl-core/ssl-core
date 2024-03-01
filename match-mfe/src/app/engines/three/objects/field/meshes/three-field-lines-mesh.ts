@@ -24,7 +24,7 @@ class ThreeFieldLinesMesh extends LineSegments2 {
 
     return new LineSegmentsGeometry()
       .setPositions(points)
-      .translate(0, 0, 0.001);
+      .translate(0, 0, 0.01);
   }
 
   private buildMaterial() {

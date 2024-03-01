@@ -21,27 +21,7 @@ class ThreeFieldMesh extends ThreeBaseMesh {
   }
 
   protected buildMaterial() {
-    this.loadTexture();
     return new MeshLambertMaterial({ color: constants.field.color });
-  }
-
-  private loadTexture() {
-    const loader = new ImageBitmapLoader();
-
-    loader.load(grass, (imageBitmap) => {
-      const texture = new CanvasTexture(imageBitmap);
-      texture.repeat.set(
-        constants.field.width * ThreeFieldMesh.TEXTURE_REPEAT_FACTOR,
-        constants.field.height * ThreeFieldMesh.TEXTURE_REPEAT_FACTOR
-      );
-      texture.wrapS = RepeatWrapping;
-      texture.wrapT = RepeatWrapping;
-
-      this.material = new MeshLambertMaterial({
-        color: constants.field.color,
-        map: texture,
-      });
-    });
   }
 }
 

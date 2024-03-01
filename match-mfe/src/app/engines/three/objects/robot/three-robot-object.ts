@@ -86,9 +86,12 @@ class ThreeRobotObject extends ThreeBaseObject {
   }
 
   private getDotsColors() {
+    const robotId: number = this.metadata?.robotId || 0;
+    const team: "blue" | "yellow" = this.metadata?.team || "blue";
+
     return {
-      center: "#0000ff",
-      other: ["#ff00ff", "#00ff00", "#ff0000", "#ffff00"],
+      center: constants.robot.dots.colors[team],
+      other: constants.robot.dots.colors.patterns[robotId],
     };
   }
 }
