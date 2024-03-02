@@ -20,7 +20,7 @@ export default defineConfig({
     },
   },
   test: {
-    environment: "happy-dom",
+    environment: "jsdom",
     coverage: {
       reporter: ["text", "json-summary", "json"],
       exclude: [...configDefaults.coverage.exclude!, "playwright.config.ts"],
