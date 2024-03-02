@@ -1,7 +1,7 @@
 import { CylinderGeometry, MeshPhongMaterial } from "three";
 
-import ThreeBaseMesh from "../../three-base-mesh";
-import constants from "../../../../../../config/constants";
+import ThreeBaseMesh from "../three-base-mesh";
+import constants from "../../../../../config/constants";
 
 class ThreeWheelMesh extends ThreeBaseMesh {
   public setParamsByAngle(angle: number) {

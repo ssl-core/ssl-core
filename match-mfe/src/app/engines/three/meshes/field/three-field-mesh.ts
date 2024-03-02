@@ -1,7 +1,7 @@
 import { MeshLambertMaterial, PlaneGeometry } from "three";
 
-import ThreeBaseMesh from "../../three-base-mesh";
-import constants from "../../../../../../config/constants";
+import ThreeBaseMesh from "../three-base-mesh";
+import constants from "../../../../../config/constants";
 
 class ThreeFieldMesh extends ThreeBaseMesh {
   protected buildGeometry() {

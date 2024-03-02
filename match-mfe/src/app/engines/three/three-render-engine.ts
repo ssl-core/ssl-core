@@ -1,7 +1,7 @@
 import BaseRenderEngine from "../../lib/base-render-engine";
-import ElementProxy from "./three-element-proxy";
-import { eventHandlers } from "./utils/proxy-event-handlers";
 import ThreeWorker from "./worker/three-worker?worker";
+import ElementProxy from "./proxy/three-element-proxy";
+import { eventHandlers } from "./proxy/three-proxy-event-handlers";
 
 class ThreeRenderEngine extends BaseRenderEngine {
   private parentElement: HTMLElement;

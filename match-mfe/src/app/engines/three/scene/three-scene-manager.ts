@@ -10,7 +10,7 @@ import { OrbitControls } from "three/examples/jsm/Addons.js";
 
 import ThreeRobotObject from "../objects/robot/three-robot-object";
 import ThreeFieldObject from "../objects/field/three-field-object";
-import ElementProxyReceiver from "./three-element-proxy-receiver";
+import ElementProxyReceiver from "../proxy/three-element-proxy-receiver";
 import ThreeGoalObject from "../objects/goal/three-goal-object";
 import constants from "../../../../config/constants";
 import ThreeBallObject from "../objects/ball/three-ball-object";

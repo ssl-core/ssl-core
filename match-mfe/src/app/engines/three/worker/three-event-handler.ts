@@ -1,6 +1,6 @@
-import ThreeProxyManager from "./three-proxy-manager";
-import ThreeSceneManager from "./three-scene-manager";
-import ElementProxyReceiver from "./three-element-proxy-receiver";
+import ThreeProxyManager from "../proxy/three-proxy-manager";
+import ThreeSceneManager from "../scene/three-scene-manager";
+import ElementProxyReceiver from "../proxy/three-element-proxy-receiver";
 
 class ThreeEventHandler {
   private sceneManager: ThreeSceneManager;

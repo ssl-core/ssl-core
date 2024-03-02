@@ -4,7 +4,7 @@ import {
   LineSegmentsGeometry,
 } from "three/examples/jsm/Addons.js";
 
-import constants from "../../../../../../config/constants";
+import constants from "../../../../../config/constants";
 
 class ThreeFieldLinesMesh extends LineSegments2 {
   constructor() {

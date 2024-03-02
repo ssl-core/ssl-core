@@ -1,8 +1,8 @@
 import ThreeBaseObject from "../three-base-object";
-import ThreeChassisMesh from "./meshes/three-chassis-mesh";
-import ThreeWheelMesh from "./meshes/three-wheel-mesh";
+import ThreeChassisMesh from "../../meshes/robot/three-chassis-mesh";
+import ThreeWheelMesh from "../../meshes/robot/three-wheel-mesh";
 import constants from "../../../../../config/constants";
-import ThreeDotMesh from "./meshes/three-dot-mesh";
+import ThreeDotMesh from "../../meshes/robot/three-dot-mesh";
 
 type ThreeRobotObjectMetadata = {
   robotId: number;

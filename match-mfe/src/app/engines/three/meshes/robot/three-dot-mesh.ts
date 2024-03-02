@@ -1,7 +1,7 @@
 import { CircleGeometry, MeshPhongMaterial } from "three";
 
-import ThreeBaseMesh from "../../three-base-mesh";
-import constants from "../../../../../../config/constants";
+import ThreeBaseMesh from "../three-base-mesh";
+import constants from "../../../../../config/constants";
 
 type ThreeDotMeshMetadata = {
   radius: number;

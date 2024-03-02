@@ -1,4 +1,4 @@
-import { defineConfig } from "vite";
+import { configDefaults, defineConfig } from "vitest/config";
 
 export default defineConfig({
   build: {
@@ -18,6 +18,14 @@ export default defineConfig({
         entryFileNames: "[name].js",
       },
     },
+  },
+  test: {
+    environment: "happy-dom",
+    coverage: {
+      reporter: ["text", "json-summary", "json"],
+      exclude: [...configDefaults.coverage.exclude!, "playwright.config.ts"],
+    },
+    exclude: [...configDefaults.exclude, "e2e/*"],
   },
   preview: {
     port: 4001,
