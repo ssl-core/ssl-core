@@ -1,9 +1,11 @@
-FROM robocin/clang-cpp23-ubuntu-latest:manual-experimental-v7
+FROM robocin/ssl-core-cpp-base:latest
+
+SHELL ["/bin/bash", "-c"]
 
 COPY .cmake/ /tmp/.cmake/
 COPY common/ /tmp/common/
 
-RUN cd /tmp/common/cpp && rm -rf build && mkdir build && cd build && cmake .. -G "Ninja" -DCMAKE_CXX_COMPILER=clang++-17 && cmake --build . && cmake --install .
-
-RUN rm -rf /tmp/.cmake/
-RUN rm -rf /tmp/common/
+RUN pushd /tmp/common/cpp && rm -rf build && \
+  cmake -B build -S . -G "Ninja" -DCMAKE_CXX_COMPILER=clang++ && \
+  cmake --build build && cmake --install build && \
+  popd && rm -rf /tmp/.cmake/ /tmp/common/
