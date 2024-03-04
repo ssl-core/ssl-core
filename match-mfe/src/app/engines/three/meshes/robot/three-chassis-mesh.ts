@@ -4,6 +4,12 @@ import ThreeBaseMesh from "../three-base-mesh";
 import constants from "../../../../../config/constants";
 
 class ThreeChassisMesh extends ThreeBaseMesh {
+  constructor() {
+    super();
+
+    this.buildMesh();
+  }
+
   protected buildGeometry() {
     return new CylinderGeometry(
       constants.robot.chassis.radius,

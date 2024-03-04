@@ -1,15 +1,14 @@
-import ElementProxyReceiver from "./three-element-proxy-receiver";
+import ThreeElementProxyReceiver from "./three-element-proxy-receiver";
 
 class ThreeProxyManager {
-  private targets: Record<number, ElementProxyReceiver>;
+  private targets: Record<number, ThreeElementProxyReceiver>;
 
   constructor() {
     this.targets = {};
-    this.handleEvent = this.handleEvent.bind(this);
   }
 
-  public makeProxy(id: number) {
-    const proxy = new ElementProxyReceiver();
+  public addProxy(id: number) {
+    const proxy = new ThreeElementProxyReceiver();
     this.targets[id] = proxy;
   }
 

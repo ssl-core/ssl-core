@@ -1,17 +1,8 @@
-import { Group, Mesh } from "three";
+import { Group } from "three";
 
-abstract class ThreeBaseObject<T extends object = {}> extends Group {
-  protected metadata: T;
-
-  constructor(metadata: T = {} as T) {
-    super();
-
-    this.metadata = metadata;
-    this.buildMeshes().forEach((mesh) => this.add(mesh));
-  }
-
-  protected abstract buildMeshes(): Mesh[];
-  protected abstract update(): void;
+abstract class ThreeBaseObject extends Group {
+  public abstract update(): void;
+  protected abstract addMeshes(): void;
 }
 
 export default ThreeBaseObject;

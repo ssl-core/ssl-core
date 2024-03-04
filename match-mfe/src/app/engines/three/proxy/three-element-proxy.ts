@@ -1,37 +1,52 @@
-class ElementProxy {
-  private static nextProxyId = 0;
+class ThreeElementProxy {
+  private static nextProxyId: number;
   private id: number;
   private element: HTMLElement;
   private worker: Worker;
-  private eventHandlers: any[];
+  private eventHandlers: Record<string, Function>;
 
-  constructor(element: HTMLElement, worker: Worker, eventHandlers: any) {
-    this.id = ElementProxy.getNewId();
+  constructor(
+    element: HTMLElement,
+    worker: Worker,
+    eventHandlers: Record<string, Function>
+  ) {
+    this.id = ThreeElementProxy.getNewId();
     this.element = element;
     this.worker = worker;
     this.eventHandlers = eventHandlers;
   }
 
   private static getNewId() {
-    return ElementProxy.nextProxyId++;
-  }
-
-  public initialize() {
-    this.worker.postMessage({
-      type: "makeProxy",
-      payload: this.id,
-    });
-
-    for (const [eventName, handler] of Object.entries(this.eventHandlers)) {
-      this.element.addEventListener(eventName, (event) => {
-        handler(event, (data: any) => this.sendEvent(data));
-      });
+    if (!ThreeElementProxy.nextProxyId) {
+      ThreeElementProxy.nextProxyId = 0;
     }
+
+    return ThreeElementProxy.nextProxyId++;
   }
 
   public getId() {
     return this.id;
   }
+
+  public initialize() {
+    this.addProxy();
+    this.addEventListeners();
+  }
+
+  private addProxy = () => {
+    this.worker.postMessage({
+      type: "proxy",
+      payload: this.id,
+    });
+  };
+
+  private addEventListeners = () => {
+    for (const [eventName, handler] of Object.entries(this.eventHandlers)) {
+      this.element.addEventListener(eventName, (event) => {
+        handler(event, (data: any) => this.sendEvent(data));
+      });
+    }
+  };
 
   private sendEvent = (data: any) => {
     this.worker.postMessage({
@@ -41,4 +56,4 @@ class ElementProxy {
   };
 }
 
-export default ElementProxy;
+export default ThreeElementProxy;

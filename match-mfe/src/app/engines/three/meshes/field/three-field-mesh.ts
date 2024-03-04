@@ -4,6 +4,12 @@ import ThreeBaseMesh from "../three-base-mesh";
 import constants from "../../../../../config/constants";
 
 class ThreeFieldMesh extends ThreeBaseMesh {
+  constructor() {
+    super();
+
+    this.buildMesh();
+  }
+
   protected buildGeometry() {
     return new PlaneGeometry(
       constants.field.width + constants.field.outside.margin * 2,

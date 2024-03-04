@@ -1,21 +1,18 @@
-import { Mesh, MeshPhongMaterial, SphereGeometry } from "three";
-
 import ThreeBaseObject from "../three-base-object";
-import constants from "../../../../../config/constants";
+import ThreeBallMesh from "../../meshes/ball/three-ball-mesh";
 
 class ThreeBallObject extends ThreeBaseObject {
+  constructor() {
+    super();
+
+    this.addMeshes();
+  }
+
   public update() {}
 
-  protected buildMeshes() {
-    const ballGeometry = new SphereGeometry(
-      constants.ball.radius,
-      constants.ball.segments,
-      constants.ball.segments
-    ).translate(0, 0, -constants.ball.radius);
-    const ballMaterial = new MeshPhongMaterial({ color: constants.ball.color });
-    const ball = new Mesh(ballGeometry, ballMaterial);
-
-    return [ball];
+  protected addMeshes() {
+    const ball = new ThreeBallMesh();
+    this.add(ball);
   }
 }
 

@@ -1,6 +1,6 @@
 import { EventDispatcher } from "three";
 
-class ElementProxyReceiver extends EventDispatcher {
+class ThreeElementProxyReceiver extends EventDispatcher {
   private width: number;
   private height: number;
   private left: number;
@@ -67,4 +67,4 @@ class ElementProxyReceiver extends EventDispatcher {
   public focus() {}
 }
 
-export default ElementProxyReceiver;
+export default ThreeElementProxyReceiver;

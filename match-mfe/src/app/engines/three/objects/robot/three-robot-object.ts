@@ -1,103 +1,82 @@
 import ThreeBaseObject from "../three-base-object";
 import ThreeChassisMesh from "../../meshes/robot/three-chassis-mesh";
 import ThreeWheelMesh from "../../meshes/robot/three-wheel-mesh";
-import constants from "../../../../../config/constants";
 import ThreeDotMesh from "../../meshes/robot/three-dot-mesh";
+import constants from "../../../../../config/constants";
 
-type ThreeRobotObjectMetadata = {
-  robotId: number;
-  team: "blue" | "yellow";
-};
+class ThreeRobotObject extends ThreeBaseObject {
+  private robotId: number;
+  private team: TeamColor;
 
-class ThreeRobotObject extends ThreeBaseObject<ThreeRobotObjectMetadata> {
-  public update() {}
+  constructor(robotId: number, team: TeamColor) {
+    super();
+    this.robotId = robotId;
+    this.team = team;
 
-  protected buildMeshes() {
-    const chassis = new ThreeChassisMesh();
-    chassis.position.set(0, 0, 0);
-
-    const dotColors = this.getDotsColors();
-
-    const centerDot = new ThreeDotMesh({
-      color: dotColors.center,
-      radius: constants.robot.dots.center.radius,
-    });
-    centerDot.position.set(0, 0, constants.robot.dots.common.y);
-
-    const dot1 = new ThreeDotMesh({
-      color: dotColors.other[0],
-      radius: constants.robot.dots.other.radius,
-    });
-    dot1.position.set(
-      constants.robot.dots.other.min_distance,
-      constants.robot.dots.other.max_distance,
-      constants.robot.dots.common.y
-    );
-
-    const dot2 = new ThreeDotMesh({
-      color: dotColors.other[1],
-      radius: constants.robot.dots.other.radius,
-    });
-    dot2.position.set(
-      constants.robot.dots.other.min_distance,
-      -constants.robot.dots.other.max_distance,
-      constants.robot.dots.common.y
-    );
-
-    const dot3 = new ThreeDotMesh({
-      color: dotColors.other[2],
-      radius: constants.robot.dots.other.radius,
-    });
-    dot3.position.set(
-      -constants.robot.dots.other.max_distance,
-      constants.robot.dots.other.min_distance,
-      constants.robot.dots.common.y
-    );
-
-    const dot4 = new ThreeDotMesh({
-      color: dotColors.other[3],
-      radius: constants.robot.dots.other.radius,
-    });
-    dot4.position.set(
-      -constants.robot.dots.other.max_distance,
-      -constants.robot.dots.other.min_distance,
-      constants.robot.dots.common.y
-    );
-
-    const wheel1 = new ThreeWheelMesh();
-    wheel1.setParamsByAngle(constants.robot.wheels.angles[0]);
-
-    const wheel2 = new ThreeWheelMesh();
-    wheel2.setParamsByAngle(constants.robot.wheels.angles[1]);
-
-    const wheel3 = new ThreeWheelMesh();
-    wheel3.setParamsByAngle(constants.robot.wheels.angles[2]);
-
-    const wheel4 = new ThreeWheelMesh();
-    wheel4.setParamsByAngle(constants.robot.wheels.angles[3]);
-
-    return [
-      chassis,
-      centerDot,
-      dot1,
-      dot2,
-      dot3,
-      dot4,
-      wheel1,
-      wheel2,
-      wheel3,
-      wheel4,
-    ];
+    this.addMeshes();
   }
 
-  private getDotsColors() {
-    const robotId: number = this.metadata?.robotId || 0;
-    const team: "blue" | "yellow" = this.metadata?.team || "blue";
+  public update() {}
 
-    return {
-      center: constants.robot.dots.colors[team],
-      other: constants.robot.dots.colors.patterns[robotId],
-    };
+  protected addMeshes() {
+    const chassis = new ThreeChassisMesh();
+    chassis.position.set(0, 0, 0);
+    this.add(chassis);
+
+    const dotParams = this.getDotsParams();
+    for (let i = 0; i < dotParams.length; i++) {
+      const dot = new ThreeDotMesh(dotParams[i].radius, dotParams[i].color);
+      const position = dotParams[i].position;
+      dot.position.set(position[0], position[1], position[2]);
+
+      this.add(dot);
+    }
+
+    const angles = constants.robot.wheels.angles;
+    for (let i = 0; i < angles.length; i++) {
+      const wheel = new ThreeWheelMesh(angles[i]);
+      this.add(wheel);
+    }
+  }
+
+  private getDotsParams() {
+    const robotId = this.robotId;
+    const team = this.team;
+    const colors = constants.robot.dots.colors;
+    const centerRadius = constants.robot.dots.center.radius;
+    const {
+      minDistance,
+      maxDistance,
+      radius: otherRadius,
+    } = constants.robot.dots.other;
+
+    return [
+      {
+        radius: centerRadius,
+        position: [0, 0, constants.robot.dots.common.z],
+        color: colors[team],
+      },
+      {
+        radius: otherRadius,
+        position: [minDistance, maxDistance, constants.robot.dots.common.z],
+        color: colors.patterns[robotId][0],
+      },
+      {
+        radius: otherRadius,
+        position: [minDistance, -maxDistance, constants.robot.dots.common.z],
+        color: colors.patterns[robotId][1],
+      },
+      {
+        radius: otherRadius,
+        position: [-maxDistance, minDistance, constants.robot.dots.common.z],
+        color: colors.patterns[robotId][2],
+      },
+      {
+        radius: otherRadius,
+        position: [-maxDistance, -minDistance, constants.robot.dots.common.z],
+        color: colors.patterns[robotId][3],
+      },
+    ];
   }
 }
 

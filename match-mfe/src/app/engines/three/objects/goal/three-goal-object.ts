@@ -4,36 +4,62 @@ import ThreeBaseObject from "../three-base-object";
 import constants from "../../../../../config/constants";
 
 class ThreeGoalObject extends ThreeBaseObject {
+  constructor() {
+    super();
+
+    this.addMeshes();
+  }
+
   public update() {}
 
-  protected buildMeshes() {
-    const wallMaterial = new MeshPhongMaterial({ color: constants.goal.color });
+  protected addMeshes() {
+    const params = this.getWallsParams();
+    for (let i = 0; i < params.length; i++) {
+      const wall = this.buildMesh(params[i].width);
+      wall.position.set(
+        params[i].position.x,
+        params[i].position.y,
+        params[i].position.z
+      );
+      wall.rotation.set(
+        params[i].rotation.x,
+        params[i].rotation.y,
+        params[i].rotation.z
+      );
+      this.add(wall);
+    }
+  }
 
-    const wall1geometry = new BoxGeometry(
-      constants.goal.depth,
-      constants.goal.thickness,
-      constants.goal.height
+  private buildMesh(width: number) {
+    const geometry = new BoxGeometry(
+      width,
+      constants.wall.thickness,
+      constants.wall.height
     );
-    const wall1 = new Mesh(wall1geometry, wallMaterial);
-    wall1.position.set(0, -constants.goal.width / 2, 0);
+    const material = new MeshPhongMaterial({ color: constants.goal.color });
+    const wall = new Mesh(geometry, material);
 
-    const wall2geometry = new BoxGeometry(
-      constants.goal.depth,
-      constants.goal.thickness,
-      constants.goal.height
-    );
-    const wall2 = new Mesh(wall2geometry, wallMaterial);
-    wall2.position.set(0, constants.goal.width / 2, 0);
+    return wall;
+  }
 
-    const wall3geometry = new BoxGeometry(
-      constants.goal.thickness,
-      constants.goal.width + constants.goal.thickness,
-      constants.goal.height
-    );
-    const wall3 = new Mesh(wall3geometry, wallMaterial);
-    wall3.position.set(constants.goal.depth / 2, 0, 0);
-
-    return [wall1, wall2, wall3];
+  private getWallsParams() {
+    return [
+      {
+        width: constants.goal.depth,
+        position: { x: 0, y: -constants.goal.width / 2, z: 0 },
+        rotation: { x: 0, y: 0, z: 0 },
+      },
+      {
+        width: constants.goal.depth,
+        position: { x: 0, y: constants.goal.width / 2, z: 0 },
+        rotation: { x: 0, y: 0, z: 0 },
+      },
+      {
+        width: constants.goal.width,
+        position: { x: constants.goal.depth / 2, y: 0, z: 0 },
+        rotation: { x: 0, y: 0, z: Math.PI / 2 },
+      },
+    ];
   }
 }
 

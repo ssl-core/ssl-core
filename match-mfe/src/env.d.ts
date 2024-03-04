@@ -1,5 +1,12 @@
 /// <reference types="vite/client" />
 
-type Match = {
+type Frame = {
   id: string;
 };
+
+type ProxyEvent = {
+  id: number;
+  data: any;
+};
+
+type TeamColor = "blue" | "yellow";

@@ -5,7 +5,7 @@ const constants = {
       height: 0.147,
       segments: 48,
       color: "#1a1a1a",
-      bottom_height: 0.02,
+      bottomHeight: 0.02,
     },
     wheels: {
       radius: 0.027,
@@ -20,12 +20,12 @@ const constants = {
       },
       other: {
         radius: 0.02,
-        min_distance: 0.035,
-        max_distance: 0.054772,
+        minDistance: 0.035,
+        maxDistance: 0.054772,
       },
       common: {
         segments: 48,
-        y: 0.0735,
+        z: 0.0735,
       },
       colors: {
         blue: "#0000FF",
@@ -63,22 +63,16 @@ const constants = {
       width: 0.02,
       color: "#ffffff",
     },
-    goal: {
-      width: 0.2,
-      height: 1.8,
-      color: "#0000FF",
-    },
     penalty: {
       width: 1.8,
       height: 3.6,
-      color: "#FF0000",
     },
     center: {
       radius: 0.5,
+      segments: 48,
     },
     width: 12,
     height: 9,
-    segments: 32,
     color: "#224725",
   },
   goal: {
@@ -93,6 +87,12 @@ const constants = {
     color: "#D9650A",
     segments: 32,
   },
+  wall: {
+    height: 0.18,
+    thickness: 0.02,
+    color: "#000000",
+  },
+  background: "#1B1C1F",
 };
 
 export default constants;

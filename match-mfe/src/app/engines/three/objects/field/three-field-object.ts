@@ -4,14 +4,19 @@ import ThreeFieldMesh from "../../meshes/field/three-field-mesh";
 import ThreeFieldLinesMesh from "../../meshes/field/three-field-lines-mesh";
 
 class ThreeFieldObject extends ThreeBaseObject {
+  constructor() {
+    super();
+
+    this.addMeshes();
+  }
+
   public update() {}
 
-  protected buildMeshes() {
+  protected addMeshes() {
     const lines = new ThreeFieldLinesMesh();
     const field = new ThreeFieldMesh();
     const surface = new ThreeFieldSurfaceMesh();
-
-    return [lines, field, surface];
+    this.add(lines, field, surface);
   }
 }
 

@@ -1,13 +1,13 @@
 import BaseRenderEngine from "../../lib/base-render-engine";
 import ThreeWorker from "./worker/three-worker?worker";
-import ElementProxy from "./proxy/three-element-proxy";
-import { eventHandlers } from "./proxy/three-proxy-event-handlers";
+import ThreeElementProxy from "./proxy/three-element-proxy";
+import ThreeProxyEventHandlers from "./proxy/three-proxy-event-handlers";
 
 class ThreeRenderEngine extends BaseRenderEngine {
   private parentElement: HTMLElement;
   private canvas: HTMLCanvasElement;
   private worker: Worker;
-  private observer?: ResizeObserver;
+  private observer: ResizeObserver | null;
 
   constructor(root: ShadowRoot) {
     super(root);
@@ -15,6 +15,7 @@ class ThreeRenderEngine extends BaseRenderEngine {
     this.parentElement = root.host.parentElement!;
     this.canvas = document.createElement("canvas");
     this.worker = new ThreeWorker();
+    this.observer = null;
   }
 
   public initialize() {
@@ -28,8 +29,8 @@ class ThreeRenderEngine extends BaseRenderEngine {
     this.observer?.disconnect();
   }
 
-  public render(match: Match) {
-    this.worker.postMessage({ type: "frame", payload: match });
+  public render(frame: Frame) {
+    this.worker.postMessage({ type: "frame", payload: frame });
   }
 
   private appendCanvas() {
@@ -40,13 +41,18 @@ class ThreeRenderEngine extends BaseRenderEngine {
 
   private initializeWorker() {
     const offscreen = this.canvas.transferControlToOffscreen();
-    const proxy = new ElementProxy(this.canvas, this.worker, eventHandlers);
+    const eventHandlers = ThreeProxyEventHandlers.getEventHandlers();
+    const proxy = new ThreeElementProxy(
+      this.canvas,
+      this.worker,
+      eventHandlers
+    );
     proxy.initialize();
 
     this.worker.postMessage(
       {
         type: "initialize",
-        payload: { canvas: offscreen, canvasId: proxy.getId() },
+        payload: { canvas: offscreen, proxyId: proxy.getId() },
       },
       [offscreen]
     );

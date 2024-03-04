@@ -7,7 +7,7 @@ abstract class BaseRenderEngine {
 
   public abstract initialize(): void;
   public abstract terminate(): void;
-  public abstract render(match: Match): void;
+  public abstract render(frame: Frame): void;
 }
 
 export default BaseRenderEngine;

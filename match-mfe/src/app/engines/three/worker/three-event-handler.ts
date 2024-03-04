@@ -1,6 +1,5 @@
 import ThreeProxyManager from "../proxy/three-proxy-manager";
 import ThreeSceneManager from "../scene/three-scene-manager";
-import ElementProxyReceiver from "../proxy/three-element-proxy-receiver";
 
 class ThreeEventHandler {
   private sceneManager: ThreeSceneManager;
@@ -17,23 +16,22 @@ class ThreeEventHandler {
   public handleEvent(type: string, payload: any) {
     switch (type) {
       case "initialize":
-        const proxy = this.proxyManager.getProxy(payload.canvasId);
-        this.sceneManager.initialize(
-          payload.canvas as OffscreenCanvas,
-          proxy as ElementProxyReceiver
-        );
+        const { canvas, proxyId } = payload;
+        const proxy = this.proxyManager.getProxy(proxyId);
+
+        this.sceneManager.initialize(canvas, proxy);
         break;
       case "resize":
         this.sceneManager.resize(payload.width, payload.height);
         break;
       case "frame":
-        this.sceneManager.renderFrame(payload as Match);
+        this.sceneManager.render(payload as Frame);
         break;
-      case "makeProxy":
-        this.proxyManager.makeProxy(payload as number);
+      case "proxy":
+        this.proxyManager.addProxy(payload as number);
         break;
       case "event":
-        this.proxyManager.handleEvent(payload as { id: number; data: any });
+        this.proxyManager.handleEvent(payload as ProxyEvent);
         break;
       default:
         throw new Error(`Unknown event type: ${type}`);
