@@ -5,11 +5,12 @@
 #include "vision/src/ball/ball.h"
 #include "vision/src/field/field.h"
 #include "vision/src/robot/robot.h"
+#include "vision/data/i_mongo_data.h"
 
 #include <iostream>
 #include <vector>
 
-class Frame {
+class Frame : public IMongoData {
  public:
   Frame(int id,
         const std::vector<Ball>& balls,
@@ -27,6 +28,8 @@ class Frame {
   // - MARK: JSON Support.
   [[nodiscard]] std::string toJson() const;
   [[nodiscard]] static Frame fromJson([[maybe_unused]] const std::string& json);
+
+  [[nodiscard]] bsoncxx::builder::stream::document getMongoDocument() const override;
 
  private:
   int id_;

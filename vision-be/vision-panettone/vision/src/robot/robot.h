@@ -19,6 +19,15 @@ class Robot {
 
   friend std::ostream& operator<<(std::ostream& os, const Robot& robot);
 
+  [[nodiscard]] inline std::string getUuid() const { return uuid_; };
+  [[nodiscard]] inline int getId() const { return id_; };
+  [[nodiscard]] inline Color getColor() const { return color_; };
+  [[nodiscard]] inline Point2Df getPosition() const { return position_; };
+  [[nodiscard]] inline double getAngle() const { return angle_; };
+  [[nodiscard]] inline Point2Df getVelocity() const { return velocity_; };
+  [[nodiscard]] inline double getAngularVelocity() const { return angular_velocity_; };
+  [[nodiscard]] inline Source getSource() const { return source_; };
+
  private:
   std::string uuid_;
   int id_;

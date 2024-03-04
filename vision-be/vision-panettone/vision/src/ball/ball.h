@@ -12,6 +12,11 @@ class Ball {
 
   friend std::ostream& operator<<(std::ostream& os, const Ball& ball);
 
+  [[nodiscard]] inline std::string getUuid() const { return uuid_; };
+  [[nodiscard]] inline Source getSource() const { return source_; };
+  [[nodiscard]] inline Point2Df getPosition() const { return position_; };
+  [[nodiscard]] inline Point3Df getVelocity() const { return velocity_; };
+
  private:
   std::string uuid_;
   Source source_;

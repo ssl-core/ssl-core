@@ -66,7 +66,8 @@ void FrameRepositoryMongoDB::save(const Frame& frame) {
   std::cout << __FUNCTION__ << " ENTRY" << "\n";
   auto frame_id = frame.getId();
   try {
-    auto insert_one_result = collection_.insert_one(make_document(kvp("_id", frame.getId())));
+    // auto insert_one_result = collection_.insert_one(make_document(kvp("_id", frame.getId())));
+    auto insert_one_result = collection_.insert_one(frame.getMongoDocument().view());
     assert(insert_one_result);
     std::cout << "Inserted frame with id: " << frame_id << "\n";
   } catch (const std::exception& e) {

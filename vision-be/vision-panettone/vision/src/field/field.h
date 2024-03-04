@@ -17,6 +17,18 @@ class Field {
 
   friend std::ostream& operator<<(std::ostream& os, const Field& field);
 
+  [[nodiscard]] inline double getLength() const { return length_; };
+  [[nodiscard]] inline double getWidth() const { return width_; };
+  [[nodiscard]] inline double getGoalDepth() const { return goal_depth_; };
+  [[nodiscard]] inline double getGoalWidth() const { return goal_width_; };
+  [[nodiscard]] inline double getPenaltyAreaDepth() const { return penalty_area_depth_; };
+  [[nodiscard]] inline double getPenaltyAreaWidth() const { return penalty_area_width_; };
+  [[nodiscard]] inline double getBoundaryWidth() const { return boundary_width_; };
+  [[nodiscard]] inline double getGoalCenterToPenaltyMark() const { return goal_center_to_penalty_mark_; };
+  [[nodiscard]] inline double getHeight() const { return width_; };
+
+  
+
  private:
   double length_;
   double width_;

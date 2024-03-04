@@ -10,6 +10,10 @@ class Point3Df {
 
   friend std::ostream& operator<<(std::ostream& os, const Point3Df& point);
 
+  [[nodiscard]] inline double getX() const { return x_; };
+  [[nodiscard]] inline double getY() const { return y_; };
+  [[nodiscard]] inline double getZ() const { return z_; };
+
  private:
   double x_;
   double y_;

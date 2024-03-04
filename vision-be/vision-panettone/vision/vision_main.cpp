@@ -1,5 +1,4 @@
 #include "vision/repository_factory/repository_factory_mapping/repository_factory_mapping.h"
-#include "vision/src/thread_pool/thread_pool.h"
 
 #include <iostream>
 #include <vector>
@@ -12,15 +11,13 @@ struct TestInputs {
 int main() {
   std::cout << __FUNCTION__ << " ENTRY" << "\n";
   const size_t num_threads = 4;
-  ThreadPool pool(num_threads);
   
   std::cout << "Creating factory and frame repository" << "\n";
   auto factory_mapping = std::make_shared<RepositoryFactoryMapping>();
   auto factory = factory_mapping->getFactory(RepositoryType::MONGODB);
   auto* frame_repository = factory->createFrameRepository().release();
 
-  std::cout << "Creating test inputs" << "\n"; 
-  std::vector<std::future<int>> results;
+  std::cout << "Creating test inputs" << "\n";
 
   // test input for the program
   std::vector<TestInputs> test_inputs = { {"1", "save"}, {"2", "save"}, {"1", "fetch"}, {"2", "fetch"} };
