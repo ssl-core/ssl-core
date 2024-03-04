@@ -1,5 +1,7 @@
 FROM mcr.microsoft.com/vscode/devcontainers/base:ubuntu
 
+SHELL ["/bin/bash", "-c"]
+
 ARG    GCC_VERSION='13'
 ARG   LLVM_VERSION='18'
 ARG  CMAKE_VERSION='3.29.0-rc2'
@@ -18,6 +20,7 @@ RUN apt update && apt upgrade -y && \
   bash cmake.sh ${CMAKE_VERSION} && \
   bash ninja.sh ${NINJA_VERSION} && \
   \
+  bash       absl.sh '/usr/local' && \
   bash googletest.sh '/usr/local' && \
   bash  benchmark.sh '/usr/local' && \
   \

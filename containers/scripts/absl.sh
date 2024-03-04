@@ -16,29 +16,29 @@ if [ -z "${PARENT_DIR}" ]; then
   PARENT_DIR="/usr/local"
 fi
 
-GOOGLETEST_DIR="${PARENT_DIR}/googletest"
-TMP_GIT_REPO_DIR="/tmp/googletest"
-
-echo -e "\x1B[01;93m\nInstalling or updating googletest...\n\u001b[0m"
+ABSL_DIR="${PARENT_DIR}/absl"
+TMP_GIT_REPO_DIR="/tmp/absl"
 
 rm -rf "${TMP_GIT_REPO_DIR}"
 mkdir -p "${TMP_GIT_REPO_DIR}"
 
-git clone --recurse-submodules "https://github.com/google/googletest.git" -o googletest "${TMP_GIT_REPO_DIR}"
+git clone --recurse-submodules "https://github.com/abseil/abseil-cpp.git" -o absl "${TMP_GIT_REPO_DIR}"
 
 mkdir -p "${TMP_GIT_REPO_DIR}"
 
-rm -rf "${GOOGLETEST_DIR}" # removes the directory if it exists to avoid errors
-mkdir -p "${GOOGLETEST_DIR}"
+rm -rf "${ABSL_DIR}" # removes the directory if it exists to avoid errors
+mkdir -p "${ABSL_DIR}"
 
 pushd "${TMP_GIT_REPO_DIR}" || exit 1
 cmake -B build \
       -S . \
-      -DCMAKE_INSTALL_PREFIX="${GOOGLETEST_DIR}"
+      -DCMAKE_BUILD_TYPE=Release \
+      -DABSL_BUILD_TESTING=OFF \
+      -DCMAKE_INSTALL_PREFIX="${ABSL_DIR}"
 cmake --build build -j "$(nproc)"
 cmake --install build
 popd || exit 1
 
 rm -rf "${TMP_GIT_REPO_DIR}"
 
-chown "${CURRENT_USER}":"${CURRENT_USER}" "${GOOGLETEST_DIR}" -R # changes the owner of the directory to the current user
+chown "${CURRENT_USER}":"${CURRENT_USER}" "${ABSL_DIR}" -R # changes the owner of the directory to the current user

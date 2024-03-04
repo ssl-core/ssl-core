@@ -51,7 +51,7 @@ find_package(Threads REQUIRED)
 # Find abseil installation
 # It enable the following variables:
 #   absl::...                             the abseil libraries (https://abseil.io/docs/cpp/guides)
-find_package(absl CONFIG REQUIRED HINTS "/usr/local/protobuf" "/opt/protobuf")
+find_package(absl CONFIG REQUIRED HINTS "/usr/local/absl" "/opt/absl" "/usr/local/protobuf" "/opt/protobuf")
 message(STATUS "Using absl: ${absl_VERSION}")
 
 ########################################################################################################################
@@ -91,7 +91,7 @@ message(STATUS "Using Google Benchmark: ${benchmark_VERSION}")
 # It enable the following variables:
 #   protobuf::libprotobuf                 the protobuf library
 #   $<TARGET_FILE:protobuf::protoc>       the protobuf compiler
-find_package(utf8_range CONFIG REQUIRED HINTS "/usr/local/protobuf" "/opt/protobuf") # protobuf dependency.
+find_package(utf8_range CONFIG HINTS "/usr/local/protobuf" "/opt/protobuf") # protobuf dependency.
 find_package(Protobuf CONFIG REQUIRED HINTS "/usr/local/protobuf" "/opt/protobuf")
 message(STATUS "Using Protobuf: ${Protobuf_VERSION}")
 

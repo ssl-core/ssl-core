@@ -9,42 +9,45 @@ if ! is_root; then
   exit 1
 fi
 
+VERSION="3.21.10" # TODO(#73): Allow the user to specify the version.
 PARENT_DIR="${1}"
 CURRENT_USER=$(who | awk 'NR==1{print $1}')
+
+if [ -z "${VERSION}" ]; then
+  echo -e "\x1B[31m[ERROR] No version specified."
+  exit 1
+fi
 
 if [ -z "${PARENT_DIR}" ]; then
   PARENT_DIR="/usr/local"
 fi
 
 PROTOBUF_DIR="${PARENT_DIR}/protobuf"
-TMP_GIT_REPO_DIR="/tmp/protobuf"
-
-echo -e "\x1B[01;93mInstalling git...\n\u001b[0m"
-
-apt install git -y
+TMP_PROTOBUF="/tmp/protobuf"
 
 echo -e "\x1B[01;93m\nInstalling or updating protobuf...\n\u001b[0m"
 
-rm -rf "${TMP_GIT_REPO_DIR}"
-mkdir -p "${TMP_GIT_REPO_DIR}"
+rm -rf "${TMP_PROTOBUF}"
+mkdir -p "${TMP_PROTOBUF}"
 
-git clone --recurse-submodules "https://github.com/protocolbuffers/protobuf.git" -o protobuf "${TMP_GIT_REPO_DIR}"
-
-mkdir -p "${TMP_GIT_REPO_DIR}"
+wget "https://github.com/protocolbuffers/protobuf/releases/download/v21.10/protobuf-cpp-${VERSION}.tar.gz" -O "${TMP_PROTOBUF}/protobuf-${VERSION}.tar.gz"
+tar -xvf "${TMP_PROTOBUF}/protobuf-${VERSION}.tar.gz" -C "${TMP_PROTOBUF}"
+rm -rf "${TMP_PROTOBUF}/protobuf-${VERSION}.tar.gz"
 
 rm -rf "${PROTOBUF_DIR}" # removes the directory if it exists to avoid errors
 mkdir -p "${PROTOBUF_DIR}"
 
-pushd "${TMP_GIT_REPO_DIR}" || exit 1
+pushd "${TMP_PROTOBUF}/protobuf-${VERSION}" || exit 1
 cmake -B build \
       -S . \
       -DCMAKE_BUILD_TYPE=Release \
+      -Dprotobuf_ABSL_PROVIDER=package \
       -Dprotobuf_BUILD_TESTS=OFF \
       -DCMAKE_INSTALL_PREFIX="${PROTOBUF_DIR}"
 cmake --build build -j "$(nproc)"
 cmake --install build
 popd || exit 1
 
-rm -rf "${TMP_GIT_REPO_DIR}"
+rm -rf "${TMP_PROTOBUF}"
 
 chown "${CURRENT_USER}":"${CURRENT_USER}" "${PROTOBUF_DIR}" -R # changes the owner of the directory to the current user

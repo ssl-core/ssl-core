@@ -19,10 +19,6 @@ fi
 BENCHMARK_DIR="${PARENT_DIR}/benchmark"
 TMP_GIT_REPO_DIR="/tmp/benchmark"
 
-echo -e "\x1B[01;93mInstalling git...\n\u001b[0m"
-
-apt install git -y
-
 echo -e "\x1B[01;93m\nInstalling or updating Google benchmark...\n\u001b[0m"
 
 rm -rf "${TMP_GIT_REPO_DIR}"
