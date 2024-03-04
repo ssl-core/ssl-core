@@ -1,9 +1,8 @@
 import { Mock, beforeAll, describe, expect, it, vi } from "vitest";
 
 import MatchMFE from "../../src/app/match-mfe";
-import RenderEngineFactory from "../../src/app/lib/render-engine-factory";
+import RenderEngineFactory from "../../src/app/engines/render-engine-factory";
 import SocketHandler from "../../src/app/socket/socket-handler";
-import BaseRenderEngine from "../../src/app/lib/base-render-engine";
 
 describe("MatchMFE", () => {
   let engineInitializeMock: Mock = vi.fn();

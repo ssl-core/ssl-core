@@ -1,5 +1,5 @@
-import BaseRenderEngine from "./lib/base-render-engine";
-import RenderEngineFactory from "./lib/render-engine-factory";
+import BaseRenderEngine from "./engines/base-render-engine";
+import RenderEngineFactory from "./engines/render-engine-factory";
 import SocketHandler from "./socket/socket-handler";
 import environment from "../config/environment";
 

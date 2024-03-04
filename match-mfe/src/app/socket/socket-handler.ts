@@ -1,4 +1,4 @@
-import BaseRenderEngine from "../lib/base-render-engine";
+import BaseRenderEngine from "../engines/base-render-engine";
 import SocketWorker from "./worker/socket-worker?worker";
 
 class SocketHandler {

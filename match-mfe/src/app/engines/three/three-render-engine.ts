@@ -1,4 +1,4 @@
-import BaseRenderEngine from "../../lib/base-render-engine";
+import BaseRenderEngine from "../base-render-engine";
 import ThreeWorker from "./worker/three-worker?worker";
 import ThreeElementProxy from "./proxy/three-element-proxy";
 import ThreeProxyEventHandlers from "./proxy/three-proxy-event-handlers";
