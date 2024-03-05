@@ -9,3 +9,6 @@ RUN cd /tmp/protocols && rm -rf /opt/protocols && mkdir /opt/protocols && \
   rm -rf /tmp/protocols
 
 ENV PYTHONPATH=$PYTHONPATH:/opt/protocols
+
+COPY requirements.txt requirements.txt
+RUN pip3 install -r requirements.txt
