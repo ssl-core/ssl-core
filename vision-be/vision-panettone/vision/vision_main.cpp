@@ -1,53 +1,87 @@
-#include "vision/repository_factory/repository_factory_mapping/repository_factory_mapping.h"
+#include "protocols/vision/frame.pb.h"
+#include "vision/db/irepository_factory.h"
+#include "vision/db/repository_factory_mapping.h"
 
 #include <iostream>
 #include <vector>
 
+using protocols::vision::Field;
+using protocols::vision::Frame;
+using vision::IFrameRepository;
+using vision::RepositoryFactoryMapping;
+using vision::RepositoryType;
+
 struct TestInputs {
-  std::string record_id;
+  int64_t record_id;
   std::string operation;
 };
 
 int main() {
-  std::cout << __FUNCTION__ << " ENTRY" << "\n";
-  const size_t num_threads = 4;
-  
   std::cout << "Creating factory and frame repository" << "\n";
-  auto factory_mapping = std::make_shared<RepositoryFactoryMapping>();
-  auto factory = factory_mapping->getFactory(RepositoryType::MONGODB);
-  auto* frame_repository = factory->createFrameRepository().release();
+
+  const auto kFactory = RepositoryFactoryMapping{}[RepositoryType::MongoDb];
+
+  std::unique_ptr<IFrameRepository> frame_repository = kFactory->createFrameRepository();
+  std::future<bool> connection_status = frame_repository->connect();
+
+  if (connection_status.wait(); connection_status.get()) {
+    std::cout << "Connected to the database." << "\n";
+  } else {
+    std::cout << "Failed to connect to the database." << "\n";
+    return 1;
+  }
 
   std::cout << "Creating test inputs" << "\n";
 
   // test input for the program
-  std::vector<TestInputs> test_inputs = { {"1", "save"}, {"2", "save"}, {"1", "fetch"}, {"2", "fetch"} };
+  std::vector<TestInputs> test_inputs = {
+      {1, "save"},
+      {2, "save"},
+      {1, "fetch"},
+      {2, "fetch"},
+  };
 
-  auto it_tests = test_inputs.begin();
-  while (it_tests != test_inputs.end()) {
-    std::string operation = it_tests->operation;
+  int serial_id = 0;
+  for (const auto& [record_id, operation] : test_inputs) {
     std::cout << "Operation: " << operation << "\n";
 
     if (operation == "quit") {
       break;
     }
 
-    std::string record_id = it_tests->record_id;
     std::cout << "Record id is: " << record_id << "\n";
 
     if (operation == "fetch") {
-      std::cout << "fetch\n";
-      auto ret = frame_repository->find(record_id);
-      std::cout << "Retrieved frame with id: " << ret->getId() << "\n";
-    } else if (operation == "save") {
-      std::cout << "save\n";
-      frame_repository->save(Frame(std::stoi(record_id), {}, {}, kDefaultField));
-    } else {
-      std::cout << "Invalid operation\n";
-    }
+      std::cout << "fetching...\n";
+      if (auto result = frame_repository->find(record_id)) {
+        std::cout << "retrieved frame: " << result->DebugString() << ".\n";
+      } else {
+        std::cout << "frame not found.\n";
+      }
 
-    it_tests++;
+    } else if (operation == "save") {
+      std::cout << "saving...\n";
+
+      Frame frame;
+      frame.mutable_properties()->set_serial_id(++serial_id);
+
+      Field& field = *frame.mutable_field();
+      field.set_length(9000);
+      field.set_width(6000);
+      field.set_goal_depth(180);
+      field.set_goal_width(1000);
+      field.set_penalty_area_depth(1000);
+      field.set_penalty_area_width(2000);
+      field.set_boundary_width(300);
+      field.set_goal_center_to_penalty_mark(6000);
+
+      frame_repository->save(frame);
+
+      std::cout << "saved frame: " << frame.DebugString() << ".\n";
+    } else {
+      std::cout << "invalid operation.\n";
+    }
   }
 
-  std::cout << __FUNCTION__ << " EXIT" << "\n";
   return 0;
 }

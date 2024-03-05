@@ -11,7 +11,10 @@ services:
   vision:
     build:
       context: .
-      dockerfile: vision.Dockerfile
+      dockerfile: vision-be/vision-panettone/.devcontainer/Dockerfile
+      args:
+        - SOURCE_DIRECTORY=vision-be/vision-panettone
+    working_dir: /workspaces/vision-be/vision-panettone
     container_name: vision
     command: ["bin/vision_main"]
     volumes:
