@@ -26,7 +26,9 @@ git clone --recurse-submodules "https://github.com/abseil/abseil-cpp.git" -o abs
 
 mkdir -p "${TMP_GIT_REPO_DIR}"
 
-rm -rf "${ABSL_DIR}" # removes the directory if it exists to avoid errors
+# removes the directory if it exists to avoid errors
+rm -rf "${ABSL_DIR}"
+
 mkdir -p "${ABSL_DIR}"
 
 pushd "${TMP_GIT_REPO_DIR}" || exit 1
@@ -41,4 +43,5 @@ popd || exit 1
 
 rm -rf "${TMP_GIT_REPO_DIR}"
 
-chown "${CURRENT_USER}":"${CURRENT_USER}" "${ABSL_DIR}" -R # changes the owner of the directory to the current user
+# changes the owner of the directory to the current user
+chown "${CURRENT_USER}":"${CURRENT_USER}" "${ABSL_DIR}" -R

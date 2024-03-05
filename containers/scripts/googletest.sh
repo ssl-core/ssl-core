@@ -28,7 +28,9 @@ git clone --recurse-submodules "https://github.com/google/googletest.git" -o goo
 
 mkdir -p "${TMP_GIT_REPO_DIR}"
 
-rm -rf "${GOOGLETEST_DIR}" # removes the directory if it exists to avoid errors
+# removes the directory if it exists to avoid errors
+rm -rf "${GOOGLETEST_DIR}"
+
 mkdir -p "${GOOGLETEST_DIR}"
 
 pushd "${TMP_GIT_REPO_DIR}" || exit 1
@@ -41,4 +43,5 @@ popd || exit 1
 
 rm -rf "${TMP_GIT_REPO_DIR}"
 
-chown "${CURRENT_USER}":"${CURRENT_USER}" "${GOOGLETEST_DIR}" -R # changes the owner of the directory to the current user
+# changes the owner of the directory to the current user
+chown "${CURRENT_USER}":"${CURRENT_USER}" "${GOOGLETEST_DIR}" -R

@@ -34,4 +34,5 @@ rm -rf "${TMP_DIR}"
 
 chmod +x "${DEST_DIR}/ninja"
 
-chown "${CURRENT_USER}":"${CURRENT_USER}" "${DEST_DIR}/ninja" # changes the owner of the directory to the current user
+# changes the owner of the directory to the current user
+chown "${CURRENT_USER}":"${CURRENT_USER}" "${DEST_DIR}/ninja"

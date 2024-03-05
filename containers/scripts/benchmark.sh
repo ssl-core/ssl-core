@@ -28,7 +28,9 @@ git clone "https://github.com/google/benchmark.git" -o benchmark "${TMP_GIT_REPO
 
 mkdir -p "${TMP_GIT_REPO_DIR}"
 
-rm -rf "${BENCHMARK_DIR}" # removes the directory if it exists to avoid errors
+# removes the directory if it exists to avoid errors
+rm -rf "${BENCHMARK_DIR}"
+
 mkdir -p "${BENCHMARK_DIR}"
 
 pushd "${TMP_GIT_REPO_DIR}" || exit 1
@@ -44,4 +46,5 @@ popd || exit 1
 
 rm -rf "${TMP_GIT_REPO_DIR}"
 
-chown "${CURRENT_USER}":"${CURRENT_USER}" "${BENCHMARK_DIR}" -R # changes the owner of the directory to the current user
+# changes the owner of the directory to the current user
+chown "${CURRENT_USER}":"${CURRENT_USER}" "${BENCHMARK_DIR}" -R

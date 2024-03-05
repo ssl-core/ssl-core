@@ -34,7 +34,9 @@ wget "https://github.com/protocolbuffers/protobuf/releases/download/v21.10/proto
 tar -xvf "${TMP_PROTOBUF}/protobuf-${VERSION}.tar.gz" -C "${TMP_PROTOBUF}"
 rm -rf "${TMP_PROTOBUF}/protobuf-${VERSION}.tar.gz"
 
-rm -rf "${PROTOBUF_DIR}" # removes the directory if it exists to avoid errors
+# removes the directory if it exists to avoid errors
+rm -rf "${PROTOBUF_DIR}"
+
 mkdir -p "${PROTOBUF_DIR}"
 
 pushd "${TMP_PROTOBUF}/protobuf-${VERSION}" || exit 1
@@ -50,4 +52,5 @@ popd || exit 1
 
 rm -rf "${TMP_PROTOBUF}"
 
-chown "${CURRENT_USER}":"${CURRENT_USER}" "${PROTOBUF_DIR}" -R # changes the owner of the directory to the current user
+# changes the owner of the directory to the current user
+chown "${CURRENT_USER}":"${CURRENT_USER}" "${PROTOBUF_DIR}" -R
