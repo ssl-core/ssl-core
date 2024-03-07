@@ -11,13 +11,11 @@
 
 namespace robocin {
 
-// Compare if a given value is zero, using a given epsilon -----------------------------------------
 template <arithmetic T, std::floating_point U>
 constexpr bool fuzzyIsZero(T value, U epsilon) {
   return std::abs(value) <= epsilon;
 }
 
-// Compare if a given value is zero, using the injected epsilon ------------------------------------
 template <arithmetic T, std::floating_point U = T>
 constexpr bool fuzzyIsZero(T value)
   requires(has_epsilon_v<U>)
@@ -25,7 +23,6 @@ constexpr bool fuzzyIsZero(T value)
   return fuzzyIsZero(value, epsilon_v<U>);
 }
 
-// Compare if two given values are equal, using a given epsilon ------------------------------------
 template <arithmetic T,
           arithmetic U,
           std::floating_point V = common_floating_point_for_comparison_t<T, U>>
@@ -33,7 +30,6 @@ constexpr bool fuzzyCmpEqual(T lhs, U rhs, V epsilon) {
   return std::abs(lhs - rhs) <= epsilon;
 }
 
-// Compare if two given values are equal, using the injected epsilon -------------------------------
 template <arithmetic T,
           arithmetic U,
           std::floating_point V = common_floating_point_for_comparison_t<T, U>>
@@ -43,7 +39,6 @@ constexpr bool fuzzyCmpEqual(T lhs, U rhs)
   return fuzzyCmpEqual(lhs, rhs, epsilon_v<V>);
 }
 
-// Compare if two given values are not equal, using a given epsilon --------------------------------
 template <arithmetic T,
           arithmetic U,
           std::floating_point V = common_floating_point_for_comparison_t<T, U>>
@@ -51,7 +46,6 @@ constexpr bool fuzzyCmpNotEqual(T lhs, U rhs, V epsilon) {
   return not fuzzyCmpEqual(lhs, rhs, epsilon);
 }
 
-// Compare if two given values are not equal, using the injected epsilon ---------------------------
 template <arithmetic T,
           arithmetic U,
           std::floating_point V = common_floating_point_for_comparison_t<T, U>>
@@ -61,7 +55,6 @@ constexpr bool fuzzyCmpNotEqual(T lhs, U rhs)
   return not fuzzyCmpEqual(lhs, rhs, epsilon_v<V>);
 }
 
-// Three-way compare two given values, using a given epsilon ---------------------------------------
 template <arithmetic T,
           arithmetic U,
           std::floating_point V = common_floating_point_for_comparison_t<T, U>>
@@ -72,7 +65,6 @@ constexpr std::strong_ordering fuzzyCmpThreeWay(T lhs, U rhs, V epsilon) {
   return (lhs < rhs) ? std::strong_ordering::less : std::strong_ordering::greater;
 }
 
-// Three-way compare two given values, using the injected epsilon ----------------------------------
 template <arithmetic T,
           arithmetic U,
           std::floating_point V = common_floating_point_for_comparison_t<T, U>>
@@ -82,7 +74,6 @@ constexpr std::strong_ordering fuzzyCmpThreeWay(T lhs, U rhs)
   return fuzzyCmpThreeWay(lhs, rhs, epsilon_v<V>);
 }
 
-// Compare if the first given value is lt the second, using a given epsilon ------------------------
 template <arithmetic T,
           arithmetic U,
           std::floating_point V = common_floating_point_for_comparison_t<T, U>>
@@ -90,7 +81,6 @@ constexpr bool fuzzyCmpLess(T lhs, U rhs, V epsilon) {
   return std::is_lt(fuzzyCmpThreeWay(lhs, rhs, epsilon));
 }
 
-// Compare if the first given value lt the second, using the injected epsilon ----------------------
 template <arithmetic T,
           arithmetic U,
           std::floating_point V = common_floating_point_for_comparison_t<T, U>>
@@ -100,7 +90,6 @@ constexpr bool fuzzyCmpLess(T lhs, U rhs)
   return fuzzyCmpLess(lhs, rhs, epsilon_v<V>);
 }
 
-// Compare if the first given value is lteq to the second, using a given epsilon -------------------
 template <arithmetic T,
           arithmetic U,
           std::floating_point V = common_floating_point_for_comparison_t<T, U>>
@@ -108,7 +97,6 @@ constexpr bool fuzzyCmpLessEqual(T lhs, U rhs, V epsilon) {
   return std::is_lteq(fuzzyCmpThreeWay(lhs, rhs, epsilon));
 }
 
-// Compare if the first given value is lteq to the second, using the injected epsilon --------------
 template <arithmetic T,
           arithmetic U,
           std::floating_point V = common_floating_point_for_comparison_t<T, U>>
@@ -118,7 +106,6 @@ constexpr bool fuzzyCmpLessEqual(T lhs, U rhs)
   return fuzzyCmpLessEqual(lhs, rhs, epsilon_v<V>);
 }
 
-// Compare if the first given value is gt the second, using a given epsilon ------------------------
 template <arithmetic T,
           arithmetic U,
           std::floating_point V = common_floating_point_for_comparison_t<T, U>>
@@ -126,7 +113,6 @@ constexpr bool fuzzyCmpGreater(T lhs, U rhs, V epsilon) {
   return std::is_gt(fuzzyCmpThreeWay(lhs, rhs, epsilon));
 }
 
-// Compare if the first given value is gt the second, using the injected epsilon -------------------
 template <arithmetic T,
           arithmetic U,
           std::floating_point V = common_floating_point_for_comparison_t<T, U>>
@@ -136,7 +122,6 @@ constexpr bool fuzzyCmpGreater(T lhs, U rhs)
   return fuzzyCmpGreater(lhs, rhs, epsilon_v<V>);
 }
 
-// Compare if the first given value is gteq to the second, using a given epsilon -------------------
 template <arithmetic T,
           arithmetic U,
           std::floating_point V = common_floating_point_for_comparison_t<T, U>>
@@ -144,7 +129,6 @@ constexpr bool fuzzyCmpGreaterEqual(T lhs, U rhs, V epsilon) {
   return std::is_gteq(fuzzyCmpThreeWay(lhs, rhs, epsilon));
 }
 
-// Compare if the first given value is gteq to the second, using the injected epsilon --------------
 template <arithmetic T,
           arithmetic U,
           std::floating_point V = common_floating_point_for_comparison_t<T, U>>
@@ -154,7 +138,6 @@ constexpr bool fuzzyCmpGreaterEqual(T lhs, U rhs)
   return fuzzyCmpGreaterEqual(lhs, rhs, epsilon_v<V>);
 }
 
-// Functors ----------------------------------------------------------------------------------------
 template <std::floating_point F>
 class FuzzyIsZero {
  public:
