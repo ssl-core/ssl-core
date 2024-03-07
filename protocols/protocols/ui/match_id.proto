@@ -1,0 +1,6 @@
+syntax = "proto3";
+
+package protocols.ui;
+
+// TODO($ISSUE_N): Define MatchId (maybe in a separate file to be reused in other protocols?)
+message MatchId {}
