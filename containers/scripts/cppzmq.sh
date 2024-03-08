@@ -45,4 +45,5 @@ popd || exit 1
 
 rm -rf "${TMP_CPPZMQ}"
 
-chown "${CURRENT_USER}":"${CURRENT_USER}" "${CPPZMQ_DIR}" -R # changes the owner of the directory to the current user
+# changes the owner of the directory to the current user
+chown "${CURRENT_USER}":"${CURRENT_USER}" "${CPPZMQ_DIR}" -R

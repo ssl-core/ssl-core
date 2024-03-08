@@ -184,3 +184,18 @@ Install [Protocol Buffers](https://developers.google.com/protocol-buffers) compi
   1. `version`: The version of Protoc to install
   2. `directory`: The directory where the `bin` and `include` directories will be installed
        * *default*: `/usr/local`
+
+### [absl](scripts/absl.sh)
+
+Install [Abseil](https://abseil.io/) libraries.
+
+- **Arguments:**
+
+  1. `library_directory`: The directory where the library will be installed
+       * *default*: `/usr/local`
+
+- **Usage:**
+
+```bash
+bash absl.sh <library_directory>
+```

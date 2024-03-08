@@ -19,10 +19,6 @@ fi
 GOOGLETEST_DIR="${PARENT_DIR}/googletest"
 TMP_GIT_REPO_DIR="/tmp/googletest"
 
-echo -e "\x1B[01;93mInstalling git...\n\u001b[0m"
-
-apt install git -y
-
 echo -e "\x1B[01;93m\nInstalling or updating googletest...\n\u001b[0m"
 
 rm -rf "${TMP_GIT_REPO_DIR}"
@@ -32,7 +28,9 @@ git clone --recurse-submodules "https://github.com/google/googletest.git" -o goo
 
 mkdir -p "${TMP_GIT_REPO_DIR}"
 
-rm -rf "${GOOGLETEST_DIR}" # removes the directory if it exists to avoid errors
+# removes the directory if it exists to avoid errors
+rm -rf "${GOOGLETEST_DIR}"
+
 mkdir -p "${GOOGLETEST_DIR}"
 
 pushd "${TMP_GIT_REPO_DIR}" || exit 1
@@ -45,4 +43,5 @@ popd || exit 1
 
 rm -rf "${TMP_GIT_REPO_DIR}"
 
-chown "${CURRENT_USER}":"${CURRENT_USER}" "${GOOGLETEST_DIR}" -R # changes the owner of the directory to the current user
+# changes the owner of the directory to the current user
+chown "${CURRENT_USER}":"${CURRENT_USER}" "${GOOGLETEST_DIR}" -R
