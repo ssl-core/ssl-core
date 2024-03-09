@@ -2,11 +2,12 @@
 #include "gateway/service_discovery.h"
 
 namespace gateway {
-
 namespace {
-  constexpr std::string_view kGatewayRouter = "Gateway.Router";
-  constexpr std::string_view kGatewaySyncRequests = "Gateway.Sync.Requests";
-}
+
+constexpr std::string_view kGatewayRouter = "Gateway.Router";
+constexpr std::string_view kGatewaySyncRequests = "Gateway.Sync.Requests";
+
+} // namespace
 
 SynchronousSocketsController::SynchronousSocketsController() {
   router_.bind(SServiceDiscovery.lookup(kGatewayRouter).address);

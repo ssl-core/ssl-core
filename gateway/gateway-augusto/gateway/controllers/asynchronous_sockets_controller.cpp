@@ -2,13 +2,12 @@
 #include "gateway/service_discovery.h"
 
 namespace gateway {
-
 namespace {
 
 constexpr std::string_view kGatewayLive = "Gateway.Live";
 constexpr std::string_view kVisionService = "Vision";
 
-}
+} // namespace
 
 AsynchronousSocketsController::AsynchronousSocketsController() {
   publisher_.bind(SServiceDiscovery.lookup(kGatewayLive).address);

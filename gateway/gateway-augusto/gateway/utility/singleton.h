@@ -1,5 +1,5 @@
-#ifndef GATEWAY_SINGLETON_H
-#define GATEWAY_SINGLETON_H
+#ifndef GATEWAY_UTILITY_SINGLETON_H
+#define GATEWAY_UTILITY_SINGLETON_H
 
 #include <concepts>
 
@@ -20,7 +20,7 @@ class Singleton {
 
   ~Singleton() = default;
 
-  static reference getInstance() noexcept {
+  static reference get() noexcept {
     static value_type value{};
     return value;
   }
@@ -28,4 +28,4 @@ class Singleton {
 
 } // namespace gateway
 
-#endif // GATEWAY_SINGLETON_H
+#endif // GATEWAY_UTILITY_SINGLETON_H

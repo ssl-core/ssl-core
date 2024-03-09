@@ -1,12 +1,12 @@
-#ifndef GATEWAY_POLLER_H
-#define GATEWAY_POLLER_H
+#ifndef GATEWAY_NETWORK_POLLER_H
+#define GATEWAY_NETWORK_POLLER_H
 
 #include <memory>
 #include <span>
 #include <sys/poll.h>
 #include <vector>
 
-namespace vision {
+namespace gateway {
 
 class Poller {
  public:
@@ -32,6 +32,6 @@ class Poller {
   std::vector<::pollfd> pollfds_;
 };
 
-} // namespace vision
+} // namespace gateway
 
-#endif // VISION_NETWORK_POLLER_H
+#endif // GATEWAY_NETWORK_POLLER_H

@@ -1,5 +1,6 @@
-#include "gateway/poller.h"
-namespace vision {
+#include "gateway/network/poller.h"
+
+namespace gateway {
 
 Poller::Poller(std::span<const int> file_descriptors) {
   pollfds_.reserve(file_descriptors.size());
@@ -21,4 +22,4 @@ void Poller::push(int file_descriptor) {
 
 void Poller::poll(int timeout) { ::poll(pollfds_.data(), pollfds_.size(), timeout); }
 
-} // namespace vision
+} // namespace gateway

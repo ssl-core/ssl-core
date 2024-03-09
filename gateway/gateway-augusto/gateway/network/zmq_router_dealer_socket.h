@@ -1,5 +1,5 @@
-#ifndef ROBOCIN_NETWORK_ZMQ_ROUTER_DEALER_SOCKET_H
-#define ROBOCIN_NETWORK_ZMQ_ROUTER_DEALER_SOCKET_H
+#ifndef GATEWAY_NETWORK_ZMQ_ROUTER_DEALER_SOCKET_H
+#define GATEWAY_NETWORK_ZMQ_ROUTER_DEALER_SOCKET_H
 
 #include <span>
 #include <utility>
@@ -7,7 +7,7 @@
 #include <zmq.hpp>
 #include <zmq_addon.hpp>
 
-namespace robocin {
+namespace gateway {
 
 template <class ZmqSocket, class ZmqContext, zmq::socket_type SocketType>
 class IZmqRouterDealerSocket {
@@ -52,4 +52,4 @@ using ZmqDealerSocket
 
 } // namespace robocin
 
-#endif // ROBOCIN_NETWORK_ZMQ_ROUTER_DEALER_SOCKET_H
+#endif // GATEWAY_NETWORK_ZMQ_ROUTER_DEALER_SOCKET_H

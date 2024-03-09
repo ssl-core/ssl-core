@@ -7,20 +7,17 @@
 
 namespace gateway {
 
-using robocin::UdpMulticastSocketReceiver;
-using robocin::ZmqPublisherSocket;
-
 class ThirdPartySocketsController : public IController {
  public:
   explicit ThirdPartySocketsController();
   void run() override;
 
  private:
-  UdpMulticastSocketReceiver vision_;
-  UdpMulticastSocketReceiver referee_;
-  UdpMulticastSocketReceiver tracked_;
+  robocin::UdpMulticastSocketReceiver vision_;
+  robocin::UdpMulticastSocketReceiver referee_;
+  robocin::UdpMulticastSocketReceiver tracked_;
 
-  ZmqPublisherSocket publisher_;
+  robocin::ZmqPublisherSocket publisher_;
 };
 
 } // namespace gateway

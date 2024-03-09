@@ -7,17 +7,14 @@
 
 namespace gateway {
 
-using robocin::ZmqPublisherSocket;
-using robocin::ZmqSubscriberSocket;
-
 class AsynchronousSocketsController : public IController {
  public:
   explicit AsynchronousSocketsController();
   void run() override;
 
  private:
-  ZmqPublisherSocket publisher_;
-  ZmqSubscriberSocket subscriber_;
+  robocin::ZmqPublisherSocket publisher_;
+  robocin::ZmqSubscriberSocket subscriber_;
 };
 
 } // namespace gateway

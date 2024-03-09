@@ -3,10 +3,11 @@
 #include <thread>
 
 namespace gateway {
-
 namespace {
-  constexpr std::string_view kGatewayThirdParties = "Gateway.Third.Parties";
-}
+
+constexpr std::string_view kGatewayThirdParties = "Gateway.Third.Parties";
+
+} // namespace
 
 ThirdPartySocketsController::ThirdPartySocketsController() {
   publisher_.bind(SServiceDiscovery.lookup(kGatewayThirdParties).address);

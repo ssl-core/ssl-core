@@ -1,1 +1,0 @@
-#include "gateway/singleton.h"
