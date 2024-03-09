@@ -52,7 +52,7 @@ find_package(Threads REQUIRED)
 # It enable the following variables:
 #   absl::...                             the abseil libraries (https://abseil.io/docs/cpp/guides)
 find_package(absl CONFIG REQUIRED HINTS "/usr/local/absl" "/opt/absl" "/usr/local/protobuf" "/opt/protobuf")
-message(STATUS "Using absl: ${absl_DIR}")
+message(STATUS "Using absl: ${absl_VERSION}")
 
 ########################################################################################################################
 
