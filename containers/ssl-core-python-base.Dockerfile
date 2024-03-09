@@ -1,5 +1,7 @@
 FROM mcr.microsoft.com/vscode/devcontainers/python:3
 
+SHELL ["/bin/bash", "-c"]
+
 ARG PROTOC_VERSION='25.3'
 
 COPY containers/scripts /tmp/scripts
