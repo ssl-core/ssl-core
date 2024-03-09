@@ -1,7 +1,6 @@
 #ifndef GATEWAY_NETWORK_ZMQ_ROUTER_DEALER_SOCKET_H
 #define GATEWAY_NETWORK_ZMQ_ROUTER_DEALER_SOCKET_H
 
-#include <span>
 #include <utility>
 #include <zmq.h>
 #include <zmq.hpp>
@@ -50,6 +49,6 @@ using ZmqRouterSocket
 using ZmqDealerSocket
     = IZmqRouterDealerSocket<zmq::socket_t, zmq::context_t, zmq::socket_type::dealer>;
 
-} // namespace robocin
+} // namespace gateway
 
 #endif // GATEWAY_NETWORK_ZMQ_ROUTER_DEALER_SOCKET_H

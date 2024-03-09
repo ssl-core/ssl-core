@@ -1,7 +1,6 @@
 #ifndef GATEWAY_NETWORK_POLLER_H
 #define GATEWAY_NETWORK_POLLER_H
 
-#include <memory>
 #include <span>
 #include <sys/poll.h>
 #include <vector>
