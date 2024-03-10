@@ -1,4 +1,5 @@
-#include "gateway/controllers/synchronous_sockets_controller.h"
+#include "gateway/controller/synchronous_sockets_controller.h"
+
 #include "gateway/service_discovery.h"
 
 namespace gateway {

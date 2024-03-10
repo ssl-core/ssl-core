@@ -1,10 +1,10 @@
-#ifndef GATEWAY_CONTROLLERS_THIRD_PARTY_SOCKETS_CONTROLLER
-#define GATEWAY_CONTROLLERS_THIRD_PARTY_SOCKETS_CONTROLLER
+#ifndef GATEWAY_CONTROLLER_THIRD_PARTY_SOCKETS_CONTROLLER
+#define GATEWAY_CONTROLLER_THIRD_PARTY_SOCKETS_CONTROLLER
 
+#include "gateway/controller/icontroller.h"
 #include "gateway/network/poller.h"
 #include "robocin/network/udp_multicast_socket_receiver.h"
 #include "robocin/network/zmq_publisher_socket.h"
-#include "gateway/controllers/controller.h"
 
 namespace gateway {
 
@@ -25,4 +25,4 @@ class ThirdPartySocketsController : public IController {
 
 } // namespace gateway
 
-#endif // GATEWAY_CONTROLLERS_THIRD_PARTY_SOCKETS_CONTROLLER
+#endif // GATEWAY_CONTROLLER_THIRD_PARTY_SOCKETS_CONTROLLER

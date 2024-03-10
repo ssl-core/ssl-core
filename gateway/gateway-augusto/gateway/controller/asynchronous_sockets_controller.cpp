@@ -1,4 +1,5 @@
-#include "gateway/controllers/asynchronous_sockets_controller.h"
+#include "gateway/controller/asynchronous_sockets_controller.h"
+
 #include "gateway/service_discovery.h"
 
 namespace gateway {
@@ -27,4 +28,4 @@ void AsynchronousSocketsController::run() {
   }
 }
 
-} // namespace robocin
+} // namespace gateway

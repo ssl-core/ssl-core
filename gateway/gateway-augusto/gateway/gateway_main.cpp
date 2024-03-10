@@ -1,13 +1,13 @@
 
-#include "gateway/nlohmann/json.hpp"
+#include "gateway/controller/asynchronous_sockets_controller.h"
+#include "gateway/controller/icontroller.h"
+#include "gateway/controller/synchronous_sockets_controller.h"
+#include "gateway/controller/third_party_sockets_controller.h"
 #include "gateway/service_discovery.h"
-#include "gateway/controllers/controller.h"
-#include "gateway/controllers/synchronous_sockets_controller.h"
-#include "gateway/controllers/asynchronous_sockets_controller.h"
-#include "gateway/controllers/third_party_sockets_controller.h"
 
 #include <fstream>
 #include <memory>
+#include <nlohmann/json.hpp>
 #include <thread>
 #include <zmq.hpp>
 #include <zmq_addon.hpp>
@@ -18,10 +18,10 @@ using gateway::SServiceDiscovery;
 using gateway::SynchronousSocketsController;
 using gateway::ThirdPartySocketsController;
 
-static constexpr std::string_view kServiceDomainPath = "../../../service_domain.json";
+static constexpr std::string_view kServiceDomainJson = "service_domain.json";
 
 int main() {
-  std::ifstream file(std::string{kServiceDomainPath});
+  std::ifstream file(std::format("{}/{}", ROBOCIN_REPOSITORY_PATH, kServiceDomainJson));
   if (!file.is_open()) {
     return -1;
   }
@@ -49,5 +49,5 @@ int main() {
     asynchronous_sockets_controller->run();
   });
 
-  // return 0;
+  return 0;
 }

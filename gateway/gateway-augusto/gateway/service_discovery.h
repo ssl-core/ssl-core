@@ -1,9 +1,9 @@
 #ifndef GATEWAY_SERVICE_DISCOVERY_H
 #define GATEWAY_SERVICE_DISCOVERY_H
 
-#include "gateway/nlohmann/json.hpp"
 #include "gateway/utility/singleton.h"
-#include "nlohmann/json.hpp"
+
+#include <nlohmann/json.hpp>
 
 namespace gateway {
 namespace service_discovery_internal {
@@ -27,8 +27,7 @@ class ServiceDiscovery {
 } // namespace service_discovery_internal
 
 // NOLINTNEXTLINE(*naming*, *const*)
-static auto& SServiceDiscovery
-    = Singleton<service_discovery_internal::ServiceDiscovery>::get();
+static auto& SServiceDiscovery = Singleton<service_discovery_internal::ServiceDiscovery>::get();
 
 } // namespace gateway
 

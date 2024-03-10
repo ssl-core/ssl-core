@@ -1,4 +1,4 @@
-#include "gateway/controllers/third_party_sockets_controller.h"
+#include "gateway/controller/third_party_sockets_controller.h"
 
 #include "gateway/service_discovery.h"
 
