@@ -8,5 +8,5 @@ robocin_cpp_library(
 robocin_cpp_executable(
   NAME gateway_main
   SRCS gateway_main.cpp
-  DEPS service_discovery controllers
+  DEPS service_discovery controller
 )
