@@ -1,9 +1,9 @@
-#ifndef GATEWAY_CONTROLLERS_ASYNCHRONOUS_SOCKETS_CONTROLLER_H
-#define GATEWAY_CONTROLLERS_ASYNCHRONOUS_SOCKETS_CONTROLLER_H
+#ifndef GATEWAY_CONTROLLER_ASYNCHRONOUS_SOCKETS_CONTROLLER_H
+#define GATEWAY_CONTROLLER_ASYNCHRONOUS_SOCKETS_CONTROLLER_H
 
+#include "gateway/controller/icontroller.h"
 #include "robocin/network/zmq_publisher_socket.h"
 #include "robocin/network/zmq_subscriber_socket.h"
-#include "gateway/controllers/controller.h"
 
 namespace gateway {
 
@@ -19,4 +19,4 @@ class AsynchronousSocketsController : public IController {
 
 } // namespace gateway
 
-#endif // GATEWAY_CONTROLLERS_ASYNCHRONOUS_SOCKETS_CONTROLLER_H
+#endif // GATEWAY_CONTROLLER_ASYNCHRONOUS_SOCKETS_CONTROLLER_H

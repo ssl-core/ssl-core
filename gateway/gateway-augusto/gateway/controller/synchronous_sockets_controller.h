@@ -1,8 +1,8 @@
-#ifndef GATEWAY_CONTROLLERS_SYNCHRONOUS_SOCKETS_CONTROLLER_H
-#define GATEWAY_CONTROLLERS_SYNCHRONOUS_SOCKETS_CONTROLLER_H
+#ifndef GATEWAY_CONTROLLER_SYNCHRONOUS_SOCKETS_CONTROLLER_H
+#define GATEWAY_CONTROLLER_SYNCHRONOUS_SOCKETS_CONTROLLER_H
 
+#include "gateway/controller/icontroller.h"
 #include "gateway/network/zmq_router_dealer_socket.h"
-#include "gateway/controllers/controller.h"
 
 namespace gateway {
 
@@ -18,4 +18,4 @@ class SynchronousSocketsController : public IController {
 
 } // namespace gateway
 
-#endif // GATEWAY_CONTROLLERS_SYNCHRONOUS_SOCKETS_CONTROLLER_H
+#endif // GATEWAY_CONTROLLER_SYNCHRONOUS_SOCKETS_CONTROLLER_H
