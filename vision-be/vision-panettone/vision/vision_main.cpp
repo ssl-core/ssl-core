@@ -17,47 +17,54 @@ struct TestInputs {
 };
 
 int main() {
-  std::cout << "Creating factory and frame repository" << "\n";
-
+  std::cout << "Creating factory and frame repository"
+            << "\n";
   const auto kFactory = RepositoryFactoryMapping{}[RepositoryType::MongoDb];
 
   std::unique_ptr<IFrameRepository> frame_repository = kFactory->createFrameRepository();
   std::future<bool> connection_status = frame_repository->connect();
 
   if (connection_status.wait(); connection_status.get()) {
-    std::cout << "Connected to the database." << "\n";
+    std::cout << "Connected to the database."
+              << "\n";
   } else {
-    std::cout << "Failed to connect to the database." << "\n";
+    std::cout << "Failed to connect to the database."
+              << "\n";
     return 1;
   }
 
-  std::cout << "Creating test inputs" << "\n";
-
-  // test input for the program
-  std::vector<TestInputs> test_inputs = {
-      {1, "save"},
-      {2, "save"},
-      {1, "fetch"},
-      {2, "fetch"},
-  };
+  std::cout << "Creating test inputs"
+            << "\n";
+  std::vector<TestInputs> test_inputs = {{0, "save"},
+                                         {0, "save"},
+                                         {1, "fetch"},
+                                         {2, "fetch"},
+                                         {0, "save"},
+                                         {3, "fetch"},
+                                         {3, "remove"},
+                                         {3, "fetch"},
+                                         {2, "fetch_range"}};
 
   int serial_id = 0;
   for (const auto& [record_id, operation] : test_inputs) {
-    std::cout << "Operation: " << operation << "\n";
-
-    if (operation == "quit") {
-      break;
-    }
-
-    std::cout << "Record id is: " << record_id << "\n";
-
     if (operation == "fetch") {
-      std::cout << "fetching...\n";
+      std::cout << "fetching (key=" << record_id << ")...\n";
       if (auto result = frame_repository->find(record_id)) {
         std::cout << "retrieved frame: " << result->DebugString() << ".\n";
       } else {
         std::cout << "frame not found.\n";
       }
+
+    } else if (operation == "fetch_range") {
+      std::cout << "fetching range 1 >= key <= " << record_id << ")...\n";
+      if (auto result = frame_repository->findRange(1, record_id)) {
+        std::cout << "retrieved frames \n";
+      } else {
+        std::cout << "frames not found.\n";
+      }
+    } else if (operation == "remove") {
+      std::cout << "removing (key=" << record_id << ")...\n";
+      frame_repository->remove(record_id);
 
     } else if (operation == "save") {
       std::cout << "saving...\n";
@@ -79,7 +86,7 @@ int main() {
 
       std::cout << "saved frame: " << frame.DebugString() << ".\n";
     } else {
-      std::cout << "invalid operation.\n";
+      std::cout << "invalid operation: " << operation << " \n";
     }
   }
 

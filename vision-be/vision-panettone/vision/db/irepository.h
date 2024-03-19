@@ -20,7 +20,9 @@ class IRepository {
   virtual void remove(const id_type& key) = 0;
 
   [[nodiscard]] virtual std::optional<data_type> find(const id_type& key) = 0;
-  // TODO($ISSUE_N): Add find by range.
+  [[nodiscard]] virtual std::optional<data_type> findRange(const id_type& key_lower_bound,
+                                                      const id_type& key_upper_bound)
+      = 0;
 };
 
 } // namespace vision
