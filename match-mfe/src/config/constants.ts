@@ -1,4 +1,6 @@
 const constants = {
+  epsilon: 0.001,
+  clippingEpsilon: 0.01,
   robot: {
     chassis: {
       radius: 0.09,

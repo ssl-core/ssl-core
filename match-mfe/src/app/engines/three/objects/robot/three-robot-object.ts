@@ -24,17 +24,20 @@ class ThreeRobotObject extends ThreeBaseObject {
     this.add(chassis);
 
     const dotParams = this.getDotsParams();
-    for (let i = 0; i < dotParams.length; i++) {
-      const dot = new ThreeDotMesh(dotParams[i].radius, dotParams[i].color);
-      const position = dotParams[i].position;
-      dot.position.set(position[0], position[1], position[2]);
+    for (const dotParam of dotParams) {
+      const dot = new ThreeDotMesh(dotParam.radius, dotParam.color);
+      dot.position.set(
+        dotParam.position[0],
+        dotParam.position[1],
+        dotParam.position[2]
+      );
 
       this.add(dot);
     }
 
     const angles = constants.robot.wheels.angles;
-    for (let i = 0; i < angles.length; i++) {
-      const wheel = new ThreeWheelMesh(angles[i]);
+    for (const angle of angles) {
+      const wheel = new ThreeWheelMesh(angle);
       this.add(wheel);
     }
   }

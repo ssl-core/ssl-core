@@ -2,6 +2,7 @@ import { CylinderGeometry, MeshPhongMaterial } from "three";
 
 import ThreeBaseMesh from "../three-base-mesh";
 import constants from "../../../../../config/constants";
+import { degreesToRadians } from "../../../../../utils/math";
 
 class ThreeWheelMesh extends ThreeBaseMesh {
   constructor(angle: number) {
@@ -29,15 +30,15 @@ class ThreeWheelMesh extends ThreeBaseMesh {
 
   private setParamsByAngle(angle: number) {
     const radius =
-      constants.robot.chassis.radius - constants.robot.wheels.thickness / 2.0;
-    const positionAngle = (angle * Math.PI) / 180.0;
+      constants.robot.chassis.radius - constants.robot.wheels.thickness / 2;
+    const positionAngle = degreesToRadians(angle);
     const x = radius * Math.cos(positionAngle);
     const y = radius * Math.sin(positionAngle);
     const z =
-      constants.robot.chassis.height / 2.0 -
+      constants.robot.chassis.height / 2 -
       constants.robot.wheels.radius +
       constants.robot.chassis.bottomHeight;
-    const rotationAngle = (angle * Math.PI) / 180.0 + Math.PI / 2.0;
+    const rotationAngle = positionAngle + Math.PI / 2;
 
     this.position.set(x, y, -z);
     this.rotation.set(0, 0, rotationAngle);

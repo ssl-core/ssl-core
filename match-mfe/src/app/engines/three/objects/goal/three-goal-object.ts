@@ -13,18 +13,12 @@ class ThreeGoalObject extends ThreeBaseObject {
 
   protected addMeshes() {
     const params = this.getWallsParams();
-    for (let i = 0; i < params.length; i++) {
-      const wall = this.buildMesh(params[i].width);
-      wall.position.set(
-        params[i].position.x,
-        params[i].position.y,
-        params[i].position.z
-      );
-      wall.rotation.set(
-        params[i].rotation.x,
-        params[i].rotation.y,
-        params[i].rotation.z
-      );
+
+    for (const param of params) {
+      const wall = this.buildMesh(param.width);
+      wall.position.set(param.position.x, param.position.y, param.position.z);
+      wall.rotation.set(param.rotation.x, param.rotation.y, param.rotation.z);
+
       this.add(wall);
     }
   }

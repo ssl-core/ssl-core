@@ -19,7 +19,7 @@ class ThreeDotMesh extends ThreeBaseMesh {
     return new CircleGeometry(
       this.radius,
       constants.robot.wheels.segments
-    ).translate(0, 0, 0.001);
+    ).translate(0, 0, constants.epsilon);
   }
 
   protected buildMaterial() {

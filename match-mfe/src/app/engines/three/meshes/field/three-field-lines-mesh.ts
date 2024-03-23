@@ -16,15 +16,15 @@ class ThreeFieldLinesMesh extends LineSegments2 {
   private buildGeometry() {
     const points = [
       ...this.fieldPoints(),
-      ...this.leftPenaltyPoints(),
-      ...this.rightPenaltyPoints(),
+      ...this.penaltyPoints(1),
+      ...this.penaltyPoints(-1),
       ...this.midLinesPoints(),
       ...this.centerCirclePoints(),
     ];
 
     return new LineSegmentsGeometry()
       .setPositions(points)
-      .translate(0, 0, 0.01);
+      .translate(0, 0, constants.clippingEpsilon);
   }
 
   private buildMaterial() {
@@ -36,117 +36,87 @@ class ThreeFieldLinesMesh extends LineSegments2 {
   }
 
   private fieldPoints() {
-    const fieldWidthHalf = constants.field.width / 2.0;
-    const fieldHeightHalf = constants.field.height / 2.0;
+    const fieldHalfWidth = constants.field.width / 2;
+    const fieldHalfHeight = constants.field.height / 2;
 
     return [
-      -fieldWidthHalf,
-      -fieldHeightHalf,
+      -fieldHalfWidth,
+      -fieldHalfHeight,
       0,
-      -fieldWidthHalf,
-      fieldHeightHalf,
-      0,
-
-      -fieldWidthHalf,
-      fieldHeightHalf,
-      0,
-      fieldWidthHalf,
-      fieldHeightHalf,
+      -fieldHalfWidth,
+      fieldHalfHeight,
       0,
 
-      fieldWidthHalf,
-      fieldHeightHalf,
+      -fieldHalfWidth,
+      fieldHalfHeight,
       0,
-      fieldWidthHalf,
-      -fieldHeightHalf,
+      fieldHalfWidth,
+      fieldHalfHeight,
       0,
 
-      fieldWidthHalf,
-      -fieldHeightHalf,
+      fieldHalfWidth,
+      fieldHalfHeight,
       0,
-      -fieldWidthHalf,
-      -fieldHeightHalf,
+      fieldHalfWidth,
+      -fieldHalfHeight,
+      0,
+
+      fieldHalfWidth,
+      -fieldHalfHeight,
+      0,
+      -fieldHalfWidth,
+      -fieldHalfHeight,
       0,
     ];
   }
 
-  private leftPenaltyPoints() {
-    const fieldWidthHalf = constants.field.width / 2.0;
-    const penaltyWidth = constants.field.penalty.width;
+  private penaltyPoints(side: number) {
+    const fieldHalfWidth = (side * constants.field.width) / 2;
+    const penaltyWidth = -side * constants.field.penalty.width;
     const penaltyHeight = constants.field.penalty.height;
-    const penaltyHeightHalf = penaltyHeight / 2.0;
+    const penaltyHalfHeight = penaltyHeight / 2;
 
     return [
-      -fieldWidthHalf,
-      -penaltyHeightHalf,
+      fieldHalfWidth,
+      -penaltyHalfHeight,
       0,
-      -fieldWidthHalf + penaltyWidth,
-      -penaltyHeightHalf,
-      0,
-
-      -fieldWidthHalf + penaltyWidth,
-      -penaltyHeightHalf,
-      0,
-      -fieldWidthHalf + penaltyWidth,
-      penaltyHeightHalf,
+      fieldHalfWidth + penaltyWidth,
+      -penaltyHalfHeight,
       0,
 
-      -fieldWidthHalf + penaltyWidth,
-      penaltyHeightHalf,
+      fieldHalfWidth + penaltyWidth,
+      -penaltyHalfHeight,
       0,
-      -fieldWidthHalf,
-      penaltyHeightHalf,
-      0,
-    ];
-  }
-
-  private rightPenaltyPoints() {
-    const fieldWidthHalf = constants.field.width / 2.0;
-    const penaltyWidth = constants.field.penalty.width;
-    const penaltyHeight = constants.field.penalty.height;
-    const penaltyHeightHalf = penaltyHeight / 2.0;
-
-    return [
-      fieldWidthHalf,
-      -penaltyHeightHalf,
-      0,
-      fieldWidthHalf - penaltyWidth,
-      -penaltyHeightHalf,
+      fieldHalfWidth + penaltyWidth,
+      penaltyHalfHeight,
       0,
 
-      fieldWidthHalf - penaltyWidth,
-      -penaltyHeightHalf,
+      fieldHalfWidth + penaltyWidth,
+      penaltyHalfHeight,
       0,
-      fieldWidthHalf - penaltyWidth,
-      penaltyHeightHalf,
-      0,
-
-      fieldWidthHalf - penaltyWidth,
-      penaltyHeightHalf,
-      0,
-      fieldWidthHalf,
-      penaltyHeightHalf,
+      fieldHalfWidth,
+      penaltyHalfHeight,
       0,
     ];
   }
 
   private midLinesPoints() {
-    const fieldWidthHalf = constants.field.width / 2.0;
-    const fieldHeightHalf = constants.field.height / 2.0;
+    const fieldHalfWidth = constants.field.width / 2;
+    const fieldHalfHeight = constants.field.height / 2;
 
     return [
-      -fieldWidthHalf,
+      -fieldHalfWidth,
       0,
       0,
-      fieldWidthHalf,
+      fieldHalfWidth,
       0,
       0,
 
       0,
-      -fieldHeightHalf,
+      -fieldHalfHeight,
       0,
       0,
-      fieldHeightHalf,
+      fieldHalfHeight,
       0,
     ];
   }
@@ -155,11 +125,11 @@ class ThreeFieldLinesMesh extends LineSegments2 {
     const { radius, segments } = constants.field.center;
     const points = [];
 
-    for (let i = 0; i < segments; i++) {
-      const angle = (i / segments) * Math.PI * 2;
+    for (let segmentIndex = 0; segmentIndex < segments; segmentIndex++) {
+      const angle = (segmentIndex / segments) * Math.PI * 2;
       points.push(Math.cos(angle) * radius, Math.sin(angle) * radius, 0);
 
-      if (i > 0) {
+      if (segmentIndex > 0) {
         points.push(Math.cos(angle) * radius, Math.sin(angle) * radius, 0);
       }
     }

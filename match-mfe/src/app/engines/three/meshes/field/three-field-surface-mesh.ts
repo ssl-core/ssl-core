@@ -10,14 +10,16 @@ class ThreeFieldSurfaceMesh extends ThreeBaseMesh {
   }
 
   protected buildGeometry() {
-    return new PlaneGeometry(
+    const width =
       constants.field.width +
-        constants.field.outside.margin * 2 +
-        constants.field.surface.margin * 2,
+      constants.field.outside.margin * 2 +
+      constants.field.surface.margin * 2;
+    const height =
       constants.field.height +
-        constants.field.outside.margin * 2 +
-        constants.field.surface.margin * 2
-    ).translate(0, 0, -0.001);
+      constants.field.outside.margin * 2 +
+      constants.field.surface.margin * 2;
+
+    return new PlaneGeometry(width, height).translate(0, 0, -constants.epsilon);
   }
 
   protected buildMaterial() {

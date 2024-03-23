@@ -10,10 +10,10 @@ class ThreeFieldMesh extends ThreeBaseMesh {
   }
 
   protected buildGeometry() {
-    return new PlaneGeometry(
-      constants.field.width + constants.field.outside.margin * 2,
-      constants.field.height + constants.field.outside.margin * 2
-    );
+    const width = constants.field.width + constants.field.outside.margin * 2;
+    const height = constants.field.height + constants.field.outside.margin * 2;
+
+    return new PlaneGeometry(width, height);
   }
 
   protected buildMaterial() {

@@ -43,11 +43,11 @@ class ThreeSceneManager {
   }
 
   public render(_frame: Frame) {
-    this.scene.children.forEach((child) => {
+    for (const child of this.scene.children) {
       if (child instanceof ThreeRobotObject) {
         child.update();
       }
-    });
+    }
 
     this.update();
   }
@@ -121,8 +121,7 @@ class ThreeSceneManager {
 
   private addRobots() {
     const z =
-      constants.robot.chassis.height / 2.0 +
-      constants.robot.chassis.bottomHeight;
+      constants.robot.chassis.height / 2 + constants.robot.chassis.bottomHeight;
 
     for (let i = 0; i < 11; i++) {
       const robot = new ThreeRobotObject(i, "blue");
