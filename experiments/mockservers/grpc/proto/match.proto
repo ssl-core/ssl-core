@@ -1,0 +1,22 @@
+syntax = "proto3";
+
+package vision;
+
+option go_package = "proto/vision";
+
+service MatchService {
+  rpc Get(MatchRequest) returns (MatchResponse) {}
+}
+
+message Match {
+  string id = 1;
+  string name = 2;
+}
+
+message MatchRequest {
+  string req = 1;
+}
+
+message MatchResponse {
+  Match match = 1;
+}

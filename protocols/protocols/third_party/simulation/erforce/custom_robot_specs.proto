@@ -2,6 +2,8 @@ syntax = "proto2";
 
 package protocols.third_party.simulation.erforce;
 
+option go_package = "github.com/robocin/ssl-core/protocols/protocols/third_party/simulation/erforce";
+
 // Custom robot specs for ER-Force simulator
 message RobotSpecErForce {
   // The distance [m] from the robot center to the ball, when the ball is as

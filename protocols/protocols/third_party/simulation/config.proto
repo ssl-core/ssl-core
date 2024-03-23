@@ -2,6 +2,8 @@ syntax = "proto2";
 
 package protocols.third_party.simulation;
 
+option go_package = "github.com/robocin/ssl-core/protocols/protocols/third_party/simulation";
+
 import "google/protobuf/any.proto";
 import "protocols/third_party/detection/geometry.proto";
 import "protocols/third_party/game_controller/common.proto";

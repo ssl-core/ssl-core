@@ -2,6 +2,8 @@ syntax = "proto3";
 
 package protocols.common;
 
+option go_package = "github.com/robocin/ssl-core/protocols/protocols/common";
+
 // Point2Df is a (float) 2D point in the plane.
 message Point2Df {
   // The x coordinate of the point in the plane (in millimeters).

@@ -2,6 +2,8 @@ syntax = "proto2";
 
 package protocols.third_party.detection;
 
+option go_package = "github.com/robocin/ssl-core/protocols/protocols/third_party/detection";
+
 import "protocols/third_party/detection/geometry.proto";
 import "protocols/third_party/detection/raw.proto";
 

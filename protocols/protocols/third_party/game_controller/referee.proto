@@ -2,6 +2,8 @@ syntax = "proto2";
 
 package protocols.third_party.game_controller;
 
+option go_package = "github.com/robocin/ssl-core/protocols/protocols/third_party/game_controller";
+
 import "protocols/third_party/game_controller/event.proto";
 
 // Each UDP packet contains one of these messages.

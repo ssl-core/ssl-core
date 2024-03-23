@@ -2,6 +2,8 @@ syntax = "proto3";
 
 package protocols.common;
 
+option go_package = "github.com/robocin/ssl-core/protocols/protocols/common";
+
 // RobotId is the message describing the id of a robot.
 message RobotId {
   // Color is the enum describing the color of the robot.
