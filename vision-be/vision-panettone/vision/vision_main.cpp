@@ -73,10 +73,9 @@ int main() {
       std::cout << "saving...\n";
 
       Frame frame;
-      // Set Frame id
+
       frame.mutable_properties()->set_serial_id(++serial_id);
 
-      // Set field properties
       Field& field = *frame.mutable_field();
       field.set_length(9000);
       field.set_width(6000);

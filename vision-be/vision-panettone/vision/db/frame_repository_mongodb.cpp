@@ -31,28 +31,19 @@ MongoDbDocument toMongoDbDocument(const Frame& frame) {
   MongoDbArray balls_array{};
   for (const auto& ball : frame.balls()) {
     MongoDbDocument ball_doc{};
-    // TODO($ISSUE_N): Add ball source to the document.
-    // ball_doc << "source" << static_cast<int>(ball.source());
     ball_doc << "confidence" << ball.confidence();
     ball_doc << "position" << bsoncxx::builder::stream::open_array << ball.position().x()
              << ball.position().y() << ball.position().z() << bsoncxx::builder::stream::close_array;
     ball_doc << "velocity" << bsoncxx::builder::stream::open_array << ball.velocity().x()
              << ball.velocity().y() << ball.position().z() << bsoncxx::builder::stream::close_array;
-    // TODO($ISSUE_N): Add ball acceleration to the document.
-    // balls_array << "acceleration" << bsoncxx::builder::stream::open_array <<
-    // ball.acceleration().x()
-    //             << ball.acceleration().y() << ball.acceleration().z()
-    //             << bsoncxx::builder::stream::close_array;
     balls_array << ball_doc;
   }
   document << "balls" << balls_array;
 
-  // add robots array
   MongoDbArray robots_array{};
   for (const auto& robot : frame.robots()) {
     MongoDbDocument robot_doc{};
-    // TODO($ISSUE_N): Add robot source to the document.
-    // robot_doc << "source" << robot.source();
+
     robot_doc << "confidence" << robot.confidence();
     robot_doc << "id" << robot.robot_id().number();
     robot_doc << "color" << robot.robot_id().color();
@@ -62,24 +53,11 @@ MongoDbDocument toMongoDbDocument(const Frame& frame) {
     robot_doc << "velocity" << bsoncxx::builder::stream::open_array << robot.velocity().x()
               << robot.velocity().y() << bsoncxx::builder::stream::close_array;
     robot_doc << "angular_velocity" << robot.angular_velocity();
-    // TODO($ISSUE_N): Add robot acceleration to the document.
-    // robot_doc << "acceleration" << bsoncxx::builder::stream::open_array <<
-    // robot.acceleration().x()
-    //           << robot.acceleration().y() << bsoncxx::builder::stream::close_array;
-
-    // TODO($ISSUE_N): Add robot physical attributes to the document.
-    // robot_doc << "robot_radius" << robot.robot_physical_attributes().radius();
-    // robot_doc << "robot_height" << robot.robot_physical_attributes().height();
-    // robot_doc << "dribbler_width" << robot.robot_physical_attributes().dribbler_width();
-
-    // TODO($ISSUE_N): Add robot feedback to the document.
-    // robot_doc << "feedback" << robot.feedback();
 
     robots_array << robot_doc;
   }
   document << "robots" << robots_array;
 
-  // add field document
   MongoDbDocument field_doc{};
   const auto& field = frame.field();
   field_doc << "serial_id" << static_cast<int64_t>(field.serial_id());
