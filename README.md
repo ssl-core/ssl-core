@@ -34,39 +34,39 @@ All the code developed was done in [Visual Studio Code](https://code.visualstudi
 
 ## Codemap
 
-- [`experiments`](experiments/README.md)
+* [`experiments`](experiments/README.md)
 
   Contains experiments and prototypes for conceptual validation.
 
-- [`vision-be`](vision-be/README.md)
+* [`vision-be`](vision-be/README.md)
 
   Contains the vision microservice.
 
-- [`app-shell`](app-shell/README.md)
+* [`app-shell`](app-shell/README.md)
 
   Contains the application shell for mounting microfrontends.
 
-- [`match-mfe`](match-mfe/README.md)
+* [`match-mfe`](match-mfe/README.md)
 
   Contains the match microfrontend.
 
-- [`common`](common/README.md)
+* [`common`](common/README.md)
 
   Contains common code and utilities used across the project.
 
-- [`.cmake`](.cmake/README.md)
+* [`.cmake`](.cmake/README.md)
 
   Contains common [CMake](https://cmake.org) rules and utilities used across the project.
 
-- [`protocols`](protocols/README.md)
+* [`protocols`](protocols/README.md)
 
   Contains the [Protocol Buffers](https://developers.google.com/protocol-buffers) definitions used across the project.
 
-- [`docs`](docs/README.md)
+* [`docs`](docs/README.md)
 
   Contains documentation pages as guides, tutorials, and other useful information.
 
-- [`containers`](containers/README.md)
+* [`containers`](containers/README.md)
 
   Contains common [Docker](https://www.docker.com) files and scripts used across the project.
 
@@ -74,9 +74,9 @@ All the code developed was done in [Visual Studio Code](https://code.visualstudi
 
 There are many ways in which you can participate in this project, for example:
 
-- [Reporting bugs, suggesting new features](https://github.com/robocin/ssl-core/issues) and contributing to the validation while they are being checked in
-- Reviewing our [pull requests](https://github.com/robocin/ssl-core/pulls)
-- Reviewing our documentation within this repository and making pull requests for anything from typos to additional new content
+* [Reporting bugs, suggesting new features](https://github.com/robocin/ssl-core/issues) and contributing to the validation while they are being checked in
+* Reviewing our [pull requests](https://github.com/robocin/ssl-core/pulls)
+* Reviewing our documentation within this repository and making pull requests for anything from typos to additional new content
 
 If you are interested in fixing issues and contributing directly to the code base,
 please see [How to Contribute](docs/how-to-contribute.md).
@@ -89,6 +89,6 @@ The `ssl-core` repository is licensed under the terms of the MIT license. See [L
 
 We would like to express our gratitude to the following open-source projects that have inspired and influenced us in the development of `ssl-core`:
 
-- [`abseil-cpp`](https://github.com/abseil/abseil-cpp), from Google
-- [`vscode`](https://github.com/microsoft/vscode), from Microsoft
-- [`Sumatra`](https://github.com/TIGERs-Mannheim/Sumatra), from TIGERs Mannheim
+* [`abseil-cpp`](https://github.com/abseil/abseil-cpp), from Google
+* [`vscode`](https://github.com/microsoft/vscode), from Microsoft
+* [`Sumatra`](https://github.com/TIGERs-Mannheim/Sumatra), from TIGERs Mannheim
