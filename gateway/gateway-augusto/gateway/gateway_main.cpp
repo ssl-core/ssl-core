@@ -18,10 +18,10 @@ using gateway::SServiceDiscovery;
 using gateway::SynchronousSocketsController;
 using gateway::ThirdPartySocketsController;
 
-static constexpr std::string_view kServiceDomainJson = "service_domain.json";
+static constexpr std::string_view kServiceRegistryJson = "service_registry.json";
 
 int main() {
-  std::ifstream file(std::format("{}/{}", ROBOCIN_REPOSITORY_PATH, kServiceDomainJson));
+  std::ifstream file(std::format("{}/{}", ROBOCIN_REPOSITORY_PATH, kServiceRegistryJson));
   if (!file.is_open()) {
     return -1;
   }

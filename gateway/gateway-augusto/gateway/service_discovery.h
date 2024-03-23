@@ -17,7 +17,7 @@ class ServiceDiscovery {
 
   ServiceDiscovery() = default;
 
-  void setup(const nlohmann::json& service_domain);
+  void setup(const nlohmann::json& service_registry);
   const Args& lookup(std::string_view service_name) const;
 
  private:
