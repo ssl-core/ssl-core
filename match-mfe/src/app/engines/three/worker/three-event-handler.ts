@@ -1,5 +1,6 @@
 import ThreeProxyManager from "../proxy/three-proxy-manager";
 import ThreeSceneManager from "../scene/three-scene-manager";
+import ThreeEventTypes from "./three-event-types";
 
 class ThreeEventHandler {
   private sceneManager: ThreeSceneManager;
@@ -15,22 +16,22 @@ class ThreeEventHandler {
 
   public handleEvent(type: string, payload: any) {
     switch (type) {
-      case "initialize":
+      case ThreeEventTypes.Initialize:
         const { canvas, proxyId } = payload;
         const proxy = this.proxyManager.getProxy(proxyId);
 
         this.sceneManager.initialize(canvas, proxy);
         break;
-      case "resize":
+      case ThreeEventTypes.Resize:
         this.sceneManager.resize(payload.width, payload.height);
         break;
-      case "frame":
+      case ThreeEventTypes.Frame:
         this.sceneManager.render(payload as Frame);
         break;
-      case "proxy":
+      case ThreeEventTypes.Proxy:
         this.proxyManager.addProxy(payload as number);
         break;
-      case "event":
+      case ThreeEventTypes.Event:
         this.proxyManager.handleEvent(payload as ProxyEvent);
         break;
       default:

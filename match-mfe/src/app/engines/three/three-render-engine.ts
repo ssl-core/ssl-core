@@ -2,6 +2,7 @@ import BaseRenderEngine from "../base-render-engine";
 import ThreeWorker from "./worker/three-worker?worker";
 import ThreeElementProxy from "./proxy/three-element-proxy";
 import ThreeProxyEventHandlers from "./proxy/three-proxy-event-handlers";
+import ThreeEventTypes from "./worker/three-event-types";
 
 class ThreeRenderEngine extends BaseRenderEngine {
   private parentElement: HTMLElement;
@@ -30,7 +31,7 @@ class ThreeRenderEngine extends BaseRenderEngine {
   }
 
   public render(frame: Frame) {
-    this.worker.postMessage({ type: "frame", payload: frame });
+    this.worker.postMessage({ type: ThreeEventTypes.Frame, payload: frame });
   }
 
   private appendCanvas() {
@@ -51,7 +52,7 @@ class ThreeRenderEngine extends BaseRenderEngine {
 
     this.worker.postMessage(
       {
-        type: "initialize",
+        type: ThreeEventTypes.Initialize,
         payload: { canvas: offscreen, proxyId: proxy.getId() },
       },
       [offscreen]
@@ -62,7 +63,7 @@ class ThreeRenderEngine extends BaseRenderEngine {
     const observer = new ResizeObserver((entries) => {
       const { width, height, top, left } = entries[0].contentRect;
       this.worker.postMessage({
-        type: "resize",
+        type: ThreeEventTypes.Resize,
         payload: { width, height, top, left },
       });
     });

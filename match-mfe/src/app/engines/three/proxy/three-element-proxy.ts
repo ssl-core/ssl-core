@@ -1,3 +1,5 @@
+import ThreeEventTypes from "../worker/three-event-types";
+
 class ThreeElementProxy {
   private static nextProxyId: number;
   private id: number;
@@ -35,7 +37,7 @@ class ThreeElementProxy {
 
   private addProxy = () => {
     this.worker.postMessage({
-      type: "proxy",
+      type: ThreeEventTypes.Proxy,
       payload: this.id,
     });
   };
@@ -50,7 +52,7 @@ class ThreeElementProxy {
 
   private sendEvent = (data: any) => {
     this.worker.postMessage({
-      type: "event",
+      type: ThreeEventTypes.Event,
       payload: { id: this.id, data },
     });
   };
