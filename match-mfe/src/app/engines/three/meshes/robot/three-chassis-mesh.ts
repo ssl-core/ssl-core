@@ -6,7 +6,6 @@ import constants from "../../../../../config/constants";
 class ThreeChassisMesh extends ThreeBaseMesh {
   constructor() {
     super();
-
     this.buildMesh();
   }
 

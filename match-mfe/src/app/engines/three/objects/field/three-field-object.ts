@@ -6,7 +6,6 @@ import ThreeFieldLinesMesh from "../../meshes/field/three-field-lines-mesh";
 class ThreeFieldObject extends ThreeBaseObject {
   constructor() {
     super();
-
     this.addMeshes();
   }
 

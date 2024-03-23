@@ -5,7 +5,6 @@ import ThreeWallMesh from "../../meshes/walls/three-wall-mesh";
 class ThreeWallsObject extends ThreeBaseObject {
   constructor() {
     super();
-
     this.addMeshes();
   }
 

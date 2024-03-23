@@ -6,7 +6,6 @@ import constants from "../../../../../config/constants";
 class ThreeFieldSurfaceMesh extends ThreeBaseMesh {
   constructor() {
     super();
-
     this.buildMesh();
   }
 

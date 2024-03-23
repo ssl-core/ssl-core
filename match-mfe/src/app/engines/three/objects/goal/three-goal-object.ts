@@ -6,7 +6,6 @@ import constants from "../../../../../config/constants";
 class ThreeGoalObject extends ThreeBaseObject {
   constructor() {
     super();
-
     this.addMeshes();
   }
 

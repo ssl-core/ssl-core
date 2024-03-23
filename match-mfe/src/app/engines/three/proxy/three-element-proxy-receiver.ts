@@ -10,7 +10,6 @@ class ThreeElementProxyReceiver extends EventDispatcher {
 
   constructor() {
     super();
-
     this.width = 0;
     this.height = 0;
     this.left = 0;

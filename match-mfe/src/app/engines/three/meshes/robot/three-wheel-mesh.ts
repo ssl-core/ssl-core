@@ -6,7 +6,6 @@ import constants from "../../../../../config/constants";
 class ThreeWheelMesh extends ThreeBaseMesh {
   constructor(angle: number) {
     super();
-
     this.setParamsByAngle(angle);
     this.buildMesh();
   }
