@@ -37,17 +37,17 @@ int main() {
             << "\n";
   std::vector<TestInputs> test_inputs = {{0, "save"},
                                          {0, "save"},
-                                         {1, "fetch"},
-                                         {2, "fetch"},
+                                         {1, "find"},
+                                         {2, "find"},
                                          {0, "save"},
-                                         {3, "fetch"},
+                                         {3, "find"},
                                          {3, "remove"},
-                                         {3, "fetch"},
-                                         {2, "fetch_range"}};
+                                         {3, "find"},
+                                         {2, "find_range"}};
 
   int serial_id = 0;
   for (const auto& [record_id, operation] : test_inputs) {
-    if (operation == "fetch") {
+    if (operation == "find") {
       std::cout << "fetching (key=" << record_id << ")...\n";
       if (auto result = frame_repository->find(record_id)) {
         std::cout << "retrieved frame: " << result->DebugString() << ".\n";
@@ -55,10 +55,13 @@ int main() {
         std::cout << "frame not found.\n";
       }
 
-    } else if (operation == "fetch_range") {
+    } else if (operation == "find_range") {
       std::cout << "fetching range 1 >= key <= " << record_id << ")...\n";
       if (auto result = frame_repository->findRange(1, record_id)) {
         std::cout << "retrieved frames \n";
+        for (const auto& frame : *result) {
+          std::cout << frame.DebugString() << "\n";
+        }
       } else {
         std::cout << "frames not found.\n";
       }
@@ -70,8 +73,10 @@ int main() {
       std::cout << "saving...\n";
 
       Frame frame;
+      // Set Frame id
       frame.mutable_properties()->set_serial_id(++serial_id);
 
+      // Set field properties
       Field& field = *frame.mutable_field();
       field.set_length(9000);
       field.set_width(6000);

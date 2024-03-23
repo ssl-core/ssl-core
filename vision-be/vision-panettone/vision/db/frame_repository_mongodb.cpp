@@ -16,6 +16,7 @@ using protocols::vision::Field;
 using protocols::vision::Frame;
 using protocols::vision::Robot;
 
+using MongoDbDocumentView = bsoncxx::document::view;
 using MongoDbDocument = bsoncxx::builder::stream::document;
 using MongoDbArray = bsoncxx::builder::stream::array;
 
@@ -95,6 +96,24 @@ MongoDbDocument toMongoDbDocument(const Frame& frame) {
   return document;
 }
 
+Frame fromMongoDbDocument(MongoDbDocumentView doc) {
+  Frame frame{};
+
+  frame.mutable_properties()->set_serial_id(doc["_id"].get_int64());
+
+  Field& field = *frame.mutable_field();
+  field.set_serial_id(doc["field"]["serial_id"].get_int64());
+  field.set_length(doc["field"]["length"].get_double());
+  field.set_width(doc["field"]["width"].get_double());
+  field.set_goal_depth(doc["field"]["goal_depth"].get_double());
+  field.set_goal_width(doc["field"]["goal_width"].get_double());
+  field.set_penalty_area_depth(doc["field"]["penalty_area_depth"].get_double());
+  field.set_penalty_area_width(doc["field"]["penalty_area_width"].get_double());
+  field.set_boundary_width(doc["field"]["boundary_width"].get_double());
+  field.set_goal_center_to_penalty_mark(doc["field"]["goal_center_to_penalty_mark"].get_double());
+
+  return frame;
+}
 } // namespace
 
 FrameRepositoryMongoDb::FrameRepositoryMongoDb(const MongoDbRepositoryBuildArgs& args) :
@@ -128,7 +147,7 @@ std::optional<Frame> FrameRepositoryMongoDb::find(const int64_t& key) {
       std::string result = bsoncxx::to_json(*find_result);
       std::cout << "result: " << result << "\n";
 
-      return std::nullopt;
+      return fromMongoDbDocument(find_result->view());
     }
 
     std::cerr << "frame not found.\n";
@@ -139,22 +158,23 @@ std::optional<Frame> FrameRepositoryMongoDb::find(const int64_t& key) {
   }
 }
 
-std::optional<protocols::vision::Frame>
+std::optional<std::vector<Frame>>
 FrameRepositoryMongoDb::findRange(const int64_t& key_lower_bound, const int64_t& key_upper_bound) {
   try {
     auto find_result = collection_.find(make_document(
         kvp("_id", make_document(kvp("$gte", key_lower_bound), kvp("$lte", key_upper_bound)))));
 
+    std::vector<Frame> frames;
     for (auto doc : find_result) {
       std::cout << "key: " << doc["_id"].get_int64() << "\n";
+      frames.push_back(fromMongoDbDocument(doc));
     }
 
-    return std::nullopt;
+    return frames;
   } catch (const std::exception& e) {
     std::cerr << "Error : " << e.what() << '\n';
     return std::nullopt;
   }
-  return std::nullopt;
 }
 
 } // namespace vision
