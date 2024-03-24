@@ -1,0 +1,28 @@
+version: '3'
+services:
+  mongodb:
+    image: mongo
+    container_name: mongodb
+    ports:
+      - 27017:27017
+    volumes:
+      - mongodb_data:/data/db
+
+  vision:
+    build:
+      context: .
+      dockerfile: vision-be/vision-panettone/.devcontainer/Dockerfile
+      args:
+        - SOURCE_DIRECTORY=vision-be/vision-panettone
+    working_dir: /workspaces/vision-be/vision-panettone
+    container_name: vision
+    command: ["bin/vision_main"]
+    volumes:
+      - /tmp:/tmp
+    ports:
+      - 8080:8080
+    depends_on:
+      - mongodb
+
+volumes:
+  mongodb_data:
