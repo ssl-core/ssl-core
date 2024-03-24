@@ -1,0 +1,28 @@
+{
+  "Gateway.Third.Parties": {
+    "address": "ipc:///tmp/gateway-async-backend.ipc",
+    "topics": [
+      "vision-third-party",
+      "referee-third-party",
+      "tracked-third-party"
+    ]
+  },
+  "Gateway.Live": {
+    "address": "ipc:///tmp/gateway-async-frontend.ipc",
+    "topics": [
+      "frame"
+    ]
+  },
+  "Gateway.Sync.Requests": {
+    "address": "ipc:///tmp/gateway-sync-backend.ipc"
+  },
+  "Gateway.Router": {
+    "address": "ipc:///tmp/gateway-sync-frontend.ipc"
+  },
+  "Vision": {
+    "address": "ipc:///tmp/vision.ipc",
+    "topics": [
+      "frame"
+    ]
+  }
+}
