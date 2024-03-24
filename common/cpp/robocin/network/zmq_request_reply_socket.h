@@ -1,11 +1,10 @@
-#ifndef GATEWAY_NETWORK_ZMQ_REQUEST_REPLY_SOCKET_H
-#define GATEWAY_NETWORK_ZMQ_REQUEST_REPLY_SOCKET_H
+#ifndef ROBOCIN_NETWORK_ZMQ_REQUEST_REPLY_SOCKET_H
+#define ROBOCIN_NETWORK_ZMQ_REQUEST_REPLY_SOCKET_H
 
 #include <zmq.h>
 #include <zmq.hpp>
-#include <zmq_addon.hpp>
 
-namespace gateway {
+namespace robocin {
 
 template <class ZmqSocket, class ZmqContext, zmq::socket_type SocketType>
 class IZmqRequestReplySocket {
@@ -19,13 +18,16 @@ class IZmqRequestReplySocket {
   void bind(std::string_view address) { socket_.bind(std::string{address}); }
   void connect(std::string_view address) { socket_.connect(std::string{address}); }
 
-  zmq::message_t receive() {
+  std::string receive() {
     zmq::message_t message;
-    auto _ = socket_.recv(&message, zmq::recv_flags::none);
-    return message;
+    auto _ = socket_.recv(message, zmq::recv_flags::none);
+    return message.to_string();
   }
 
-  void send(std::string_view message) { socket_.send(zmq::message_t{message}); }
+  void send(std::string_view message) {
+    zmq::message_t zmq_message{message};
+    socket_.send(zmq_message, zmq::send_flags::none);
+  }
 
   void close() { socket_.close(); }
 
@@ -40,6 +42,6 @@ using ZmqRequestSocket
     = IZmqRequestReplySocket<zmq::socket_t, zmq::context_t, zmq::socket_type::req>;
 using ZmqReplySocket = IZmqRequestReplySocket<zmq::socket_t, zmq::context_t, zmq::socket_type::rep>;
 
-} // namespace gateway
+} // namespace robocin
 
-#endif // GATEWAY_NETWORK_ZMQ_REQUEST_REPLY_SOCKET_H
+#endif // ROBOCIN_NETWORK_ZMQ_REQUEST_REPLY_SOCKET_H

@@ -2,8 +2,8 @@
 
 #include "gateway/gateway.grpc.pb.h"
 #include "gateway/gateway.pb.h"
-#include "gateway/network/zmq_request_reply_socket.h"
 #include "gateway/service_discovery.h"
+#include "robocin/network/zmq_request_reply_socket.h"
 #include "robocin/network/zmq_subscriber_socket.h"
 
 #include <grpcpp/server_builder.h>
@@ -24,6 +24,7 @@ using grpc::Status;
 using protocols::ui::GatewayService;
 using protocols::ui::GetVisionChunkRequest;
 using protocols::ui::GetVisionChunkResponse;
+using robocin::ZmqRequestSocket;
 using robocin::ZmqSubscriberSocket;
 
 class GatewayServiceImpl final : public GatewayService::Service {
@@ -40,6 +41,9 @@ class GatewayServiceImpl final : public GatewayService::Service {
   Status GetVisionChunk(ServerContext* context,
                         const GetVisionChunkRequest* request,
                         GetVisionChunkResponse* response) override {
+
+    requester_.send(std::string_view{"Mock"});
+    auto reply = requester_.receive();
     *response->mutable_header()->mutable_request_start() = request->header().start();
     return Status::OK;
   }
