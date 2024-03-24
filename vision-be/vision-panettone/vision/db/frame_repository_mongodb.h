@@ -16,8 +16,8 @@ class FrameRepositoryMongoDb : public IMongoDbRepository<int64_t, protocols::vis
   void remove(const int64_t& key) final;
 
   [[nodiscard]] std::optional<protocols::vision::Frame> find(const int64_t& key) final;
-  [[nodiscard]] std::optional<std::vector<protocols::vision::Frame>> findRange(const int64_t& key_lower_bound,
-                                                             const int64_t& key_upper_bound) final;
+  [[nodiscard]] std::vector<protocols::vision::Frame>
+  findRange(const int64_t& key_lower_bound, const int64_t& key_upper_bound) final;
 };
 
 } // namespace vision

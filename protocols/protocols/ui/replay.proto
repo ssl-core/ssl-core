@@ -1,0 +1,26 @@
+syntax = "proto3";
+
+package protocols.ui;
+
+import "google/protobuf/duration.proto";
+import "protocols/vision/frame.proto";
+
+message ReplayRequest {
+  google.protobuf.Duration start = 1;
+}
+
+message ReplayResponse {
+  google.protobuf.Duration request_start = 1; // ack
+  uint32 chunk_id = 2;
+  uint32 n_chunks = 3;
+
+  google.protobuf.Duration max_duration = 4; // total game duration
+
+  message Payload {
+    oneof payload {
+      vision.Frame frame = 1;
+    }
+  }
+
+  repeated Payload payloads = 5;
+}

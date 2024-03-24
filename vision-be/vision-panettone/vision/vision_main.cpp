@@ -10,15 +10,22 @@
 #include <absl/time/clock.h>
 #include <absl/time/time.h>
 #include <condition_variable>
+#include <google/protobuf/duration.pb.h>
+#include <google/protobuf/text_format.h>
 #include <memory>
 #include <protocols/third_party/detection/raw_wrapper.pb.h>
+#include <protocols/ui/replay.pb.h>
 #include <protocols/vision/frame.pb.h>
 #include <robocin/concurrency/thread_pool.h>
 #include <robocin/network/zmq_subscriber_socket.h>
 #include <span>
+#include <string>
 #include <thread>
 
+using ::google::protobuf::Duration;
 using protocols::third_party::detection::SSL_WrapperPacket;
+
+using protocols::ui::ReplayRequest;
 using protocols::vision::Frame;
 
 using robocin::ZmqDatagram;
@@ -36,12 +43,21 @@ std::mutex mutex;
 std::condition_variable cv;
 std::vector<ZmqDatagram> packages;
 
+const uint64_t kFPS = 80;
+
 // saves a frame to the database.
 void saveToDatabase(IFrameRepository& repository, const Frame& frame) { repository.save(frame); }
 
 // fetches a frame from the database according its key.
 std::optional<Frame> fetchFromDatabase(IFrameRepository& repository, int64_t key) {
   return repository.find(key);
+}
+
+// fetches a range of frames from the database according to the key lower and upper bounds.
+std::vector<Frame> fetchRangeFromDatabase(IFrameRepository& repository,
+                                          int64_t key_lower_bound,
+                                          int64_t key_upper_bound) {
+  return repository.findRange(key_lower_bound, key_upper_bound);
 }
 
 void subscriberRun() {
@@ -63,7 +79,7 @@ void subscriberRun() {
 
 void publisherRun() {
   std::unique_ptr<ISenderCommunication> sender = std::make_unique<ZMQSenderCommunication>();
-  sender->bind("", "");
+  sender->bind("ipc:///tmp/vision-async.ipc", "frame");
 
   // TODO($ISSUE_N): Move the database management to a class.
   ThreadPool thread_pool(4);
@@ -107,10 +123,20 @@ void publisherRun() {
         sender->send(frame);
         thread_pool.enqueue(saveToDatabase, std::ref(*frame_repository), std::cref(frame));
       } else if (topic == "replay") {
-        // get do ban
+        // tem o Duration, que seria o minuto do jogo a partir do inicio que a gente quer.
+        // precisa mapear em key_lower_bound.
+        // start = 1 second;
+        ReplayRequest request;
+        request.ParseFromString(datagram.message);
+        Duration start = request.start();
+        int64_t key_lower_bound = start.seconds() * kFPS;
+        const int64_t kNumberOfFramesPerRange = 180;
+        thread_pool.enqueue(fetchRangeFromDatabase,
+                            std::ref(*frame_repository),
+                            key_lower_bound,
+                            key_lower_bound + kNumberOfFramesPerRange);
       }
     }
-
     // publisher->send("robocin", PubSubMode::Wait, packages.back());
   }
 }
@@ -118,7 +144,36 @@ void publisherRun() {
 int main(int argc, char* argv[]) {
   std::span args{argv + 1, argv + argc - 1};
 
-  std::jthread subscriber_thread(subscriberRun);
+  // std::jthread subscriber_thread(subscriberRun);
+  std::string text = R"pb(detection {
+  frame_number: 840
+  t_capture: 14.016946999999991
+  t_sent: 14.016946999999991
+  camera_id: 3
+  balls {
+    confidence: 0.965216219
+    x: 0
+    y: 0
+    pixel_x: 0
+    pixel_y: 0
+  }
+  robots_blue {
+    confidence: 1
+    robot_id: 0
+    x: -1499.97278
+    y: 1120
+    orientation: -0
+    pixel_x: -1499.97278
+    pixel_y: 1120
+  }
+})pb";
+  SSL_WrapperPacket packet;
+  google::protobuf::TextFormat::ParseFromString(text, &packet);
+  std::cout << "After ParseFromString" << packet.DebugString() << "\n";
+
+  std::string serialized;
+  packet.SerializeToString(&serialized);
+  packages = {{"detection", serialized}, {"detection", serialized}, {"detection", serialized}};
   std::jthread publisher_thread(publisherRun);
 
   return 0;

@@ -22,6 +22,7 @@ class ZMQSenderCommunication : public ISenderCommunication {
     std::string message;
     frame.SerializeToString(&message);
     socket_.send(topic_, message);
+    std::cout << "Sending message on topic " << topic_ << "\n";
   }
 
   void close() { socket_.close(); }

@@ -136,8 +136,8 @@ std::optional<Frame> FrameRepositoryMongoDb::find(const int64_t& key) {
   }
 }
 
-std::optional<std::vector<Frame>>
-FrameRepositoryMongoDb::findRange(const int64_t& key_lower_bound, const int64_t& key_upper_bound) {
+std::vector<Frame> FrameRepositoryMongoDb::findRange(const int64_t& key_lower_bound,
+                                                     const int64_t& key_upper_bound) {
   try {
     auto find_result = collection_.find(make_document(
         kvp("_id", make_document(kvp("$gte", key_lower_bound), kvp("$lte", key_upper_bound)))));
@@ -151,7 +151,7 @@ FrameRepositoryMongoDb::findRange(const int64_t& key_lower_bound, const int64_t&
     return frames;
   } catch (const std::exception& e) {
     std::cerr << "Error : " << e.what() << '\n';
-    return std::nullopt;
+    return {};
   }
 }
 
