@@ -1,25 +1,29 @@
 package server
 
 import (
-	"fmt"
 	"net/http"
+
+	"github.com/robocin/ssl-core/match-bff/api/handler"
+	"github.com/robocin/ssl-core/match-bff/internal/client"
 )
 
 type HttpServer struct {
 	address   string
 	websocket *WebsocketServer
 	router    *http.ServeMux
+	client    client.Clienter
 }
 
-func NewHttpServer(address string, websocket *WebsocketServer) *HttpServer {
+func NewHttpServer(address string, websocket *WebsocketServer, client client.Clienter) *HttpServer {
 	router := http.NewServeMux()
 	server := &HttpServer{
 		address:   address,
 		websocket: websocket,
 		router:    router,
+		client:    client,
 	}
 
-	server.registerRoutes()
+	server.registerHandlers()
 	server.registerWebsocket()
 
 	return server
@@ -33,14 +37,8 @@ func (hs *HttpServer) Serve() error {
 	return http.ListenAndServe(hs.address, hs.router)
 }
 
-func (hs *HttpServer) registerRoutes() {
-	hs.router.HandleFunc("POST /todos", func(w http.ResponseWriter, r *http.Request) {
-		fmt.Println("create a todo")
-	})
-
-	hs.router.HandleFunc("GET /todos", func(w http.ResponseWriter, r *http.Request) {
-		fmt.Println("get all todos")
-	})
+func (hs *HttpServer) registerHandlers() {
+	hs.router.HandleFunc("GET /test", handler.TestHandler(hs.client))
 }
 
 func (hs *HttpServer) registerWebsocket() {

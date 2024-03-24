@@ -1,18 +1,24 @@
 package server
 
 import (
+	"encoding/json"
+	"io"
 	"net/http"
 
+	"github.com/robocin/ssl-core/match-bff/api/handler"
+	"github.com/robocin/ssl-core/match-bff/internal/client"
 	"golang.org/x/net/websocket"
 )
 
 type WebsocketServer struct {
-	conns map[*websocket.Conn]bool
+	conns  map[*websocket.Conn]bool
+	client client.Clienter
 }
 
-func NewWebsocketServer() *WebsocketServer {
+func NewWebsocketServer(client client.Clienter) *WebsocketServer {
 	return &WebsocketServer{
-		conns: make(map[*websocket.Conn]bool),
+		conns:  make(map[*websocket.Conn]bool),
+		client: client,
 	}
 }
 
@@ -43,14 +49,36 @@ func (ws *WebsocketServer) listenConnection(conn *websocket.Conn) {
 		size, err := conn.Read(buf)
 
 		if err != nil {
-			if err.Error() == "EOF" {
+			if err == io.EOF {
 				break
 			}
 
 			continue
 		}
 
-		message := buf[:size]
-		conn.Write([]byte("echo: " + string(message)))
+		message := map[string]interface{}{}
+		if err = json.Unmarshal(buf[:size], &message); err != nil {
+			conn.Write([]byte("Error: " + err.Error()))
+			continue
+		}
+
+		event := message["event"].(string)
+		data := message["data"].(map[string]interface{})
+		ws.handleMessage(conn, event, data)
+	}
+}
+
+func (ws *WebsocketServer) handleMessage(conn *websocket.Conn, event string, data map[string]interface{}) {
+	switch event {
+	case "receive-live-stream":
+		handler.ReceiveLiveStreamHandler(ws.client)(conn, data)
+	case "get-chunk":
+		handler.GetChunkHandler(ws.client)(conn, data)
+	case "ping":
+		conn.Write([]byte("pong"))
+	case "close":
+		conn.Close()
+	default:
+		conn.Write([]byte("echo: " + string(event)))
 	}
 }

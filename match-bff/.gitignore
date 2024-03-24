@@ -19,3 +19,6 @@ go.work
 
 # Readd Makefile
 !Makefile
+
+# Protobuf generated files
+pkg/pb
