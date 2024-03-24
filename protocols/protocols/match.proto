@@ -2,8 +2,6 @@ syntax = "proto3";
 
 package protocols;
 
-option go_package = "github.com/robocin/ssl-core/protocols/protocols";
-
 service MatchService {
   rpc Get(MatchRequest) returns (MatchResponse);
   rpc Live(MatchRequest) returns (stream MatchResponse);

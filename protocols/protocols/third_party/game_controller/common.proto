@@ -2,8 +2,6 @@ syntax = "proto2";
 
 package protocols.third_party.game_controller;
 
-option go_package = "github.com/robocin/ssl-core/protocols/protocols/third_party/game_controller";
-
 // Team is either blue or yellow
 enum Team {
   // team not set

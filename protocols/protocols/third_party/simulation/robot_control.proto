@@ -2,8 +2,6 @@ syntax = "proto2";
 
 package protocols.third_party.simulation;
 
-option go_package = "github.com/robocin/ssl-core/protocols/protocols/third_party/simulation";
-
 // Full command for a single robot
 message RobotCommand {
   // Id of the robot

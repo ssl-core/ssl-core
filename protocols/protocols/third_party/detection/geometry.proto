@@ -2,8 +2,6 @@ syntax = "proto2";
 
 package protocols.third_party.detection;
 
-option go_package = "github.com/robocin/ssl-core/protocols/protocols/third_party/detection";
-
 // A 2D float vector.
 message Vector2f {
   // X-coordinate in mm

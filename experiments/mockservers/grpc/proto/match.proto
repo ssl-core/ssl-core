@@ -2,8 +2,6 @@ syntax = "proto3";
 
 package vision;
 
-option go_package = "proto/vision";
-
 service MatchService {
   rpc Get(MatchRequest) returns (MatchResponse) {}
 }

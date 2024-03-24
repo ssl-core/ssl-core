@@ -2,8 +2,6 @@ syntax = "proto2";
 
 package protocols.third_party.simulation.erforce;
 
-option go_package = "github.com/robocin/ssl-core/protocols/protocols/third_party/simulation/erforce";
-
 // Realism configuration for ER-Force simulator
 message RealismConfigErForce {
   // Standard deviation of the gaussian noise applied to the ball position [m]
