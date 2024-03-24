@@ -1,10 +1,10 @@
-import zmq
+import pyzmq
 
-context = zmq.Context()
-sub = context.socket(zmq.SUB)
+context = pyzmq.Context()
+sub = context.socket(pyzmq.SUB)
 address = "ipc:///tmp/vision-service"
 sub.connect(address)
-sub.setsockopt_string(zmq.SUBSCRIBE, "robocin")
+sub.setsockopt_string(pyzmq.SUBSCRIBE, "robocin")
 
 count = 0
 while True:
