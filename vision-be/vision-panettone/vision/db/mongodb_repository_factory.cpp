@@ -6,8 +6,7 @@ namespace vision {
 
 std::unique_ptr<IFrameRepository> MongoDbRepositoryFactory::createFrameRepository() const {
   return std::make_unique<FrameRepositoryMongoDb>(MongoDbRepositoryBuildArgs{
-      // .uri = "mongodb://mongodb:27017/",
-      .uri = "mongodb://mongodb:27017/?replicaSet=rs0",
+      .uri = "mongodb://mongodb1:27017,mongodb2:27018,mongodb3:27019/?replicaSet=rs0",
       .db_name = "frames_database",
       .collection_name = "frames_collection",
   });

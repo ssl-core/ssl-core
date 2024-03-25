@@ -12,8 +12,6 @@ services:
       - 27017:27017
     volumes:
       - mongodb_data:/data/db
-    networks:
-      - mongo_rs0
 
   mongodb2:
     build:
@@ -24,8 +22,6 @@ services:
       - 27018:27017
     volumes:
       - mongodb_data2:/data/db
-    networks:
-      - mongo_rs0
 
   mongodb3:
     build:
@@ -36,8 +32,6 @@ services:
       - 27019:27017
     volumes:
       - mongodb_data3:/data/db
-    networks:
-      - mongo_rs0
 
   vision:
     build:
@@ -59,7 +53,3 @@ volumes:
   mongodb_data:
   mongodb_data2:
   mongodb_data3:
-
-networks:
-  mongo_rs0:
-    driver: bridge
