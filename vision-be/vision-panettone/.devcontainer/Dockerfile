@@ -25,7 +25,7 @@ RUN \
   rm -rf /workspaces/; \
   else \
   pushd "/workspaces/${SOURCE_DIRECTORY}"; \
-  rm -rf build; \
+  rm -rf build bin; \
   cmake -B build -S . -G "Ninja" -DCMAKE_CXX_COMPILER=clang++; \
   cmake --build build; \
   popd; \
