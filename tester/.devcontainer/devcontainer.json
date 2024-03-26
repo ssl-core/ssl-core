@@ -1,0 +1,34 @@
+{
+  "name": "Python",
+  "build": {
+    "context": "./../..",
+    "dockerfile": "Dockerfile"
+  },
+  // Configure tool-specific properties.
+  "customizations": {
+    // Configure properties specific to VS Code.
+    "vscode": {
+      // Add the IDs of extensions you want installed when the container is created.
+      "[python]": {
+        "editor.codeActionsOnSave": {
+          "source.organizeImports": true
+        },
+        "editor.insertSpaces": true,
+        "editor.tabSize": 4,
+        "editor.formatOnSave": true,
+        "editor.defaultFormatter": "ms-python.black-formatter",
+        "analysis.inlayHints.functionReturnTypes": true,
+        "analysis.inlayHints.pytestParameters": true,
+        "analysis.inlayHints.variableTypes": true,
+        "analysis.autoImportCompletions": true,
+        "analysis.completeFunctionParens": true
+      },
+      "extensions": [
+        "ms-python.python",
+        "ms-python.isort",
+        "ms-python.flake8",
+        "ms-python.black-formatter"
+      ]
+    }
+  }
+}

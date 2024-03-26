@@ -1,4 +1,4 @@
-FROM mcr.microsoft.com/vscode/devcontainers/base:ubuntu
+FROM mcr.microsoft.com/vscode/devcontainers/base:latest
 
 SHELL ["/bin/bash", "-c"]
 

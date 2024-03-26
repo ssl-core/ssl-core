@@ -1,0 +1,350 @@
+detection {
+  frame_number: 840
+  t_capture: 14.016946999999991
+  t_sent: 14.016946999999991
+  camera_id: 3
+  balls {
+    confidence: 0.965216219
+    x: 0
+    y: 0
+    pixel_x: 0
+    pixel_y: 0
+  }
+  robots_blue {
+    confidence: 1
+    robot_id: 0
+    x: -1499.97278
+    y: 1120
+    orientation: -0
+    pixel_x: -1499.97278
+    pixel_y: 1120
+  }
+  robots_blue {
+    confidence: 1
+    robot_id: 1
+    x: -1499.97278
+    y: -1.72736166e-11
+    orientation: -0
+    pixel_x: -1499.97278
+    pixel_y: -1.72736166e-11
+  }
+  robots_blue {
+    confidence: 1
+    robot_id: 3
+    x: -549.972717
+    y: 5.68419313e-12
+    orientation: -0
+    pixel_x: -549.972717
+    pixel_y: 5.68419313e-12
+  }
+  robots_blue {
+    confidence: 1
+    robot_id: 4
+    x: -2499.97266
+    y: -2.24928982e-11
+    orientation: 0
+    pixel_x: -2499.97266
+    pixel_y: -2.24928982e-11
+  }
+  robots_blue {
+    confidence: 1
+    robot_id: 5
+    x: -3599.97266
+    y: 1.55042125e-12
+    orientation: 0
+    pixel_x: -3599.97266
+    pixel_y: 1.55042125e-12
+  }
+  robots_blue {
+    confidence: 1
+    robot_id: 6
+    x: -3199.97266
+    y: 750
+    orientation: -0
+    pixel_x: -3199.97266
+    pixel_y: 750
+  }
+  robots_blue {
+    confidence: 1
+    robot_id: 8
+    x: -3199.97266
+    y: 1500
+    orientation: 0
+    pixel_x: -3199.97266
+    pixel_y: 1500
+  }
+  robots_blue {
+    confidence: 1
+    robot_id: 10
+    x: -3199.97266
+    y: 2250
+    orientation: -0
+    pixel_x: -3199.97266
+    pixel_y: 2250
+  }
+}
+geometry {
+  field {
+    field_length: 12000
+    field_width: 9000
+    goal_width: 1800
+    goal_depth: 180
+    boundary_width: 300
+    field_lines {
+      name: "TopTouchLine"
+      p1 {
+        x: -5995
+        y: 4495
+      }
+      p2 {
+        x: 5995
+        y: 4495
+      }
+      thickness: 10
+    }
+    field_lines {
+      name: "BottomTouchLine"
+      p1 {
+        x: -5995
+        y: -4495
+      }
+      p2 {
+        x: 5995
+        y: -4495
+      }
+      thickness: 10
+    }
+    field_lines {
+      name: "LeftGoalLine"
+      p1 {
+        x: -5990
+        y: -4495
+      }
+      p2 {
+        x: -5990
+        y: 4495
+      }
+      thickness: 10
+    }
+    field_lines {
+      name: "RightGoalLine"
+      p1 {
+        x: 5990
+        y: -4495
+      }
+      p2 {
+        x: 5990
+        y: 4495
+      }
+      thickness: 10
+    }
+    field_lines {
+      name: "HalfwayLine"
+      p1 {
+        x: 0
+        y: -4495
+      }
+      p2 {
+        x: 0
+        y: 4495
+      }
+      thickness: 10
+    }
+    field_lines {
+      name: "CenterLine"
+      p1 {
+        x: -5990
+        y: 0
+      }
+      p2 {
+        x: 5990
+        y: 0
+      }
+      thickness: 10
+    }
+    field_lines {
+      name: "LeftPenaltyStretch"
+      p1 {
+        x: -4195
+        y: -1800
+      }
+      p2 {
+        x: -4195
+        y: 1800
+      }
+      thickness: 10
+    }
+    field_lines {
+      name: "RightPenaltyStretch"
+      p1 {
+        x: 4195
+        y: -1800
+      }
+      p2 {
+        x: 4195
+        y: 1800
+      }
+      thickness: 10
+    }
+    field_lines {
+      name: "RightGoalTopLine"
+      p1 {
+        x: 5990
+        y: 900
+      }
+      p2 {
+        x: 6170
+        y: 900
+      }
+      thickness: 10
+    }
+    field_lines {
+      name: "RightGoalBottomLine"
+      p1 {
+        x: 5990
+        y: -900
+      }
+      p2 {
+        x: 6170
+        y: -900
+      }
+      thickness: 10
+    }
+    field_lines {
+      name: "RightGoalDepthLine"
+      p1 {
+        x: 6165
+        y: -900
+      }
+      p2 {
+        x: 6165
+        y: 900
+      }
+      thickness: 10
+    }
+    field_lines {
+      name: "LeftGoalTopLine"
+      p1 {
+        x: -5990
+        y: 900
+      }
+      p2 {
+        x: -6170
+        y: 900
+      }
+      thickness: 10
+    }
+    field_lines {
+      name: "LeftGoalBottomLine"
+      p1 {
+        x: -5990
+        y: -900
+      }
+      p2 {
+        x: -6170
+        y: -900
+      }
+      thickness: 10
+    }
+    field_lines {
+      name: "LeftGoalDepthLine"
+      p1 {
+        x: -6165
+        y: -900
+      }
+      p2 {
+        x: -6165
+        y: 900
+      }
+      thickness: 10
+    }
+    field_lines {
+      name: "LeftFieldLeftPenaltyStretch"
+      p1 {
+        x: -5990
+        y: 1800
+      }
+      p2 {
+        x: -4190
+        y: 1800
+      }
+      thickness: 10
+    }
+    field_lines {
+      name: "LeftFieldRightPenaltyStretch"
+      p1 {
+        x: -5990
+        y: -1800
+      }
+      p2 {
+        x: -4190
+        y: -1800
+      }
+      thickness: 10
+    }
+    field_lines {
+      name: "RightFieldLeftPenaltyStretch"
+      p1 {
+        x: 5990
+        y: -1800
+      }
+      p2 {
+        x: 4190
+        y: -1800
+      }
+      thickness: 10
+    }
+    field_lines {
+      name: "RightFieldRightPenaltyStretch"
+      p1 {
+        x: 5990
+        y: 1800
+      }
+      p2 {
+        x: 4190
+        y: 1800
+      }
+      thickness: 10
+    }
+    field_arcs {
+      name: "CenterCircle"
+      center {
+        x: 0
+        y: 0
+      }
+      radius: 495
+      a1: 0
+      a2: 6.28318548
+      thickness: 10
+    }
+  }
+  calib {
+    camera_id: 3
+    focal_length: 390
+    principal_point_x: 300
+    principal_point_y: 300
+    distortion: 0.2
+    q0: 0.7
+    q1: 0.7
+    q2: 0.7
+    q3: 0.7
+    tx: 0
+    ty: 0
+    tz: 3500
+    derived_camera_world_tx: -3000
+    derived_camera_world_ty: 2250
+    derived_camera_world_tz: 4000
+  }
+  models {
+    straight_two_phase {
+      acc_slide: -14
+      acc_roll: -0.7
+      k_switch: 0.7
+    }
+    chip_fixed_loss {
+      damping_xy_first_hop: 0.6
+      damping_xy_other_hops: 0.96
+      damping_z: 0.42
+    }
+  }
+}
