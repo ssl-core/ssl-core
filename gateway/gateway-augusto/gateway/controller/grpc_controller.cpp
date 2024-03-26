@@ -7,6 +7,7 @@
 #include "robocin/network/zmq_subscriber_socket.h"
 
 #include <grpcpp/server_builder.h>
+#include <string>
 #include <string_view>
 
 namespace gateway {
@@ -41,8 +42,9 @@ class GatewayServiceImpl final : public GatewayService::Service {
   Status GetVisionChunk(ServerContext* context,
                         const GetVisionChunkRequest* request,
                         GetVisionChunkResponse* response) override {
-
-    requester_.send(std::string_view{"Mock"});
+    std::string name;
+    request->SerializeToString(&name);
+    requester_.send(name);
     auto reply = requester_.receive();
     *response->mutable_header()->mutable_request_start() = request->header().start();
     return Status::OK;
