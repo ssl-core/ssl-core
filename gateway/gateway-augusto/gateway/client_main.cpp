@@ -42,7 +42,7 @@ class GatewayClient {
 };
 
 int main() {
-  GatewayClient client(grpc::CreateChannel("localhost:50051", grpc::InsecureChannelCredentials()));
+  GatewayClient client(grpc::CreateChannel("gateway:50051", grpc::InsecureChannelCredentials()));
 
   google::protobuf::Duration duration;
   duration.set_seconds(42);

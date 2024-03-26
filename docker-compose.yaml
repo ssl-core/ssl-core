@@ -28,7 +28,7 @@ services:
     volumes:
       - /tmp:/tmp
     ports:
-      - 8081:8081
+      - 50051:50051
       
   client:
     build:
