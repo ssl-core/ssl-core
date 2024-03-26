@@ -1,4 +1,4 @@
-FROM robocin/ssl-core-cpp-base:latest
+FROM robocin/ssl-core-cpp-grpc:manual-robocup2
 
 COPY .cmake/ /tmp/.cmake/
 COPY common/ /tmp/common/

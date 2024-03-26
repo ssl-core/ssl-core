@@ -13,10 +13,10 @@ struct UdpArgs {
   int port{};
 };
 
-constexpr std::string_view kGatewayThirdParties = "Gateway.Third.Parties";
+constexpr std::string_view kGatewayThirdParties = "Gateway.Publisher.Third.Parties";
 constexpr UdpArgs kVisionThirdParty = {
     .address = "224.5.23.2",
-    .inet = "192.168.1.19",
+    .inet = "172.22.78.146",
     .port = 10020,
 };
 // constexpr UdpArgs kRefereeThirdParty = {.address = ..., .inet = ..., .port = ...,};
