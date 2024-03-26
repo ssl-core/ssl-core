@@ -10,7 +10,7 @@ Checks: >
   cppcoreguidelines-*, -cppcoreguidelines-pro-type-vararg, -cppcoreguidelines-avoid-magic-numbers, -cppcoreguidelines-owning-memory,
   darwin-*,
   google-*,
-  hicpp-*,
+  hicpp-*, -hicpp-special-member-functions,
   linuxkernel-*,
   llvm-*, -llvm-header-guard, -llvm-include-order,
   misc-*,

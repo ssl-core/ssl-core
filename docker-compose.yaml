@@ -1,0 +1,47 @@
+version: '3'
+services:
+  vision:
+    build:
+      context: .
+      dockerfile: vision-be/vision-panettone/.devcontainer/Dockerfile
+      args:
+        - SOURCE_DIRECTORY=vision-be/vision-panettone
+    working_dir: /workspaces/vision-be/vision-panettone
+    container_name: vision
+    command: ["bin/vision_main"]
+    volumes:
+      - /tmp:/tmp
+    ports:
+      - 8080:8080
+    depends_on:
+      - gateway
+      
+  gateway:
+    build:
+      context: .
+      dockerfile: gateway/gateway-augusto/.devcontainer/Dockerfile
+      args:
+        - SOURCE_DIRECTORY=gateway/gateway-augusto
+    working_dir: /workspaces/gateway/gateway-augusto
+    container_name: gateway
+    command: ["bin/gateway_main"]
+    volumes:
+      - /tmp:/tmp
+    ports:
+      - 50051:50051
+      
+  client:
+    build:
+      context: .
+      dockerfile: gateway/gateway-augusto/.devcontainer/Dockerfile
+      args:
+        - SOURCE_DIRECTORY=gateway/gateway-augusto
+    working_dir: /workspaces/gateway/gateway-augusto
+    container_name: client
+    command: ["bin/client_main"]
+    volumes:
+      - /tmp:/tmp
+    ports:
+      - 8082:8082
+    depends_on:
+      - gateway

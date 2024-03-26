@@ -41,4 +41,12 @@ robocin_cpp_proto_library(
   DEPS common
 )
 
+get_protobufs("protocols/ui" ui_protos)
+
+robocin_cpp_proto_library(
+  NAME ui
+  PROTOS ${ui_protos}
+  DEPS common
+)
+
 ########################################################################################################################
