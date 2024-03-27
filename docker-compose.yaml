@@ -1,4 +1,4 @@
-version: '3'
+version: "3"
 services:
   mongodb1:
     build:
@@ -49,7 +49,7 @@ services:
     depends_on:
       - mongodb1
       - gateway
-      
+
   gateway:
     build:
       context: .
@@ -63,7 +63,19 @@ services:
       - /tmp:/tmp
     ports:
       - 50051:50051
-      
+
+  match-bff:
+    build:
+      context: .
+      dockerfile: match-bff/Dockerfile
+      args:
+        - SOURCE_DIRECTORY=match-bff
+    command: ["bin/match-bff"]
+    ports:
+      - 8080:8080
+    depends_on:
+      - gateway
+
   client:
     build:
       context: .

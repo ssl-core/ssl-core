@@ -3,7 +3,7 @@ GREEN="\033[0;32m"
 NC="\033[0m"
 
 # Directories
-PROTO_DIR="../protocols"
+PROTO_DIR="/tmp/protocols"
 BUILD_DIR="./pkg"
 GO_MODULE="github.com/robocin/ssl-core/match-bff"
 

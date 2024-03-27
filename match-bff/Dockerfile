@@ -1,12 +1,16 @@
 FROM golang:1.22
 
+ARG SOURCE_DIRECTORY
+
+COPY /protocols /tmp/protocols
+
 WORKDIR /app
 
-COPY go.mod go.sum ./
-RUN go mod download
+COPY ./${SOURCE_DIRECTORY} .
 
-COPY . .
+RUN make setup
+RUN make build
 
 EXPOSE 8080
 
-CMD ["make", "run"]
+CMD ["./bin/match-bff"]

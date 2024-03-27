@@ -8,8 +8,8 @@ import (
 )
 
 const (
-	serverAddress = "localhost:8080"
-	grpcAddress   = "localhost:50051"
+	serverAddress = "0.0.0.0:8080"
+	grpcAddress   = "gateway:50051"
 	clientType    = "grpc"
 )
 

@@ -1,6 +1,9 @@
 run:
 	@go run cmd/main.go
 
+build:
+	@go build -o bin/match-bff cmd/main.go
+
 setup:
 	@bash scripts/setup-protoc.sh
 	@bash scripts/setup-zmq.sh
