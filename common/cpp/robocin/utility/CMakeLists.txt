@@ -35,7 +35,7 @@ robocin_cpp_test(
 
 robocin_cpp_library(
   NAME concepts
-  HDRS concepts.h
+  HDRS concepts.h internal/concepts_internal.h
   SRCS concepts.cpp
   DEPS protobuf::libprotobuf
 )

@@ -21,3 +21,6 @@ Which significantly saves the compilation time of its components.
 ### Codemap
 
 - [`utility`](cpp/robocin/utility/README.md): a collection of utility and helper code.
+- [`network`](cpp/robocin/network/README.md): a collection of network-related code.
+- [`container`](cpp/robocin/container/README.md): a collection of container adaptors.
+- [`macros`](cpp/robocin/macros/README.md): a collection of macros used throughout the project.
