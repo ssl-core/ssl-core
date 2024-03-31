@@ -19,3 +19,10 @@ robocin_cpp_test(
   SRCS point2d_test.cpp
   DEPS point2d
 )
+
+robocin_cpp_library(
+  NAME point3d
+  HDRS point3d.h ../utility/internal/fuzzy_compare_internal.h
+  SRCS point3d.cpp
+  DEPS point2d fuzzy_compare
+)
