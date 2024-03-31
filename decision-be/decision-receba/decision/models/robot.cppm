@@ -1,10 +1,12 @@
 module;
 
-#include "decision/macros/builder.h"
+#include "robocin/geometry/point2d.h"
+#include "robocin/geometry/point3d.h"
+#include "robocin/macros/builder.h"
 
 export module decision.models:robot;
 
-import decision.geometry;
+using robocin::Point2Df;
 
 export namespace decision {
 

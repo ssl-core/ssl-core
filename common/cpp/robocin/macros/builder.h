@@ -7,9 +7,15 @@
 
 #define BuildableWith(...) ROBOCIN_BUILDER_BUILDABLE_WITH(__VA_ARGS__)
 #define BuilderOf(...)     ROBOCIN_BUILDER_BUILDER_OF(__VA_ARGS__)
-#define Getter(...)        ROBOCIN_BUILDER_GETTER(__VA_ARGS__)
+#define Getter(kind, ...)  __ROBOCIN_BUILDER_GETTER_##kind(__VA_ARGS__)
 #define Setter(...)        ROBOCIN_BUILDER_SETTER(__VA_ARGS__)
 #define Adder(...)         ROBOCIN_BUILDER_ADDER(__VA_ARGS__)
+
+#define __ROBOCIN_BUILDER_GETTER_Default(...)  ROBOCIN_BUILDER_GETTER_DEFAULT(__VA_ARGS__)
+#define __ROBOCIN_BUILDER_GETTER_Optional(...) ROBOCIN_BUILDER_GETTER_OPTIONAL(__VA_ARGS__)
+#define __ROBOCIN_BUILDER_GETTER_Repeated(...) ROBOCIN_BUILDER_GETTER_REPEATED(__VA_ARGS__)
+// #define ROBOCIN_BUILDER_GETTER_Variant(...)  ROBOCIN_BUILDER_GETTER_VARIANT(__VA_ARGS__)
+// #define ROBOCIN_BUILDER_GETTER_Lazy(...)     ROBOCIN_BUILDER_GETTER_LAZY(__VA_ARGS__)
 
 #endif
 
@@ -45,49 +51,6 @@
                 "'" #clazz "' must be buildable and this builder must be its builder: please add " \
                 "'BuildableWith(" #clazz ")' to the class definition.")
 
-#define ROBOCIN_BUILDER_GETTER(name, ...) /* NOLINT(*naming*) */                                   \
- public:                                                                                           \
-  template <std::same_as<__VA_ARGS__> R = __VA_ARGS__>                                             \
-  [[nodiscard]] auto get##name() const->::robocin::builder_internal::getter_result_t<R> {          \
-    static_assert(not std::same_as<R, bool>, "use 'is" #name "()' for boolean types.");            \
-    if constexpr (::robocin::optionalish<R>) {                                                     \
-      static_assert(std::default_initializable<typename R::value_type>,                            \
-                    "'" #__VA_ARGS__                                                               \
-                    "::value_type' must be default initializable: use 'getOptional" #name          \
-                    "()' instead.");                                                               \
-                                                                                                   \
-      using ::robocin::builder_internal::get_or_default;                                           \
-      return get_or_default(_M_##name);                                                            \
-    } else {                                                                                       \
-      return _M_##name;                                                                            \
-    }                                                                                              \
-  }                                                                                                \
-  template <std::same_as<__VA_ARGS__> R = __VA_ARGS__>                                             \
-  [[nodiscard]] auto is##name() const->::robocin::builder_internal::getter_result_t<R> {           \
-    static_assert(std::same_as<R, bool>, "use 'get" #name "()' for non-boolean types.");           \
-    return _M_##name;                                                                              \
-  }                                                                                                \
-  template <std::same_as<bool> R = bool>                                                           \
-  [[nodiscard]] auto has##name() const->::robocin::builder_internal::getter_result_t<R> {          \
-    static_assert(::robocin::optionalish<__VA_ARGS__>,                                             \
-                  "'has" #name "' can only be used with optional types.");                         \
-    using ::robocin::builder_internal::has_value;                                                  \
-    return has_value(_M_##name);                                                                   \
-  }                                                                                                \
-  template <std::same_as<__VA_ARGS__> R = __VA_ARGS__>                                             \
-  [[nodiscard]] auto getOptional##name()                                                           \
-      const->::robocin::builder_internal::get_optional_result_t<R> {                               \
-    static_assert(::robocin::optionalish<R>,                                                       \
-                  "'getOptional" #name "' can only be used with optional types.");                 \
-    return _M_##name;                                                                              \
-  }                                                                                                \
-  static_assert('A' <= #name[0] and #name[0] <= 'Z',                                               \
-                "'" #name "' must starts with an uppercase letter.");                              \
-  static_assert(not std::ranges::range<__VA_ARGS__>                                                \
-                    or (::robocin::stringish<__VA_ARGS__> or #name[sizeof(#name) - 2] == 's'),     \
-                "'" #name "' must ends with 's' for range types (except strings).");               \
-  __VA_ARGS__ _M_##name {} // NOLINT(*naming*, *redundant*)
-
 #define ROBOCIN_BUILDER_SETTER(name) /* NOLINT(*naming*) */                                        \
  public:                                                                                           \
   auto set##name(const decltype(_M_instance._M_##name)& cref_value)&->builder_type& {              \
@@ -119,58 +82,66 @@
   }                                                                                                \
   static_assert(true, "expected a semicolon after 'Setter(" #name ")'.")
 
-#define ROBOCIN_BUILDER_ADDER(name) /* NOLINT(*naming*) */                                         \
+#define ROBOCIN_BUILDER_GETTER_DEFAULT(name, ...) /* NOLINT(*naming*) */                           \
  public:                                                                                           \
-  static_assert(::robocin::builder_internal::pushable<decltype(_M_instance._M_##name##s)>,         \
-                "'add" #name "' can only be used with containers that have 'push_back' or "        \
-                "'insert' methods.");                                                              \
-  auto add##name(                                                                                  \
-      const typename decltype(_M_instance._M_##name##s)::value_type& cref_value)&->builder_type& { \
-    using ::robocin::builder_internal::push_to;                                                    \
-    push_to(_M_instance._M_##name##s, cref_value);                                                 \
-    return *this;                                                                                  \
+  template <std::same_as<__VA_ARGS__> R = __VA_ARGS__>                                             \
+  [[nodiscard]] ::robocin::builder_internal::getter_result_t<R> get##name() const {                \
+    static_assert(not std::same_as<R, bool>, "use 'is" #name "()' for boolean types.");            \
+    return _M_##name;                                                                              \
   }                                                                                                \
-  [[nodiscard]] auto add##name(                                                                    \
-      const typename decltype(_M_instance._M_##name##s)::value_type& cref_value)&&->builder_type { \
-    using ::robocin::builder_internal::push_to;                                                    \
-    push_to(_M_instance._M_##name##s, cref_value);                                                 \
-    return std::move(*this);                                                                       \
+  template <std::same_as<__VA_ARGS__> R = __VA_ARGS__>                                             \
+  [[nodiscard]] auto is##name() const->::robocin::builder_internal::getter_result_t<R> {           \
+    static_assert(std::same_as<R, bool>, "use 'get" #name "()' for non-boolean types.");           \
+    return _M_##name;                                                                              \
   }                                                                                                \
-  auto add##name(                                                                                  \
-      typename decltype(_M_instance._M_##name##s)::value_type&& rvalue)&->builder_type& {          \
-    using ::robocin::builder_internal::push_to;                                                    \
-    push_to(_M_instance._M_##name##s, std::move(rvalue));                                          \
-    return *this;                                                                                  \
+  static_assert(not robocin::optionalish<__VA_ARGS__>,                                             \
+                "use 'Getter(Optional, " #name ", typename " #__VA_ARGS__                          \
+                "::value_type)' for optional types.");                                             \
+  ROBOCIN_BUILDER_GETTER_DECLARE(name, __VA_ARGS__)
+
+#define ROBOCIN_BUILDER_GETTER_OPTIONAL(name, ...) /* NOLINT(*naming*) */                          \
+ public:                                                                                           \
+  template <std::same_as<__VA_ARGS__> R = __VA_ARGS__>                                             \
+  [[nodiscard]] ::robocin::builder_internal::getter_result_t<std::optional<R>> get##name() const { \
+    static_assert(std::default_initializable<R>,                                                   \
+                  "'" #__VA_ARGS__ "' must be default initializable: use 'getOptional" #name       \
+                  "()' instead.");                                                                 \
+    using ::robocin::builder_internal::get_or_default;                                             \
+    return get_or_default(_M_##name);                                                              \
   }                                                                                                \
-  [[nodiscard]] auto add##name(                                                                    \
-      typename decltype(_M_instance._M_##name##s)::value_type&& rvalue)&&->builder_type {          \
-    using ::robocin::builder_internal::push_to;                                                    \
-    push_to(_M_instance._M_##name##s, std::move(rvalue));                                          \
-    return std::move(*this);                                                                       \
+  [[nodiscard]] ::robocin::builder_internal::getter_result_t<bool> has##name() const {             \
+    return _M_##name.has_value();                                                                  \
   }                                                                                                \
-  static_assert(::robocin::builder_internal::emplaceable<decltype(_M_instance._M_##name##s)>,      \
-                "'add" #name "' can only be used with containers that have 'emplace_back' or "     \
-                "'emplace' methods.");                                                             \
-  template <class... Args>                                                                         \
-  auto add##name(Args&&... args)&->builder_type& {                                                 \
-    using ::robocin::builder_internal::emplace_to;                                                 \
-    emplace_to(_M_instance._M_##name##s, std::forward<Args>(args)...);                             \
-    return *this;                                                                                  \
+  [[nodiscard]] ::robocin::builder_internal::get_optional_result_t<std::optional<__VA_ARGS__>>     \
+      getOptional##name() const {                                                                  \
+    return _M_##name;                                                                              \
   }                                                                                                \
-  template <class... Args>                                                                         \
-  [[nodiscard]] auto add##name(Args&&... args)&&->builder_type {                                   \
-    using ::robocin::builder_internal::emplace_to;                                                 \
-    emplace_to(_M_instance._M_##name##s, std::forward<Args>(args)...);                             \
-    return std::move(*this);                                                                       \
+  static_assert(not robocin::optionalish<__VA_ARGS__>,                                             \
+                "when using 'Getter(Optional, ...)', the given type must be non-optional: use "    \
+                "'Getter(Optional, " #name ", typename " #__VA_ARGS__                              \
+                "::value_type)' for optional types.");                                             \
+  ROBOCIN_BUILDER_GETTER_DECLARE(name, std::optional<__VA_ARGS__>)
+
+#define ROBOCIN_BUILDER_GETTER_REPEATED(name, ...) /* NOLINT(*naming*) */                          \
+ public:                                                                                           \
+  [[nodiscard]] ::robocin::builder_internal::getter_result_t<__VA_ARGS__> get##name() const {      \
+    return _M_##name;                                                                              \
   }                                                                                                \
-  auto clear##name##s()&->builder_type& {                                                          \
-    _M_instance._M_##name##s.clear();                                                              \
-    return *this;                                                                                  \
+  [[nodiscard]] ::robocin::builder_internal::getter_result_t<typename __VA_ARGS__::value_type>     \
+      get##name(size_t pos) const {                                                                \
+    return _M_##name[pos];                                                                         \
   }                                                                                                \
-  [[nodiscard]] auto clear##name##s()&&->builder_type {                                            \
-    _M_instance._M_##name##s.clear();                                                              \
-    return std::move(*this);                                                                       \
+  [[nodiscard]] ::robocin::builder_internal::getter_result_t<typename __VA_ARGS__::size_type>      \
+      get##name##Size() const {                                                                    \
+    return _M_##name.size();                                                                       \
   }                                                                                                \
-  static_assert(true, "expected a semicolon after 'Adder(" #name ")'.")
+  static_assert(#name[sizeof(#name) - 2] == 's',                                                   \
+                "'" #name "' must ends with 's' for repeated types.");                             \
+  ROBOCIN_BUILDER_GETTER_DECLARE(name, __VA_ARGS__)
+
+#define ROBOCIN_BUILDER_GETTER_DECLARE(name, ...)                                                  \
+  static_assert('A' <= #name[0] and #name[0] <= 'Z',                                               \
+                "'" #name "' must starts with an uppercase letter.");                              \
+  __VA_ARGS__ _M_##name {} // NOLINT(*naming*, *redundant*)
 
 #endif // ROBOCIN_MACROS_BUILDER_H

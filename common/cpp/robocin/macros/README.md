@@ -39,16 +39,7 @@ The [builder](builder.h) header provides a set of macros for building classes wi
 
 - `Getter`: generate getter methods for a class member. It provides methods to retrieve the value, check if it exists, and get an optional value for the specified member:
 
-  - `get##field() const`: Retrieves the value of the specified member;
-  - `is##field() const`: Checks if the specified boolean member is `true` (if applicable);
-  - `has##field() const`: Checks if the optional member has a value (if applicable);
-  - `getOptional##field() const`: Retrieves the optional value of the specified member (if applicable);
-  - Usage:
-    ```cpp
-    // ...
-    Getter(Integers, std::vector<int>);
-    // ...
-    ```
+TODO($ISSUE_N): Add Getter description.
 
 - `Setter`: generate setter methods for a class member. It provides methods to set the value of the specified member:
 
@@ -63,17 +54,3 @@ The [builder](builder.h) header provides a set of macros for building classes wi
     ```
 
 > **Note**: All setter methods return a reference to the instance of the class to allow chaining.
-
-- `Adder`: generate methods for adding elements to a container-type class member. It supports both lvalue and rvalue references for adding elements, and add methods to clear the container.
-  - `add##name(const type& cref_value)`: Adds an element to the container with a const reference.
-  - `add##name(type&& rvalue)`: Adds an element to the container with an rvalue reference.
-  - `add##name(Args&&... args)`: Emplaces elements into the container.
-  - `clear##name##s()`: Clears the container.
-  - Usage:
-    ```cpp
-    // ...
-    Adder(Integer); // singular, without 's'.
-    // ...
-    ```
-
-> **Note**: All adder methods return a reference to the instance of the class to allow chaining.

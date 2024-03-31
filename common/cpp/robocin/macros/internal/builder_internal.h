@@ -72,11 +72,6 @@ get_or_default(const Optional& opt) { // NOLINT(*naming*)
   }
 }
 
-template <optionalish T>
-bool has_value(const T& opt) { // NOLINT(*naming*)
-  return opt.has_value();
-}
-
 // container-related -------------------------------------------------------------------------------
 
 template <class Container>

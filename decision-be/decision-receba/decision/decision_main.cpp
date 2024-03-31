@@ -75,13 +75,30 @@ Decision makeDecision() {
   return decision;
 }
 
+// Default
+// Boolean
+// Optional
+// Repeated
+// Variant
+
+#define ROBOCIN_INTERNAL_LazyGetter() "Lazy"
+#define ROBOCIN_INTERNAL_DefaultGetter() "Default"
+#define ROBOCIN_INTERNAL_BooleanGetter() "Boolean"
+#define ROBOCIN_INTERNAL_OptionalGetter() "Optional"
+#define ROBOCIN_INTERNAL_RepeatedGetter() "Repeated"
+#define ROBOCIN_INTERNAL_VariantGetter() "Variant"
+
+#define Getter(kind, ...) ROBOCIN_INTERNAL_##kind##Getter(__VA_ARGS__)
+
 int main() {
   // std::expected<int, std::string> expt;
+  std::cout << Getter(Default) << std::endl;
+    std::cout << Getter(Boolean) << std::endl;
 
-  World world;
-
-  Decision dcs = makeDecision();
-  auto team_objective = dcs.run(world);
-
+ //  World world;
+// 
+ //  Decision dcs = makeDecision();
+ //  auto team_objective = dcs.run(world);
+// 
   return 0;
 }

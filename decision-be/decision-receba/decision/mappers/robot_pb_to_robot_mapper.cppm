@@ -2,11 +2,13 @@ module;
 
 #include "protocols/common/robot_id.pb.h"
 #include "protocols/vision/frame.pb.h"
+#include "robocin/geometry/point2d.h"
 
 export module decision.mappers:robot_pb_to_robot_mapper;
 
 import decision.models;
-import decision.geometry;
+
+using robocin::Point2Df;
 
 export namespace decision {
 

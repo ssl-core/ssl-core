@@ -124,6 +124,18 @@ struct Point3D {
   constexpr void swap(Point3D& other) noexcept { std::swap(*this, other); }
 };
 
+// Deduction guides --------------------------------------------------------------------------------
+Point3D() -> Point3D<double>;
+
+template <class T, class U, class V>
+Point3D(T, U, V) -> Point3D<std::common_type_t<T, U, V>>;
+
+// Aliases -----------------------------------------------------------------------------------------
+using Point3Di = Point3D<std::int32_t>;
+using Point3Df = Point3D<float>;
+using Point3Dd = Point3D<double>;
+using Point3Dld = Point3D<long double>;
+
 } // namespace robocin
 
 #endif // ROBOCIN_GEOMETRY_POINT3D_H

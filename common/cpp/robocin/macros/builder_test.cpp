@@ -12,15 +12,24 @@ struct Value {
   friend bool operator==(const Value& lhs, const Value& rhs) = default;
 };
 
+class NonDefault {
+ public:
+  explicit NonDefault(int x) : x_(x) {}
+
+ private:
+  int x_;
+};
+
 class Buildable final {
   BuildableWith(Builder);
 
-  Getter(Checked, bool);
-  Getter(Fundamental, int);
-  Getter(String, std::string);
-  Getter(OptionalValue, std::optional<Value>);
-  Getter(DictOfNumberNames, std::map<int, std::string>);
-  Getter(VectorOfNumbers, std::vector<int>);
+  Getter(Default, Checked, bool);
+  Getter(Default, Fundamental, int);
+  Getter(Default, String, std::string);
+  Getter(Optional, OptionalValue, Value);
+  Getter(Optional, Val, NonDefault);
+  Getter(Default, DictOfNumberNames, std::map<int, std::string>);
+  Getter(Repeated, VectorOfNumbers, std::vector<int>);
 };
 
 class Buildable::Builder final {
@@ -31,9 +40,7 @@ class Buildable::Builder final {
   Setter(String);
   Setter(OptionalValue);
   Setter(DictOfNumberNames);
-  Adder(DictOfNumberName);
   Setter(VectorOfNumbers);
-  Adder(VectorOfNumber);
 };
 
 TEST(BuilderTest, BuildBuildableClass) {
@@ -42,10 +49,8 @@ TEST(BuilderTest, BuildBuildableClass) {
                                   .setFundamental(1)
                                   .setString("robocin")
                                   .setOptionalValue(Value{})
-                                  .addDictOfNumberName(1, "one")
-                                  .addDictOfNumberName(2, "two")
-                                  .addVectorOfNumber(1)
-                                  .addVectorOfNumber(2)
+                                  .setDictOfNumberNames({{1, "one"}, {2, "two"}})
+                                  .setVectorOfNumbers({1, 2})
                                   .build();
 
   EXPECT_EQ(buildable.getFundamental(), 1);

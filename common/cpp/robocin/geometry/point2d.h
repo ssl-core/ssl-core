@@ -311,6 +311,12 @@ Point2D() -> Point2D<double>;
 template <class T, class U>
 Point2D(T, U) -> Point2D<std::common_type_t<T, U>>;
 
+// Aliases -----------------------------------------------------------------------------------------
+using Point2Di = Point2D<std::int32_t>;
+using Point2Df = Point2D<float>;
+using Point2Dd = Point2D<double>;
+using Point2Dld = Point2D<long double>;
+
 } // namespace robocin
 
 #endif // ROBOCIN_GEOMETRY_POINT2D_H
