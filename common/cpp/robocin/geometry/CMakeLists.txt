@@ -8,8 +8,9 @@ robocin_cpp_library(
 
 robocin_cpp_library(
   NAME point2d
-  HDRS point2d.h internal/point2d_internal.h
+  HDRS point2d.h internal/point2d_internal.h ../utility/internal/fuzzy_compare_internal.h
   SRCS point2d.cpp
+  DEPS fuzzy_compare
 )
 
 robocin_cpp_test(

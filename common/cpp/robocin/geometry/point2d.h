@@ -2,12 +2,11 @@
 #define ROBOCIN_GEOMETRY_POINT2D_H
 
 #include "robocin/geometry/internal/point2d_internal.h"
-#include "robocin/utility/fuzzy_compare.h"
+#include "robocin/utility/internal/fuzzy_compare_internal.h"
 
 #include <cmath>
 #include <iostream>
 #include <numeric>
-#include <optional>
 #include <stdexcept>
 
 namespace robocin {
@@ -48,8 +47,7 @@ struct Point2D {
   constexpr Point2D() : x(0), y(0) {}
   constexpr Point2D(const Point2D& point) = default;
   constexpr Point2D(Point2D&& point) noexcept = default;
-  // NOLINTNEXTLINE(bugprone-easily-swappable-parameters)
-  constexpr Point2D(value_type x, value_type y) : x(x), y(y) {}
+  constexpr Point2D(value_type x, value_type y) : x(x), y(y) {} // NOLINT(*swappable*)
   constexpr explicit Point2D(const point2d_internal::StructPoint auto& point) :
       x(static_cast<value_type>(point.x)),
       y(static_cast<value_type>(point.y)) {}
@@ -70,11 +68,7 @@ struct Point2D {
 
   // Validators ------------------------------------------------------------------------------------
   [[nodiscard]] constexpr bool isNull() const {
-    if constexpr (has_epsilon_v<value_type>) {
-      return fuzzyIsZero(x) and fuzzyIsZero(y);
-    } else {
-      return x == 0 and y == 0;
-    }
+    return fuzzy_compare_internal::fuzzyIsZero(x) and fuzzy_compare_internal::fuzzyIsZero(y);
   }
 
   // Arithmetic-assignment operators ---------------------------------------------------------------
@@ -108,25 +102,15 @@ struct Point2D {
 
   // Comparison operators --------------------------------------------------------------------------
   inline constexpr bool operator==(const Point2D& other) const {
-    if constexpr (has_epsilon_v<value_type>) {
-      return fuzzyCmpEqual(x, other.x) and fuzzyCmpEqual(y, other.y);
-    } else {
-      return x == other.x and y == other.y;
-    }
+    return fuzzy_compare_internal::fuzzyCmpEqual(x, other.x)
+           and fuzzy_compare_internal::fuzzyCmpEqual(y, other.y);
   }
 
   inline constexpr auto operator<=>(const Point2D& other) const {
-    if constexpr (has_epsilon_v<value_type>) {
-      if (auto x_cmp = fuzzyCmpThreeWay(x, other.x); std::is_neq(x_cmp)) {
-        return x_cmp;
-      }
-      return fuzzyCmpThreeWay(y, other.y);
-    } else {
-      if (auto x_cmp = x <=> other.x; std::is_neq(x_cmp)) {
-        return x_cmp;
-      }
-      return y <=> other.y;
+    if (auto x_cmp = fuzzy_compare_internal::fuzzyCmpThreeWay(x, other.x); std::is_neq(x_cmp)) {
+      return x_cmp;
     }
+    return fuzzy_compare_internal::fuzzyCmpThreeWay(y, other.y);
   }
 
   // Swap ------------------------------------------------------------------------------------------
@@ -216,14 +200,8 @@ struct Point2D {
   constexpr void resize(value_type t) &
     requires(std::floating_point<value_type>)
   {
-    if constexpr (has_epsilon_v<value_type>) {
-      if (value_type norm = this->norm(); not fuzzyIsZero(norm)) {
-        x *= t / norm, y *= t / norm;
-      }
-    } else {
-      if (value_type norm = this->norm()) {
-        x *= t / norm, y *= t / norm;
-      }
+    if (value_type norm = this->norm(); not fuzzy_compare_internal::fuzzyIsZero(norm)) {
+      x *= t / norm, y *= t / norm;
     }
   }
   [[nodiscard]] constexpr Point2D resized(value_type t) &&
@@ -240,14 +218,8 @@ struct Point2D {
   constexpr void normalize() &
     requires(std::floating_point<value_type>)
   {
-    if constexpr (has_epsilon_v<value_type>) {
-      if (value_type norm = this->norm(); not fuzzyIsZero(norm)) {
-        x /= norm, y /= norm;
-      }
-    } else {
-      if (value_type norm = this->norm()) {
-        x /= norm, y /= norm;
-      }
+    if (value_type norm = this->norm(); not fuzzy_compare_internal::fuzzyIsZero(norm)) {
+      x /= norm, y /= norm;
     }
   }
   constexpr void normalize() &
@@ -261,11 +233,8 @@ struct Point2D {
   [[nodiscard]] constexpr Point2D normalized() const& { return Point2D(*this).normalized(); }
 
   constexpr void axesNormalize() & {
-    if constexpr (has_epsilon_v<value_type>) {
-      x = fuzzyIsZero(x) ? 0 : (x > 0 ? 1 : -1), y = fuzzyIsZero(y) ? 0 : (y > 0 ? 1 : -1);
-    } else {
-      x = (x == 0) ? 0 : (x > 0 ? 1 : -1), y = (y == 0) ? 0 : (y > 0 ? 1 : -1);
-    }
+    x = fuzzy_compare_internal::fuzzyIsZero(x) ? 0 : (x > 0 ? 1 : -1),
+    y = fuzzy_compare_internal::fuzzyIsZero(y) ? 0 : (y > 0 ? 1 : -1);
   }
   [[nodiscard]] constexpr Point2D axesNormalized() && { return axesNormalize(), std::move(*this); }
   [[nodiscard]] constexpr Point2D axesNormalized() const& {

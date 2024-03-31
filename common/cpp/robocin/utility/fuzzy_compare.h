@@ -58,17 +58,17 @@ constexpr bool fuzzyCmpNotEqual(T lhs, U rhs)
 template <arithmetic T,
           arithmetic U,
           std::floating_point V = common_floating_point_for_comparison_t<T, U>>
-constexpr std::strong_ordering fuzzyCmpThreeWay(T lhs, U rhs, V epsilon) {
+constexpr std::partial_ordering fuzzyCmpThreeWay(T lhs, U rhs, V epsilon) {
   if (fuzzyCmpEqual(lhs, rhs, epsilon)) {
-    return std::strong_ordering::equal;
+    return std::partial_ordering::equivalent;
   }
-  return (lhs < rhs) ? std::strong_ordering::less : std::strong_ordering::greater;
+  return (lhs < rhs) ? std::partial_ordering::less : std::partial_ordering::greater;
 }
 
 template <arithmetic T,
           arithmetic U,
           std::floating_point V = common_floating_point_for_comparison_t<T, U>>
-constexpr std::strong_ordering fuzzyCmpThreeWay(T lhs, U rhs)
+constexpr std::partial_ordering fuzzyCmpThreeWay(T lhs, U rhs)
   requires(has_epsilon_v<V>)
 {
   return fuzzyCmpThreeWay(lhs, rhs, epsilon_v<V>);
@@ -204,7 +204,7 @@ class FuzzyThreeWay {
 
   constexpr explicit FuzzyThreeWay(value_type epsilon) : epsilon_{epsilon} {}
 
-  constexpr std::strong_ordering operator()(value_type lhs, value_type rhs) const {
+  constexpr std::partial_ordering operator()(value_type lhs, value_type rhs) const {
     return fuzzyCmpThreeWay(lhs, rhs, epsilon_);
   }
 

@@ -135,9 +135,7 @@ TYPED_TEST(Point2DTest, ConstructorGivenStructPoint) {
 TYPED_TEST(Point2DTest, ConstructorGivenClassPoint) {
   class OtherPoint2D {
    public:
-    OtherPoint2D(TypeParam x, TypeParam y) : // NOLINT(bugprone-easily-swappable-parameters)
-        x_(x),
-        y_(y) {}
+    OtherPoint2D(TypeParam x, TypeParam y) : x_(x), y_(y) {} // NOLINT(*swappable*)
 
     [[nodiscard]] TypeParam x() const { return x_; }
     [[nodiscard]] TypeParam y() const { return y_; }
@@ -285,11 +283,11 @@ TYPED_TEST(Point2DTest, ThreeWayComparison) {
   const Point2D<TypeParam> kPt1(/*x=*/1, /*y=*/2);
   const Point2D<TypeParam> kPt2(/*x=*/1, /*y=*/2);
 
-  EXPECT_EQ(kPt1 <=> kPt2, std::strong_ordering::equal);
+  EXPECT_EQ(kPt1 <=> kPt2, std::partial_ordering::equivalent);
 
   const Point2D<TypeParam> kPt3(/*x=*/3, /*y=*/4);
-  EXPECT_EQ(kPt1 <=> kPt3, std::strong_ordering::less);
-  EXPECT_EQ(kPt3 <=> kPt1, std::strong_ordering::greater);
+  EXPECT_EQ(kPt1 <=> kPt3, std::partial_ordering::less);
+  EXPECT_EQ(kPt3 <=> kPt1, std::partial_ordering::greater);
 }
 
 // Swap --------------------------------------------------------------------------------------------
@@ -674,10 +672,10 @@ TYPED_TEST(Point2DTest, Rbegin) {
 
 TYPED_TEST(Point2DTest, Rend) {
   Point2D<TypeParam> pt(/*x=*/1, /*y=*/2);
-  EXPECT_THROW(*pt.rend(), std::out_of_range);
+  EXPECT_THROW(std::ignore = *pt.rend(), std::out_of_range);
 
   const Point2D<TypeParam> kPt(/*x=*/3, /*y=*/4);
-  EXPECT_THROW(*kPt.rend(), std::out_of_range);
+  EXPECT_THROW(std::ignore = *kPt.rend(), std::out_of_range);
 
   static_assert(
       std::is_same_v<decltype(kPt.rend()), typename Point2D<TypeParam>::const_reverse_iterator>);
@@ -693,10 +691,10 @@ TYPED_TEST(Point2DTest, Crbegin) {
 
 TYPED_TEST(Point2DTest, Crend) {
   Point2D<TypeParam> pt(/*x=*/1, /*y=*/2); // NOLINT(misc-const-correctness)
-  EXPECT_THROW(*pt.crend(), std::out_of_range);
+  EXPECT_THROW(std::ignore = *pt.crend(), std::out_of_range);
 
   const Point2D<TypeParam> kPt(/*x=*/3, /*y=*/4);
-  EXPECT_THROW(*kPt.crend(), std::out_of_range);
+  EXPECT_THROW(std::ignore = *kPt.crend(), std::out_of_range);
 }
 
 // Input/Output ------------------------------------------------------------------------------------

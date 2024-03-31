@@ -4,9 +4,7 @@
 #include "robocin/geometry/internal/angle_internal.h"
 #include "robocin/utility/angular.h"
 #include "robocin/utility/concepts.h"
-#include "robocin/utility/fuzzy_compare.h"
 #include "robocin/utility/internal/fuzzy_compare_internal.h"
-#include "robocin/utility/type_traits.h"
 
 #include <concepts>
 #include <iostream>
