@@ -3,7 +3,7 @@ syntax = "proto3";
 package protocols.ui;
 
 import "google/protobuf/duration.proto";
-// import "protocols/vision/frame.proto";
+import "protocols/vision/frame.proto";
 
 service GatewayService {
   rpc GetVisionChunk(GetVisionChunkRequest) returns (GetVisionChunkResponse);
@@ -20,7 +20,7 @@ message GetVisionChunkRequest {
 
 message GetVisionChunkResponse {
   ChunkResponseHeader header = 1;
-  repeated string payloads = 2;
+  repeated vision.Frame payloads = 2;
 }
 
 message ChunkRequestHeader {
@@ -47,7 +47,7 @@ message ReceiveLiveStreamRequest {
 message ReceiveLiveStreamResponse {
   message Payload {
     oneof payload {
-      string vision_frame = 1;
+      vision.Frame vision_frame = 1;
     }
   }
 
