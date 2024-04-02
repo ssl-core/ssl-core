@@ -24,6 +24,7 @@ using ::google::protobuf::Duration;
 using protocols::third_party::detection::SSL_WrapperPacket;
 
 using protocols::ui::ReplayRequest;
+using protocols::vision::Field;
 using protocols::vision::Frame;
 
 using robocin::ThreadPool;
@@ -186,6 +187,38 @@ int main() {
   std::string const kVisionRepService = "ipc:///tmp/vision-sync.ipc";
   ZmqReplySocket reply;
   reply.bind(kVisionRepService);
+
+  Frame frame;
+  frame.mutable_properties()->set_serial_id(42);
+
+  Field& field = *frame.mutable_field();
+  field.set_length(9000);
+  field.set_width(6000);
+  field.set_goal_depth(180);
+  field.set_goal_width(1000);
+  field.set_penalty_area_depth(1000);
+  field.set_penalty_area_width(2000);
+  field.set_boundary_width(300);
+  field.set_goal_center_to_penalty_mark(6000);
+
+  for (int i = 0; i < 11; ++i) {
+    protocols::vision::Robot& robot = *frame.add_robots();
+    robot.mutable_robot_id()->set_number(i);
+    robot.mutable_robot_id()->set_color(
+        protocols::common::RobotId_Color::RobotId_Color_COLOR_YELLOW);
+
+    robot.mutable_position()->set_x((i * 9000) / 11);
+    robot.mutable_position()->set_y(0);
+  }
+
+  for (int i = 0; i < 11; ++i) {
+    protocols::vision::Robot& robot = *frame.add_robots();
+    robot.mutable_robot_id()->set_number(i);
+    robot.mutable_robot_id()->set_color(protocols::common::RobotId_Color::RobotId_Color_COLOR_BLUE);
+
+    robot.mutable_position()->set_x((i * 9000) / 11);
+    robot.mutable_position()->set_y(0);
+  }
 
   while (true) {
     auto message = reply.receive();
