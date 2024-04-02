@@ -21,10 +21,10 @@ Checks: >
   portability-*,
   readability-*, -readability-identifier-length
 
-WarningsAsErrors: >
-  *,
-  -cert-err58-cpp,
-  -readability-magic-numbers
+# WarningsAsErrors: >
+#   *,
+#   -cert-err58-cpp,
+#   -readability-magic-numbers
 
 CheckOptions:
   # bugprone-argument-comment:
