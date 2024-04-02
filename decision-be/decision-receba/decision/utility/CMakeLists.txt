@@ -6,6 +6,6 @@ robocin_cpp_library(
 
 robocin_cpp_library(
   NAME utility
-  MODS utility.cppm
+  MODS utility.cppm behavior_tree.cppm
   DEPS models
 )

@@ -19,10 +19,10 @@ class Robot final {
     Yellow,
   };
 
-  Getter(Id, int);
-  Getter(Color, Color);
-  Getter(Position, Point2Df);
-  Getter(Angle, float);
+  Getter(Default, Id, int);
+  Getter(Default, Color, Color);
+  Getter(Default, Position, Point2Df);
+  Getter(Default, Angle, float);
 };
 
 class Robot::Builder final {

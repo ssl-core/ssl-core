@@ -1,7 +1,8 @@
 module;
 
-#include "protocols/common/robot_id.pb.h"
-#include "protocols/vision/frame.pb.h"
+#include <protocols/common/robot_id.pb.h>
+#include <protocols/vision/frame.pb.h>
+
 #include "robocin/geometry/point2d.h"
 
 export module decision.mappers:robot_pb_to_robot_mapper;

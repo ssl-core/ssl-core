@@ -13,7 +13,7 @@ export namespace decision {
 class World final {
   BuildableWith(Builder);
 
-  Getter(Robots, std::vector<Robot>);
+  Getter(Repeated, Robots, std::vector<Robot>);
 };
 
 class World::Builder final {
