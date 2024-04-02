@@ -45,8 +45,6 @@
 				}
 			},
 			"extensions": [
-				// Go
-				"golang.Go",
 				// GitLens - Git supercharged
 				"eamodio.gitlens",
 				// Docker
