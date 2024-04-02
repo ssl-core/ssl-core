@@ -1,0 +1,67 @@
+// For format details, see https://aka.ms/devcontainer.json. For config options, see the
+// README at: https://github.com/devcontainers/templates/tree/main/src/typescript-node
+{
+	"name": "Typescript",
+	"build": {
+		"context": "../..",
+		"dockerfile": "Dockerfile"
+	},
+	"postCreateCommand": "yarn",
+	"customizations": {
+		"vscode": {
+			"settings": {
+				// JS Settings
+				"[javascript]": {
+					"editor.formatOnSave": true
+				},
+				// TS Settings
+				"[typescript]": {
+					"editor.formatOnSave": true
+				},
+				// Editor Settings
+				"editor.detectIndentation": true,
+				"editor.codeActionsOnSave": {
+					"source.fixAll.eslint": true
+				},
+				// Files Settings
+				"files.insertFinalNewline": true,
+				"files.eol": "\n",
+				// JSON Settings
+				"[json]": {
+					"editor.insertSpaces": true,
+					"editor.tabSize": 2,
+					"editor.formatOnSave": true,
+					"editor.defaultFormatter": "vscode.json-language-features"
+				},
+				// YAML Settings
+				"[yaml]": {
+					"editor.insertSpaces": true,
+					"editor.tabSize": 2,
+					"editor.formatOnSave": true,
+					"editor.defaultFormatter": "redhat.vscode-yaml"
+				},
+				"[markdown]": {
+					"editor.formatOnSave": true
+				}
+			},
+			"extensions": [
+				// Go
+				"golang.Go",
+				// GitLens - Git supercharged
+				"eamodio.gitlens",
+				// Docker
+				"ms-azuretools.vscode-docker",
+				// Live Share
+				"ms-vsliveshare.vsliveshare",
+				// ESLint
+				"dbaeumer.vscode-eslint",
+				// Github Copilot
+				"github.copilot",
+				// Markdown
+				"yzhang.markdown-all-in-one",
+				// YAML
+				"redhat.vscode-yaml"
+			]
+		}
+	}
+}
