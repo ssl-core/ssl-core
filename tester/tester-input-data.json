@@ -1,0 +1,17 @@
+{
+    "requests": [
+        {
+            "count": "10",
+            "address_zmq": "ipc:///tmp/vision-service",
+            "topic": "vision-tester",
+            "message_path_pb": "message-vision.textpb",
+            "protobuf_type": "SSL_WrapperPacket",
+            "response": {
+                "address_zmq": "ipc:///tmp/vision-service",
+                "topic": "vision-tester",
+                "message_path_pb": "message-vision.textpb",
+                "protobuf_type": "SSL_WrapperPacket"
+            }
+        }
+    ]
+}
