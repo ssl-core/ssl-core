@@ -15,14 +15,13 @@ class Tester:
         self.pub = self.context.socket(zmq.PUB)
         self.PbType = eval(str(pbType))
         self.pbPath = Path(pbPath).read_text()
-        self.address = address
-        self.topic = topic
+        self.address = str(address).strip()
+        self.topic = str(topic).strip()
         self.response = response
         self.listDiffTime = []
 
     def createSocket(self):
-        pub = self.context.socket(zmq.PUB)
-        pub.bind(self.address)
+        self.pub.bind(self.address)
 
     def sendMessage(self):
         qty = int(self.count)
@@ -33,10 +32,11 @@ class Tester:
         )
         message = proto.SerializeToString()
         while qty > 0:
-            time.sleep(0.5)
+            time.sleep(0.7)
             initTimer = datetime.now().timestamp()
+
             self.pub.send_multipart([self.topic.encode(), message])
-            print(message)
+            # print(message)
             endTimer = datetime.now().timestamp()
             elapsedTime = measuringTime(initTimer, endTimer)
             self.listDiffTime.append(elapsedTime[1])
