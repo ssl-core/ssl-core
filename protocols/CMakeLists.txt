@@ -41,18 +41,16 @@ robocin_cpp_proto_library(
   DEPS common
 )
 
-get_protobufs("protocols/ui" ui_protos)
-
 robocin_cpp_proto_library(
   NAME ui
   PROTOS protocols/ui/replay.proto
-  DEPS vision common
+  DEPS vision
 )
 
 robocin_cpp_proto_library(
-  NAME ui_grpc
+  NAME gateway
   PROTOS protocols/ui/gateway.proto
-  DEPS vision common
+  DEPS vision
 )
 
 ########################################################################################################################
