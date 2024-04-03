@@ -47,7 +47,7 @@ robocin_cpp_proto_library(
   DEPS vision
 )
 
-robocin_cpp_proto_library(
+robocin_cpp_grpc_library(
   NAME gateway
   PROTOS protocols/ui/gateway.proto
   DEPS vision

@@ -10,6 +10,8 @@
 #include <google/protobuf/text_format.h>
 #include <memory>
 #include <protocols/third_party/detection/raw_wrapper.pb.h>
+#include <protocols/ui/gateway.grpc.pb.h>
+#include <protocols/ui/gateway.pb.h>
 #include <protocols/ui/replay.pb.h>
 #include <protocols/vision/frame.pb.h>
 #include <robocin/concurrency/thread_pool.h>

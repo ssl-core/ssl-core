@@ -611,7 +611,7 @@ function(robocin_cpp_grpc_library)
   endforeach (PROTO)
 
   add_library(${ARG_NAME} ${proto_hdrs} ${proto_srcs} ${grpc_hdrs} ${grpc_srcs})
-  target_link_libraries(${ARG_NAME} PUBLIC protobuf::libprotobuf gRPC::grpc++ gRPC::grpc++_reflection) # link library with given dependencies
+  target_link_libraries(${ARG_NAME} PUBLIC protobuf::libprotobuf gRPC::grpc++ gRPC::grpc++_reflection ${ARG_DEPS}) # link library with given dependencies
 
   target_include_directories(${ARG_NAME} PRIVATE ${ROBOCIN_PROJECT_PATH})
   target_include_directories(${ARG_NAME} PRIVATE ${CMAKE_BINARY_DIR})

@@ -2,8 +2,6 @@
 #include "gateway/controller/grpc_controller.h"
 #include "gateway/controller/icontroller.h"
 #include "gateway/controller/third_party_sockets_controller.h"
-#include "gateway/gateway.grpc.pb.h"
-#include "gateway/gateway.pb.h"
 #include "gateway/service_discovery.h"
 #include "grpc_controller.h"
 
@@ -12,6 +10,8 @@
 #include <grpcpp/server_context.h>
 #include <memory>
 #include <nlohmann/json.hpp>
+#include <protocols/ui/gateway.grpc.pb.h>
+#include <protocols/ui/gateway.pb.h>
 #include <thread>
 #include <zmq.hpp>
 #include <zmq_addon.hpp>

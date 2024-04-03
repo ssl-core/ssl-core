@@ -13,6 +13,9 @@ project(gateway LANGUAGES CXX)
 find_package(common CONFIG REQUIRED)
 message(STATUS "Using common: '${common_DIR}'")
 
+find_package(protocols CONFIG REQUIRED)
+message(STATUS "Using protocols: '${protocols_DIR}'")
+
 ########################################################################################################################
 
 robocin_cpp_project_setup(STANDARD 23)

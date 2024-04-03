@@ -1,10 +1,10 @@
-#include "gateway/gateway.grpc.pb.h"
-#include "gateway/gateway.pb.h"
 #include "gateway/service_discovery.h"
 
 #include <google/protobuf/duration.pb.h>
 #include <grpcpp/grpcpp.h>
 #include <iostream>
+#include <protocols/ui/gateway.grpc.pb.h>
+#include <protocols/ui/gateway.pb.h>
 #include <string>
 
 using grpc::Channel;

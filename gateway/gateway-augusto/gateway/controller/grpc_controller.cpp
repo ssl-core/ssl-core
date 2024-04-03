@@ -1,12 +1,12 @@
 #include "gateway/controller/grpc_controller.h"
 
-#include "gateway/gateway.grpc.pb.h"
-#include "gateway/gateway.pb.h"
 #include "gateway/service_discovery.h"
 #include "robocin/network/zmq_request_reply_socket.h"
 #include "robocin/network/zmq_subscriber_socket.h"
 
 #include <grpcpp/server_builder.h>
+#include <protocols/ui/gateway.grpc.pb.h>
+#include <protocols/ui/gateway.pb.h>
 #include <string>
 #include <string_view>
 
