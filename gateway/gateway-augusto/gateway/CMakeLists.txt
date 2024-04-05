@@ -16,3 +16,9 @@ robocin_cpp_executable(
   SRCS client_main.cpp
   DEPS protocols::gateway
 )
+
+robocin_cpp_executable(
+  NAME service_main
+  SRCS service_main.cpp
+  DEPS common::network protocols::vision protocols::gateway
+)
