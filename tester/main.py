@@ -21,7 +21,7 @@ for i in data["requests"]:
     zmq_topic = i["zmq"]["topic"]
     udp_multicast_ip = i["udp_multicast"]["ip"]
     udp_multicast_port = int(i["udp_multicast"]["port"])
-    udp_multicast_inet = str(i["udp_multicast"]["inet"])
+    # udp_multicast_inet = str(i["udp_multicast"]["inet"])
 
     if i["response"]:
         response = i["response"]
@@ -31,7 +31,7 @@ for i in data["requests"]:
     messagePb = pbMessage(pbPath, pbType)
 
     while True:
-        multicast_udp.send(messagePb, udp_multicast_inet, udp_multicast_port)
+        multicast_udp.send(messagePb, udp_multicast_ip, udp_multicast_port)
         time.sleep(0.5)
 
     exit(0)

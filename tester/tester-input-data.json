@@ -9,8 +9,7 @@
             },
             "udp_multicast": {
                 "ip": "224.5.23.2",
-                "port": "10006",
-                "inet": "127.0.0.1"
+                "port": "10006"
             },
             "message_path_pb": "message-vision.textpb",
             "protobuf_type": "SSL_WrapperPacket",
@@ -22,7 +21,7 @@
                 "udp_multicast": {
                     "ip": "224.5.23.2",
                     "port": "10006",
-                    "inet": "127.0.0.1"
+                    "inet": "192.168.18.5"
                 },
                 "message_path_pb": "message-vision.textpb",
                 "protobuf_type": "SSL_WrapperPacket"

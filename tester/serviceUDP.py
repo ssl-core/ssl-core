@@ -22,6 +22,8 @@ if __name__ == "__main__":
     raw_udp_socket.bind(args.raw_ip_address, args.raw_port, args.network_interface)
 
     while True:
+        print(f"receiving before... {args.raw_port} {args.raw_ip_address}")
+
         # Receive vision packet
         data = raw_udp_socket.receive()
         raw_packet = SSL_WrapperPacket()
