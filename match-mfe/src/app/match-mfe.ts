@@ -15,7 +15,7 @@ class MatchMFE extends HTMLElement {
       environment.engine,
       this.root
     );
-    this.socketHandler = new SocketHandler(this.renderEngine);
+    this.socketHandler = new SocketHandler(environment.socketUrl);
   }
 
   public connectedCallback() {

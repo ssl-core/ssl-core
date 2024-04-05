@@ -13,16 +13,21 @@ class ThreeWallMesh extends ThreeBaseMesh {
     this.buildMesh();
   }
 
+  public setWidth(width: number) {
+    this.width = width;
+    this.buildMesh();
+  }
+
   protected buildGeometry() {
     return new BoxGeometry(
       this.width,
-      constants.wall.thickness,
-      constants.wall.height
+      constants.field.wall.thickness,
+      constants.field.wall.height
     );
   }
 
   protected buildMaterial() {
-    return new MeshPhongMaterial({ color: constants.wall.color });
+    return new MeshPhongMaterial({ color: constants.field.wall.color });
   }
 }
 

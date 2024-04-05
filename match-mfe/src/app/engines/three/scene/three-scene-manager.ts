@@ -8,12 +8,9 @@ import {
 } from "three";
 import { OrbitControls } from "three/examples/jsm/Addons.js";
 
-import ThreeRobotObject from "../objects/robot/three-robot-object";
-import ThreeFieldObject from "../objects/field/three-field-object";
 import ThreeElementProxyReceiver from "../proxy/three-element-proxy-receiver";
-import ThreeGoalObject from "../objects/goal/three-goal-object";
-import ThreeBallObject from "../objects/ball/three-ball-object";
-import ThreeWallsObject from "../objects/walls/three-walls-object";
+import ThreeSceneObjectPool from "./three-scene-object-pool";
+import Channels from "../../../../config/channels";
 import constants from "../../../../config/constants";
 
 class ThreeSceneManager {
@@ -22,6 +19,8 @@ class ThreeSceneManager {
   private renderer: WebGLRenderer | null;
   private camera: PerspectiveCamera;
   private scene: Scene;
+  private channel: BroadcastChannel;
+  private pool: ThreeSceneObjectPool;
 
   constructor() {
     this.canvas = null;
@@ -29,6 +28,12 @@ class ThreeSceneManager {
     this.renderer = null;
     this.camera = new PerspectiveCamera();
     this.scene = new Scene();
+    this.channel = new BroadcastChannel(Channels.Engine);
+    this.pool = new ThreeSceneObjectPool(
+      this.scene,
+      constants.numRobots,
+      constants.numBalls
+    );
   }
 
   public initialize(
@@ -38,26 +43,26 @@ class ThreeSceneManager {
     this.setCanvas(canvas, canvasDOM);
     this.setCameraPosition();
     this.setOrbitControls();
-    this.addObjects();
+    this.setLighting();
+    this.listenChannel();
     this.resize(canvas.width, canvas.height);
   }
 
-  public render(_frame: Frame) {
-    for (const child of this.scene.children) {
-      if (child instanceof ThreeRobotObject) {
-        child.update();
-      }
-    }
+  public render(frame: Frame) {
+    const { field, robots, balls } = frame;
 
+    this.renderField(field);
+    this.renderRobots(robots);
+    this.renderBalls(balls);
     this.update();
   }
 
-  private update() {
-    if (!this.renderer) {
-      throw new Error("Renderer not initialized");
+  public tick() {
+    for (const object of this.pool.getObjects()) {
+      object.update();
     }
 
-    this.renderer.render(this.scene, this.camera);
+    this.update();
   }
 
   public resize(width: number, height: number) {
@@ -72,14 +77,15 @@ class ThreeSceneManager {
     this.update();
   }
 
-  private addObjects() {
-    this.addLight();
-    this.addField();
-    this.addRobots();
-    this.addBall();
+  private update() {
+    if (!this.renderer) {
+      throw new Error("Renderer not initialized");
+    }
+
+    this.renderer.render(this.scene, this.camera);
   }
 
-  private addLight() {
+  private setLighting() {
     this.scene.background = new Color(constants.background);
 
     const directionalLight = new DirectionalLight("#FFFFFF", 8);
@@ -92,70 +98,26 @@ class ThreeSceneManager {
     this.scene.add(light);
   }
 
-  private addField() {
-    const field = new ThreeFieldObject();
-    field.position.set(0, 0, 0);
-    this.scene.add(field);
-
-    const blueGoal = new ThreeGoalObject();
-    blueGoal.position.set(
-      -(constants.field.width + constants.goal.depth) / 2,
-      0,
-      constants.goal.height / 2
-    );
-    blueGoal.rotation.set(0, Math.PI, 0);
-    this.scene.add(blueGoal);
-
-    const yellowGoal = new ThreeGoalObject();
-    yellowGoal.position.set(
-      (constants.field.width + constants.goal.depth) / 2,
-      0,
-      constants.goal.height / 2
-    );
-    this.scene.add(yellowGoal);
-
-    const walls = new ThreeWallsObject();
-    walls.position.set(0, 0, constants.wall.height / 2);
-    this.scene.add(walls);
+  private renderField(fieldParams: Field) {
+    const field = this.pool.getField();
+    field.setParams(fieldParams);
   }
 
-  private addRobots() {
-    const z =
-      constants.robot.chassis.height / 2 + constants.robot.chassis.bottomHeight;
-
-    for (let i = 0; i < 11; i++) {
-      const robot = new ThreeRobotObject(i, "blue");
-
-      if (i === 0) {
-        robot.position.set(-constants.field.width / 2, 0, z);
-      } else if (i < 6) {
-        robot.position.set(-3.5, (i - 3) * 1.5, z);
-      } else {
-        robot.position.set(-1.5, i - 8, z);
-      }
-
-      this.scene.add(robot);
-    }
-
-    for (let i = 0; i < 11; i++) {
-      const robot = new ThreeRobotObject(i, "yellow");
-
-      if (i === 0) {
-        robot.position.set(constants.field.width / 2, 0, z);
-      } else if (i < 6) {
-        robot.position.set(3.5, (i - 3) * 1.5, z);
-      } else {
-        robot.position.set(1.5, i - 8, z);
-      }
-
-      this.scene.add(robot);
+  private renderRobots(robotsParams: Robot[]) {
+    for (const robotParams of robotsParams) {
+      const robot = this.pool.getRobot(
+        robotParams.robot_id,
+        robotParams.robot_color
+      );
+      robot?.setParams(robotParams);
     }
   }
 
-  private addBall() {
-    const ball = new ThreeBallObject();
-    ball.position.set(0, 0, constants.ball.radius);
-    this.scene.add(ball);
+  private renderBalls(ballsParams: Ball[]) {
+    for (const [index, ballParams] of ballsParams.entries()) {
+      const ball = this.pool.getBall(index);
+      ball?.setParams(ballParams);
+    }
   }
 
   private setCameraPosition() {
@@ -172,6 +134,12 @@ class ThreeSceneManager {
     this.renderer = new WebGLRenderer({
       canvas,
       antialias: true,
+    });
+  }
+
+  private listenChannel() {
+    this.channel.addEventListener("message", (event) => {
+      this.render(event.data as Frame);
     });
   }
 

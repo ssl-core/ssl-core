@@ -1,27 +1,24 @@
-import BaseRenderEngine from "../engines/base-render-engine";
 import SocketWorker from "./worker/socket-worker?worker";
+import SocketEventTypes from "./worker/socket-event-types";
 
 class SocketHandler {
   private worker: Worker;
-  private renderEngine: BaseRenderEngine;
+  private address: string;
 
-  constructor(renderEngine: BaseRenderEngine) {
+  constructor(address: string) {
     this.worker = new SocketWorker();
-    this.renderEngine = renderEngine;
+    this.address = address;
   }
 
   public initialize() {
-    this.addMessageListener();
+    this.worker.postMessage({
+      type: SocketEventTypes.Initialize,
+      payload: { address: this.address },
+    });
   }
 
   public terminate() {
     this.worker.terminate();
-  }
-
-  private addMessageListener() {
-    this.worker.addEventListener("message", (event) => {
-      this.renderEngine.render(event.data);
-    });
   }
 }
 

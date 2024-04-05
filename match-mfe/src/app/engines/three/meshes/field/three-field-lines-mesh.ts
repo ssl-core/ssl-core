@@ -7,8 +7,41 @@ import {
 import constants from "../../../../../config/constants";
 
 class ThreeFieldLinesMesh extends LineSegments2 {
-  constructor() {
+  private length: number;
+  private width: number;
+  private penaltyDepth: number;
+  private penaltyWidth: number;
+
+  constructor(
+    length?: number,
+    width?: number,
+    penaltyDepth?: number,
+    penaltyWidth?: number
+  ) {
     super();
+    this.length = length || 0;
+    this.width = width || 0;
+    this.penaltyDepth = penaltyDepth || 0;
+    this.penaltyWidth = penaltyWidth || 0;
+
+    this.buildMesh();
+  }
+
+  public setParams(
+    length: number,
+    width: number,
+    penaltyDepth: number,
+    penaltyWidth: number
+  ) {
+    this.length = length;
+    this.width = width;
+    this.penaltyDepth = penaltyDepth;
+    this.penaltyWidth = penaltyWidth;
+
+    this.buildMesh();
+  }
+
+  private buildMesh() {
     this.geometry = this.buildGeometry();
     this.material = this.buildMaterial();
   }
@@ -36,87 +69,87 @@ class ThreeFieldLinesMesh extends LineSegments2 {
   }
 
   private fieldPoints() {
-    const fieldHalfWidth = constants.field.width / 2;
-    const fieldHalfHeight = constants.field.height / 2;
+    const fieldHalfLength = this.length / 2;
+    const fieldHalfWidth = this.width / 2;
 
     return [
+      -fieldHalfLength,
       -fieldHalfWidth,
-      -fieldHalfHeight,
       0,
-      -fieldHalfWidth,
-      fieldHalfHeight,
+      -fieldHalfLength,
+      fieldHalfWidth,
       0,
 
-      -fieldHalfWidth,
-      fieldHalfHeight,
-      0,
+      -fieldHalfLength,
       fieldHalfWidth,
-      fieldHalfHeight,
+      0,
+      fieldHalfLength,
+      fieldHalfWidth,
       0,
 
+      fieldHalfLength,
       fieldHalfWidth,
-      fieldHalfHeight,
       0,
-      fieldHalfWidth,
-      -fieldHalfHeight,
+      fieldHalfLength,
+      -fieldHalfWidth,
       0,
 
-      fieldHalfWidth,
-      -fieldHalfHeight,
-      0,
+      fieldHalfLength,
       -fieldHalfWidth,
-      -fieldHalfHeight,
+      0,
+      -fieldHalfLength,
+      -fieldHalfWidth,
       0,
     ];
   }
 
   private penaltyPoints(side: number) {
-    const fieldHalfWidth = (side * constants.field.width) / 2;
-    const penaltyWidth = -side * constants.field.penalty.width;
-    const penaltyHeight = constants.field.penalty.height;
-    const penaltyHalfHeight = penaltyHeight / 2;
+    const fieldHalfLength = (side * this.length) / 2;
+    const penaltyDepth = -side * this.penaltyDepth;
+    const penaltyWidth = this.penaltyWidth;
+    const penaltyHalfWidth = penaltyWidth / 2;
 
     return [
-      fieldHalfWidth,
-      -penaltyHalfHeight,
+      fieldHalfLength,
+      -penaltyHalfWidth,
       0,
-      fieldHalfWidth + penaltyWidth,
-      -penaltyHalfHeight,
-      0,
-
-      fieldHalfWidth + penaltyWidth,
-      -penaltyHalfHeight,
-      0,
-      fieldHalfWidth + penaltyWidth,
-      penaltyHalfHeight,
+      fieldHalfLength + penaltyDepth,
+      -penaltyHalfWidth,
       0,
 
-      fieldHalfWidth + penaltyWidth,
-      penaltyHalfHeight,
+      fieldHalfLength + penaltyDepth,
+      -penaltyHalfWidth,
       0,
-      fieldHalfWidth,
-      penaltyHalfHeight,
+      fieldHalfLength + penaltyDepth,
+      penaltyHalfWidth,
+      0,
+
+      fieldHalfLength + penaltyDepth,
+      penaltyHalfWidth,
+      0,
+      fieldHalfLength,
+      penaltyHalfWidth,
       0,
     ];
   }
 
   private midLinesPoints() {
-    const fieldHalfWidth = constants.field.width / 2;
-    const fieldHalfHeight = constants.field.height / 2;
+    const fieldHalfLength = this.length / 2;
+    const fieldHalfWidth = this.width / 2;
 
     return [
+      -fieldHalfLength,
+      0,
+      0,
+      fieldHalfLength,
+      0,
+      0,
+
+      0,
       -fieldHalfWidth,
       0,
       0,
       fieldHalfWidth,
-      0,
-      0,
-
-      0,
-      -fieldHalfHeight,
-      0,
-      0,
-      fieldHalfHeight,
       0,
     ];
   }
