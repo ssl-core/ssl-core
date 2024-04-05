@@ -1,41 +1,49 @@
 import zmq
 from datetime import datetime
 import time
-from google.protobuf.text_format import Parse as ParseFromText
 from pathlib import Path
 from protocols.third_party.detection.raw_wrapper_pb2 import SSL_WrapperPacket
-from testerLatencyFunctions import latencyMean, measuringTime
+from testerCommonFunctions import latencyMean, measuringTime, pbMessage
 
 
 class Tester:
 
-    def __init__(self, count, pbType, pbPath, address, topic, response):
+    def __init__(
+        self,
+        count,
+        pbType,
+        pbPath,
+        zmqAddress,
+        zmqTopic,
+        response,
+        udpIp,
+        udpPort,
+        udpInet,
+    ):
         self.count = count
         self.context = zmq.Context()
         self.pub = self.context.socket(zmq.PUB)
-        self.PbType = eval(str(pbType))
+        self.PbType = pbType
         self.pbPath = Path(pbPath).read_text()
-        self.address = str(address).strip()
-        self.topic = str(topic).strip()
+        self.zmqAddress = str(zmqAddress).strip()
+        self.zmqTopic = str(zmqTopic).strip()
         self.response = response
         self.listDiffTime = []
+        self.udpIp = udpIp
+        self.udpPort = udpPort
+        self.udpInet = udpInet
 
-    def createSocket(self):
-        self.pub.bind(self.address)
+    def createZmqSocket(self):
+        self.pub.bind(self.zmqAddress)
 
     def sendMessage(self):
         qty = int(self.count)
-        proto = self.PbType()
-        ParseFromText(
-            self.pbPath,
-            proto,
-        )
-        message = proto.SerializeToString()
+        message = pbMessage(self.pbPath, self.PbType)
         while qty > 0:
-            time.sleep(0.7)
+            time.sleep(0.1)
             initTimer = datetime.now().timestamp()
 
-            self.pub.send_multipart([self.topic.encode(), message])
+            self.pub.send_multipart([self.zmqTopic.encode(), message])
             # print(message)
             endTimer = datetime.now().timestamp()
             elapsedTime = measuringTime(initTimer, endTimer)
@@ -46,6 +54,6 @@ class Tester:
         mean = latencyMean(self.listDiffTime)
         print(
             "The mean of the latency from tester into {} is {} ms".format(
-                self.topic, mean
+                self.zmqTopic, mean
             )
         )
