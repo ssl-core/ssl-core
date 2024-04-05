@@ -3,11 +3,10 @@ from datetime import datetime
 import time
 from pathlib import Path
 from protocols.third_party.detection.raw_wrapper_pb2 import SSL_WrapperPacket
-from testerCommonFunctions import latencyMean, measuringTime, pbMessage
+from utility.latency import measure_mean, measure_time
 
 
 class Tester:
-
     def __init__(
         self,
         count,
@@ -51,7 +50,7 @@ class Tester:
             qty = qty - 1
 
     def getLatency(self):
-        mean = latencyMean(self.listDiffTime)
+        mean = measure_mean(self.listDiffTime)
         print(
             "The mean of the latency from tester into {} is {} ms".format(
                 self.zmqTopic, mean

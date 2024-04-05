@@ -1,0 +1,18 @@
+{
+    "requests": [
+        {
+            "count": "30",
+            "fps": "60",
+            "zmq": {
+                "address": "ipc:///tmp/vision-service",
+                "topic": "vision-tester"
+            },
+            "udp_multicast": {
+                "ip": "224.5.23.2",
+                "port": "10020"
+            },
+            "message_path_pb": "message-vision.textpb",
+            "protobuf_type": "SSL_WrapperPacket"
+        }
+    ]
+}

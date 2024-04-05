@@ -1,5 +1,5 @@
 import json
-from multicast_udp_socket import MulticastUdpSocket
+from network.multicast_udp_receiver_socket import MulticastUdpSocket
 from tester import Tester
 from testerCommonFunctions import pbMessage
 import time
