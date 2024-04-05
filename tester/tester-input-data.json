@@ -1,14 +1,28 @@
 {
     "requests": [
         {
-            "count": "10",
-            "address_zmq": "ipc:///tmp/vision-service",
-            "topic": "vision-tester",
+            "count": "30",
+            "fps": "60",
+            "zmq": {
+                "address": "ipc:///tmp/vision-service",
+                "topic": "vision-tester"
+            },
+            "udp_multicast": {
+                "ip": "224.5.23.2",
+                "port": "10006"
+            },
             "message_path_pb": "message-vision.textpb",
             "protobuf_type": "SSL_WrapperPacket",
             "response": {
-                "address_zmq": "ipc:///tmp/vision-service",
-                "topic": "vision-tester",
+                "zmq": {
+                    "address": "ipc:///tmp/vision-service",
+                    "topic": "vision-tester"
+                },
+                "udp_multicast": {
+                    "ip": "224.5.23.2",
+                    "port": "10006",
+                    "inet": "192.168.18.5"
+                },
                 "message_path_pb": "message-vision.textpb",
                 "protobuf_type": "SSL_WrapperPacket"
             }

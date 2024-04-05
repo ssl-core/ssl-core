@@ -1,4 +1,7 @@
 from datetime import datetime
+from pathlib import Path
+from protocols.third_party.detection.raw_wrapper_pb2 import SSL_WrapperPacket
+from google.protobuf.text_format import Parse as ParseFromText
 
 
 def measuringTime(init, end):
@@ -17,3 +20,16 @@ def latencyMean(latencyList):
     latencySum = sum(listDiffTime)
     mean = latencySum / len(listDiffTime)
     return mean
+
+
+def pbMessage(pbPathValue, pbType):
+    pbPath = Path(pbPathValue).read_text()
+    PbType = eval(str(pbType))
+    proto = PbType()
+    ParseFromText(
+        pbPath,
+        proto,
+    )
+    message = proto.SerializeToString()
+
+    return message
