@@ -25,10 +25,13 @@ static constexpr std::string_view kServiceRegistryJson = "service_registry.json"
 constexpr std::string_view kGatewayGrpc = "Gateway.Grpc";
 
 int main() {
+  std::cout << "GATEWAY MAIN...\n";
   std::ifstream file(std::format("{}/{}", ROBOCIN_REPOSITORY_PATH, kServiceRegistryJson));
   if (!file.is_open()) {
     return -1;
   }
+
+  std::cout << "FILE OPENED...\n";
 
   SServiceDiscovery.setup(nlohmann::json::parse(file));
 
@@ -39,10 +42,10 @@ int main() {
     third_party_sockets_controller->run();
   });
 
-  std::string gateway_grpc_address(SServiceDiscovery.lookup(kGatewayGrpc).address);
-  std::unique_ptr<IController> grpc_controller
-      = std::make_unique<GrpcController>(gateway_grpc_address);
-  grpc_controller->run();
+  // std::string gateway_grpc_address(SServiceDiscovery.lookup(kGatewayGrpc).address);
+  // std::unique_ptr<IController> grpc_controller
+  //     = std::make_unique<GrpcController>(gateway_grpc_address);
+  // grpc_controller->run();
 
   return 0;
 }

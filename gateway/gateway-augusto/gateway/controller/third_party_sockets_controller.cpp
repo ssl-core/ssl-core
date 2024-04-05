@@ -41,16 +41,18 @@ ThirdPartySocketsController::ThirdPartySocketsController() {
 void ThirdPartySocketsController::run() {
   std::cout << "Starting third_party_sockets_controller...\n";
   while (true) {
-    poller_.poll(/*timeout=*/-1);
+    // std::cout << "Before poll...\n";
+    // poller_.poll(/*timeout=*/10);
 
-    if (isSocketConnected(vision_.fd())) {
-      std::cout << "VISION IS CONNECTED!\n";
+    if (auto message = vision_.receive(); !message.empty()) {
+      std::cout << "GATEWAY RECEIVED A MESSAGE: " << message << "\n";
+      publisher_.send("vision-third-party", message);
     }
 
-    if (auto vision_message = poller_.recvFrom(vision_); !vision_message.empty()) {
-      std::cout << "GATEWAY RECEIVED A MESSAGE: " << vision_message << "\n";
-      publisher_.send("vision-third-party", vision_message);
-    }
+    // if (auto vision_message = poller_.recvFrom(vision_); !vision_message.empty()) {
+    //   std::cout << "GATEWAY RECEIVED A MESSAGE: " << vision_message << "\n";
+    //   publisher_.send("vision-third-party", vision_message);
+    // }
   }
 }
 
