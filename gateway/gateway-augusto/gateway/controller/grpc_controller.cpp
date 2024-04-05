@@ -7,9 +7,9 @@
 #include <grpcpp/server_builder.h>
 #include <protocols/ui/gateway.grpc.pb.h>
 #include <protocols/ui/gateway.pb.h>
+#include <protocols/ui/replay.pb.h>
 #include <string>
 #include <string_view>
-
 namespace gateway {
 
 namespace {
@@ -42,17 +42,27 @@ class GatewayServiceImpl final : public GatewayService::Service {
   Status GetVisionChunk(ServerContext* context,
                         const GetVisionChunkRequest* request,
                         GetVisionChunkResponse* response) override {
-    std::string name;
-    request->SerializeToString(&name);
-    requester_.send(name);
+    requester_.send(serialize(*request));
     auto reply = requester_.receive();
-    *response->mutable_header()->mutable_request_start() = request->header().start();
+    *response = deserialize(reply);
     return Status::OK;
   }
 
  private:
   ZmqRequestSocket requester_;
   ZmqSubscriberSocket subscriber_;
+
+  static std::string serialize(const GetVisionChunkRequest& request) {
+    std::string bytes;
+    request.SerializeToString(&bytes);
+    return bytes;
+  }
+
+  static GetVisionChunkResponse deserialize(std::string_view reply) {
+    GetVisionChunkResponse chunk;
+    chunk.ParseFromString(std::string{reply});
+    return chunk;
+  }
 };
 
 } // namespace
