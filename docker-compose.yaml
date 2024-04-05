@@ -2,7 +2,7 @@ version: "3"
 services:
   mongodb1:
     build:
-      context: ./mongoDb/mongodb1
+      context: ./mongodb/node-1
       dockerfile: .devcontainer/Dockerfile
     container_name: mongodb1
     depends_on:
@@ -15,7 +15,7 @@ services:
 
   mongodb2:
     build:
-      context: ./mongoDb/mongodb2
+      context: ./mongodb/node-2
       dockerfile: .devcontainer/Dockerfile
     container_name: mongodb2
     ports:
@@ -25,7 +25,7 @@ services:
 
   mongodb3:
     build:
-      context: ./mongoDb/mongodb3
+      context: ./mongodb/node-2
       dockerfile: .devcontainer/Dockerfile
     container_name: mongodb3
     ports:
@@ -47,8 +47,10 @@ services:
     ports:
       - 8080:8080
     depends_on:
-      - mongodb1
+      # - mongodb1
       - gateway
+    networks:
+      - host
 
   gateway:
     build:
@@ -63,36 +65,59 @@ services:
       - /tmp:/tmp
     ports:
       - 50051:50051
+    networks:
+      - host
 
-  match-bff:
-    build:
-      context: .
-      dockerfile: match-bff/Dockerfile
-      args:
-        - SOURCE_DIRECTORY=match-bff
-    command: ["bin/match-bff"]
+  simulator-private:
+    image: roboticserlangen/simulatorcli:commit-6a4e1c06533b
+#    image: robocupssl/grsim:2.4.0
+    restart: unless-stopped
+    environment:
+      # ER-Force options
+      GEOMETRY: "2020"
+      REALISM: "RC2021"
     ports:
-      - 8080:8080
-    depends_on:
-      - gateway
+      - 10300/udp
+      - 10301/udp
+      - 10302/udp
+  
+  simulator:
+    image: g3force/proxy-tcp-udp-mc:0.2.1
+    command:
+      - "udp,:10301,simulator-private:10301,Blue"
+      - "udp,:10302,simulator-private:10302,Yellow"
+      - "mc,224.5.23.2:10020,224.5.23.2:10006,Vision"
+      - "mc,224.5.23.1:10003,224.5.23.1:11003,Referee"
+      - "mc,224.5.23.2:10010,224.5.23.2:11010,Tracker"
+    restart: unless-stopped
+    ports:
+      - 10300/udp
+      - 10301/udp
+      - 10302/udp
 
-  client:
-    build:
-      context: .
-      dockerfile: gateway/gateway-augusto/.devcontainer/Dockerfile
-      args:
-        - SOURCE_DIRECTORY=gateway/gateway-augusto
-    working_dir: /workspaces/gateway/gateway-augusto
-    container_name: client
-    command: ["bin/client_main"]
+  ssl-simulation-controller:
+    image: robocupssl/ssl-simulation-controller:0.12.1
+    command:
+      - "-refereeAddress"
+      - "224.5.23.1:11003"
+      - "-visionAddress"
+      - "224.5.23.2:10020"
+      - "-trackerAddress"
+      - "224.5.23.2:11010"
+      - "-simControlPort"
+      - "10300"
+      - "-robotSpecConfig"
+      - "/config/robot-specs.yaml"
+    restart: unless-stopped
     volumes:
-      - /tmp:/tmp
-    ports:
-      - 8082:8082
-    depends_on:
-      - gateway
+      - ./config/ssl-simulation-controller:/config:ro
 
 volumes:
   mongodb_data:
   mongodb_data2:
   mongodb_data3:
+
+networks:
+  host:
+    external:
+      name: host

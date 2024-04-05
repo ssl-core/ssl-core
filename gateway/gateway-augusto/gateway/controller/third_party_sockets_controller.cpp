@@ -2,6 +2,8 @@
 
 #include "gateway/service_discovery.h"
 
+#include <iostream>
+
 namespace gateway {
 namespace {
 
@@ -15,9 +17,9 @@ struct UdpArgs {
 
 constexpr std::string_view kGatewayThirdParties = "Gateway.Publisher.Third.Parties";
 constexpr UdpArgs kVisionThirdParty = {
-    .address = "224.5.23.2",
-    .inet = "172.22.78.146",
-    .port = 10020,
+    .address = "224.5.25.2",
+    .inet = "192.168.0.108",
+    .port = 10006,
 };
 // constexpr UdpArgs kRefereeThirdParty = {.address = ..., .inet = ..., .port = ...,};
 // constexpr UdpArgs kTrackedThirdParty = {.address = ..., .inet = ..., .port = ...,};
@@ -37,10 +39,16 @@ ThirdPartySocketsController::ThirdPartySocketsController() {
 }
 
 void ThirdPartySocketsController::run() {
+  std::cout << "Starting third_party_sockets_controller...\n";
   while (true) {
     poller_.poll(/*timeout=*/-1);
 
+    if (isSocketConnected(vision_.fd())) {
+      std::cout << "VISION IS CONNECTED!\n";
+    }
+
     if (auto vision_message = poller_.recvFrom(vision_); !vision_message.empty()) {
+      std::cout << "GATEWAY RECEIVED A MESSAGE: " << vision_message << "\n";
       publisher_.send("vision-third-party", vision_message);
     }
   }
