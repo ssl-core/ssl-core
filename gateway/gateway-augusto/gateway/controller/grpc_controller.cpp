@@ -25,6 +25,9 @@ using grpc::Status;
 using protocols::ui::GatewayService;
 using protocols::ui::GetVisionChunkRequest;
 using protocols::ui::GetVisionChunkResponse;
+using protocols::ui::MessageType;
+using protocols::ui::ReceiveLiveStreamRequest;
+using protocols::ui::ReceiveLiveStreamResponse;
 using robocin::ZmqRequestSocket;
 using robocin::ZmqSubscriberSocket;
 
@@ -42,24 +45,29 @@ class GatewayServiceImpl final : public GatewayService::Service {
   Status GetVisionChunk(ServerContext* context,
                         const GetVisionChunkRequest* request,
                         GetVisionChunkResponse* response) override {
-    requester_.send(serialize(*request));
+    requester_.send(request->SerializeAsString());
     auto reply = requester_.receive();
-    *response = deserialize(reply);
+    *response = deserialize<GetVisionChunkResponse>(reply);
     return Status::OK;
+  }
+
+  Status ReceiveLiveStream(ServerContext* context,
+                           const ReceiveLiveStreamRequest* request,
+                           grpc::ServerWriter<ReceiveLiveStreamResponse>* writer) override {
+    // TODO(aalmds): Poller for specific subscribers.
+    while (true) {
+      auto reply = subscriber_.receive();
+      writer->Write(deserialize<ReceiveLiveStreamResponse>(reply.message));
+    }
   }
 
  private:
   ZmqRequestSocket requester_;
   ZmqSubscriberSocket subscriber_;
 
-  static std::string serialize(const GetVisionChunkRequest& request) {
-    std::string bytes;
-    request.SerializeToString(&bytes);
-    return bytes;
-  }
-
-  static GetVisionChunkResponse deserialize(std::string_view reply) {
-    GetVisionChunkResponse chunk;
+  template <class Response>
+  static Response deserialize(std::string_view reply) {
+    Response chunk;
     chunk.ParseFromString(std::string{reply});
     return chunk;
   }
@@ -72,8 +80,10 @@ GrpcController::GrpcController(std::string_view address) : address_{address} {}
 void GrpcController::run() {
   ServerBuilder builder;
   builder.AddListeningPort(address_, grpc::InsecureServerCredentials());
+
   GatewayServiceImpl service;
   builder.RegisterService(&service);
+
   std::unique_ptr<Server> server(builder.BuildAndStart());
   server->Wait();
 }
