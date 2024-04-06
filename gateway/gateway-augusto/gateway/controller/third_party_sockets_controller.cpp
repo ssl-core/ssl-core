@@ -16,15 +16,17 @@ struct UdpArgs {
 };
 
 constexpr std::string_view kGatewayThirdParties = "Gateway.Publisher.Third.Parties";
+constexpr std::string_view kInet = "192.168.18.5";
+
 constexpr UdpArgs kGrSim = {
     .address = "224.5.23.2",
-    .inet = "192.168.0.108",
+    .inet = kInet,
     .port = 10006,
 };
 
 constexpr UdpArgs kSimulatorCLI = {
-    .address = "224.5.25.2",
-    .inet = "192.168.0.108",
+    .address = "224.5.23.2",
+    .inet = kInet,
     .port = 10020,
 };
 
@@ -47,12 +49,13 @@ ThirdPartySocketsController::ThirdPartySocketsController() {
 }
 
 void ThirdPartySocketsController::run() {
-
+  std::cout << "ThirdPartySocketsController" << std::endl;
   while (true) {
-    const int k_timeout_ms = 10;
+    static constexpr int k_timeout_ms = 10;
     poller_.poll(/*timeout=*/k_timeout_ms);
 
     if (auto vision_message = poller_.recvFrom(vision_); !vision_message.empty()) {
+      std::cout << "Sending" << std::endl;
       publisher_.send("vision-third-party", vision_message);
     }
   }

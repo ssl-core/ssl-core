@@ -17,6 +17,7 @@
 #include <span>
 #include <string>
 #include <thread>
+#include <iostream>
 
 using protocols::third_party::detection::SSL_WrapperPacket;
 
@@ -78,7 +79,7 @@ Frame createMockedFrame() {
 }
 
 void subscriberRun() {
-  std::cout << "Starting subscriberRun..." << "\n";
+  std::cout << "Starting subscriberRun..." << std::endl;
 
   robocin::ZmqSubscriberSocket vision_third_party_socket{};
   const std::string_view kAddress = "ipc:///tmp/gateway-pub-th-parties.ipc";
@@ -99,7 +100,7 @@ void subscriberRun() {
 }
 
 void publisherRun() {
-  std::cout << "Starting publisherRun..." << "\n";
+  std::cout << "Starting publisherRun..." << std::endl;
 
   const std::string_view kVisionMessageTopic = "vision-third-party";
 
@@ -156,6 +157,7 @@ void publisherRun() {
 }
 
 int main(int argc, char* argv[]) {
+  std::cout << "vision-service" << std::endl;
   std::span args{argv + 1, argv + argc - 1};
 
   std::jthread publisher_thread(publisherRun);

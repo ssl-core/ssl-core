@@ -1,38 +1,5 @@
 version: "3"
 services:
-  # mongodb1:
-  #   build:
-  #     context: ./mongodb/node-1
-  #     dockerfile: .devcontainer/Dockerfile
-  #   container_name: mongodb1
-  #   depends_on:
-  #     - mongodb2
-  #     - mongodb3
-  #   ports:
-  #     - 27017:27017
-  #   volumes:
-  #     - mongodb_data_1:/data/db
-
-  # mongodb2:
-  #   build:
-  #     context: ./mongodb/node-2
-  #     dockerfile: .devcontainer/Dockerfile
-  #   container_name: mongodb2
-  #   ports:
-  #     - 27018:27017
-  #   volumes:
-  #     - mongodb_data_2:/data/db
-
-  # mongodb3:
-  #   build:
-  #     context: ./mongodb/node-3
-  #     dockerfile: .devcontainer/Dockerfile
-  #   container_name: mongodb3
-  #   ports:
-  #     - 27019:27017
-  #   volumes:
-  #     - mongodb_data_3:/data/db
-
   vision:
     build:
       context: .
@@ -45,7 +12,6 @@ services:
     volumes:
       - /tmp:/tmp
     depends_on:
-      # - mongodb1
       - gateway
     network_mode: host
 
@@ -62,8 +28,3 @@ services:
       - /tmp:/tmp
       - ./:/app
     network_mode: host
-
-volumes:
-  mongodb_data_1:
-  mongodb_data_2:
-  mongodb_data_3:
