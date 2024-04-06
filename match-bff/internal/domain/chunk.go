@@ -3,7 +3,7 @@ package domain
 import "encoding/json"
 
 type Chunk struct {
-	Payloads []string
+	Payloads interface{}
 }
 
 func (c *Chunk) ToJson() ([]byte, error) {

@@ -5,7 +5,7 @@ import (
 	"golang.org/x/net/websocket"
 )
 
-func GetChunkHandler(client client.Clienter) func(conn *websocket.Conn, data map[string]interface{}) {
+func GetReplayChunkHandler(client client.Clienter) func(conn *websocket.Conn, data map[string]interface{}) {
 	return func(conn *websocket.Conn, data map[string]interface{}) {
 		chunk, err := client.GetVisionChunk()
 		if err != nil {

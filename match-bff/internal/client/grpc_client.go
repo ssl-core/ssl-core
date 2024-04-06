@@ -6,6 +6,7 @@ import (
 	"log"
 
 	"github.com/robocin/ssl-core/match-bff/internal/domain"
+	"github.com/robocin/ssl-core/match-bff/internal/service"
 	pb "github.com/robocin/ssl-core/match-bff/pkg/pb/ui"
 	"golang.org/x/net/websocket"
 	"google.golang.org/grpc"
@@ -78,10 +79,11 @@ func (gc *GrpcClient) ReceiveLiveStream() error {
 		}
 
 		payload := response.Payload.GetVisionFrame()
+		frame, err := service.ProcessLiveStream(payload)
 
 		for conn := range gc.socketConns {
 			go func(conn *websocket.Conn) {
-				if _, err := conn.Write([]byte(payload)); err != nil {
+				if _, err := conn.Write(frame); err != nil {
 					conn.Close()
 				}
 			}(conn)

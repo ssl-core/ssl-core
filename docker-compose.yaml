@@ -72,7 +72,7 @@ services:
         - SOURCE_DIRECTORY=match-bff
     command: ["bin/match-bff"]
     ports:
-      - 8080:8080
+      - 4040:4040
     depends_on:
       - gateway
 
@@ -89,6 +89,22 @@ services:
       - /tmp:/tmp
     ports:
       - 8082:8082
+    depends_on:
+      - gateway
+
+  service_test:
+    build:
+      context: .
+      dockerfile: gateway/gateway-augusto/.devcontainer/Dockerfile
+      args:
+        - SOURCE_DIRECTORY=gateway/gateway-augusto
+    working_dir: /workspaces/gateway/gateway-augusto
+    container_name: service_test
+    command: ["bin/service_main"]
+    volumes:
+      - /tmp:/tmp
+    ports:
+      - 8083:8083
     depends_on:
       - gateway
 

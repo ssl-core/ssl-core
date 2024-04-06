@@ -62,8 +62,8 @@ func (ws *WebsocketServer) listenConnection(conn *websocket.Conn) {
 			continue
 		}
 
-		event := message["event"].(string)
-		data := message["data"].(map[string]interface{})
+		event, _ := message["event"].(string)
+		data, _ := message["data"].(map[string]interface{})
 		ws.handleMessage(conn, event, data)
 	}
 }
@@ -72,8 +72,8 @@ func (ws *WebsocketServer) handleMessage(conn *websocket.Conn, event string, dat
 	switch event {
 	case "receive-live-stream":
 		handler.ReceiveLiveStreamHandler(ws.client)(conn, data)
-	case "get-chunk":
-		handler.GetChunkHandler(ws.client)(conn, data)
+	case "get-replay-chunk":
+		handler.GetReplayChunkHandler(ws.client)(conn, data)
 	case "ping":
 		conn.Write([]byte("pong"))
 	case "close":

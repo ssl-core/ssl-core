@@ -38,7 +38,7 @@ func (hs *HttpServer) Serve() error {
 }
 
 func (hs *HttpServer) registerHandlers() {
-	hs.router.HandleFunc("GET /test", handler.TestHandler(hs.client))
+	hs.router.HandleFunc("GET /health", handler.HealthHandler())
 }
 
 func (hs *HttpServer) registerWebsocket() {
