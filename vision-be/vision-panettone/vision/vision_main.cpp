@@ -90,7 +90,6 @@ void subscriberRun() {
       std::lock_guard lock(mutex);
 
       if (auto message = vision_third_party_socket.receive(); !message.message.empty()) {
-        std::cout << "vision ----> Received message: " << message.message << "\n";
         packages.push_back(message);
       }
     }
@@ -108,20 +107,20 @@ void publisherRun() {
   vision_publisher.bind("ipc:///tmp/vision-async.ipc");
 
   // TODO($ISSUE_N): Move the database management to a class.
-  ThreadPool thread_pool(4);
+  // ThreadPool thread_pool(4);
 
-  std::cout << "Creating factory and frame repository." << "\n";
-  const auto kFactory = RepositoryFactoryMapping{}[RepositoryType::MongoDb];
+  // std::cout << "Creating factory and frame repository." << "\n";
+  // const auto kFactory = RepositoryFactoryMapping{}[RepositoryType::MongoDb];
 
-  std::unique_ptr<IFrameRepository> frame_repository = kFactory->createFrameRepository();
-  std::future<bool> connection_status = frame_repository->connect();
+  // std::unique_ptr<IFrameRepository> frame_repository = kFactory->createFrameRepository();
+  // std::future<bool> connection_status = frame_repository->connect();
 
-  if (connection_status.wait(); connection_status.get()) {
-    std::cout << "Connected to the database." << "\n";
-  } else {
-    std::cout << "Failed to connect to the database." << "\n";
-    return;
-  }
+  // if (connection_status.wait(); connection_status.get()) {
+  //   std::cout << "Connected to the database." << "\n";
+  // } else {
+  //   std::cout << "Failed to connect to the database." << "\n";
+  //   return;
+  // }
 
   // Receive datagrams.
   while (true) {
@@ -144,7 +143,8 @@ void publisherRun() {
         std::string message;
         frame.SerializeToString(&message);
         vision_publisher.send("frame", message);
-        thread_pool.enqueue(saveToDatabase, std::ref(*frame_repository), std::cref(frame));
+        std::cout << "SENDING FRAME ON VISION PUB\n";
+        // thread_pool.enqueue(saveToDatabase, std::ref(*frame_repository), std::cref(frame));
       } else {
         std::cout << "Unexpected topic for ZmqDatagram. Expect " << kVisionMessageTopic << " got "
                   << topic << " instead.\n";

@@ -25,13 +25,10 @@ static constexpr std::string_view kServiceRegistryJson = "service_registry.json"
 constexpr std::string_view kGatewayGrpc = "Gateway.Grpc";
 
 int main() {
-  std::cout << "GATEWAY MAIN...\n";
   std::ifstream file(std::format("{}/{}", ROBOCIN_REPOSITORY_PATH, kServiceRegistryJson));
   if (!file.is_open()) {
     return -1;
   }
-
-  std::cout << "FILE OPENED...\n";
 
   SServiceDiscovery.setup(nlohmann::json::parse(file));
 

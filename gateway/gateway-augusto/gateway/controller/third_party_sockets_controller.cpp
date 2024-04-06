@@ -16,11 +16,19 @@ struct UdpArgs {
 };
 
 constexpr std::string_view kGatewayThirdParties = "Gateway.Publisher.Third.Parties";
-constexpr UdpArgs kVisionThirdParty = {
-    .address = "224.5.25.2",
+constexpr UdpArgs kGrSim = {
+    .address = "224.5.23.2",
     .inet = "192.168.0.108",
     .port = 10006,
 };
+
+constexpr UdpArgs kSimulatorCLI = {
+    .address = "224.5.25.2",
+    .inet = "192.168.0.108",
+    .port = 10020,
+};
+
+constexpr UdpArgs kVisionThirdParty = kSimulatorCLI;
 // constexpr UdpArgs kRefereeThirdParty = {.address = ..., .inet = ..., .port = ...,};
 // constexpr UdpArgs kTrackedThirdParty = {.address = ..., .inet = ..., .port = ...,};
 
@@ -39,20 +47,14 @@ ThirdPartySocketsController::ThirdPartySocketsController() {
 }
 
 void ThirdPartySocketsController::run() {
-  std::cout << "Starting third_party_sockets_controller...\n";
+
   while (true) {
-    // std::cout << "Before poll...\n";
-    // poller_.poll(/*timeout=*/10);
+    const int k_timeout_ms = 10;
+    poller_.poll(/*timeout=*/k_timeout_ms);
 
-    if (auto message = vision_.receive(); !message.empty()) {
-      std::cout << "GATEWAY RECEIVED A MESSAGE: " << message << "\n";
-      publisher_.send("vision-third-party", message);
+    if (auto vision_message = poller_.recvFrom(vision_); !vision_message.empty()) {
+      publisher_.send("vision-third-party", vision_message);
     }
-
-    // if (auto vision_message = poller_.recvFrom(vision_); !vision_message.empty()) {
-    //   std::cout << "GATEWAY RECEIVED A MESSAGE: " << vision_message << "\n";
-    //   publisher_.send("vision-third-party", vision_message);
-    // }
   }
 }
 
