@@ -45,7 +45,11 @@ All the code developed was done in [Visual Studio Code](https://code.visualstudi
 * [`app-shell`](app-shell/README.md)
 
   Contains the application shell for mounting microfrontends.
-  
+
+* [`match-mfe`](match-mfe/README.md)
+
+  Contains the match microfrontend.
+
 * [`common`](common/README.md)
 
   Contains common code and utilities used across the project.
