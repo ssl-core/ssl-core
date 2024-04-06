@@ -1,18 +1,12 @@
 version: "3"
 services:
-  vision:
-    build:
-      context: .
-      dockerfile: vision-be/vision-panettone/.devcontainer/Dockerfile
-      args:
-        - SOURCE_DIRECTORY=vision-be/vision-panettone
-    working_dir: /workspaces/vision-be/vision-panettone
-    container_name: vision
-    command: ["bin/vision_main"]
-    volumes:
-      - /tmp:/tmp
-    depends_on:
-      - gateway
+  simulator:
+    image: roboticserlangen/simulatorcli:commit-6a4e1c06533b
+    restart: unless-stopped
+    container_name: simulator
+    environment:
+      GEOMETRY: "2020"
+      REALISM: "RC2021"
     network_mode: host
 
   gateway:
@@ -27,4 +21,21 @@ services:
     volumes:
       - /tmp:/tmp
       - ./:/app
+    depends_on:
+      - simulator
+    network_mode: host
+
+  vision:
+    build:
+      context: .
+      dockerfile: vision-be/vision-panettone/.devcontainer/Dockerfile
+      args:
+        - SOURCE_DIRECTORY=vision-be/vision-panettone
+    working_dir: /workspaces/vision-be/vision-panettone
+    container_name: vision
+    command: ["bin/vision_main"]
+    volumes:
+      - /tmp:/tmp
+    depends_on:
+      - gateway
     network_mode: host
