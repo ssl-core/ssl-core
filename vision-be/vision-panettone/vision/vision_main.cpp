@@ -113,20 +113,20 @@ void publisherRun() {
   vision_publisher.bind(kVisionPublisherAddress);
 
   // TODO($ISSUE_N): Move the database management to a class.
-  // ThreadPool thread_pool(4);
+  ThreadPool thread_pool(4);
 
-  // std::cout << "Creating factory and frame repository." << "\n";
-  // const auto kFactory = RepositoryFactoryMapping{}[RepositoryType::MongoDb];
+  std::cout << "Creating factory and frame repository." << "\n";
+  const auto kFactory = RepositoryFactoryMapping{}[RepositoryType::MongoDb];
 
-  // std::unique_ptr<IFrameRepository> frame_repository = kFactory->createFrameRepository();
-  // std::future<bool> connection_status = frame_repository->connect();
+  std::unique_ptr<IFrameRepository> frame_repository = kFactory->createFrameRepository();
+  std::future<bool> connection_status = frame_repository->connect();
 
-  // if (connection_status.wait(); connection_status.get()) {
-  //   std::cout << "Connected to the database." << "\n";
-  // } else {
-  //   std::cout << "Failed to connect to the database." << "\n";
-  //   return;
-  // }
+  if (connection_status.wait(); connection_status.get()) {
+    std::cout << "Connected to the database." << "\n";
+  } else {
+    std::cout << "Failed to connect to the database." << "\n";
+    return;
+  }
 
   // Receive datagrams.
   while (true) {
@@ -150,8 +150,7 @@ void publisherRun() {
         frame.SerializeToString(&message);
         vision_publisher.send("frame", message);
         std::cout << std::format("frame '{}' sent.", frame.properties().serial_id()) << std::endl;
-        // TODO: save on database.
-        // thread_pool.enqueue(saveToDatabase, std::ref(*frame_repository), std::cref(frame));
+        thread_pool.enqueue(saveToDatabase, std::ref(*frame_repository), std::cref(frame));
       } else {
         std::cout << std::format("unexpected topic for ZmqDatagram: expect {}, got: {} instead.",
                                  kVisionMessageTopic,
