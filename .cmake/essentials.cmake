@@ -567,6 +567,12 @@ function(robocin_cpp_grpc_library)
           "PROTOS;DEPS;MACROS;COMPILE_OPTIONS"   # list of names of multi-valued arguments
           ${ARGN}                                # arguments of the function to parse
   )
+  
+  # if gRPC is not found, just return to avoid breaking the build
+  if (NOT gRPC_FOUND)
+  	message(WARNING "robocin_cpp_grpc_library not found.")
+  	return()
+  endif()
 
   # if there isn't at least one proto file, then the library is not created
   if (NOT ARG_PROTOS)
