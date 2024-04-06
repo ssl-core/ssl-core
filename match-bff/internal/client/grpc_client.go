@@ -5,7 +5,7 @@ import (
 	"io"
 	"log"
 
-	"github.com/robocin/ssl-core/match-bff/internal/domain"
+	"github.com/robocin/ssl-core/match-bff/internal/entity"
 	"github.com/robocin/ssl-core/match-bff/internal/service"
 	pb "github.com/robocin/ssl-core/match-bff/pkg/pb/ui"
 	"golang.org/x/net/websocket"
@@ -93,7 +93,7 @@ func (gc *GrpcClient) ReceiveLiveStream() error {
 	return nil
 }
 
-func (gc *GrpcClient) GetVisionChunk() (domain.Chunk, error) {
+func (gc *GrpcClient) GetVisionChunk() (entity.Chunk, error) {
 	client := pb.NewGatewayServiceClient(gc.conn)
 
 	ctx, cancel := context.WithCancel(context.Background())
@@ -108,10 +108,10 @@ func (gc *GrpcClient) GetVisionChunk() (domain.Chunk, error) {
 	})
 
 	if err != nil {
-		return domain.Chunk{}, err
+		return entity.Chunk{}, err
 	}
 
-	chunk := domain.Chunk{
+	chunk := entity.Chunk{
 		Payloads: response.Payloads,
 	}
 

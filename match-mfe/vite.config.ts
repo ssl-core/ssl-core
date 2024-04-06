@@ -28,11 +28,11 @@ export default defineConfig({
     exclude: [...configDefaults.exclude, "e2e/*"],
   },
   preview: {
-    port: 4001,
+    port: 3031,
     strictPort: true,
   },
   server: {
-    port: 4001,
+    port: 3031,
     strictPort: true,
     host: true,
   },

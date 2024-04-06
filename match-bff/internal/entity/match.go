@@ -1,4 +1,4 @@
-package domain
+package entity
 
 type Match struct {
 	Id   string
