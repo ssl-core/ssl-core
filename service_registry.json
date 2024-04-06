@@ -8,15 +8,15 @@
     ]
   },
   "Gateway.Grpc": {
-    "address": "gateway:50051"
+    "address": "localhost:50051"
   },
   "Vision.Publisher": {
     "address": "ipc:///tmp/vision-async.ipc",
     "topics": [
       "frame"
     ]
-  }, 
-   "Vision.Reply": {
+  },
+  "Vision.Reply": {
     "address": "ipc:///tmp/vision-sync.ipc"
   }
 }

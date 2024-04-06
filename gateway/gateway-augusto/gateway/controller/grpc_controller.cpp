@@ -7,7 +7,7 @@
 #include <grpcpp/server_builder.h>
 #include <protocols/ui/gateway.grpc.pb.h>
 #include <protocols/ui/gateway.pb.h>
-#include <protocols/ui/replay.pb.h>
+#include <protocols/vision/frame.pb.h>
 #include <string>
 #include <string_view>
 namespace gateway {
@@ -25,7 +25,6 @@ using grpc::Status;
 using protocols::ui::GatewayService;
 using protocols::ui::GetVisionChunkRequest;
 using protocols::ui::GetVisionChunkResponse;
-using protocols::ui::MessageType;
 using protocols::ui::ReceiveLiveStreamRequest;
 using protocols::ui::ReceiveLiveStreamResponse;
 using robocin::ZmqRequestSocket;
@@ -57,7 +56,11 @@ class GatewayServiceImpl final : public GatewayService::Service {
     // TODO(aalmds): Poller for specific subscribers.
     while (true) {
       auto reply = subscriber_.receive();
-      writer->Write(deserialize<ReceiveLiveStreamResponse>(reply.message));
+      std::cout << "ReceiveLiveStream: Replying" << std::endl;
+      ReceiveLiveStreamResponse response;
+      *response.mutable_payload()->mutable_vision_frame()
+          = deserialize<protocols::vision::Frame>(reply.message);
+      writer->Write(response);
     }
   }
 

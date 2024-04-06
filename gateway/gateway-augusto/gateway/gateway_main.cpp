@@ -4,6 +4,7 @@
 #include "gateway/controller/third_party_sockets_controller.h"
 #include "gateway/service_discovery.h"
 #include "grpc_controller.h"
+#include "singleton.h"
 
 #include <fstream>
 #include <grpcpp/grpcpp.h>
@@ -24,7 +25,20 @@ using gateway::ThirdPartySocketsController;
 static constexpr std::string_view kServiceRegistryJson = "service_registry.json";
 constexpr std::string_view kGatewayGrpc = "Gateway.Grpc";
 
-int main() {
+int main(int argc, char* argv[]) {
+  if (argc < 2) {
+    std::cout << "first arg must be the inet parameter.";
+    return -1;
+  }
+
+  std::span args{argv + 1, argv + argc - 1};
+
+  std::cout << "Gateway is runnning!" << std::endl;
+  std::cout << std::format("inet is '{}'.", args[0]) << std::endl;
+
+  // saving inet into a singleton of string.
+  gateway::Singleton<std::string>::get() = args[0];
+
   std::ifstream file(std::format("{}/{}", ROBOCIN_REPOSITORY_PATH, kServiceRegistryJson));
   if (!file.is_open()) {
     return -1;
@@ -39,10 +53,10 @@ int main() {
     third_party_sockets_controller->run();
   });
 
-  // std::string gateway_grpc_address(SServiceDiscovery.lookup(kGatewayGrpc).address);
-  // std::unique_ptr<IController> grpc_controller
-  //     = std::make_unique<GrpcController>(gateway_grpc_address);
-  // grpc_controller->run();
+  std::string gateway_grpc_address(SServiceDiscovery.lookup(kGatewayGrpc).address);
+  std::unique_ptr<IController> grpc_controller
+      = std::make_unique<GrpcController>(gateway_grpc_address);
+  grpc_controller->run();
 
   return 0;
 }

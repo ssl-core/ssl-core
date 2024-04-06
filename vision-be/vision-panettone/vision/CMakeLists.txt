@@ -6,7 +6,6 @@ robocin_cpp_executable(
        absl::random_random
        absl::strings
        protocols::third_party
-       protocols::ui
        protocols::vision
        common::network
        common::thread_pool

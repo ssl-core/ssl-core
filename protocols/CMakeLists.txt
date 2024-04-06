@@ -41,12 +41,6 @@ robocin_cpp_proto_library(
   DEPS common
 )
 
-robocin_cpp_proto_library(
-  NAME ui
-  PROTOS protocols/ui/replay.proto
-  DEPS vision
-)
-
 robocin_cpp_grpc_library(
   NAME gateway
   PROTOS protocols/ui/gateway.proto

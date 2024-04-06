@@ -8,6 +8,7 @@
 #include <condition_variable>
 #include <google/protobuf/duration.pb.h>
 #include <google/protobuf/text_format.h>
+#include <iostream>
 #include <memory>
 #include <protocols/third_party/detection/raw_wrapper.pb.h>
 #include <protocols/vision/frame.pb.h>
@@ -30,6 +31,11 @@ using robocin::ZmqDatagram;
 using vision::IFrameRepository;
 using vision::RepositoryFactoryMapping;
 using vision::RepositoryType;
+
+static constexpr std::string_view kAddress = "ipc:///tmp/gateway-pub-th-parties.ipc";
+static constexpr std::string_view kTopic = "vision-third-party";
+static constexpr std::string_view kVisionMessageTopic = "vision-third-party";
+static constexpr std::string_view kVisionPublisherAddress = "ipc:///tmp/vision-async.ipc";
 
 std::mutex mutex;
 std::condition_variable cv;
@@ -79,18 +85,21 @@ Frame createMockedFrame() {
 }
 
 void subscriberRun() {
-  std::cout << "Starting subscriberRun..." << std::endl;
-
   robocin::ZmqSubscriberSocket vision_third_party_socket{};
-  const std::string_view kAddress = "ipc:///tmp/gateway-pub-th-parties.ipc";
-  const std::string_view kTopic = "vision-third-party";
   vision_third_party_socket.connect(kAddress, std::span{&kTopic, 1});
+
+  uint64_t total_msgs_received = 0;
 
   while (true) {
     {
       std::lock_guard lock(mutex);
 
-      if (auto message = vision_third_party_socket.receive(); !message.message.empty()) {
+      while (true) {
+        auto message = vision_third_party_socket.receive();
+        if (message.message.empty()) {
+          break;
+        }
+        std::cout << std::format("received message!, total: {}", total_msgs_received++) << std::endl;
         packages.push_back(message);
       }
     }
@@ -100,12 +109,8 @@ void subscriberRun() {
 }
 
 void publisherRun() {
-  std::cout << "Starting publisherRun..." << std::endl;
-
-  const std::string_view kVisionMessageTopic = "vision-third-party";
-
   robocin::ZmqPublisherSocket vision_publisher;
-  vision_publisher.bind("ipc:///tmp/vision-async.ipc");
+  vision_publisher.bind(kVisionPublisherAddress);
 
   // TODO($ISSUE_N): Move the database management to a class.
   // ThreadPool thread_pool(4);
@@ -144,21 +149,21 @@ void publisherRun() {
         std::string message;
         frame.SerializeToString(&message);
         vision_publisher.send("frame", message);
-        std::cout << "SENDING FRAME ON VISION PUB\n";
+        std::cout << std::format("frame '{}' sent.", frame.properties().serial_id()) << std::endl;
+        // TODO: save on database.
         // thread_pool.enqueue(saveToDatabase, std::ref(*frame_repository), std::cref(frame));
       } else {
-        std::cout << "Unexpected topic for ZmqDatagram. Expect " << kVisionMessageTopic << " got "
-                  << topic << " instead.\n";
+        std::cout << std::format("unexpected topic for ZmqDatagram: expect {}, got: {} instead.",
+                                 kVisionMessageTopic,
+                                 topic)
+                  << std::endl;
       }
-
-      vision_publisher.send("frame", "VISION MESSAGE");
     }
   }
 }
 
-int main(int argc, char* argv[]) {
-  std::cout << "vision-service" << std::endl;
-  std::span args{argv + 1, argv + argc - 1};
+int main() {
+  std::cout << "Vision is runnning!" << std::endl;
 
   std::jthread publisher_thread(publisherRun);
   std::jthread subscriber_thread(subscriberRun);

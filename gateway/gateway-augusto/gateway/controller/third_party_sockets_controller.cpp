@@ -16,28 +16,18 @@ struct UdpArgs {
 };
 
 constexpr std::string_view kGatewayThirdParties = "Gateway.Publisher.Third.Parties";
-constexpr std::string_view kInet = "192.168.18.5";
 
-constexpr UdpArgs kGrSim = {
+constexpr UdpArgs kVisionThirdParty = {
     .address = "224.5.23.2",
-    .inet = kInet,
-    .port = 10006,
-};
-
-constexpr UdpArgs kSimulatorCLI = {
-    .address = "224.5.23.2",
-    .inet = kInet,
     .port = 10020,
 };
-
-constexpr UdpArgs kVisionThirdParty = kSimulatorCLI;
 // constexpr UdpArgs kRefereeThirdParty = {.address = ..., .inet = ..., .port = ...,};
 // constexpr UdpArgs kTrackedThirdParty = {.address = ..., .inet = ..., .port = ...,};
 
 } // namespace
 
 ThirdPartySocketsController::ThirdPartySocketsController() {
-  vision_.connect(kVisionThirdParty.address, kVisionThirdParty.inet, kVisionThirdParty.port);
+  vision_.connect(kVisionThirdParty.address, Singleton<std::string>::get(), kVisionThirdParty.port);
   // vision_.connect(kRefereeThirdParty.address, kRefereeThirdParty.inet, kRefereeThirdParty.port);
   // vision_.connect(kTrackedThirdParty.address, kTrackedThirdParty.inet, kTrackedThirdParty.port);
 
@@ -49,10 +39,8 @@ ThirdPartySocketsController::ThirdPartySocketsController() {
 }
 
 void ThirdPartySocketsController::run() {
-  std::cout << "ThirdPartySocketsController" << std::endl;
   while (true) {
-    static constexpr int k_timeout_ms = 10;
-    poller_.poll(/*timeout=*/k_timeout_ms);
+    poller_.poll(/*timeout=*/-1);
 
     if (auto vision_message = poller_.recvFrom(vision_); !vision_message.empty()) {
       std::cout << "Sending" << std::endl;
