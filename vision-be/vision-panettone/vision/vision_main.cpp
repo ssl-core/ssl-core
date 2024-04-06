@@ -18,7 +18,6 @@
 #include <span>
 #include <string>
 #include <thread>
-#include <iostream>
 
 using protocols::third_party::detection::SSL_WrapperPacket;
 
@@ -115,16 +114,16 @@ void publisherRun() {
   // TODO($ISSUE_N): Move the database management to a class.
   ThreadPool thread_pool(4);
 
-  std::cout << "Creating factory and frame repository." << "\n";
+  std::cout << "Creating factory and frame repository." << std::endl;
   const auto kFactory = RepositoryFactoryMapping{}[RepositoryType::MongoDb];
 
   std::unique_ptr<IFrameRepository> frame_repository = kFactory->createFrameRepository();
   std::future<bool> connection_status = frame_repository->connect();
 
   if (connection_status.wait(); connection_status.get()) {
-    std::cout << "Connected to the database." << "\n";
+    std::cout << "Connected to the database." << std::endl;
   } else {
-    std::cout << "Failed to connect to the database." << "\n";
+    std::cout << "Failed to connect to the database." << std::endl;
     return;
   }
 

@@ -20,8 +20,6 @@ using MongoDbDocumentView = bsoncxx::document::view;
 using MongoDbDocument = bsoncxx::builder::stream::document;
 using MongoDbArray = bsoncxx::builder::stream::array;
 
-using google::protobuf::util::JsonStringToMessage; // TODO($ISSUE_N): Remove if unused.
-
 MongoDbDocument toMongoDbDocument(const Frame& frame) {
   MongoDbDocument document{};
 
@@ -101,10 +99,10 @@ void FrameRepositoryMongoDb::save(const Frame& frame) {
   try {
     if (auto save_result = collection_.insert_one(toMongoDbDocument(frame).view())) {
       std::cout << "inserted frame with id: "
-                << static_cast<int64_t>(frame.properties().serial_id()) << ".\n";
+                << static_cast<int64_t>(frame.properties().serial_id()) << "." << std::endl;
     }
   } catch (const std::exception& e) {
-    std::cerr << "error saving frame: " << e.what() << ".\n";
+    std::cerr << "error saving frame: " << e.what() << "." << std::endl;
   }
 }
 
