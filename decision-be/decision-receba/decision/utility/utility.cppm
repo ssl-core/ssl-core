@@ -1,5 +1,3 @@
-module;
-
 export module decision.utility;
 
-export import :behavior_tree;
+export import :decision_behavior_tree;

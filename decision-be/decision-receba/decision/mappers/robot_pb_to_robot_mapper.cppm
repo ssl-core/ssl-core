@@ -7,7 +7,7 @@ module;
 
 export module decision.mappers:robot_pb_to_robot_mapper;
 
-import decision.models;
+import decision.entities;
 
 using robocin::Point2Df;
 

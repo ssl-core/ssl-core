@@ -1,34 +1,18 @@
-module;
-
-#if __has_include(<cxxabi.h>)
-#define ROBOCIN_UTILITY_HAS_CXX_ABI_SUPPORT
-#include <cxxabi.h>
-#endif
+#ifndef ROBOCIN_BEHAVIOR_TREE_BEHAVIOR_TREE_H
+#define ROBOCIN_BEHAVIOR_TREE_BEHAVIOR_TREE_H
 
 #include <concepts>
 #include <memory>
 #include <span>
+#include <string>
 #include <vector>
 
-export module decision.utility:behavior_tree;
+namespace robocin {
+namespace behavior_tree_internal {
 
-namespace {
+std::string demangle_or_default(const char* mangled); // NOLINT(*naming*)
 
-std::string make_name(const std::type_info& type_info) {
-#ifdef ROBOCIN_UTILITY_HAS_CXX_ABI_SUPPORT
-  if (char* c_str_name = abi::__cxa_demangle(type_info.name(), nullptr, nullptr, nullptr)) {
-    std::string name{c_str_name};
-    delete c_str_name;
-
-    return name;
-  }
-#endif
-  return type_info.name();
-}
-
-} // namespace
-
-export namespace robocin {
+} // namespace behavior_tree_internal
 
 template <class>
 class BehaviorTree;
@@ -43,18 +27,42 @@ class BehaviorTree<R(Ts...)> {
     Running, // TODO(joseviccruz): Consider remove Running status when using std::expected.
   };
 
-  class AbstractNode;
-  class ControlNode;
-  class SelectorNode;
-  class SequenceNode;
-  class TaskNode;
+  class AbstractNode;       // parent of all nodes
+  class ControlNode;        // inherits from AbstractNode
+  class SelectorNode;       // inherits from ControlNode
+  class SequenceNode;       // inherits from ControlNode
+  class TaskNode;           // inherits from AbstractNode
+  class ValidationTaskNode; // inherits from TaskNode (used with selector nodes for validation-only)
+
+  template <std::derived_from<AbstractNode> Node>
+  class Rootable : public Node {
+    friend class BehaviorTree;
+
+   public:
+    [[nodiscard]] bool abort([[maybe_unused]] Ts... ts) const final { return false; }
+
+   private:
+    static consteval bool is_root() { return true; } // NOLINT(*naming*)
+  };
 
   class DebugNode;
 
   // TODO(joseviccruz): Replace pair result_type with std::expected<Status, Result>.
   using result_type = std::conditional_t<std::is_void_v<R>, Status, std::pair<Status, R>>;
 
-  explicit BehaviorTree(std::unique_ptr<ControlNode> root) : root_(std::move(root)) {
+  BehaviorTree() = delete;
+
+  BehaviorTree(const BehaviorTree&) = delete;
+  BehaviorTree& operator=(const BehaviorTree&) = delete;
+
+  BehaviorTree(BehaviorTree&&) = default;
+  BehaviorTree& operator=(BehaviorTree&&) = default;
+
+  ~BehaviorTree() = default;
+
+  template <std::derived_from<AbstractNode> T>
+    requires(T::is_root())
+  explicit BehaviorTree(std::unique_ptr<T> root) : root_(std::move(root)) {
     root_->build();
   }
 
@@ -65,7 +73,7 @@ class BehaviorTree<R(Ts...)> {
   std::unique_ptr<AbstractNode> root_;
 
   template <class... Args>
-  static result_type make_result(Status status, [[maybe_unused]] Args&&... args) {
+  static result_type make_result(Status status, Args&&... args) { // NOLINT(*naming*)
     if constexpr (std::is_void_v<R>) {
       return Status{status};
     } else {
@@ -73,7 +81,7 @@ class BehaviorTree<R(Ts...)> {
     }
   }
 
-  static Status get_status(const result_type& result) {
+  static Status get_status(const result_type& result) { // NOLINT(*naming*)
     if constexpr (std::is_void_v<R>) {
       return result;
     } else {
@@ -207,14 +215,32 @@ class BehaviorTree<R(Ts...)>::TaskNode : public AbstractNode {
 
   [[nodiscard]] virtual result_type run(Ts... ts) const = 0;
 
-  [[nodiscard]] std::string_view type() const final { return "Task"; }
+  [[nodiscard]] std::string_view type() const override { return "Task"; }
+};
+
+template <class R, class... Ts>
+class BehaviorTree<R(Ts...)>::ValidationTaskNode : public TaskNode {
+ public:
+  using Status = typename BehaviorTree<R(Ts...)>::Status;
+
+  using result_type = typename BehaviorTree<R(Ts...)>::result_type;
+
+  [[nodiscard]] std::string_view type() const final { return "ValidationTask"; }
+
+ private:
+  [[nodiscard]] virtual result_type run([[maybe_unused]] Ts... ts) const final {
+    make_result(Status::Success);
+  }
 };
 
 template <class R, class... Ts>
 class BehaviorTree<R(Ts...)>::DebugNode {
  public:
   template <class T>
-  explicit DebugNode(const T& node) : name_{make_name(typeid(node))}, type_{node.type()} {}
+  explicit DebugNode(const T& node) :
+      // TODO(joseviccruz): use robocin::nameof<T>().
+      name_{behavior_tree_internal::demangle_or_default(typeid(node).name())},
+      type_{node.type()} {}
 
   [[nodiscard]] std::string_view name() const { return name_; }
   [[nodiscard]] std::string_view type() const { return type_; }
@@ -230,3 +256,5 @@ class BehaviorTree<R(Ts...)>::DebugNode {
 };
 
 } // namespace robocin
+
+#endif // ROBOCIN_BEHAVIOR_TREE_BEHAVIOR_TREE_H
