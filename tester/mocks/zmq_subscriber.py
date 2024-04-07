@@ -12,5 +12,5 @@ if __name__ == "__main__":
     count = 0
     while True:
         topic, message = socket.recv_multipart()
-        count = count + 1
+        count += 1
         print(f"Received request: {message} from {topic} for {count} times")

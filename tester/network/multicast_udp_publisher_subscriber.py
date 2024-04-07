@@ -1,13 +1,30 @@
 import socket
-from typing import Dict
-
 import netifaces
 
+from typing import Dict
+from google.protobuf.message import Message as Protobuf
 
-class MulticastUdpReceiverSocket:
-    def __init__(self):
-        self.socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
 
+class MulticastUdpPublisherSocket:
+    def __init__(self, ip, port):
+        self.socket = socket.socket(
+            socket.AF_INET, socket.SOCK_DGRAM, socket.IPPROTO_UDP
+        )
+        self.ip = ip
+        self.port = port
+
+    def send(self, message):
+        if isinstance(message, str):
+            self.socket.sendto(message.encode(), (self.ip, self.port))
+        elif isinstance(message, bytes):
+            self.socket.sendto(message, (self.ip, self.port))
+        elif isinstance(message, Protobuf):
+            self.socket.sendto(message.SerializeToString(), (self.ip, self.port))
+        else:
+            raise ValueError(f"Invalid message type: {type(message)}.")
+
+
+class MulticastUdpSubscriberSocket:
     @staticmethod
     def _all_network_interfaces() -> Dict[str, str]:
         result = {}
@@ -20,9 +37,11 @@ class MulticastUdpReceiverSocket:
 
         return result
 
-    def bind(self, ip_address, port, network_interface):
+    def __init__(self, ip_address, port, network_interface):
+        self.socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+
         # Get the network interface address
-        network_interfaces = MulticastUdpReceiverSocket._all_network_interfaces()
+        network_interfaces = MulticastUdpSubscriberSocket._all_network_interfaces()
         if network_interface not in network_interfaces:
             raise ValueError(f"Invalid network interface: {network_interface}.")
 
