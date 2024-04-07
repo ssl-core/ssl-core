@@ -10,14 +10,11 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument("--raw_ip_address", default="224.5.23.2")
     parser.add_argument("--raw_port", default=10020, type=int)
-    parser.add_argument("--network_interface", required=True)
 
     args = parser.parse_args()
 
     # Create UDP socket to receive raw vision packets
-    raw_udp_socket = MulticastUdpSubscriberSocket(
-        args.raw_ip_address, args.raw_port, args.network_interface
-    )
+    raw_udp_socket = MulticastUdpSubscriberSocket(args.raw_ip_address, args.raw_port)
 
     total_messages_received = 0
 

@@ -4,7 +4,6 @@ TODO([#41](https://github.com/robocin/ssl-core/issues/41)): Add a description of
 
 ```json
 {
-    "inet": "..." // optional, required when using udp_multicast on some response type.
     "requests": [
         {
             "count": 30, // optional, integer

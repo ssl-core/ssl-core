@@ -39,11 +39,7 @@ def __create_subscriber(response):
 
     elif "udp_multicast" in response:
         udp_response = response["udp_multicast"]
-        return MulticastUdpSubscriberSocket(
-            udp_response["ip"],
-            udp_response["port"],
-            udp_response["inet"] if "inet" in udp_response else __inet__,
-        )
+        return MulticastUdpSubscriberSocket(udp_response["ip"], udp_response["port"])
 
     else:
         sys.exit("[error] create_subscriber: no subscriber found from json.")
@@ -59,16 +55,11 @@ if __name__ == "__main__":
 
     parser = argparse.ArgumentParser()
     parser.add_argument("--input_file", required=True)
-    parser.add_argument("--inet")
 
     args = parser.parse_args()
 
     with open(f"inputs/{args.input_file}") as json_input:
         data = json.load(json_input)
-
-        if "inet" in args:
-            global __inet__
-            __inet__ = args.inet
 
         for request in data["requests"]:
             publisher = create_publisher(request)
