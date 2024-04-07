@@ -17,7 +17,7 @@ services:
         - SOURCE_DIRECTORY=gateway/gateway-augusto
     working_dir: /workspaces/gateway/gateway-augusto
     container_name: gateway
-    command: ["bin/gateway_main", "192.168.18.5"]
+    command: ["bin/gateway_main"]
     volumes:
       - /tmp:/tmp
       - ./:/app
