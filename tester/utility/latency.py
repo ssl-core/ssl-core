@@ -1,7 +1,7 @@
 from datetime import datetime
 
 
-def measuringTime(init, end):
+def measure_time(init, end):
     t1 = datetime.fromtimestamp(init)
     t2 = datetime.fromtimestamp(end)
     delta = t2 - t1
@@ -12,8 +12,5 @@ def measuringTime(init, end):
     ]
 
 
-def latencyMean(latencyList):
-    listDiffTime = latencyList
-    latencySum = sum(listDiffTime)
-    mean = latencySum / len(listDiffTime)
-    return mean
+def measure_mean(latencies):
+    return sum(latencies) / len(latencies)

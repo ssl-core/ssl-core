@@ -4,6 +4,11 @@
     "context": "./../..",
     "dockerfile": "Dockerfile"
   },
+  "runArgs": [
+    "-e",
+    "DISPLAY=${env:DISPLAY}",
+    "--network=host"
+  ],
   // Configure tool-specific properties.
   "customizations": {
     // Configure properties specific to VS Code.
