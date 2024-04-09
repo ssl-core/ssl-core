@@ -22,7 +22,7 @@ class ThreeGoalObject extends ThreeBaseObject {
     this.position.set(
       (side * (params.length + params.goal_depth)) / 2,
       0,
-      params.goal_width / 2
+      constants.field.goal.height / 2
     );
 
     if (side < 0) {

@@ -12,6 +12,7 @@ class WebSocketManager {
   public initialize(address: string) {
     this.socket = new WebSocket(address);
     this.addMessageListener();
+    this.receiveLiveStream();
   }
 
   public send(message: any) {
@@ -45,6 +46,17 @@ class WebSocketManager {
         default:
           break;
       }
+    });
+  }
+
+  private receiveLiveStream() {
+    if (!this.socket) {
+      throw new Error("Socket not initialized");
+    }
+
+    this.socket.addEventListener("open", () => {
+      const message = JSON.stringify({ event: "receive-live-stream" });
+      this.socket?.send(message);
     });
   }
 

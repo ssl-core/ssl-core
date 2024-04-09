@@ -15,6 +15,11 @@ class ThreeDotMesh extends ThreeBaseMesh {
     this.buildMesh();
   }
 
+  public setColor(color: string) {
+    this.color = color;
+    this.material = this.buildMaterial();
+  }
+
   protected buildGeometry() {
     return new CircleGeometry(
       this.radius,

@@ -1,5 +1,9 @@
 /// <reference types="vite/client" />
 
+type Vector2 = [number, number];
+type Vector3 = [number, number, number];
+type RobotColor = "yellow" | "blue";
+
 type WebSocketMessage = {
   type: string;
   payload: any;
@@ -9,10 +13,6 @@ type ProxyEvent = {
   id: number;
   data: any;
 };
-
-type Vector3 = [number, number, number];
-
-type RobotColor = "yellow" | "blue";
 
 type Frame = {
   serial_id: number;
@@ -34,9 +34,9 @@ type Robot = {
   confidence: number;
   robot_id: number;
   robot_color: RobotColor;
-  position: Vector3;
+  position: Vector2;
   angle: number;
-  velocity: Vector3;
+  velocity: Vector2;
   angular_velocity: number;
   radius: number;
   height: number;

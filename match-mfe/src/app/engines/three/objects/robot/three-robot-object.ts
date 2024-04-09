@@ -6,13 +6,17 @@ import constants from "../../../../../config/constants";
 import { degreesToRadians } from "../../../../../utils/math";
 
 class ThreeRobotObject extends ThreeBaseObject {
+  private params: Robot | null;
   private robotId: number;
   private robotColor: RobotColor;
+  private dots: ThreeDotMesh[];
 
   constructor(robotId?: number, robotColor?: RobotColor) {
     super();
+    this.params = null;
     this.robotId = robotId || 0;
     this.robotColor = robotColor || "yellow";
+    this.dots = [];
 
     this.addMeshes();
   }
@@ -26,6 +30,19 @@ class ThreeRobotObject extends ThreeBaseObject {
       constants.robot.chassis.height / 2 + constants.robot.chassis.bottomHeight
     );
     this.rotation.set(0, 0, degreesToRadians(params.angle));
+
+    if (this.needsToRedraw(params)) {
+      this.robotId = params.robot_id;
+      this.robotColor = params.robot_color;
+
+      const dotParams = this.getDotsParams();
+      for (const [index, dotParam] of dotParams.entries()) {
+        const dot = this.dots[index];
+        dot.setColor(dotParam.robotColor);
+      }
+    }
+
+    this.params = params;
   }
 
   public getRobotId() {
@@ -51,6 +68,7 @@ class ThreeRobotObject extends ThreeBaseObject {
       );
 
       this.add(dot);
+      this.dots.push(dot);
     }
 
     const angles = constants.robot.wheels.angles;
@@ -58,6 +76,14 @@ class ThreeRobotObject extends ThreeBaseObject {
       const wheel = new ThreeWheelMesh(angle);
       this.add(wheel);
     }
+  }
+
+  private needsToRedraw(params: Robot) {
+    return (
+      !this.params ||
+      this.params.robot_id !== params.robot_id ||
+      this.params.robot_color !== params.robot_color
+    );
   }
 
   private getDotsParams() {

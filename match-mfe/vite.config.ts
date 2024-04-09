@@ -30,10 +30,11 @@ export default defineConfig({
   preview: {
     port: 3031,
     strictPort: true,
+    host: "0.0.0.0",
   },
   server: {
     port: 3031,
     strictPort: true,
-    host: true,
+    host: "0.0.0.0",
   },
 });

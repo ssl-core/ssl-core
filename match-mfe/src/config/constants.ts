@@ -2,7 +2,7 @@ const constants = {
   background: "#1B1C1F",
   epsilon: 0.001,
   clippingEpsilon: 0.01,
-  numRobots: 11,
+  numRobots: 22,
   numBalls: 1,
   field: {
     surface: {

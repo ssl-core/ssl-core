@@ -20,18 +20,18 @@ class ThreeWallsObject extends ThreeBaseObject {
     if (this.needsToRedraw(params)) {
       const wallsParams = this.getWallsParams(params);
 
-      for (const [index, goalParam] of wallsParams.entries()) {
+      for (const [index, wallParam] of wallsParams.entries()) {
         const wall = this.walls[index];
-        wall.setWidth(goalParam.width);
+        wall.setWidth(wallParam.width);
         wall.position.set(
-          goalParam.position.x,
-          goalParam.position.y,
-          goalParam.position.z
+          wallParam.position.x,
+          wallParam.position.y,
+          wallParam.position.z
         );
         wall.rotation.set(
-          goalParam.rotation.x,
-          goalParam.rotation.y,
-          goalParam.rotation.z
+          wallParam.rotation.x,
+          wallParam.rotation.y,
+          wallParam.rotation.z
         );
       }
     }

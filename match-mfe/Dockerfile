@@ -1,15 +1,17 @@
 FROM node:20-alpine
 
+ARG SOURCE_DIRECTORY
+
 WORKDIR /app
 
-COPY package.json .
-
+COPY ./${SOURCE_DIRECTORY}/package.json .
+COPY ./${SOURCE_DIRECTORY}/yarn.lock .
 RUN yarn
 
-COPY . .
+COPY ./${SOURCE_DIRECTORY} .
 
 RUN yarn build
 
-EXPOSE 4001
+EXPOSE 3031
 
 CMD ["yarn", "run", "preview"]

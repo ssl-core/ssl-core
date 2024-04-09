@@ -1,6 +1,6 @@
 const environment = {
   engine: "three",
-  socketUrl: "ws://match-bff:4040",
+  socketUrl: "ws://localhost:4040/ws",
 };
 
 export default environment;

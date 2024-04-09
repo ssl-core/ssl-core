@@ -26,7 +26,9 @@ class ThreeEventHandler {
         this.sceneManager.resize(payload.width, payload.height);
         break;
       case ThreeEventTypes.Frame:
-        this.sceneManager.render(payload as Frame);
+        self.requestAnimationFrame(() => {
+          this.sceneManager.render(payload as Frame);
+        });
         break;
       case ThreeEventTypes.Proxy:
         this.proxyManager.addProxy(payload as number);

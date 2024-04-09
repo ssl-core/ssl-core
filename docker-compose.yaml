@@ -7,7 +7,6 @@ services:
     environment:
       GEOMETRY: "2020"
       REALISM: "RC2021"
-    network_mode: host
 
   gateway:
     build:
@@ -23,7 +22,6 @@ services:
       - ./:/app
     depends_on:
       - simulator
-    network_mode: host
 
   vision:
     build:
@@ -38,4 +36,28 @@ services:
       - /tmp:/tmp
     depends_on:
       - gateway
-    network_mode: host
+
+  match-bff:
+    build:
+      context: .
+      dockerfile: match-bff/Dockerfile
+      args:
+        - SOURCE_DIRECTORY=match-bff
+    command: ["bin/match-bff"]
+    ports:
+      - 4040:4040
+    depends_on:
+      - gateway
+      - vision
+
+  match-mfe:
+    build:
+      context: .
+      dockerfile: match-mfe/Dockerfile
+      args:
+        - SOURCE_DIRECTORY=match-mfe
+    command: ["yarn", "run", "preview"]
+    ports:
+      - 3031:3031
+    depends_on:
+      - match-bff
