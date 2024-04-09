@@ -11,7 +11,6 @@ using namespace std::chrono_literals;
 
 struct UdpArgs {
   std::string_view address;
-  std::string_view inet;
   int port{};
 };
 
@@ -21,15 +20,15 @@ constexpr UdpArgs kVisionThirdParty = {
     .address = "224.5.23.2",
     .port = 10020,
 };
-// constexpr UdpArgs kRefereeThirdParty = {.address = ..., .inet = ..., .port = ...,};
-// constexpr UdpArgs kTrackedThirdParty = {.address = ..., .inet = ..., .port = ...,};
+// constexpr UdpArgs kRefereeThirdParty = {.address = ..., .port = ...,};
+// constexpr UdpArgs kTrackedThirdParty = {.address = ..., .port = ...,};
 
 } // namespace
 
 ThirdPartySocketsController::ThirdPartySocketsController() {
-  vision_.connect(kVisionThirdParty.address, Singleton<std::string>::get(), kVisionThirdParty.port);
-  // vision_.connect(kRefereeThirdParty.address, kRefereeThirdParty.inet, kRefereeThirdParty.port);
-  // vision_.connect(kTrackedThirdParty.address, kTrackedThirdParty.inet, kTrackedThirdParty.port);
+  vision_.connect(kVisionThirdParty.address, kVisionThirdParty.port);
+  // vision_.connect(kRefereeThirdParty.address, kRefereeThirdParty.port);
+  // vision_.connect(kTrackedThirdParty.address, kTrackedThirdParty.port);
 
   poller_.push(vision_.fd());
   // poller.push(referee_.fd());
