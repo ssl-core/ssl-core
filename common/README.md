@@ -13,7 +13,7 @@ COPY .cmake/ /tmp/.cmake/
 COPY common/ /tmp/common/
 
 # Install the library inside the Docker in the '/usr/local/' directory.
-RUN pushd /tmp/common/cpp && rm -rf build && cmake -B build -S . -DCMAKE_CXX_COMPILER=${CXX_COMPILER} && cmake --build build && cmake --install build && popd && rm -rf /tmp/.cmake/ /tmp/common/
+RUN pushd /tmp/common/cpp && rm -rf build && cmake -B build -S . -G "Ninja" -DCMAKE_CXX_COMPILER=${CXX_COMPILER} && cmake --build build && cmake --install build && popd && rm -rf /tmp/.cmake/ /tmp/common/
 ```
 
 Which significantly saves the compilation time of its components.

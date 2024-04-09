@@ -5,6 +5,7 @@ SHELL ["/bin/bash", "-c"]
 ARG    GCC_VERSION='13'
 ARG   LLVM_VERSION='18'
 ARG  CMAKE_VERSION='3.29.0-rc2'
+ARG  NINJA_VERSION='1.11.1'
 ARG    BUF_VERSION='1.28.1'
 ARG LIBZMQ_VERSION='4.3.5'
 ARG CPPZMQ_VERSION='4.10.0'
@@ -16,7 +17,8 @@ RUN apt update && apt upgrade -y && \
   \
   bash   gcc.sh   ${GCC_VERSION} && \
   bash  llvm.sh  ${LLVM_VERSION} && \
-  bash cmake.sh ${CMAKE_VERSION} && \  
+  bash cmake.sh ${CMAKE_VERSION} && \
+  bash ninja.sh ${NINJA_VERSION} && \
   \
   bash       absl.sh '/usr/local' && \
   bash googletest.sh '/usr/local' && \

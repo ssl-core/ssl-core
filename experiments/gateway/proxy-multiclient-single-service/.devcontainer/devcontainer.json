@@ -52,6 +52,7 @@
         // CMake Settings
         "cmake.buildDirectory": "${workspaceFolder}/build",
         "cmake.cmakePath": "cmake",
+        "cmake.generator": "Ninja",
         "cmake.options.advanced": {
           "build": {
             "statusBarVisibility": "visible"
