@@ -1,6 +1,9 @@
 package entity
 
-import "github.com/robocin/ssl-core/match-bff/pkg/pb/vision"
+import (
+	"github.com/robocin/ssl-core/match-bff/internal/util"
+	"github.com/robocin/ssl-core/match-bff/pkg/pb/vision"
+)
 
 type Field struct {
 	SerialId                uint64  `json:"serial_id"`
@@ -15,15 +18,25 @@ type Field struct {
 }
 
 func NewFieldFromProto(field *vision.Field) Field {
+	serialId := util.SetDefaultIfNil(field.SerialId, 0)
+	length := util.SetDefaultIfNil(field.Length, 0) / 1000
+	width := util.SetDefaultIfNil(field.Width, 0) / 1000
+	goalDepth := util.SetDefaultIfNil(field.GoalDepth, 0) / 1000
+	goalWidth := util.SetDefaultIfNil(field.GoalWidth, 0) / 1000
+	penaltyAreaDepth := util.SetDefaultIfNil(field.PenaltyAreaDepth, 0) / 1000
+	penaltyAreaWidth := util.SetDefaultIfNil(field.PenaltyAreaWidth, 0) / 1000
+	boundaryWidth := util.SetDefaultIfNil(field.BoundaryWidth, 0) / 1000
+	goalCenterToPenaltyMark := util.SetDefaultIfNil(field.GoalCenterToPenaltyMark, 0) / 1000
+
 	return Field{
-		SerialId:                field.SerialId,
-		Length:                  field.Length,
-		Width:                   field.Width,
-		GoalDepth:               field.GoalDepth,
-		GoalWidth:               field.GoalWidth,
-		PenaltyAreaDepth:        field.PenaltyAreaDepth,
-		PenaltyAreaWidth:        field.PenaltyAreaWidth,
-		BoundaryWidth:           field.BoundaryWidth,
-		GoalCenterToPenaltyMark: field.GoalCenterToPenaltyMark,
+		SerialId:                serialId,
+		Length:                  length,
+		Width:                   width,
+		GoalDepth:               goalDepth,
+		GoalWidth:               goalWidth,
+		PenaltyAreaDepth:        penaltyAreaDepth,
+		PenaltyAreaWidth:        penaltyAreaWidth,
+		BoundaryWidth:           boundaryWidth,
+		GoalCenterToPenaltyMark: goalCenterToPenaltyMark,
 	}
 }

@@ -6,7 +6,6 @@ build:
 
 setup:
 	@bash scripts/setup-protoc.sh
-	@bash scripts/setup-zmq.sh
 	@bash scripts/compile-proto.sh
 	@go mod download
 

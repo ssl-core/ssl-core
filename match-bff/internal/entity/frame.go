@@ -4,7 +4,9 @@ import (
 	"encoding/json"
 	"time"
 
+	"github.com/robocin/ssl-core/match-bff/internal/util"
 	"github.com/robocin/ssl-core/match-bff/pkg/pb/vision"
+	"google.golang.org/protobuf/types/known/timestamppb"
 )
 
 type Frame struct {
@@ -18,26 +20,32 @@ type Frame struct {
 }
 
 func NewFrameFromProto(frame *vision.Frame) Frame {
-	field := NewFieldFromProto(frame.Field)
+	field := NewFieldFromProto(util.SetDefaultIfNil(frame.Field, &vision.Field{}))
 
 	balls := make([]Ball, len(frame.Balls))
 	for i, ball := range frame.Balls {
-		balls[i] = NewBallFromProto(ball)
+		balls[i] = NewBallFromProto(util.SetDefaultIfNil(ball, &vision.Ball{}))
 	}
 
 	robots := make([]Robot, len(frame.Robots))
 	for i, robot := range frame.Robots {
-		robots[i] = NewRobotFromProto(robot)
+		robots[i] = NewRobotFromProto(util.SetDefaultIfNil(robot, &vision.Robot{}))
 	}
 
+	pbProperties := util.SetDefaultIfNil(frame.Properties, &vision.Frame_Properties{})
+	serialId := util.SetDefaultIfNil(pbProperties.SerialId, 0)
+	effectiveSerialId := util.SetDefaultIfNil(pbProperties.EffectiveSerialId, 0)
+	fps := util.SetDefaultIfNil(pbProperties.Fps, 0)
+	createdAt := util.SetDefaultIfNil(pbProperties.CreatedAt, &timestamppb.Timestamp{}).AsTime()
+
 	return Frame{
-		SerialId:          frame.Properties.SerialId,
-		EffectiveSerialId: frame.Properties.EffectiveSerialId,
-		Fps:               frame.Properties.Fps,
+		SerialId:          serialId,
+		EffectiveSerialId: effectiveSerialId,
+		Fps:               fps,
 		Balls:             balls,
 		Robots:            robots,
 		Field:             field,
-		CreatedAt:         frame.Properties.CreatedAt.AsTime(),
+		CreatedAt:         createdAt,
 	}
 }
 

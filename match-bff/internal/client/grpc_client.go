@@ -2,6 +2,7 @@ package client
 
 import (
 	"context"
+	"fmt"
 	"io"
 	"log"
 
@@ -64,6 +65,7 @@ func (gc *GrpcClient) ReceiveLiveStream() error {
 	})
 
 	if err != nil {
+		fmt.Println(err)
 		return err
 	}
 
@@ -75,11 +77,21 @@ func (gc *GrpcClient) ReceiveLiveStream() error {
 				break
 			}
 
+			fmt.Println(err)
 			continue
 		}
 
 		payload := response.Payload.GetVisionFrame()
+
+		if payload.Properties == nil {
+			continue
+		}
+
 		frame, err := service.ProcessLiveStream(payload)
+
+		if err != nil {
+			continue
+		}
 
 		for conn := range gc.socketConns {
 			go func(conn *websocket.Conn) {

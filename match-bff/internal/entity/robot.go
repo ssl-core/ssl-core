@@ -1,6 +1,7 @@
 package entity
 
 import (
+	"github.com/robocin/ssl-core/match-bff/internal/util"
 	"github.com/robocin/ssl-core/match-bff/pkg/pb/common"
 	"github.com/robocin/ssl-core/match-bff/pkg/pb/vision"
 )
@@ -19,17 +20,32 @@ type Robot struct {
 }
 
 func NewRobotFromProto(robot *vision.Robot) Robot {
+	confidence := util.SetDefaultIfNil(robot.Confidence, 0)
+	pbRobotId := util.SetDefaultIfNil(robot.RobotId, &common.RobotId{})
+	robotId := uint8(util.SetDefaultIfNil(pbRobotId.Number, 0))
+	robotColor := translateColor(util.SetDefaultIfNil(pbRobotId.Color, common.RobotId_COLOR_UNSPECIFIED))
+	pbPosition := util.SetDefaultIfNil(robot.Position, &common.Point2Df{})
+	position := []float32{util.SetDefaultIfNil(pbPosition.X, 0) / 1000, util.SetDefaultIfNil(pbPosition.Y, 0) / 1000}
+	angle := util.SetDefaultIfNil(robot.Angle, 0)
+	pbVelocity := util.SetDefaultIfNil(robot.Velocity, &common.Point2Df{})
+	velocity := []float32{util.SetDefaultIfNil(pbVelocity.X, 0) / 1000, util.SetDefaultIfNil(pbVelocity.Y, 0) / 1000}
+	angularVelocity := util.SetDefaultIfNil(robot.AngularVelocity, 0)
+	pbPhysicalAttributes := util.SetDefaultIfNil(robot.PhysicalAttributes, &vision.Robot_PhysicalAttributes{})
+	radius := util.SetDefaultIfNil(pbPhysicalAttributes.Radius, 0) / 1000
+	height := util.SetDefaultIfNil(pbPhysicalAttributes.Height, 0) / 1000
+	dribblerWidth := util.SetDefaultIfNil(pbPhysicalAttributes.DribblerWidth, 0) / 1000
+
 	return Robot{
-		Confidence:      robot.Confidence,
-		RobotId:         uint8(robot.RobotId.Number),
-		RobotColor:      translateColor(robot.RobotId.Color),
-		Position:        []float32{robot.Position.X, robot.Position.Y},
-		Angle:           robot.Angle,
-		Velocity:        []float32{robot.Velocity.X, robot.Velocity.Y},
-		AngularVelocity: robot.AngularVelocity,
-		Radius:          robot.PhysicalAttributes.Radius,
-		Height:          robot.PhysicalAttributes.Height,
-		DribblerWidth:   robot.PhysicalAttributes.DribblerWidth,
+		Confidence:      confidence,
+		RobotId:         robotId,
+		RobotColor:      robotColor,
+		Position:        position,
+		Angle:           angle,
+		Velocity:        velocity,
+		AngularVelocity: angularVelocity,
+		Radius:          radius,
+		Height:          height,
+		DribblerWidth:   dribblerWidth,
 	}
 }
 

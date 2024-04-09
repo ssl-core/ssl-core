@@ -11,6 +11,6 @@ COPY ./${SOURCE_DIRECTORY} .
 RUN make setup
 RUN make build
 
-EXPOSE 8080
+EXPOSE 4040
 
 CMD ["./bin/match-bff"]
