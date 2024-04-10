@@ -1,9 +1,12 @@
 module;
 
+#include <memory>
+
 export module decision.phase_of_game:dispute_selector;
 
 import decision.entities;
 import decision.utility;
+import decision.team_objective;
 
 export namespace decision {
 

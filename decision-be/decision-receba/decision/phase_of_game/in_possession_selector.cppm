@@ -12,7 +12,11 @@ export namespace decision {
 
 class InPossessionSelector : public DecisionBehaviorTree::SelectorNode {
  public:
-  void build() final { add(std::make_unique<BuildUpSelector>()); }
+  void build() final { 
+    add(std::make_unique<BuildUpSelector>());
+    add(std::make_unique<PossessionSelector>());
+    add(std::make_unique<CreationSelector>());
+  }
   [[nodiscard]] bool abort(const World& world) const final { return false; }
 };
 
