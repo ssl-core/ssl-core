@@ -3,10 +3,12 @@ import Channels from "../../../config/channels";
 class WebSocketManager {
   private socket: WebSocket | null;
   private engineChannel: BroadcastChannel;
+  private isSendingMessage: boolean;
 
   constructor() {
     this.socket = null;
     this.engineChannel = new BroadcastChannel(Channels.Engine);
+    this.isSendingMessage = false;
   }
 
   public initialize(address: string) {
@@ -61,7 +63,16 @@ class WebSocketManager {
   }
 
   private handleFrame(frame: Frame) {
-    this.engineChannel.postMessage(frame);
+    if (this.isSendingMessage) {
+      return;
+    }
+
+    this.isSendingMessage = true;
+
+    self.requestAnimationFrame(() => {
+      this.engineChannel.postMessage(frame);
+      this.isSendingMessage = false;
+    });
   }
 }
 

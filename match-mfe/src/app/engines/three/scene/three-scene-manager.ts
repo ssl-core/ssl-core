@@ -49,12 +49,14 @@ class ThreeSceneManager {
   }
 
   public render(frame: Frame) {
-    const { field, robots, balls } = frame;
+    self.requestAnimationFrame(() => {
+      const { field, robots, balls } = frame;
 
-    this.renderField(field);
-    this.renderRobots(robots);
-    this.renderBalls(balls);
-    this.update();
+      this.renderField(field);
+      this.renderRobots(robots);
+      this.renderBalls(balls);
+      this.update();
+    });
   }
 
   public tick() {
