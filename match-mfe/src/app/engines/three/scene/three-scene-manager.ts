@@ -17,6 +17,7 @@ class ThreeSceneManager {
   private canvas: OffscreenCanvas | null;
   private canvasDOM: ThreeElementProxyReceiver | null;
   private renderer: WebGLRenderer | null;
+  private isRendering: boolean;
   private camera: PerspectiveCamera;
   private scene: Scene;
   private channel: BroadcastChannel;
@@ -26,6 +27,7 @@ class ThreeSceneManager {
     this.canvas = null;
     this.canvasDOM = null;
     this.renderer = null;
+    this.isRendering = false;
     this.camera = new PerspectiveCamera();
     this.scene = new Scene();
     this.channel = new BroadcastChannel(Channels.Engine);
@@ -49,6 +51,12 @@ class ThreeSceneManager {
   }
 
   public render(frame: Frame) {
+    if (this.isRendering) {
+      return;
+    }
+
+    this.isRendering = true;
+
     self.requestAnimationFrame(() => {
       const { field, robots, balls } = frame;
 
@@ -56,6 +64,7 @@ class ThreeSceneManager {
       this.renderRobots(robots);
       this.renderBalls(balls);
       this.update();
+      this.isRendering = false;
     });
   }
 

@@ -63,16 +63,7 @@ class WebSocketManager {
   }
 
   private handleFrame(frame: Frame) {
-    if (this.isSendingMessage) {
-      return;
-    }
-
-    this.isSendingMessage = true;
-
-    self.requestAnimationFrame(() => {
-      this.engineChannel.postMessage(frame);
-      this.isSendingMessage = false;
-    });
+    this.engineChannel.postMessage(frame);
   }
 }
 
