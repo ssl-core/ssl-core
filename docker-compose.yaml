@@ -1,37 +1,44 @@
 version: "3"
 services:
   mongodb1:
-    build:
-      context: ./mongodb/node1
-      dockerfile: .devcontainer/Dockerfile
-    container_name: mongodb1
-    depends_on:
-      - mongodb2
-      - mongodb3
+    image: mongo:7.0
+    command: ["--replSet", "rs0", "--bind_ip_all", "--port", "27017"]
     ports:
       - 27017:27017
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    healthcheck:
+      test: echo "try { rs.status() } catch (err) { rs.initiate({_id:'rs0',members:[{_id:0,host:'host.docker.internal:27017',priority:1},{_id:1,host:'host.docker.internal:27018',priority:0.5},{_id:2,host:'host.docker.internal:27019',priority:0.5}]}) }" | mongosh --port 27017 --quiet
+      interval: 5s
+      timeout: 30s
+      start_period: 0s
+      start_interval: 1s
+      retries: 30
     volumes:
-      - mongodb_data_1:/data/db
+      - "mongodb1_data:/data/db"
+      - "mongodb1_config:/data/configdb"
 
   mongodb2:
-    build:
-      context: ./mongodb/node2
-      dockerfile: .devcontainer/Dockerfile
-    container_name: mongodb2
+    image: mongo:7.0
+    command: ["--replSet", "rs0", "--bind_ip_all", "--port", "27018"]
     ports:
-      - 27018:27017
+      - 27018:27018
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
     volumes:
-      - mongodb_data_2:/data/db
+      - "mongodb2_data:/data/db"
+      - "mongodb2_config:/data/configdb"
 
   mongodb3:
-    build:
-      context: ./mongodb/node3
-      dockerfile: .devcontainer/Dockerfile
-    container_name: mongodb3
+    image: mongo:7.0
+    command: ["--replSet", "rs0", "--bind_ip_all", "--port", "27019"]
     ports:
-      - 27019:27017
+      - 27019:27019
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
     volumes:
-      - mongodb_data_3:/data/db
+      - "mongodb3_data:/data/db"
+      - "mongodb3_config:/data/configdb"
 
   simulator:
     image: roboticserlangen/simulatorcli:commit-6a4e1c06533b
@@ -68,7 +75,6 @@ services:
     volumes:
       - /tmp:/tmp
     depends_on:
-      - gateway
       - mongodb1
 
   match-bff:
@@ -97,6 +103,9 @@ services:
       - match-bff
 
 volumes:
-  mongodb_data_1:
-  mongodb_data_2:
-  mongodb_data_3:
+  mongodb1_data:
+  mongodb2_data:
+  mongodb3_data:
+  mongodb1_config:
+  mongodb2_config:
+  mongodb3_config:
