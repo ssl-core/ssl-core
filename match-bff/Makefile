@@ -4,6 +4,9 @@ run:
 build:
 	@go build -o bin/match-bff cmd/main.go
 
+build-linux:
+	@CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -o bin/match-bff cmd/main.go
+
 setup:
 	@bash scripts/setup-protoc.sh
 	@bash scripts/compile-proto.sh

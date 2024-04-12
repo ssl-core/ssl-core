@@ -43,7 +43,7 @@ services:
       dockerfile: match-bff/Dockerfile
       args:
         - SOURCE_DIRECTORY=match-bff
-    command: ["bin/match-bff"]
+    command: ["./match-bff"]
     ports:
       - 4040:4040
     depends_on:
@@ -56,7 +56,7 @@ services:
       dockerfile: match-mfe/Dockerfile
       args:
         - SOURCE_DIRECTORY=match-mfe
-    command: ["yarn", "run", "preview"]
+    command: ["-g", "daemon off;"]
     ports:
       - 3031:3031
     depends_on:
