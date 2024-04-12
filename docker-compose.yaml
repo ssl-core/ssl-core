@@ -6,6 +6,8 @@ services:
     ports:
       - 27017:27017
     container_name: mongodb1
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
     healthcheck:
       test: echo "try { rs.status() } catch (err) { rs.initiate({_id:'rs0',members:[{_id:0,host:'host.docker.internal:27017',priority:1},{_id:1,host:'host.docker.internal:27018',priority:0.5},{_id:2,host:'host.docker.internal:27019',priority:0.5}]}) }" | mongosh --port 27017 --quiet
       interval: 5s
@@ -23,6 +25,8 @@ services:
     ports:
       - 27018:27018
     container_name: mongodb2
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
     volumes:
       - "mongodb2_data:/data/db"
       - "mongodb2_config:/data/configdb"
@@ -33,6 +37,8 @@ services:
     ports:
       - 27019:27019
     container_name: mongodb3
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
     volumes:
       - "mongodb3_data:/data/db"
       - "mongodb3_config:/data/configdb"
@@ -69,6 +75,8 @@ services:
     working_dir: /workspaces/vision-be/vision-panettone
     container_name: vision
     command: ["bin/vision_main"]
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
     volumes:
       - /tmp:/tmp
     depends_on:
