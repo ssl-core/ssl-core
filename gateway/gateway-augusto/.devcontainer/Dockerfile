@@ -1,4 +1,4 @@
-FROM robocin/ssl-core-cpp-grpc:manual-robocup2
+FROM robocin/ssl-core-cpp-grpc:manual-multiplatform
 
 ARG SOURCE_DIRECTORY
 
