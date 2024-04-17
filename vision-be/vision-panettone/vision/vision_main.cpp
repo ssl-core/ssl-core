@@ -47,7 +47,7 @@ std::unique_ptr<IFrameRepository> frame_repository = kFactory->createFrameReposi
 void saveToDatabase(IFrameRepository& repository, const Frame& frame) { repository.save(frame); }
 
 // fetches a frame range from the database.
-std::vector<Frame> fetchFromDatabase(IFrameRepository& repository,
+std::vector<Frame> findRangeFromDatabase(IFrameRepository& repository,
                                      const int64_t& key_lower_bound,
                                      const int64_t& key_upper_bound) {
   return repository.findRange(key_lower_bound, key_upper_bound);
@@ -102,6 +102,7 @@ std::condition_variable cv;
 std::vector<ZmqDatagram> packages;
 
 void subscriberRun() {
+  std::cout << "Subscriber thread running..." << std::endl;
   robocin::ZmqSubscriberSocket vision_third_party_socket{};
   vision_third_party_socket.connect(kThirdPartyAddress, std::span{&kVisionMessageTopic, 1});
 
@@ -127,6 +128,7 @@ void subscriberRun() {
 }
 
 void publisherRun() {
+  std::cout << "Publisher thread running..." << std::endl;
   robocin::ZmqPublisherSocket vision_publisher;
   vision_publisher.bind(kVisionPublisherAddress);
 
@@ -164,9 +166,8 @@ void publisherRun() {
 }
 
 static constexpr std::string_view kReplyAddress = "ipc:///tmp/vision-sync.ipc";
-
 void databaseHandlerRun() {
-
+  std::cout << "Database thread running..." << std::endl;
   robocin::ZmqReplySocket vision_reply_socket{};
   vision_reply_socket.connect(kReplyAddress);
 
@@ -177,12 +178,13 @@ void databaseHandlerRun() {
   // Receive sync request.
   while (true) {
     if (auto request = vision_reply_socket.receive(); !request.empty()) {
+      std::cout << "GetVisionChunk on VisionMS..." << std::endl;
       int64_t first_key = distribution(gen);
       int64_t second_key = distribution(gen);
       auto [lower, upper] = std::minmax(first_key, second_key);
 
       auto range
-          = thread_pool.enqueue(fetchFromDatabase, std::ref(*frame_repository), lower, upper);
+          = thread_pool.enqueue(findRangeFromDatabase, std::ref(*frame_repository), lower, upper);
 
       /*
       message ChunkResponseHeader {
@@ -221,20 +223,20 @@ int main() {
   std::cout << "Vision is runnning!" << std::endl;
 
   // TODO($ISSUE_N): Move the database management to a class.
-  std::cout << "Creating factory and frame repository." << "\n";
+  std::cout << "Creating factory and frame repository." << std::endl;
 
   std::future<bool> connection_status = frame_repository->connect();
 
   if (connection_status.wait(); connection_status.get()) {
-    std::cout << "Connected to the database." << "\n";
+    std::cout << "Connected to the database." << std::endl;
   } else {
-    std::cout << "Failed to connect to the database." << "\n";
+    std::cout << "Failed to connect to the database." << std::endl;
     return -1;
   }
 
   std::jthread publisher_thread(publisherRun);
   std::jthread subscriber_thread(subscriberRun);
-  std::jthread database_thread(subscriberRun);
+  std::jthread database_thread(databaseHandlerRun);
 
   return 0;
 }

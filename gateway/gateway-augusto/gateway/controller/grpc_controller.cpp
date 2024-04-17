@@ -44,6 +44,7 @@ class GatewayServiceImpl final : public GatewayService::Service {
   Status GetVisionChunk(ServerContext* context,
                         const GetVisionChunkRequest* request,
                         GetVisionChunkResponse* response) override {
+    std::cout << "Receive GetVisionChunk request" << std::endl;
     requester_.send(request->SerializeAsString());
     auto reply = requester_.receive();
     *response = deserialize<GetVisionChunkResponse>(reply);
