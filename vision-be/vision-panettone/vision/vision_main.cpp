@@ -169,7 +169,7 @@ static constexpr std::string_view kReplyAddress = "ipc:///tmp/vision-sync.ipc";
 void databaseHandlerRun() {
   std::cout << "Database thread running..." << std::endl;
   robocin::ZmqReplySocket vision_reply_socket{};
-  vision_reply_socket.connect(kReplyAddress);
+  vision_reply_socket.bind(kReplyAddress);
 
   std::random_device rd;
   std::mt19937 gen(rd());
