@@ -64,6 +64,7 @@ class ThreeSceneManager {
       this.renderRobots(robots);
       this.renderBalls(balls);
       this.update();
+      this.notifyTester();
       this.isRendering = false;
     });
   }
@@ -163,6 +164,10 @@ class ThreeSceneManager {
     const controls = new OrbitControls(this.camera, this.canvasDOM);
     controls.target.set(0, 0, 0);
     controls.update();
+  }
+
+  private notifyTester() {
+    self.postMessage(performance.now());
   }
 }
 

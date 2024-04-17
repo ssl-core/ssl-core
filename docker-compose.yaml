@@ -50,14 +50,14 @@ services:
       - gateway
       - vision
 
-  match-mfe:
-    build:
-      context: .
-      dockerfile: match-mfe/Dockerfile
-      args:
-        - SOURCE_DIRECTORY=match-mfe
-    command: ["-g", "daemon off;"]
-    ports:
-      - 3031:3031
-    depends_on:
-      - match-bff
+  # match-mfe:
+  #   build:
+  #     context: .
+  #     dockerfile: match-mfe/Dockerfile
+  #     args:
+  #       - SOURCE_DIRECTORY=match-mfe
+  #   command: ["-g", "daemon off;"]
+  #   ports:
+  #     - 3031:3031
+  #   depends_on:
+  #     - match-bff
