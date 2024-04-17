@@ -6,14 +6,18 @@
 #include <absl/time/clock.h>
 #include <absl/time/time.h>
 #include <condition_variable>
+#include <cstdlib>
 #include <google/protobuf/duration.pb.h>
 #include <google/protobuf/text_format.h>
 #include <iostream>
 #include <memory>
 #include <protocols/third_party/detection/raw_wrapper.pb.h>
+#include <protocols/ui/messages.pb.h>
 #include <protocols/vision/frame.pb.h>
+#include <random>
 #include <robocin/concurrency/thread_pool.h>
 #include <robocin/network/zmq_publisher_socket.h>
+#include <robocin/network/zmq_request_reply_socket.h>
 #include <robocin/network/zmq_subscriber_socket.h>
 #include <span>
 #include <string>
@@ -31,21 +35,25 @@ using vision::IFrameRepository;
 using vision::RepositoryFactoryMapping;
 using vision::RepositoryType;
 
-static constexpr std::string_view kAddress = "ipc:///tmp/gateway-pub-th-parties.ipc";
-static constexpr std::string_view kTopic = "vision-third-party";
-static constexpr std::string_view kVisionMessageTopic = "vision-third-party";
-static constexpr std::string_view kVisionPublisherAddress = "ipc:///tmp/vision-async.ipc";
-
-std::mutex mutex;
-std::condition_variable cv;
-std::vector<ZmqDatagram> packages;
-
 const uint64_t kFPS = 80;
-
 uint64_t frame_id = 1;
+
+const auto kFactory = RepositoryFactoryMapping{}[RepositoryType::MongoDb];
+std::unique_ptr<IFrameRepository> frame_repository = kFactory->createFrameRepository();
+
+// Database:
 
 // saves a frame to the database.
 void saveToDatabase(IFrameRepository& repository, const Frame& frame) { repository.save(frame); }
+
+// fetches a frame range from the database.
+std::vector<Frame> fetchFromDatabase(IFrameRepository& repository,
+                                     const int64_t& key_lower_bound,
+                                     const int64_t& key_upper_bound) {
+  return repository.findRange(key_lower_bound, key_upper_bound);
+}
+
+// Helpers:
 
 Frame createMockedFrame() {
   Frame frame;
@@ -83,9 +91,19 @@ Frame createMockedFrame() {
   return frame;
 }
 
+static constexpr std::string_view kThirdPartyAddress = "ipc:///tmp/gateway-pub-th-parties.ipc";
+static constexpr std::string_view kVisionMessageTopic = "vision-third-party";
+static constexpr std::string_view kVisionPublisherAddress = "ipc:///tmp/vision-async.ipc";
+
+ThreadPool thread_pool(4);
+
+std::mutex mutex;
+std::condition_variable cv;
+std::vector<ZmqDatagram> packages;
+
 void subscriberRun() {
   robocin::ZmqSubscriberSocket vision_third_party_socket{};
-  vision_third_party_socket.connect(kAddress, std::span{&kTopic, 1});
+  vision_third_party_socket.connect(kThirdPartyAddress, std::span{&kVisionMessageTopic, 1});
 
   uint64_t total_msgs_received = 0;
 
@@ -98,7 +116,8 @@ void subscriberRun() {
         if (message.message.empty()) {
           break;
         }
-        std::cout << std::format("received message!, total: {}", total_msgs_received++) << std::endl;
+        std::cout << std::format("received message!, total: {}", total_msgs_received++)
+                  << std::endl;
         packages.push_back(message);
       }
     }
@@ -110,22 +129,6 @@ void subscriberRun() {
 void publisherRun() {
   robocin::ZmqPublisherSocket vision_publisher;
   vision_publisher.bind(kVisionPublisherAddress);
-
-  // TODO($ISSUE_N): Move the database management to a class.
-  ThreadPool thread_pool(4);
-
-  std::cout << "Creating factory and frame repository." << std::endl;
-  const auto kFactory = RepositoryFactoryMapping{}[RepositoryType::MongoDb];
-
-  std::unique_ptr<IFrameRepository> frame_repository = kFactory->createFrameRepository();
-  std::future<bool> connection_status = frame_repository->connect();
-
-  if (connection_status.wait(); connection_status.get()) {
-    std::cout << "Connected to the database." << std::endl;
-  } else {
-    std::cout << "Failed to connect to the database." << std::endl;
-    return;
-  }
 
   // Receive datagrams.
   while (true) {
@@ -160,11 +163,78 @@ void publisherRun() {
   }
 }
 
+static constexpr std::string_view kReplyAddress = "ipc:///tmp/vision-sync.ipc";
+
+void databaseHandlerRun() {
+
+  robocin::ZmqReplySocket vision_reply_socket{};
+  vision_reply_socket.connect(kReplyAddress);
+
+  std::random_device rd;
+  std::mt19937 gen(rd());
+  std::uniform_int_distribution<int64_t> distribution(1, 6);
+
+  // Receive sync request.
+  while (true) {
+    if (auto request = vision_reply_socket.receive(); !request.empty()) {
+      int64_t first_key = distribution(gen);
+      int64_t second_key = distribution(gen);
+      auto [lower, upper] = std::minmax(first_key, second_key);
+
+      auto range
+          = thread_pool.enqueue(fetchFromDatabase, std::ref(*frame_repository), lower, upper);
+
+      /*
+      message ChunkResponseHeader {
+        google.protobuf.Duration request_start = 1;
+        uint32 chunk_id = 2;
+        uint32 n_chunks = 3;
+
+        google.protobuf.Duration max_duration = 4;
+      }
+
+      message GetVisionChunkResponse {
+        ChunkResponseHeader header = 1;
+        repeated vision.Frame payloads = 2;
+      }
+      */
+      protocols::ui::ChunkResponseHeader header;
+      header.mutable_request_start()->set_seconds(0);
+      header.set_chunk_id(1);
+      header.set_n_chunks(1);
+      header.mutable_max_duration()->set_seconds(0);
+
+      protocols::ui::GetVisionChunkResponse response;
+      response.set_allocated_header(&header);
+      for (auto& frame : range.get()) {
+        response.add_payloads()->CopyFrom(frame);
+      }
+
+      std::string serialized_response;
+      response.SerializeToString(&serialized_response);
+      vision_reply_socket.send(serialized_response);
+    }
+  }
+}
+
 int main() {
   std::cout << "Vision is runnning!" << std::endl;
 
+  // TODO($ISSUE_N): Move the database management to a class.
+  std::cout << "Creating factory and frame repository." << "\n";
+
+  std::future<bool> connection_status = frame_repository->connect();
+
+  if (connection_status.wait(); connection_status.get()) {
+    std::cout << "Connected to the database." << "\n";
+  } else {
+    std::cout << "Failed to connect to the database." << "\n";
+    return -1;
+  }
+
   std::jthread publisher_thread(publisherRun);
   std::jthread subscriber_thread(subscriberRun);
+  std::jthread database_thread(subscriberRun);
 
   return 0;
 }

@@ -35,12 +35,12 @@ int main(int argc, char* argv[]) {
 
   SServiceDiscovery.setup(nlohmann::json::parse(file));
 
-  std::jthread third_party_sockets_controller_thread([]() {
-    std::unique_ptr<IController> third_party_sockets_controller
-        = std::make_unique<ThirdPartySocketsController>();
+  // std::jthread third_party_sockets_controller_thread([]() {
+  //   std::unique_ptr<IController> third_party_sockets_controller
+  //       = std::make_unique<ThirdPartySocketsController>();
 
-    third_party_sockets_controller->run();
-  });
+  //   third_party_sockets_controller->run();
+  // });
 
   std::string gateway_grpc_address(SServiceDiscovery.lookup(kGatewayGrpc).address);
   std::unique_ptr<IController> grpc_controller

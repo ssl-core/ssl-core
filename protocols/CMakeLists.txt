@@ -41,10 +41,16 @@ robocin_cpp_proto_library(
   DEPS common
 )
 
+robocin_cpp_proto_library(
+  NAME messages
+  PROTOS protocols/ui/messages.proto
+  DEPS common vision
+)
+
 robocin_cpp_grpc_library(
   NAME gateway
   PROTOS protocols/ui/gateway.proto
-  DEPS vision
+  DEPS messages
 )
 
 ########################################################################################################################

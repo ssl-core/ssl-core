@@ -56,7 +56,7 @@ class GatewayServiceImpl final : public GatewayService::Service {
     // TODO(aalmds): Poller for specific subscribers.
     while (true) {
       auto reply = subscriber_.receive();
-      std::cout << "ReceiveLiveStream: Replying" << std::endl;
+      // std::cout << "ReceiveLiveStream: Replying" << std::endl;
       ReceiveLiveStreamResponse response;
       *response.mutable_payload()->mutable_vision_frame()
           = deserialize<protocols::vision::Frame>(reply.message);
