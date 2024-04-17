@@ -44,7 +44,9 @@ std::unique_ptr<IFrameRepository> frame_repository = kFactory->createFrameReposi
 // Database:
 
 // saves a frame to the database.
-void saveToDatabase(IFrameRepository& repository, const Frame& frame) { repository.save(frame); }
+void saveToDatabase(IFrameRepository& repository, const Frame& frame) {
+    repository.save(frame);
+}
 
 // fetches a frame range from the database.
 std::vector<Frame> findRangeFromDatabase(IFrameRepository& repository,
@@ -117,8 +119,8 @@ void subscriberRun() {
         if (message.message.empty()) {
           break;
         }
-        std::cout << std::format("received message!, total: {}", total_msgs_received++)
-                  << std::endl;
+        // std::cout << std::format("received message!, total: {}", total_msgs_received++) <<
+        // std::endl;
         packages.push_back(message);
       }
     }

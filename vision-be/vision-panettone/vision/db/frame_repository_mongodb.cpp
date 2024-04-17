@@ -4,6 +4,7 @@
 #include <bsoncxx/builder/stream/document.hpp>
 #include <bsoncxx/json.hpp>
 #include <google/protobuf/util/json_util.h>
+#include <mutex>
 
 namespace vision {
 namespace {
@@ -19,6 +20,8 @@ using protocols::vision::Robot;
 using MongoDbDocumentView = bsoncxx::document::view;
 using MongoDbDocument = bsoncxx::builder::stream::document;
 using MongoDbArray = bsoncxx::builder::stream::array;
+
+std::mutex mutex_db;
 
 MongoDbDocument toMongoDbDocument(const Frame& frame) {
   MongoDbDocument document{};
@@ -96,19 +99,30 @@ FrameRepositoryMongoDb::FrameRepositoryMongoDb(const MongoDbRepositoryBuildArgs&
     IMongoDbRepository(args) {}
 
 void FrameRepositoryMongoDb::save(const Frame& frame) {
+  std::cout << "saving frame with id: " << static_cast<int64_t>(frame.properties().serial_id()) << "." << std::endl;
   try {
-    if (auto save_result = collection_.insert_one(toMongoDbDocument(frame).view())) {
+    auto client = pool_.acquire();
+    auto collection = (*client)[db_][collection_];
+
+    std::cout << "client acquired (Frame" << static_cast<int64_t>(frame.properties().serial_id()) << ")" << std::endl;
+
+    if (auto save_result = collection.insert_one(toMongoDbDocument(frame).view())) {
       std::cout << "inserted frame with id: "
                 << static_cast<int64_t>(frame.properties().serial_id()) << "." << std::endl;
     }
+    std::cout << "frame saved." << std::endl;
   } catch (const std::exception& e) {
     std::cerr << "error saving frame: " << e.what() << "." << std::endl;
   }
+  std::cout << "saved frame with id: " << static_cast<int64_t>(frame.properties().serial_id())
+            << "." << std::endl;
 }
 
 void FrameRepositoryMongoDb::remove(const int64_t& key) {
   try {
-    if (auto remove_result = collection_.delete_one(make_document(kvp("_id", key)))) {
+    auto client = pool_.acquire();
+    auto collection = (*client)[db_][collection_];
+    if (auto remove_result = collection.delete_one(make_document(kvp("_id", key)))) {
       std::cout << "removed frame with id: " << key << ".\n";
     }
   } catch (const std::exception& e) {
@@ -118,7 +132,10 @@ void FrameRepositoryMongoDb::remove(const int64_t& key) {
 
 std::optional<Frame> FrameRepositoryMongoDb::find(const int64_t& key) {
   try {
-    if (auto find_result = collection_.find_one(make_document(kvp("_id", key)))) {
+    auto client = pool_.acquire();
+    auto collection = (*client)[db_][collection_];
+
+    if (auto find_result = collection.find_one(make_document(kvp("_id", key)))) {
 
       std::string result = bsoncxx::to_json(*find_result);
       std::cout << "result: " << result << "\n";
@@ -137,7 +154,9 @@ std::optional<Frame> FrameRepositoryMongoDb::find(const int64_t& key) {
 std::vector<Frame> FrameRepositoryMongoDb::findRange(const int64_t& key_lower_bound,
                                                      const int64_t& key_upper_bound) {
   try {
-    auto find_result = collection_.find(make_document(
+    auto client = pool_.acquire();
+    auto collection = (*client)[db_][collection_];
+    auto find_result = collection.find(make_document(
         kvp("_id", make_document(kvp("$gte", key_lower_bound), kvp("$lte", key_upper_bound)))));
 
     std::vector<Frame> frames;
