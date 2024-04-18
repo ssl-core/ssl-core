@@ -36,4 +36,6 @@ set(mongocxx_deps mongo::mongoc_shared mongo::bson_shared mongo::mongocxx_shared
 
 robocin_cpp_project_setup(STANDARD 23)
 
+add_subdirectory(microservice)
+
 ########################################################################################################################
