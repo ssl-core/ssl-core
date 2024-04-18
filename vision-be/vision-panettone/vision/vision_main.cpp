@@ -11,6 +11,7 @@
 #include <google/protobuf/text_format.h>
 #include <iostream>
 #include <memory>
+#include <mutex>
 #include <protocols/third_party/detection/raw_wrapper.pb.h>
 #include <protocols/ui/messages.pb.h>
 #include <protocols/vision/frame.pb.h>
@@ -41,12 +42,11 @@ uint64_t frame_id = 1;
 const auto kFactory = RepositoryFactoryMapping{}[RepositoryType::MongoDb];
 std::unique_ptr<IFrameRepository> frame_repository = kFactory->createFrameRepository();
 
+std::mutex mutex_db;
 // Database:
 
 // saves a frame to the database.
-void saveToDatabase(IFrameRepository& repository, const Frame& frame) {
-    repository.save(frame);
-}
+void saveToDatabase(IFrameRepository& repository, const Frame& frame) { repository.save(frame); }
 
 // fetches a frame range from the database.
 std::vector<Frame> findRangeFromDatabase(IFrameRepository& repository,
@@ -58,6 +58,7 @@ std::vector<Frame> findRangeFromDatabase(IFrameRepository& repository,
 // Helpers:
 
 Frame createMockedFrame() {
+  std::cout << "Creating mocked frame..." << std::endl;
   Frame frame;
   frame.mutable_properties()->set_serial_id(frame_id++);
 
@@ -146,17 +147,20 @@ void publisherRun() {
 
     // TODO($ISSUE_N): Move this workflow to a DatagramHandler class.
     for (auto& datagram : datagrams) { // 1 frame == 2 pacotes, normalmente.
+
       auto topic = datagram.topic;
       if (topic == kVisionMessageTopic) {
         SSL_WrapperPacket detection;
         detection.ParseFromString(datagram.message);
-        Frame frame = createMockedFrame();
+        {
+          std::lock_guard<std::mutex> lock(mutex_db);
+          Frame frame = createMockedFrame();
 
-        std::string message;
-        frame.SerializeToString(&message);
-        vision_publisher.send("frame", message);
-        std::cout << std::format("frame '{}' sent.", frame.properties().serial_id()) << std::endl;
-        thread_pool.enqueue(saveToDatabase, std::ref(*frame_repository), std::cref(frame));
+          std::string message;
+          frame.SerializeToString(&message);
+          vision_publisher.send("frame", message);
+          thread_pool.enqueue(saveToDatabase, std::ref(*frame_repository), std::cref(frame));
+        }
       } else {
         std::cout << std::format("unexpected topic for ZmqDatagram: expect {}, got: {} instead.",
                                  kVisionMessageTopic,
@@ -186,7 +190,8 @@ void databaseHandlerRun() {
       auto [lower, upper] = std::minmax(first_key, second_key);
 
       auto range
-          = thread_pool.enqueue(findRangeFromDatabase, std::ref(*frame_repository), lower, upper);
+          = thread_pool.enqueue(findRangeFromDatabase, std::ref(*frame_repository), lower,
+          upper);
 
       /*
       message ChunkResponseHeader {
@@ -227,14 +232,14 @@ int main() {
   // TODO($ISSUE_N): Move the database management to a class.
   std::cout << "Creating factory and frame repository." << std::endl;
 
-  std::future<bool> connection_status = frame_repository->connect();
+  // std::future<bool> connection_status = frame_repository->connect();
 
-  if (connection_status.wait(); connection_status.get()) {
-    std::cout << "Connected to the database." << std::endl;
-  } else {
-    std::cout << "Failed to connect to the database." << std::endl;
-    return -1;
-  }
+  // if (connection_status.wait(); connection_status.get()) {
+  //   std::cout << "Connected to the database." << std::endl;
+  // } else {
+  //   std::cout << "Failed to connect to the database." << std::endl;
+  //   return -1;
+  // }
 
   std::jthread publisher_thread(publisherRun);
   std::jthread subscriber_thread(subscriberRun);
