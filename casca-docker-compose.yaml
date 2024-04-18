@@ -1,0 +1,93 @@
+version: '3'
+
+services:
+  gateway:
+    build:
+      context: .
+      dockerfile: gateway/gateway-augusto/.devcontainer/Dockerfile
+      args:
+        - SOURCE_DIRECTORY=gateway/gateway-augusto
+    working_dir: /workspaces/gateway/gateway-augusto
+    container_name: gateway
+    command: ["bin/gateway_main"]
+    volumes:
+      - /tmp:/tmp
+      - ./:/app
+
+  service-0:
+    build:
+      context: .
+      dockerfile: vision-be/vision-panettone/.devcontainer/Dockerfile
+      args:
+        - SOURCE_DIRECTORY=vision-be/vision-panettone
+    working_dir: /workspaces/vision-be/vision-panettone
+    command: ["bin/microservice_main", "0", "0"]
+    volumes:
+      - /tmp:/tmp
+    depends_on:
+      - gateway
+
+  service-1:
+    build:
+      context: .
+      dockerfile: vision-be/vision-panettone/.devcontainer/Dockerfile
+      args:
+        - SOURCE_DIRECTORY=vision-be/vision-panettone
+    working_dir: /workspaces/vision-be/vision-panettone
+    command: ["bin/microservice_main", "1", "0"]
+    volumes:
+      - /tmp:/tmp
+    depends_on:
+      - service-0
+
+  service-2:
+    build:
+      context: .
+      dockerfile: vision-be/vision-panettone/.devcontainer/Dockerfile
+      args:
+        - SOURCE_DIRECTORY=vision-be/vision-panettone
+    working_dir: /workspaces/vision-be/vision-panettone
+    command: ["bin/microservice_main", "2", "0"]
+    volumes:
+      - /tmp:/tmp
+    depends_on:
+      - service-1
+
+  service-3:
+    build:
+      context: .
+      dockerfile: vision-be/vision-panettone/.devcontainer/Dockerfile
+      args:
+        - SOURCE_DIRECTORY=vision-be/vision-panettone
+    working_dir: /workspaces/vision-be/vision-panettone
+    command: ["bin/microservice_main", "3", "0"]
+    volumes:
+      - /tmp:/tmp
+    depends_on:
+      - service-2
+
+  service-4:
+    build:
+      context: .
+      dockerfile: vision-be/vision-panettone/.devcontainer/Dockerfile
+      args:
+        - SOURCE_DIRECTORY=vision-be/vision-panettone
+    working_dir: /workspaces/vision-be/vision-panettone
+    command: ["bin/microservice_main", "4", "0"]
+    volumes:
+      - /tmp:/tmp
+    depends_on:
+      - service-3
+
+  service-5:
+    build:
+      context: .
+      dockerfile: vision-be/vision-panettone/.devcontainer/Dockerfile
+      args:
+        - SOURCE_DIRECTORY=vision-be/vision-panettone
+    working_dir: /workspaces/vision-be/vision-panettone
+    command: ["bin/microservice_main", "5", "0"]
+    volumes:
+      - /tmp:/tmp
+    depends_on:
+      - service-4
