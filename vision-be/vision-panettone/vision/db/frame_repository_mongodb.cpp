@@ -152,10 +152,10 @@ void FrameRepositoryMongoDb::remove(const int64_t& key) {
     auto client = pool_.acquire();
     auto collection = (*client)[db_][collection_];
     if (auto remove_result = collection.delete_one(make_document(kvp("_id", key)))) {
-      std::cout << "removed frame with id: " << key << ".\n";
+      std::cout << "removed frame with id: " << key << "." << std::endl;
     }
   } catch (const std::exception& e) {
-    std::cerr << "error removing frame: " << e.what() << ".\n";
+    std::cerr << "error removing frame: " << e.what() << "." << std::endl;
   }
 }
 
@@ -167,15 +167,15 @@ std::optional<Frame> FrameRepositoryMongoDb::find(const int64_t& key) {
     if (auto find_result = collection.find_one(make_document(kvp("_id", key)))) {
 
       std::string result = bsoncxx::to_json(*find_result);
-      std::cout << "result: " << result << "\n";
+      std::cout << "result: " << result << std::endl;;
 
       return fromMongoDbDocument(find_result->view());
     }
 
-    std::cerr << "frame not found.\n";
+    std::cerr << "frame not found." << std::endl;
     return std::nullopt;
   } catch (const std::exception& e) {
-    std::cerr << "Error : " << e.what() << '\n';
+    std::cerr << "Error : " << e.what() << std::endl;
     return std::nullopt;
   }
 }
@@ -183,7 +183,7 @@ std::optional<Frame> FrameRepositoryMongoDb::find(const int64_t& key) {
 std::vector<Frame> FrameRepositoryMongoDb::findRange(const int64_t& key_lower_bound,
                                                      const int64_t& key_upper_bound) {
   std::cout << "finding frames in range [" << key_lower_bound << ", " << key_upper_bound
-            << "].\n";
+            << "]." << std::endl;
   try {
     auto client = pool_.acquire();
     auto collection = (*client)[db_][collection_];
@@ -192,13 +192,13 @@ std::vector<Frame> FrameRepositoryMongoDb::findRange(const int64_t& key_lower_bo
 
     std::vector<Frame> frames;
     for (auto doc : find_result) {
-      std::cout << "key: " << doc["_id"].get_int64() << "\n";
+      std::cout << "key: " << doc["_id"].get_int64() << std::endl;;
       frames.push_back(fromMongoDbDocument(doc));
     }
 
     return frames;
   } catch (const std::exception& e) {
-    std::cerr << "Error : " << e.what() << '\n';
+    std::cerr << "Error : " << e.what() << std::endl;
     return {};
   }
 }
