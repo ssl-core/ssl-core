@@ -191,20 +191,6 @@ void databaseHandlerRun() {
           = thread_pool.enqueue(findRangeFromDatabase, std::ref(*frame_repository), lower,
           upper);
 
-      /*
-      message ChunkResponseHeader {
-        google.protobuf.Duration request_start = 1;
-        uint32 chunk_id = 2;
-        uint32 n_chunks = 3;
-
-        google.protobuf.Duration max_duration = 4;
-      }
-
-      message GetVisionChunkResponse {
-        ChunkResponseHeader header = 1;
-        repeated vision.Frame payloads = 2;
-      }
-      */
       protocols::ui::GetVisionChunkResponse response;
       protocols::ui::ChunkResponseHeader &header = *response.mutable_header();
       header.mutable_request_start()->set_seconds(0);

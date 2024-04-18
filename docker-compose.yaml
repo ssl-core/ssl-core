@@ -43,13 +43,13 @@ services:
       - "mongodb3_data:/data/db"
       - "mongodb3_config:/data/configdb"
 
-  # simulator:
-  #   image: roboticserlangen/simulatorcli:commit-6a4e1c06533b
-  #   restart: unless-stopped
-  #   container_name: simulator
-  #   environment:
-  #     GEOMETRY: "2020"
-  #     REALISM: "RC2021"
+  simulator:
+    image: roboticserlangen/simulatorcli:commit-6a4e1c06533b
+    restart: unless-stopped
+    container_name: simulator
+    environment:
+      GEOMETRY: "2020"
+      REALISM: "RC2021"
 
   gateway:
     build:
@@ -65,8 +65,8 @@ services:
     volumes:
       - /tmp:/tmp
       - ./:/app
-    # depends_on:
-    #   - simulator
+    depends_on:
+      - simulator
 
   vision:
     build:
