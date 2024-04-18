@@ -1,3 +1,5 @@
+# docker-compose -f casca-docker-compose.yaml up --build
+
 version: '3'
 
 services:
@@ -13,6 +15,7 @@ services:
     volumes:
       - /tmp:/tmp
       - ./:/app
+    network_mode: host
 
   service-0:
     build:
@@ -24,6 +27,7 @@ services:
     command: ["bin/microservice_main", "0", "0"]
     volumes:
       - /tmp:/tmp
+    network_mode: host
     depends_on:
       - gateway
 
@@ -37,6 +41,7 @@ services:
     command: ["bin/microservice_main", "1", "0"]
     volumes:
       - /tmp:/tmp
+    network_mode: host
     depends_on:
       - service-0
 
@@ -50,6 +55,7 @@ services:
     command: ["bin/microservice_main", "2", "0"]
     volumes:
       - /tmp:/tmp
+    network_mode: host
     depends_on:
       - service-1
 
@@ -63,6 +69,7 @@ services:
     command: ["bin/microservice_main", "3", "0"]
     volumes:
       - /tmp:/tmp
+    network_mode: host
     depends_on:
       - service-2
 
@@ -76,6 +83,7 @@ services:
     command: ["bin/microservice_main", "4", "0"]
     volumes:
       - /tmp:/tmp
+    network_mode: host
     depends_on:
       - service-3
 
@@ -89,5 +97,6 @@ services:
     command: ["bin/microservice_main", "5", "0"]
     volumes:
       - /tmp:/tmp
+    network_mode: host
     depends_on:
       - service-4

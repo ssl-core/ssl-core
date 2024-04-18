@@ -101,7 +101,7 @@ void publisherRun(int id) {
       mockedSleep();
 
       auto message_parsed = parseMessage(message, id);
-      pub->send("frame", message_parsed);
+      pub->send(kTopic, message_parsed);
     }
   }
 }
@@ -116,6 +116,8 @@ int main(int argc, char* argv[]) {
 
   int service_id = std::stoi(args[0]);
   reps_to_wait = std::stoi(args[1]);
+
+  std::cout << std::format("Service {} is running!", service_id) << std::endl;
 
   sub = std::make_unique<ZmqSubscriberSocket>(makeSubscriberSocket(service_id));
   pub = std::make_unique<ZmqPublisherSocket>(makePublisherSocket(service_id));
@@ -163,8 +165,10 @@ ZmqSubscriberSocket makeSubscriberSocket(int id) {
     static constexpr std::string_view k3rdPartyTopic = "vision-third-party";
 
     sub.connect(k3rdPartyAddress, std::span{&k3rdPartyTopic, 1});
+    std::cout << std::format("Service {} receiving from third party.", id) << std::endl;
   } else {
     std::string address = std::format("ipc:///tmp/channel{}.ipc", id - 1);
+    std::cout << std::format("Service {} receiving from Service {}.", id, id - 1) << std::endl;
     sub.connect(address, std::span{&kTopic, 1});
   }
 
