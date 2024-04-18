@@ -207,14 +207,13 @@ void databaseHandlerRun() {
         repeated vision.Frame payloads = 2;
       }
       */
-      protocols::ui::ChunkResponseHeader header;
+      protocols::ui::GetVisionChunkResponse response;
+      protocols::ui::ChunkResponseHeader &header = *response.mutable_header();
       header.mutable_request_start()->set_seconds(0);
       header.set_chunk_id(1);
       header.set_n_chunks(1);
       header.mutable_max_duration()->set_seconds(0);
 
-      protocols::ui::GetVisionChunkResponse response;
-      response.set_allocated_header(&header);
       for (auto& frame : range.get()) {
         response.add_payloads()->CopyFrom(frame);
       }
