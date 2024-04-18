@@ -42,7 +42,6 @@ uint64_t frame_id = 1;
 const auto kFactory = RepositoryFactoryMapping{}[RepositoryType::MongoDb];
 std::unique_ptr<IFrameRepository> frame_repository = kFactory->createFrameRepository();
 
-std::mutex mutex_db;
 // Database:
 
 // saves a frame to the database.
@@ -146,14 +145,13 @@ void publisherRun() {
     }
 
     // TODO($ISSUE_N): Move this workflow to a DatagramHandler class.
-    for (auto& datagram : datagrams) { // 1 frame == 2 pacotes, normalmente.
+    for (auto& datagram : datagrams) {
 
       auto topic = datagram.topic;
       if (topic == kVisionMessageTopic) {
         SSL_WrapperPacket detection;
         detection.ParseFromString(datagram.message);
         {
-          std::lock_guard<std::mutex> lock(mutex_db);
           Frame frame = createMockedFrame();
 
           std::string message;
@@ -231,14 +229,14 @@ int main() {
   // TODO($ISSUE_N): Move the database management to a class.
   std::cout << "Creating factory and frame repository." << std::endl;
 
-  // std::future<bool> connection_status = frame_repository->connect();
+  std::future<bool> connection_status = frame_repository->connect();
 
-  // if (connection_status.wait(); connection_status.get()) {
-  //   std::cout << "Connected to the database." << std::endl;
-  // } else {
-  //   std::cout << "Failed to connect to the database." << std::endl;
-  //   return -1;
-  // }
+  if (connection_status.wait(); connection_status.get()) {
+    std::cout << "Connected to the database." << std::endl;
+  } else {
+    std::cout << "Failed to connect to the database." << std::endl;
+    return -1;
+  }
 
   std::jthread publisher_thread(publisherRun);
   std::jthread subscriber_thread(subscriberRun);
