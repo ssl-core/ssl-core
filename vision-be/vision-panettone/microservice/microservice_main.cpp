@@ -58,13 +58,15 @@ void subscriberRun() {
     {
       std::lock_guard lock(mutex);
 
-      while (true) {
-        auto message = sub->receive();
-        if (message.topic.empty()) {
-          break;
+      do {
+        while (true) {
+          auto message = sub->receive();
+          if (message.topic.empty()) {
+            break;
+          }
+          packages.push_back(message);
         }
-        packages.push_back(message);
-      }
+      } while (packages.empty());
     }
 
     cv.notify_one();

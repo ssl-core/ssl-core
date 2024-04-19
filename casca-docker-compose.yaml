@@ -81,19 +81,6 @@ services:
     depends_on:
       - service-3
 
-  service-5:
-    build:
-      context: .
-      dockerfile: vision-be/vision-panettone/.devcontainer/Dockerfile
-      args:
-        - SOURCE_DIRECTORY=vision-be/vision-panettone
-    working_dir: /workspaces/vision-be/vision-panettone
-    command: ["bin/microservice_main", "5", "0"]
-    volumes:
-      - /tmp:/tmp
-    depends_on:
-      - service-4
-
   tester:
     container_name: tester
     build:
@@ -104,4 +91,4 @@ services:
     volumes:
       - /tmp:/tmp
     depends_on:
-      - service-5
+      - service-4

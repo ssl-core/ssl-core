@@ -37,6 +37,7 @@ def create_message(request):
 def __create_subscriber(response):
     if "zmq" in response:
         zmq_response = response["zmq"]
+        print(f"response[\"zmq\"]: {zmq_response}")
         return ZmqSubscriberSocket(zmq_response["topic"], zmq_response["address"])
 
     elif "udp_multicast" in response:

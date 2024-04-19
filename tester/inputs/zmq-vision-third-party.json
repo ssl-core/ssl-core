@@ -4,7 +4,7 @@
       "count": 30,
       "fps": 60,
       "zmq": {
-        "address": "ipc:///tmp/channel5.ipc",
+        "address": "ipc:///tmp/channel4.ipc",
         "topic": "robocin"
       },
       "message_path_pb": "vision-third-party.textpb",

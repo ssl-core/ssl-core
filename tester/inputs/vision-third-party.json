@@ -11,7 +11,7 @@
       "protobuf_type": "protocols.third_party.detection.raw_wrapper.SSL_WrapperPacket",
       "response": {
         "zmq": {
-          "address": "ipc:///tmp/channel5.ipc",
+          "address": "ipc:///tmp/channel4.ipc",
           "topic": "robocin"
         }
       }
