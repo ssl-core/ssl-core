@@ -18,6 +18,8 @@ class IRepository {
   virtual std::future<bool> connect() = 0;
 
   virtual void save(const data_type& data) = 0;
+  virtual void saveMany(const std::vector<data_type>& data) = 0;
+
   virtual void remove(const id_type& key) = 0;
 
   [[nodiscard]] virtual std::optional<data_type> find(const id_type& key) = 0;

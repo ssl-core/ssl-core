@@ -42,22 +42,18 @@ uint64_t frame_id = 1;
 const auto kFactory = RepositoryFactoryMapping{}[RepositoryType::MongoDb];
 std::unique_ptr<IFrameRepository> frame_repository = kFactory->createFrameRepository();
 
-// Database:
-
-// saves a frame to the database.
-void saveToDatabase(IFrameRepository& repository, const Frame& frame) { repository.save(frame); }
-
-// fetches a frame range from the database.
+// Database
+void saveToDatabase(IFrameRepository& repository, Frame frame) { repository.save(frame); }
+void saveManyToDatabase(IFrameRepository& repository, std::vector<Frame> frames) { repository.saveMany(frames); }
 std::vector<Frame> findRangeFromDatabase(IFrameRepository& repository,
                                      const int64_t& key_lower_bound,
                                      const int64_t& key_upper_bound) {
   return repository.findRange(key_lower_bound, key_upper_bound);
 }
 
-// Helpers:
-
+// Helpers
 Frame createMockedFrame() {
-  std::cout << "Creating mocked frame..." << std::endl;
+  // std::cout << "Creating mocked frame..." << std::endl;
   Frame frame;
   frame.mutable_properties()->set_serial_id(frame_id++);
 
@@ -76,9 +72,13 @@ Frame createMockedFrame() {
     robot.mutable_robot_id()->set_number(i);
     robot.mutable_robot_id()->set_color(
         protocols::common::RobotId_Color::RobotId_Color_COLOR_YELLOW);
-
+    robot.set_angle(0);
+    robot.set_confidence(1.0);
     robot.mutable_position()->set_x((i * 9000) / 11);
     robot.mutable_position()->set_y(0);
+    robot.mutable_velocity()->set_x(0);
+    robot.mutable_velocity()->set_y(0);
+    robot.set_angular_velocity(0);
   }
 
   for (int i = 0; i < 11; ++i) {
@@ -86,8 +86,15 @@ Frame createMockedFrame() {
     robot.mutable_robot_id()->set_number(i);
     robot.mutable_robot_id()->set_color(protocols::common::RobotId_Color::RobotId_Color_COLOR_BLUE);
 
+    robot.set_angle(0);
+    robot.set_confidence(1.0);
+
     robot.mutable_position()->set_x((i * 9000) / 11);
     robot.mutable_position()->set_y(0);
+
+    robot.mutable_velocity()->set_x(0);
+    robot.mutable_velocity()->set_y(0);
+    robot.set_angular_velocity(0);
   }
 
   return frame;
@@ -134,6 +141,8 @@ void publisherRun() {
   robocin::ZmqPublisherSocket vision_publisher;
   vision_publisher.bind(kVisionPublisherAddress);
 
+  std::vector<Frame> unsaved_frames;
+
   // Receive datagrams.
   while (true) {
     std::vector<ZmqDatagram> datagrams;
@@ -152,12 +161,12 @@ void publisherRun() {
         SSL_WrapperPacket detection;
         detection.ParseFromString(datagram.message);
         {
-          Frame frame = createMockedFrame();
+          auto frame = createMockedFrame();
 
           std::string message;
           frame.SerializeToString(&message);
           vision_publisher.send("frame", message);
-          thread_pool.enqueue(saveToDatabase, std::ref(*frame_repository), std::cref(frame));
+          unsaved_frames.push_back(frame);
         }
       } else {
         std::cout << std::format("unexpected topic for ZmqDatagram: expect {}, got: {} instead.",
@@ -165,6 +174,12 @@ void publisherRun() {
                                  topic)
                   << std::endl;
       }
+    }
+
+    const uint64_t kFrameBatchSave = 100; 
+    if(unsaved_frames.size() >= kFrameBatchSave) {
+      thread_pool.enqueue(saveManyToDatabase, std::ref(*frame_repository), unsaved_frames);
+      unsaved_frames.clear();
     }
   }
 }
