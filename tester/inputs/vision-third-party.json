@@ -1,14 +1,20 @@
 {
   "requests": [
     {
-      "count": 100,
+      "count": 1000,
       "fps": 60,
       "udp_multicast": {
         "ip": "224.5.23.2",
         "port": 10020
       },
       "message_path_pb": "vision-third-party.textpb",
-      "protobuf_type": "protocols.third_party.detection.raw_wrapper.SSL_WrapperPacket"
+      "protobuf_type": "protocols.third_party.detection.raw_wrapper.SSL_WrapperPacket",
+      "response": {
+        "zmq": {
+          "address": "ipc:///tmp/channel5.ipc",
+          "topic": "robocin"
+        }
+      }
     }
   ]
 }

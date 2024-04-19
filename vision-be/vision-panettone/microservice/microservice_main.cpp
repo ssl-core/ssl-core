@@ -60,7 +60,7 @@ void subscriberRun() {
 
       while (true) {
         auto message = sub->receive();
-        if (message == ZmqDatagram{}) {
+        if (message.topic.empty()) {
           break;
         }
         packages.push_back(message);
@@ -102,6 +102,10 @@ void publisherRun(int id) {
 
       auto message_parsed = parseMessage(message, id);
       pub->send(kTopic, message_parsed);
+
+      // if (id == 5) {
+      //   std::cout << std::format("Sending at {} at {}!", id, std::chrono::duration_cast<std::chrono::microseconds>(std::chrono::system_clock::now().time_since_epoch()).count()) << std::endl;
+      // }
     }
   }
 }
@@ -117,7 +121,7 @@ int main(int argc, char* argv[]) {
   int service_id = std::stoi(args[0]);
   reps_to_wait = std::stoi(args[1]);
 
-  std::cout << std::format("Service {} is running!", service_id) << std::endl;
+  std::cout << std::format("Service {} is running and waiting {} reps.!", service_id, reps_to_wait) << std::endl;
 
   sub = std::make_unique<ZmqSubscriberSocket>(makeSubscriberSocket(service_id));
   pub = std::make_unique<ZmqPublisherSocket>(makePublisherSocket(service_id));
@@ -179,6 +183,7 @@ ZmqPublisherSocket makePublisherSocket(int id) {
   ZmqPublisherSocket pub;
 
   std::string address = std::format("ipc:///tmp/channel{}.ipc", id);
+  std::cout << std::format("Service {} bind at: '{}'", id, address) << std::endl;
   pub.bind(address);
 
   return pub;
