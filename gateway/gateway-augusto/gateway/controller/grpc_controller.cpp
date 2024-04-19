@@ -44,6 +44,7 @@ class GatewayServiceImpl final : public GatewayService::Service {
   Status GetVisionChunk(ServerContext* context,
                         const GetVisionChunkRequest* request,
                         GetVisionChunkResponse* response) override {
+    std::cout << "Receive GetVisionChunk request" << std::endl;
     requester_.send(request->SerializeAsString());
     auto reply = requester_.receive();
     *response = deserialize<GetVisionChunkResponse>(reply);
@@ -56,7 +57,7 @@ class GatewayServiceImpl final : public GatewayService::Service {
     // TODO(aalmds): Poller for specific subscribers.
     while (true) {
       auto reply = subscriber_.receive();
-      std::cout << "ReceiveLiveStream: Replying" << std::endl;
+      // std::cout << "ReceiveLiveStream: Replying" << std::endl;
       ReceiveLiveStreamResponse response;
       *response.mutable_payload()->mutable_vision_frame()
           = deserialize<protocols::vision::Frame>(reply.message);

@@ -7,6 +7,7 @@ robocin_cpp_executable(
        absl::strings
        protocols::third_party
        protocols::vision
+       protocols::messages
        common::network
        common::thread_pool
        irepository_factory

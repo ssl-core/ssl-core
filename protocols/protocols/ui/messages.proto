@@ -1,0 +1,46 @@
+syntax = "proto3";
+
+package protocols.ui;
+
+import "google/protobuf/duration.proto";
+import "protocols/vision/frame.proto";
+
+message GetVisionChunkRequest {
+  ChunkRequestHeader header = 1;
+}
+
+message GetVisionChunkResponse {
+  ChunkResponseHeader header = 1;
+  repeated vision.Frame payloads = 2;
+}
+
+message ChunkRequestHeader {
+  google.protobuf.Duration start = 1;
+}
+
+message ChunkResponseHeader {
+  google.protobuf.Duration request_start = 1;
+  uint32 chunk_id = 2;
+  uint32 n_chunks = 3;
+
+  google.protobuf.Duration max_duration = 4;
+}
+
+enum MessageType { // ??
+  MESSAGE_TYPE_UNSPECIFIED = 0;
+  MESSAGE_TYPE_VISION = 1;
+}
+
+message ReceiveLiveStreamRequest {
+  repeated MessageType message_types = 1 [packed = true];
+}
+
+message ReceiveLiveStreamResponse {
+  message Payload {
+    oneof payload {
+      vision.Frame vision_frame = 1;
+    }
+  }
+
+  Payload payload = 1;
+}
