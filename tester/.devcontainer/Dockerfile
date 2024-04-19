@@ -10,5 +10,7 @@ RUN cd /tmp/protocols && rm -rf /opt/protocols && mkdir /opt/protocols && \
 
 ENV PYTHONPATH=$PYTHONPATH:/workspaces/ssl-core/tester:/opt/protocols
 
-COPY requirements.txt requirements.txt
+WORKDIR /
+
+COPY . .
 RUN pip3 install -r requirements.txt

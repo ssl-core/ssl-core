@@ -15,7 +15,6 @@ services:
     volumes:
       - /tmp:/tmp
       - ./:/app
-    network_mode: host
 
   service-0:
     build:
@@ -27,7 +26,6 @@ services:
     command: ["bin/microservice_main", "0", "0"]
     volumes:
       - /tmp:/tmp
-    network_mode: host
     depends_on:
       - gateway
 
@@ -41,7 +39,6 @@ services:
     command: ["bin/microservice_main", "1", "0"]
     volumes:
       - /tmp:/tmp
-    network_mode: host
     depends_on:
       - service-0
 
@@ -55,7 +52,6 @@ services:
     command: ["bin/microservice_main", "2", "0"]
     volumes:
       - /tmp:/tmp
-    network_mode: host
     depends_on:
       - service-1
 
@@ -69,7 +65,6 @@ services:
     command: ["bin/microservice_main", "3", "0"]
     volumes:
       - /tmp:/tmp
-    network_mode: host
     depends_on:
       - service-2
 
@@ -83,20 +78,17 @@ services:
     command: ["bin/microservice_main", "4", "0"]
     volumes:
       - /tmp:/tmp
-    network_mode: host
     depends_on:
       - service-3
 
-  service-5:
+  tester:
+    container_name: tester
     build:
       context: .
-      dockerfile: vision-be/vision-panettone/.devcontainer/Dockerfile
-      args:
-        - SOURCE_DIRECTORY=vision-be/vision-panettone
-    working_dir: /workspaces/vision-be/vision-panettone
-    command: ["bin/microservice_main", "5", "0"]
+      dockerfile: ./tester/.devcontainer/Dockerfile
+    working_dir: /tester
+    command: ["python", "tester.py", "--input_file", "vision-third-party.json"]
     volumes:
       - /tmp:/tmp
-    network_mode: host
     depends_on:
       - service-4

@@ -36,22 +36,16 @@ class ZmqPublisherSocket:
 
 
 class ZmqSubscriberSocket:
-    def __init__(
-        self, topic: str, address: str, n_threads: int = 1, timeout_ms: int = -1
-    ):
+    def __init__(self, topic: str, address: str):
         # Create a ZMQ Subscriber
-        self.topic = topic
-        self.context = zmq.Context(n_threads)
-        self.timeout_ms = timeout_ms
+        self.context = zmq.Context()
         self.subscriber = self.context.socket(zmq.SUB)
+
         self.subscriber.connect(address)
-        if self.timeout_ms >= 0:
-            self.subscriber.setsockopt(zmq.RCVTIMEO, self.timeout_ms)
-        self.subscriber.setsockopt(zmq.SUBSCRIBE, topic.encode())
+        self.subscriber.setsockopt_string(zmq.SUBSCRIBE, topic)
 
     def receive(self, mode=PubSubMode.DontWait) -> Optional[bytes]:
         flags = zmq.DONTWAIT if mode == PubSubMode.DontWait else zmq.Flag(0)
-
         try:
             topic, message = self.subscriber.recv_multipart(flags=flags)
             # assert topic.decode() == self.topic

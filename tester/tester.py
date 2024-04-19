@@ -1,3 +1,4 @@
+from datetime import datetime as dt
 import json
 import argparse
 import sys
@@ -7,6 +8,7 @@ from network.multicast_udp_publisher_subscriber import (
     MulticastUdpPublisherSocket,
     MulticastUdpSubscriberSocket,
 )
+from network.pub_sub_mode import PubSubMode
 from network.zmq_publisher_subscriber import ZmqPublisherSocket, ZmqSubscriberSocket
 from utility.protobuf import parse_from_textpb, serialize
 from pathlib import Path
@@ -35,6 +37,7 @@ def create_message(request):
 def __create_subscriber(response):
     if "zmq" in response:
         zmq_response = response["zmq"]
+        print(f"response[\"zmq\"]: {zmq_response}")
         return ZmqSubscriberSocket(zmq_response["topic"], zmq_response["address"])
 
     elif "udp_multicast" in response:
@@ -72,16 +75,22 @@ if __name__ == "__main__":
             print(f"message type: {type(message)}")
             print(f"subscriber type: {type(subscriber)}")
 
-            # print(f"serialized_message: {type(serialized_message)}")
-
             # TODO($ISSUE_N): Fix count fps and.
             count = request["count"] if "count" in request else -1
             fps = request["fps"] if "fps" in request else 60
 
             total_sent = 0
+            diffs = []
             while total_sent != count:
+                pub_time = dt.now()
                 publisher.send(serialized_message)
-                print(f"serialized_message of '{type(message)}' sent.")
+                if subscriber:
+                    received = subscriber.receive(PubSubMode.Wait)
+                    if received:
+                        rcv_time = dt.now()
+                        diffs.append((rcv_time - pub_time).total_seconds() * 1000)
 
                 total_sent += 1
-                time.sleep(1 / fps)
+                # time.sleep(1 / fps) # commented because it its impacting the benchmark.
+
+            print(diffs)

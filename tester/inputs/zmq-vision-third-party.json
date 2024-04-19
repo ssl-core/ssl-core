@@ -4,8 +4,8 @@
       "count": 30,
       "fps": 60,
       "zmq": {
-        "address": "ipc:///tmp/vision-service",
-        "topic": "vision-tester"
+        "address": "ipc:///tmp/channel4.ipc",
+        "topic": "robocin"
       },
       "message_path_pb": "vision-third-party.textpb",
       "protobuf_type": "protocols.third_party.detection.raw_wrapper.SSL_WrapperPacket"
