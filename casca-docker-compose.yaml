@@ -23,7 +23,7 @@ services:
       args:
         - SOURCE_DIRECTORY=vision-be/vision-panettone
     working_dir: /workspaces/vision-be/vision-panettone
-    command: ["bin/microservice_main", "0", "0"]
+    command: ["bin/microservice_main", "0", "960000"]
     volumes:
       - /tmp:/tmp
     depends_on:
@@ -36,7 +36,7 @@ services:
       args:
         - SOURCE_DIRECTORY=vision-be/vision-panettone
     working_dir: /workspaces/vision-be/vision-panettone
-    command: ["bin/microservice_main", "1", "0"]
+    command: ["bin/microservice_main", "1", "666000"]
     volumes:
       - /tmp:/tmp
     depends_on:
@@ -49,7 +49,7 @@ services:
       args:
         - SOURCE_DIRECTORY=vision-be/vision-panettone
     working_dir: /workspaces/vision-be/vision-panettone
-    command: ["bin/microservice_main", "2", "0"]
+    command: ["bin/microservice_main", "2", "260000"]
     volumes:
       - /tmp:/tmp
     depends_on:
@@ -62,7 +62,7 @@ services:
       args:
         - SOURCE_DIRECTORY=vision-be/vision-panettone
     working_dir: /workspaces/vision-be/vision-panettone
-    command: ["bin/microservice_main", "3", "0"]
+    command: ["bin/microservice_main", "3", "3150000"]
     volumes:
       - /tmp:/tmp
     depends_on:
@@ -75,7 +75,7 @@ services:
       args:
         - SOURCE_DIRECTORY=vision-be/vision-panettone
     working_dir: /workspaces/vision-be/vision-panettone
-    command: ["bin/microservice_main", "4", "0"]
+    command: ["bin/microservice_main", "4", "185000"]
     volumes:
       - /tmp:/tmp
     depends_on:
