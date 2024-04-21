@@ -9,6 +9,8 @@
 #include <protocols/ui/gateway.pb.h>
 #include <protocols/vision/frame.pb.h>
 #include <string>
+#include <chrono>
+#include <format>
 #include <string_view>
 namespace gateway {
 
@@ -55,8 +57,16 @@ class GatewayServiceImpl final : public GatewayService::Service {
                            const ReceiveLiveStreamRequest* request,
                            grpc::ServerWriter<ReceiveLiveStreamResponse>* writer) override {
     // TODO(aalmds): Poller for specific subscribers.
+    auto start = std::chrono::high_resolution_clock::now();
     while (true) {
       auto reply = subscriber_.receive();
+      if (reply.message.empty()) {
+        continue;
+      }
+      auto end = std::chrono::high_resolution_clock::now();
+      auto diff = std::chrono::duration_cast<std::chrono::nanoseconds>(end - start).count() / 1e6;
+      start = std::move(end);
+      std::cout << std::format("sending after {} ms.", diff) << std::endl;
       // std::cout << "ReceiveLiveStream: Replying" << std::endl;
       ReceiveLiveStreamResponse response;
       *response.mutable_payload()->mutable_vision_frame()
