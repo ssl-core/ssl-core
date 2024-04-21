@@ -66,7 +66,7 @@ class GatewayServiceImpl final : public GatewayService::Service {
       auto end = std::chrono::high_resolution_clock::now();
       auto diff = std::chrono::duration_cast<std::chrono::nanoseconds>(end - start).count() / 1e6;
       start = std::move(end);
-      std::cout << std::format("sending after {} ms.", diff) << std::endl;
+      // std::cout << std::format("sending after {} ms.", diff) << std::endl;
       // std::cout << "ReceiveLiveStream: Replying" << std::endl;
       ReceiveLiveStreamResponse response;
       *response.mutable_payload()->mutable_vision_frame()

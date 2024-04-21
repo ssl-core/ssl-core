@@ -92,9 +92,9 @@ if __name__ == "__main__":
     with open(f"inputs/{args.input_file}") as json_input:
         data = json.load(json_input)
 
-        for i in range(40):
-            time.sleep(1)
-            print(f"slept for {i}s.", flush=True)
+        # for i in range(40):
+        #     time.sleep(1)
+        #     print(f"slept for {i}s.", flush=True)
 
         for request in data["requests"]:
             threads = []

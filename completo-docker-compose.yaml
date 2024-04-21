@@ -1,6 +1,49 @@
 version: '3'
 
 services:
+  mongodb1:
+    image: mongo:7.0
+    command: ["--replSet", "rs0", "--bind_ip_all", "--port", "27017"]
+    ports:
+      - 27017:27017
+    container_name: mongodb1
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    healthcheck:
+      test: echo "try { rs.status() } catch (err) { rs.initiate({_id:'rs0',members:[{_id:0,host:'host.docker.internal:27017',priority:1},{_id:1,host:'host.docker.internal:27018',priority:0.5},{_id:2,host:'host.docker.internal:27019',priority:0.5}]}) }" | mongosh --port 27017 --quiet
+      interval: 5s
+      timeout: 30s
+      start_period: 0s
+      start_interval: 1s
+      retries: 30
+    volumes:
+      - "mongodb1_data:/data/db"
+      - "mongodb1_config:/data/configdb"
+
+  mongodb2:
+    image: mongo:7.0
+    command: ["--replSet", "rs0", "--bind_ip_all", "--port", "27018"]
+    ports:
+      - 27018:27018
+    container_name: mongodb2
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    volumes:
+      - "mongodb2_data:/data/db"
+      - "mongodb2_config:/data/configdb"
+
+  mongodb3:
+    image: mongo:7.0
+    command: ["--replSet", "rs0", "--bind_ip_all", "--port", "27019"]
+    ports:
+      - 27019:27019
+    container_name: mongodb3
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    volumes:
+      - "mongodb3_data:/data/db"
+      - "mongodb3_config:/data/configdb"
+
   gateway:
     build:
       context: .
@@ -21,11 +64,14 @@ services:
       args:
         - SOURCE_DIRECTORY=vision-be/vision-panettone
     working_dir: /workspaces/vision-be/vision-panettone
-    command: ["bin/microservice_main", "0", "0"]
+    command: ["bin/microservice_main", "0", "960000", "1"]
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
     volumes:
       - /tmp:/tmp
     depends_on:
       - gateway
+      - mongodb1
 
   service-1:
     build:
@@ -34,7 +80,9 @@ services:
       args:
         - SOURCE_DIRECTORY=vision-be/vision-panettone
     working_dir: /workspaces/vision-be/vision-panettone
-    command: ["bin/microservice_main", "1", "0"]
+    command: ["bin/microservice_main", "1", "666000", "1"]
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
     volumes:
       - /tmp:/tmp
     depends_on:
@@ -47,7 +95,9 @@ services:
       args:
         - SOURCE_DIRECTORY=vision-be/vision-panettone
     working_dir: /workspaces/vision-be/vision-panettone
-    command: ["bin/microservice_main", "2", "0"]
+    command: ["bin/microservice_main", "2", "260000", "1"]
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
     volumes:
       - /tmp:/tmp
     depends_on:
@@ -60,7 +110,9 @@ services:
       args:
         - SOURCE_DIRECTORY=vision-be/vision-panettone
     working_dir: /workspaces/vision-be/vision-panettone
-    command: ["bin/microservice_main", "3", "0"]
+    command: ["bin/microservice_main", "3", "3150000", "1"]
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
     volumes:
       - /tmp:/tmp
     depends_on:
@@ -73,7 +125,9 @@ services:
       args:
         - SOURCE_DIRECTORY=vision-be/vision-panettone
     working_dir: /workspaces/vision-be/vision-panettone
-    command: ["bin/microservice_main", "4", "0"]
+    command: ["bin/microservice_main", "4", "185000", "1"]
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
     volumes:
       - /tmp:/tmp
     depends_on:
@@ -115,3 +169,11 @@ services:
       - 3031:3031
     depends_on:
       - match-bff
+
+volumes:
+  mongodb1_data:
+  mongodb2_data:
+  mongodb3_data:
+  mongodb1_config:
+  mongodb2_config:
+  mongodb3_config:
