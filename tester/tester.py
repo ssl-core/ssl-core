@@ -73,7 +73,7 @@ if __name__ == "__main__":
 
             print(f"publisher type: {type(publisher)}")
             print(f"message type: {type(message)}")
-            print(f"subscriber type: {type(subscriber)}")
+            print(f"subscriber type: {type(subscriber)}", flush=True)
 
             # TODO($ISSUE_N): Fix count fps and.
             count = request["count"] if "count" in request else -1

@@ -107,7 +107,7 @@ ZmqReplySocket makeReplySocket(int id);
 Frame mapWrapperPacketToFrame(const SSL_WrapperPacket& packet);
 void mockedSleep();
 
-std::optional<Frame> parseMessage(std::string message, int id) {
+Frame parseMessage(std::string message, int id) {
   if (id == 0) {
     SSL_WrapperPacket packet;
     packet.ParseFromString(message);
@@ -115,7 +115,9 @@ std::optional<Frame> parseMessage(std::string message, int id) {
     Frame frame = mapWrapperPacketToFrame(packet);
     return frame;
   }
-  return std::nullopt;
+  Frame frame;
+  frame.ParseFromString(message);
+  return frame;
 }
 
 void publisherRun(int id) {
@@ -134,13 +136,12 @@ void publisherRun(int id) {
 
     for (const auto& [_, message] : local_packages) {
       mockedSleep();
-      processedFrame = parseMessage(message, id);
-    }
 
-    if(processedFrame.has_value()) {
+      processedFrame = parseMessage(message, id);
       auto message_parsed = processedFrame->SerializeAsString();
+
       pub->send(kTopic, message_parsed);
-      
+
       if(using_database) {
         unsaved_frames.push_back(processedFrame.value());
       }
