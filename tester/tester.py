@@ -87,6 +87,7 @@ if __name__ == "__main__":
             diffs = []
             while total_sent != count:
                 pub_time = dt.now()
+                # print(f'sent {len(serialized_message)} bytes.', flush=True)
                 publisher.send(serialized_message)
                 if subscriber:
                     received = subscriber.receive(PubSubMode.Wait)

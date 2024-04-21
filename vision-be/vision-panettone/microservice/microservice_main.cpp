@@ -135,6 +135,7 @@ void publisherRun(int id) {
     }
 
     for (const auto& [_, message] : local_packages) {
+      // std::cout << std::format("sending at microservice {}.", id) << std::endl;
       mockedSleep();
 
       processedFrame = parseMessage(message, id);
@@ -147,9 +148,10 @@ void publisherRun(int id) {
       }
     }
 
-    const uint64_t kFrameBatchSave = 100; 
+    const uint64_t kFrameBatchSave = 100;
     if(unsaved_frames.size() >= kFrameBatchSave && using_database) {
-      thread_pool.enqueue(saveManyToDatabase, std::ref(*frame_repository), unsaved_frames);
+      // std::cout << std::format("saving on database for microservice {}.", id) << std::endl;
+      // thread_pool.enqueue(saveManyToDatabase, std::ref(*frame_repository), unsaved_frames);
       unsaved_frames.clear();
     }
   }
@@ -210,7 +212,9 @@ int main(int argc, char* argv[]) {
 
   sub = std::make_unique<ZmqSubscriberSocket>(makeSubscriberSocket(service_id));
   pub = std::make_unique<ZmqPublisherSocket>(makePublisherSocket(service_id));
-  
+
+  std::unique_ptr<std::jthread> database_thread;
+
   if(using_database) {
     rep = std::make_unique<ZmqReplySocket>(makeReplySocket(service_id));
     frame_repository = kFactory->createFrameRepository(service_id);
@@ -224,7 +228,7 @@ int main(int argc, char* argv[]) {
       std::cout << "Failed to connect to the database." << std::endl;
       return -1;
     }
-    std::jthread database_thread(chunkReplyRun);
+    database_thread = std::make_unique<std::jthread>(chunkReplyRun);
   }
 
   std::jthread subscriber_thread(subscriberRun);
