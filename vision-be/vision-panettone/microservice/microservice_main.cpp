@@ -72,7 +72,7 @@ std::vector<ZmqDatagram> packages;
 ThreadPool thread_pool(4);
 
 const auto kFactory = RepositoryFactoryMapping{}[RepositoryType::MongoDb];
-std::unique_ptr<IFrameRepository> frame_repository = kFactory->createFrameRepository();
+std::unique_ptr<IFrameRepository> frame_repository;
 void saveToDatabase(IFrameRepository& repository, Frame frame) { repository.save(frame); }
 void saveManyToDatabase(IFrameRepository& repository, std::vector<Frame> frames) { repository.saveMany(frames); }
 std::vector<Frame> findRangeFromDatabase(IFrameRepository& repository,
@@ -154,8 +154,8 @@ void publisherRun(int id) {
   }
 }
 
-void chunkRequestRun() {
-  std::cout << "Database thread running..." << std::endl;
+void chunkReplyRun() {
+  std::cout << "Chunk reply thread running..." << std::endl;
 
   std::random_device rd;
   std::mt19937 gen(rd());
@@ -209,9 +209,11 @@ int main(int argc, char* argv[]) {
 
   sub = std::make_unique<ZmqSubscriberSocket>(makeSubscriberSocket(service_id));
   pub = std::make_unique<ZmqPublisherSocket>(makePublisherSocket(service_id));
-  rep = std::make_unique<ZmqReplySocket>(makeReplySocket(service_id));
-
+  
   if(using_database) {
+    rep = std::make_unique<ZmqReplySocket>(makeReplySocket(service_id));
+    frame_repository = kFactory->createFrameRepository(service_id);
+
     std::cout << "Database connection check..." << std::endl;
     std::future<bool> connection_status = frame_repository->connect();
 
@@ -221,7 +223,7 @@ int main(int argc, char* argv[]) {
       std::cout << "Failed to connect to the database." << std::endl;
       return -1;
     }
-    std::jthread database_thread(chunkRequestRun);
+    std::jthread database_thread(chunkReplyRun);
   }
 
   std::jthread subscriber_thread(subscriberRun);
