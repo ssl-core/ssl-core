@@ -42,7 +42,7 @@ void ThirdPartySocketsController::run() {
     poller_.poll(/*timeout=*/-1);
 
     if (auto vision_message = poller_.recvFrom(vision_); !vision_message.empty()) {
-      // std::cout << "Sending" << std::endl;
+      // std::cout << "sending " << vision_message.size() << " bytes on gateway." << std::endl;
       publisher_.send("vision-third-party", vision_message);
     }
   }
