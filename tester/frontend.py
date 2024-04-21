@@ -5,7 +5,7 @@ from datetime import datetime
 import csv
 
 # Download the driver
-service = ChromeService(ChromeDriverManager().install())
+service = ChromeService(ChromeDriverManager().install(), service_args=["--disable-gpu-vsync"])
 
 # Start the driver and open the browser
 driver = webdriver.Chrome(service=service)
