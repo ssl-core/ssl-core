@@ -91,6 +91,6 @@ if __name__ == "__main__":
                         diffs.append((rcv_time - pub_time).total_seconds() * 1000)
 
                 total_sent += 1
-                # time.sleep(1 / fps) # commented because it its impacting the benchmark.
+                time.sleep(1 / fps) # commented because it its impacting the benchmark.
 
             print(diffs)

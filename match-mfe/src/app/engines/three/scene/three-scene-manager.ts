@@ -14,6 +14,8 @@ import Channels from "../../../../config/channels";
 import constants from "../../../../config/constants";
 
 class ThreeSceneManager {
+  private static readonly SAMPLES = 3000;
+
   private canvas: OffscreenCanvas | null;
   private canvasDOM: ThreeElementProxyReceiver | null;
   private renderer: WebGLRenderer | null;
@@ -22,6 +24,8 @@ class ThreeSceneManager {
   private scene: Scene;
   private channel: BroadcastChannel;
   private pool: ThreeSceneObjectPool;
+  private testerBuffer: any[];
+  private testerLastTimestamp: number = 0;
 
   constructor() {
     this.canvas = null;
@@ -36,6 +40,7 @@ class ThreeSceneManager {
       constants.numRobots,
       constants.numBalls
     );
+    this.testerBuffer = [];
   }
 
   public initialize(
@@ -167,7 +172,26 @@ class ThreeSceneManager {
   }
 
   private notifyTester() {
-    self.postMessage(performance.now());
+    if (this.testerBuffer.length >= ThreeSceneManager.SAMPLES) return;
+
+    const now = performance.now();
+
+    if (this.testerLastTimestamp === 0) {
+      this.testerLastTimestamp = now;
+      return;
+    }
+
+    this.testerBuffer.push({
+      duration: now - this.testerLastTimestamp,
+      startTime: this.testerLastTimestamp,
+      endTime: now,
+    });
+
+    if (this.testerBuffer.length === ThreeSceneManager.SAMPLES) {
+      self.postMessage(this.testerBuffer);
+    }
+
+    this.testerLastTimestamp = now;
   }
 }
 

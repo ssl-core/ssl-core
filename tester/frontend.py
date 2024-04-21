@@ -13,19 +13,14 @@ driver = webdriver.Chrome(service=service)
 # Open the URL
 driver.get("http://localhost:3031/")
 
+# Set timeout to 30 minutes
+driver.set_script_timeout(30 * 60)
+
 # Execute the JavaScript code
 script = """
-const SAMPLES = 100;
-
 let callback = arguments[arguments.length - 1];
-const buffer = [];
-
 document.body.addEventListener("tester", (event) => {
-  buffer.push(Object.values(event.detail).join());
-  
-  if (buffer.length === SAMPLES) {
-    callback(buffer);
-  }
+  callback(event.detail);
 });
 """
 
@@ -37,7 +32,7 @@ path = f"results/{today}.csv"
 with open(path, "w", newline="", encoding="utf-8") as file:
   writer = csv.writer(file)
   writer.writerow(["duration", "start", "end"])
-  writer.writerows([row.split(",") for row in result])
+  writer.writerows([[row['duration'], row['startTime'], row['endTime']] for row in result])
 
 # Print the result
 print(f"Result saved to '{path}'")

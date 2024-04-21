@@ -73,23 +73,12 @@ class ThreeRenderEngine extends BaseRenderEngine {
   }
 
   private proxyWorkerMessages() {
-    let lastTimestamp = 0;
     this.worker.onmessage = (message) => {
-      if (lastTimestamp === 0) {
-        lastTimestamp = message.data;
-        return;
-      }
-
       const event = new CustomEvent("tester", {
-        detail: {
-          duration: message.data - lastTimestamp,
-          startTime: lastTimestamp,
-          endTime: message.data,
-        },
+        detail: message.data,
       });
 
       window.document.body.dispatchEvent(event);
-      lastTimestamp = message.data;
     };
   }
 }
