@@ -1,8 +1,19 @@
 import sys
 import numpy as np
-import matplotlib.pyplot as plt
+# import matplotlib
+# import matplotlib.pyplot as plt
 import seaborn as sns
 from scipy import stats
+
+import matplotlib as mpl
+from matplotlib import pyplot as plt
+
+import tikzplotlib
+from matplotlib.lines import Line2D
+from matplotlib.legend import Legend
+Line2D._us_dashSeq    = property(lambda self: self._dash_pattern[1])
+Line2D._us_dashOffset = property(lambda self: self._dash_pattern[0])
+Legend._ncol = property(lambda self: self._ncols)
 
 def remove_outliers(values, threshold=3):
     z_scores = np.abs(stats.zscore(values, nan_policy='omit'))
@@ -87,8 +98,9 @@ def plot_distribution_graph(filename):
     n = len(original_values)
     plt.title(f'Distribution of Pipeline Latency')
     plt.legend()
-    plt.savefig(f'{filename}-distribution.png')
-    # tikzplotlib.save(f'distribution_{filename}.tex')
+    # plt.savefig(f'{filename}-distribution.png')
+    # plt.savefig("teste_tex.pgf", format='pgf')
+    tikzplotlib.save(f'{filename}-distribution.tex')
 
 def plot_linear_graph(filename):
     filtered_values, original_values, mean, std = get_values_and_stats_from_file(filename)
