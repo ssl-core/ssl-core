@@ -23,6 +23,7 @@ class ThreeRenderEngine extends BaseRenderEngine {
     this.appendCanvas();
     this.initializeWorker();
     this.addResizeObserver();
+    this.proxyWorkerMessages();
   }
 
   public terminate() {
@@ -69,6 +70,27 @@ class ThreeRenderEngine extends BaseRenderEngine {
     });
 
     observer.observe(this.parentElement);
+  }
+
+  private proxyWorkerMessages() {
+    let lastTimestamp = 0;
+    this.worker.onmessage = (message) => {
+      if (lastTimestamp === 0) {
+        lastTimestamp = message.data;
+        return;
+      }
+
+      const event = new CustomEvent("tester", {
+        detail: {
+          duration: message.data - lastTimestamp,
+          startTime: lastTimestamp,
+          endTime: message.data,
+        },
+      });
+
+      window.document.body.dispatchEvent(event);
+      lastTimestamp = message.data;
+    };
   }
 }
 

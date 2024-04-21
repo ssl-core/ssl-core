@@ -1,2 +1,4 @@
 zmq
 netifaces
+selenium
+webdriver-manager
