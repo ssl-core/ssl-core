@@ -33,8 +33,8 @@ using RobotIdColor = protocols::common::RobotId::Color;
 
 using robocin::ZmqDatagram;
 using robocin::ZmqPublisherSocket;
-using robocin::ZmqSubscriberSocket;
 using robocin::ZmqReplySocket;
+using robocin::ZmqSubscriberSocket;
 
 using robocin::ThreadPool;
 
@@ -69,15 +69,17 @@ std::mutex mutex;
 std::condition_variable cv;
 std::vector<ZmqDatagram> packages;
 
-ThreadPool thread_pool(4);
+ThreadPool thread_pool(1);
 
 const auto kFactory = RepositoryFactoryMapping{}[RepositoryType::MongoDb];
 std::unique_ptr<IFrameRepository> frame_repository;
 void saveToDatabase(IFrameRepository& repository, Frame frame) { repository.save(frame); }
-void saveManyToDatabase(IFrameRepository& repository, std::vector<Frame> frames) { repository.saveMany(frames); }
+void saveManyToDatabase(IFrameRepository& repository, std::vector<Frame> frames) {
+  repository.saveMany(frames);
+}
 std::vector<Frame> findRangeFromDatabase(IFrameRepository& repository,
-                                     const int64_t& key_lower_bound,
-                                     const int64_t& key_upper_bound) {
+                                         const int64_t& key_lower_bound,
+                                         const int64_t& key_upper_bound) {
   return repository.findRange(key_lower_bound, key_upper_bound);
 }
 
@@ -121,10 +123,11 @@ Frame parseMessage(std::string message, int id) {
 }
 
 void publisherRun(int id) {
-  std::vector<Frame> unsaved_frames;
+  auto unsaved_frames = std::make_unique<std::vector<Frame>>();
+  unsaved_frames->reserve(2048);
 
   while (true) {
-    std::optional<Frame> processedFrame;
+    std::optional<Frame> processed_frame;
 
     std::vector<ZmqDatagram> local_packages;
     {
@@ -138,21 +141,23 @@ void publisherRun(int id) {
       // std::cout << std::format("sending at microservice {}.", id) << std::endl;
       mockedSleep();
 
-      processedFrame = parseMessage(message, id);
-      auto message_parsed = processedFrame->SerializeAsString();
+      processed_frame = parseMessage(message, id);
+      auto message_parsed = processed_frame->SerializeAsString();
 
       pub->send(kTopic, message_parsed);
 
-      if(using_database) {
-        unsaved_frames.push_back(processedFrame.value());
+      if (using_database) {
+        unsaved_frames->push_back(std::move(processed_frame.value()));
       }
     }
 
-    const uint64_t kFrameBatchSave = 100;
-    if(unsaved_frames.size() >= kFrameBatchSave && using_database) {
+    const uint64_t kFrameBatchSave = 1000;
+    if (unsaved_frames->size() >= kFrameBatchSave && using_database) {
       // std::cout << std::format("saving on database for microservice {}.", id) << std::endl;
-      // thread_pool.enqueue(saveManyToDatabase, std::ref(*frame_repository), unsaved_frames);
-      unsaved_frames.clear();
+      thread_pool.enqueue(
+          [uf = std::move(unsaved_frames)]() { saveManyToDatabase(*frame_repository, *uf); });
+      unsaved_frames = std::make_unique<std::vector<Frame>>();
+      unsaved_frames->reserve(2048);
     }
   }
 }
@@ -167,17 +172,16 @@ void chunkReplyRun() {
   // Receive sync request.
   while (true) {
     if (auto request = rep->receive(); !request.empty()) {
-      std::cout << "GetVisionChunk on VisionMS..." << std::endl;
+      // std::cout << "GetVisionChunk on VisionMS..." << std::endl;
       int64_t first_key = distribution(gen);
-      int64_t second_key = distribution(gen);
+      int64_t second_key = first_key + 100;
       auto [lower, upper] = std::minmax(first_key, second_key);
 
       auto range
-          = thread_pool.enqueue(findRangeFromDatabase, std::ref(*frame_repository), lower,
-          upper);
+          = thread_pool.enqueue(findRangeFromDatabase, std::ref(*frame_repository), lower, upper);
 
       protocols::ui::GetVisionChunkResponse response;
-      protocols::ui::ChunkResponseHeader &header = *response.mutable_header();
+      protocols::ui::ChunkResponseHeader& header = *response.mutable_header();
       header.mutable_request_start()->set_seconds(0);
       header.set_chunk_id(1);
       header.set_n_chunks(1);
@@ -207,7 +211,8 @@ int main(int argc, char* argv[]) {
   reps_to_wait = std::stoi(args[1]);
   using_database = std::stoi(args[2]);
 
-  std::cout << std::format("Service {} is running and waiting {} reps.!", service_id, reps_to_wait) << std::endl;
+  std::cout << std::format("Service {} is running and waiting {} reps.!", service_id, reps_to_wait)
+            << std::endl;
   std::cout << std::format("Using database? {}", using_database) << std::endl;
 
   sub = std::make_unique<ZmqSubscriberSocket>(makeSubscriberSocket(service_id));
@@ -215,7 +220,7 @@ int main(int argc, char* argv[]) {
 
   std::unique_ptr<std::jthread> database_thread;
 
-  if(using_database) {
+  if (using_database) {
     rep = std::make_unique<ZmqReplySocket>(makeReplySocket(service_id));
     frame_repository = kFactory->createFrameRepository(service_id);
 

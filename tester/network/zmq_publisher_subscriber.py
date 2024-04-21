@@ -5,16 +5,14 @@ import zmq
 
 
 class ZmqPublisherSocket:
-    def __init__(self, topic, address, n_threads: int = 1, timeout_ms: int = 3):
+    def __init__(self, topic, address, n_threads: int = 1):
         # Create a ZMQ Publisher
         self.context = zmq.Context(n_threads)
-        self.timeout_ms = timeout_ms
         self.publisher = self.context.socket(zmq.PUB)
         self.topic = topic.encode()
 
         # Bind the socket to the given ZMQ address
         self.publisher.bind(address)
-        # self.publisher.setsockopt(zmq.SNDTIMEO, self.timeout_ms)
 
     def send(
         self,

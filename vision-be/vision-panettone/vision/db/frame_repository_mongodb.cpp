@@ -122,7 +122,7 @@ void FrameRepositoryMongoDb::save(const Frame& frame) {
 }
 
 void FrameRepositoryMongoDb::saveMany(const std::vector<Frame>& frames) {
-  std::cout << "Saving " << frames.size() << " frames." << std::endl;
+  // std::cout << "Saving " << frames.size() << " frames." << std::endl;
   try {
     auto client = pool_.acquire();
     auto collection = (*client)[db_][collection_];
@@ -133,15 +133,15 @@ void FrameRepositoryMongoDb::saveMany(const std::vector<Frame>& frames) {
       documents.push_back(toMongoDbDocument(frame));
     }
 
-    std::cout << "Mongo document created for " << frames.size() << " frames." << std::endl;
+    // std::cout << "Mongo document created for " << frames.size() << " frames." << std::endl;
 
     if (auto save_result = collection.insert_many(documents)) {
-      std::cout << "Inserted frames." << std::endl;
+      // std::cout << "Inserted frames." << std::endl;
     }
   } catch (const std::exception& e) {
     std::cerr << "Error saving frames: " << e.what() << "." << std::endl;
   }
-  std::cout << "Saved frames." << std::endl;
+  // std::cout << "Saved frames." << std::endl;
 }
 
 void FrameRepositoryMongoDb::remove(const int64_t& key) {
