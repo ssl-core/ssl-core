@@ -21,6 +21,7 @@ class ThreeChassisMesh extends ThreeBaseMesh {
   protected buildMaterial() {
     return new MeshPhongMaterial({
       color: constants.robot.chassis.color,
+      fog: false,
     });
   }
 }

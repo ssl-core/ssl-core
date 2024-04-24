@@ -30,6 +30,7 @@ class ThreeDotMesh extends ThreeBaseMesh {
   protected buildMaterial() {
     return new MeshPhongMaterial({
       color: this.color,
+      fog: false,
     });
   }
 }

@@ -1,5 +1,5 @@
 const enum SocketEventTypes {
-  Initialize = "initialize",
+  Connect = "connect",
 }
 
 export default SocketEventTypes;

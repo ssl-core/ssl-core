@@ -1,18 +1,28 @@
 import Channels from "../../../config/channels";
+import BaseSocketManager from "../base-socket-manager";
 
-class WebSocketManager {
+class WebSocketManager extends BaseSocketManager {
   private socket: WebSocket | null;
   private engineChannel: BroadcastChannel;
 
   constructor() {
+    super();
     this.socket = null;
     this.engineChannel = new BroadcastChannel(Channels.Engine);
   }
 
-  public initialize(address: string) {
+  public connect(address: string) {
     this.socket = new WebSocket(address);
     this.addMessageListener();
     this.receiveLiveStream();
+  }
+
+  public disconnect() {
+    if (!this.socket) {
+      throw new Error("Socket not initialized");
+    }
+
+    this.socket.close();
   }
 
   public send(message: any) {
@@ -21,14 +31,6 @@ class WebSocketManager {
     }
 
     this.socket.send(JSON.stringify(message));
-  }
-
-  public close() {
-    if (!this.socket) {
-      throw new Error("Socket not initialized");
-    }
-
-    this.socket.close();
   }
 
   private addMessageListener() {

@@ -12,7 +12,7 @@ class SocketHandler {
 
   public initialize() {
     this.worker.postMessage({
-      type: SocketEventTypes.Initialize,
+      type: SocketEventTypes.Connect,
       payload: { address: this.address },
     });
   }

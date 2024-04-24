@@ -1,18 +1,18 @@
-import WebSocketManager from "../web/web-socket-manager";
+import BaseSocketManager from "../base-socket-manager";
 import SocketEventTypes from "./socket-event-types";
 
 class SocketEventHandler {
-  private webSocketManager: WebSocketManager;
+  private socketManager: BaseSocketManager;
 
-  constructor(webSocketManager: WebSocketManager) {
-    this.webSocketManager = webSocketManager;
+  constructor(socketManager: BaseSocketManager) {
+    this.socketManager = socketManager;
   }
 
   public handleEvent(type: string, payload: any) {
     switch (type) {
-      case SocketEventTypes.Initialize:
+      case SocketEventTypes.Connect:
         const { address } = payload;
-        this.webSocketManager.initialize(address as string);
+        this.socketManager.connect(address as string);
         break;
       default:
         throw new Error(`Unknown event type: ${type}`);

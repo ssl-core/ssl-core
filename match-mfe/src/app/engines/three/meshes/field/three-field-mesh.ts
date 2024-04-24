@@ -33,7 +33,10 @@ class ThreeFieldMesh extends ThreeBaseMesh {
   }
 
   protected buildMaterial() {
-    return new MeshLambertMaterial({ color: constants.field.color });
+    return new MeshLambertMaterial({
+      color: constants.field.color,
+      fog: false,
+    });
   }
 }
 

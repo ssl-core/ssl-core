@@ -10,20 +10,16 @@ class ThreeFieldObject extends ThreeBaseObject {
   private params: Field | null;
   private linesMesh: ThreeFieldLinesMesh;
   private fieldMesh: ThreeFieldMesh;
-  private surfaceMesh: ThreeFieldSurfaceMesh;
   private yellowGoal: ThreeGoalObject;
   private blueGoal: ThreeGoalObject;
-  private walls: ThreeWallsObject;
 
   constructor(params?: Field) {
     super();
     this.params = params || null;
     this.linesMesh = new ThreeFieldLinesMesh();
     this.fieldMesh = new ThreeFieldMesh();
-    this.surfaceMesh = new ThreeFieldSurfaceMesh();
     this.yellowGoal = new ThreeGoalObject();
     this.blueGoal = new ThreeGoalObject();
-    this.walls = new ThreeWallsObject();
 
     this.addMeshes();
     this.addObjects();
@@ -38,7 +34,6 @@ class ThreeFieldObject extends ThreeBaseObject {
   public setParams(params: Field) {
     this.yellowGoal.setParams(params, 1);
     this.blueGoal.setParams(params, -1);
-    this.walls.setParams(params);
 
     if (this.needsToRedraw(params)) {
       this.linesMesh.setParams(
@@ -52,22 +47,17 @@ class ThreeFieldObject extends ThreeBaseObject {
         params.width,
         params.boundary_width
       );
-      this.surfaceMesh.setParams(
-        params.length,
-        params.width,
-        params.boundary_width
-      );
     }
 
     this.params = params;
   }
 
   protected addMeshes() {
-    this.add(this.linesMesh, this.fieldMesh, this.surfaceMesh);
+    this.add(this.linesMesh, this.fieldMesh);
   }
 
   private addObjects() {
-    this.add(this.yellowGoal, this.blueGoal, this.walls);
+    this.add(this.yellowGoal, this.blueGoal);
   }
 
   private needsToRedraw(params: Field) {

@@ -33,7 +33,10 @@ class ThreeFieldSurfaceMesh extends ThreeBaseMesh {
   }
 
   protected buildMaterial() {
-    return new MeshPhongMaterial({ color: constants.field.surface.color });
+    return new MeshPhongMaterial({
+      color: constants.field.surface.color,
+      fog: false,
+    });
   }
 }
 

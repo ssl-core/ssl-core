@@ -1,8 +1,8 @@
-import WebSocketManager from "../web/web-socket-manager";
+import SocketManagerFactory from "../socket-manager-factory";
 import SocketEventHandler from "./socket-event-handler";
 
-const webSocketManager = new WebSocketManager();
-const handler = new SocketEventHandler(webSocketManager);
+const socketManager = SocketManagerFactory.createManager("test");
+const handler = new SocketEventHandler(socketManager);
 
 self.onmessage = (event) => {
   const { data } = event;

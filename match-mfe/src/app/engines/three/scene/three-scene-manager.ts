@@ -5,6 +5,8 @@ import {
   PerspectiveCamera,
   Scene,
   WebGLRenderer,
+  Fog,
+  GridHelper,
 } from "three";
 import { OrbitControls } from "three/examples/jsm/Addons.js";
 
@@ -46,6 +48,7 @@ class ThreeSceneManager {
     this.setCameraPosition();
     this.setOrbitControls();
     this.setLighting();
+    this.setGrid();
     this.listenChannel();
     this.resize(canvas.width, canvas.height);
   }
@@ -110,6 +113,18 @@ class ThreeSceneManager {
     this.scene.add(light);
   }
 
+  private setGrid() {
+    const fog = new Fog(constants.background, 4, 40);
+    this.scene.fog = fog;
+
+    const grid = new GridHelper(200, 200, 0xffffff, 0xffffff);
+    grid.material.opacity = 0.2;
+    grid.material.transparent = true;
+    grid.rotation.x = Math.PI / 2;
+    grid.position.z = -constants.clippingEpsilon;
+    this.scene.add(grid);
+  }
+
   private renderField(fieldParams: Field) {
     const field = this.pool.getField();
     field.setParams(fieldParams);
@@ -163,6 +178,9 @@ class ThreeSceneManager {
     // @ts-ignore
     const controls = new OrbitControls(this.camera, this.canvasDOM);
     controls.target.set(0, 0, 0);
+    controls.minDistance = 1;
+    controls.maxDistance = 20;
+    controls.enablePan = false;
     controls.update();
   }
 

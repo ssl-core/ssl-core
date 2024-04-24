@@ -27,7 +27,10 @@ class ThreeWallMesh extends ThreeBaseMesh {
   }
 
   protected buildMaterial() {
-    return new MeshPhongMaterial({ color: constants.field.wall.color });
+    return new MeshPhongMaterial({
+      color: constants.field.wall.color,
+      fog: false,
+    });
   }
 }
 

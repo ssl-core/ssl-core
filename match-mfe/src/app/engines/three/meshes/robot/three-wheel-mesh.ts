@@ -25,6 +25,7 @@ class ThreeWheelMesh extends ThreeBaseMesh {
   protected buildMaterial() {
     return new MeshPhongMaterial({
       color: constants.robot.wheels.color,
+      fog: false,
     });
   }
 

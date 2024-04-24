@@ -14,11 +14,11 @@ class ThreeBallMesh extends ThreeBaseMesh {
       constants.ball.radius,
       constants.ball.segments,
       constants.ball.segments
-    );
+    ).translate(0, 0, constants.ball.radius);
   }
 
   protected buildMaterial() {
-    return new MeshPhongMaterial({ color: constants.ball.color });
+    return new MeshPhongMaterial({ color: constants.ball.color, fog: false });
   }
 }
 
