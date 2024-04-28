@@ -4,7 +4,7 @@ module;
 #include "robocin/geometry/point3d.h"
 #include "robocin/macros/builder.h"
 
-export module decision.entities:robot;
+export module decision.world:robot;
 
 using robocin::Point2Df;
 
