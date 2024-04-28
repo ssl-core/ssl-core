@@ -13,6 +13,7 @@ class ThreeRobotObject extends ThreeBaseObject {
 
   constructor(robotId?: number, robotColor?: RobotColor) {
     super();
+    this.selectable = true;
     this.params = null;
     this.robotId = robotId || 0;
     this.robotColor = robotColor || "yellow";

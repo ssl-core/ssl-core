@@ -1,6 +1,39 @@
 import { Group } from "three";
 
 abstract class ThreeBaseObject extends Group {
+  protected selectable: boolean;
+  protected selected: boolean;
+
+  constructor() {
+    super();
+    this.selected = false;
+    this.selectable = false;
+  }
+
+  public isSelectable() {
+    return this.selectable;
+  }
+
+  public isSelected() {
+    return this.selectable && this.selected;
+  }
+
+  public select() {
+    if (!this.selectable) {
+      throw new Error("Object is not selectable");
+    }
+
+    this.selected = true;
+  }
+
+  public deselect() {
+    if (!this.selectable) {
+      throw new Error("Object is not selectable");
+    }
+
+    this.selected = false;
+  }
+
   public abstract update(): void;
   protected abstract addMeshes(): void;
 }

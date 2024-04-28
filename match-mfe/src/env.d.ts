@@ -14,6 +14,11 @@ type ProxyEvent = {
   data: any;
 };
 
+type ThreeSyncMessage = {
+  camera: (string | number | undefined)[];
+  time: number;
+};
+
 type Frame = {
   serial_id: number;
   effective_serial_id: number;

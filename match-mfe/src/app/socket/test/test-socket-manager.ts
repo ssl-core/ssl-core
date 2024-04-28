@@ -54,7 +54,7 @@ class TestSocketManager extends BaseSocketManager {
       }
 
       this.handleFrame(this.lastFrame);
-    }, 1 / this.fps);
+    }, 1000 / this.fps);
   }
 
   private createDefaultFrame(): Frame {

@@ -90,6 +90,10 @@ class ThreeSceneObjectPool {
   public getObjects() {
     return [this.field, ...this.robots, ...this.balls];
   }
+
+  public getSelectableObjects() {
+    return this.getObjects().filter((object) => object.isSelectable());
+  }
 }
 
 export default ThreeSceneObjectPool;

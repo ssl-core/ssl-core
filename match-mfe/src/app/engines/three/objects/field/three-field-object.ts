@@ -1,9 +1,7 @@
 import ThreeBaseObject from "../three-base-object";
-import ThreeFieldSurfaceMesh from "../../meshes/field/three-field-surface-mesh";
 import ThreeFieldMesh from "../../meshes/field/three-field-mesh";
 import ThreeFieldLinesMesh from "../../meshes/field/three-field-lines-mesh";
 import ThreeGoalObject from "../goal/three-goal-object";
-import ThreeWallsObject from "../walls/three-walls-object";
 import { fuzzyNotEqual } from "../../../../../utils/fuzzy";
 
 class ThreeFieldObject extends ThreeBaseObject {
@@ -15,6 +13,7 @@ class ThreeFieldObject extends ThreeBaseObject {
 
   constructor(params?: Field) {
     super();
+    this.selectable = true;
     this.params = params || null;
     this.linesMesh = new ThreeFieldLinesMesh();
     this.fieldMesh = new ThreeFieldMesh();

@@ -4,6 +4,7 @@ import ThreeBallMesh from "../../meshes/ball/three-ball-mesh";
 class ThreeBallObject extends ThreeBaseObject {
   constructor() {
     super();
+    this.selectable = true;
     this.addMeshes();
   }
 

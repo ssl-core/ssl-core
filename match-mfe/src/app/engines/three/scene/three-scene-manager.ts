@@ -7,11 +7,15 @@ import {
   WebGLRenderer,
   Fog,
   GridHelper,
+  Raycaster,
+  Vector2,
+  Vector3,
 } from "three";
 import { OrbitControls } from "three/examples/jsm/Addons.js";
 
 import ThreeElementProxyReceiver from "../proxy/three-element-proxy-receiver";
 import ThreeSceneObjectPool from "./three-scene-object-pool";
+import ThreeBaseObject from "../objects/three-base-object";
 import Channels from "../../../../config/channels";
 import constants from "../../../../config/constants";
 
@@ -24,6 +28,8 @@ class ThreeSceneManager {
   private scene: Scene;
   private channel: BroadcastChannel;
   private pool: ThreeSceneObjectPool;
+  private raycaster: Raycaster;
+  private orbitControls: OrbitControls | null;
 
   constructor() {
     this.canvas = null;
@@ -38,6 +44,8 @@ class ThreeSceneManager {
       constants.numRobots,
       constants.numBalls
     );
+    this.raycaster = new Raycaster();
+    this.orbitControls = null;
   }
 
   public initialize(
@@ -49,8 +57,9 @@ class ThreeSceneManager {
     this.setOrbitControls();
     this.setLighting();
     this.setGrid();
+    this.listenMouseEvents();
     this.listenChannel();
-    this.resize(canvas.width, canvas.height);
+    this.resize(0, 0, canvas.width, canvas.height);
   }
 
   public render(frame: Frame) {
@@ -67,7 +76,6 @@ class ThreeSceneManager {
       this.renderRobots(robots);
       this.renderBalls(balls);
       this.update();
-      this.notifyTester();
       this.isRendering = false;
     });
   }
@@ -80,7 +88,7 @@ class ThreeSceneManager {
     this.update();
   }
 
-  public resize(width: number, height: number) {
+  public resize(top: number, left: number, width: number, height: number) {
     if (!this.canvas || !this.renderer) {
       throw new Error("Renderer not initialized");
     }
@@ -88,8 +96,22 @@ class ThreeSceneManager {
     this.camera.aspect = width / height;
     this.camera.updateProjectionMatrix();
     this.renderer.setSize(width, height, false);
-    this.canvasDOM?.setSize({ top: 0, left: 0, width, height });
+    this.canvasDOM?.setSize({ top, left, width, height });
     this.update();
+  }
+
+  public setAxis(axis: any) {
+    if (!this.orbitControls) {
+      throw new Error("OrbitControls not initialized");
+    }
+
+    let distance = this.camera.position.distanceTo(this.orbitControls.target);
+    this.camera.position.copy(
+      new Vector3(axis.direction.x, axis.direction.y, axis.direction.z)
+        .multiplyScalar(distance)
+        .add(this.orbitControls.target)
+    );
+    this.camera.lookAt(this.orbitControls.target);
   }
 
   private update() {
@@ -98,6 +120,7 @@ class ThreeSceneManager {
     }
 
     this.renderer.render(this.scene, this.camera);
+    this.sync();
   }
 
   private setLighting() {
@@ -164,6 +187,44 @@ class ThreeSceneManager {
     });
   }
 
+  private listenMouseEvents() {
+    if (!this.canvasDOM) {
+      throw new Error("Canvas not initialized");
+    }
+
+    // @ts-ignore
+    this.canvasDOM.addEventListener("mousedown", (event: MouseEvent) => {
+      const canvasRect = this.canvasDOM!.getBoundingClientRect();
+
+      const pointer = new Vector2(
+        ((event.clientX - canvasRect?.left) / canvasRect?.width) * 2 - 1,
+        -((event.clientY - canvasRect?.top) / canvasRect?.height) * 2 + 1
+      );
+
+      this.raycaster.setFromCamera(pointer, this.camera);
+
+      const selectableObjects = this.pool.getSelectableObjects();
+      const intersects = this.raycaster.intersectObjects(selectableObjects);
+
+      for (const object of selectableObjects) {
+        object.deselect();
+      }
+
+      if (intersects.length > 0) {
+        const object = intersects[0].object.parent as ThreeBaseObject;
+
+        if (!object.isSelectable()) {
+          return;
+        }
+
+        object.select();
+
+        this.orbitControls!.target = object.position;
+        this.orbitControls!.update();
+      }
+    });
+  }
+
   private listenChannel() {
     this.channel.addEventListener("message", (event) => {
       this.render(event.data as Frame);
@@ -176,16 +237,21 @@ class ThreeSceneManager {
     }
 
     // @ts-ignore
-    const controls = new OrbitControls(this.camera, this.canvasDOM);
-    controls.target.set(0, 0, 0);
-    controls.minDistance = 1;
-    controls.maxDistance = 20;
-    controls.enablePan = false;
-    controls.update();
+    this.orbitControls = new OrbitControls(this.camera, this.canvasDOM);
+    this.orbitControls.target.set(0, 0, 0);
+    this.orbitControls.minDistance = 1;
+    this.orbitControls.maxDistance = 20;
+    this.orbitControls.enablePan = false;
+    this.orbitControls.update();
   }
 
-  private notifyTester() {
-    self.postMessage(performance.now());
+  private sync() {
+    const syncMessage: ThreeSyncMessage = {
+      camera: this.camera.rotation.toArray(),
+      time: performance.now(),
+    };
+
+    self.postMessage(syncMessage);
   }
 }
 

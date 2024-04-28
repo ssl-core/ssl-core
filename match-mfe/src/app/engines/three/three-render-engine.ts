@@ -3,12 +3,16 @@ import ThreeWorker from "./worker/three-worker?worker";
 import ThreeElementProxy from "./proxy/three-element-proxy";
 import ThreeProxyEventHandlers from "./proxy/three-proxy-event-handlers";
 import ThreeEventTypes from "./worker/three-event-types";
+import OrientationGizmo from "./lib/orientation-gizmo";
+import Stats from "./lib/stats";
 
 class ThreeRenderEngine extends BaseRenderEngine {
   private parentElement: HTMLElement;
   private canvas: HTMLCanvasElement;
   private worker: Worker;
   private observer: ResizeObserver | null;
+  private orientationGizmo: OrientationGizmo;
+  private stats: Stats;
 
   constructor(root: ShadowRoot) {
     super(root);
@@ -17,13 +21,17 @@ class ThreeRenderEngine extends BaseRenderEngine {
     this.canvas = document.createElement("canvas");
     this.worker = new ThreeWorker();
     this.observer = null;
+    this.orientationGizmo = new OrientationGizmo(this.root);
+    this.stats = new Stats(this.root);
   }
 
   public initialize() {
     this.appendCanvas();
     this.initializeWorker();
+    this.initializeOrientationGizmo();
+    this.initializeStats();
     this.addResizeObserver();
-    this.proxyWorkerMessages();
+    this.listenSyncMessages();
   }
 
   public terminate() {
@@ -60,37 +68,39 @@ class ThreeRenderEngine extends BaseRenderEngine {
     );
   }
 
+  private initializeOrientationGizmo() {
+    this.orientationGizmo.initialize();
+    this.orientationGizmo.setOnAxisSelected((axis) => {
+      this.worker.postMessage({
+        type: ThreeEventTypes.AxisSelected,
+        payload: axis,
+      });
+    });
+  }
+
+  private initializeStats() {
+    this.stats.initialize();
+  }
+
   private addResizeObserver() {
     const observer = new ResizeObserver((entries) => {
-      const { width, height, top, left } = entries[0].contentRect;
       this.worker.postMessage({
         type: ThreeEventTypes.Resize,
-        payload: { width, height, top, left },
+        payload: entries[0].target.getBoundingClientRect(),
       });
     });
 
     observer.observe(this.parentElement);
   }
 
-  private proxyWorkerMessages() {
-    let lastTimestamp = 0;
-    this.worker.onmessage = (message) => {
-      if (lastTimestamp === 0) {
-        lastTimestamp = message.data;
-        return;
+  private listenSyncMessages() {
+    this.worker.addEventListener(
+      "message",
+      (event: MessageEvent<ThreeSyncMessage>) => {
+        this.orientationGizmo.update(event.data.camera);
+        this.stats.update();
       }
-
-      const event = new CustomEvent("tester", {
-        detail: {
-          duration: message.data - lastTimestamp,
-          startTime: lastTimestamp,
-          endTime: message.data,
-        },
-      });
-
-      window.document.body.dispatchEvent(event);
-      lastTimestamp = message.data;
-    };
+    );
   }
 }
 

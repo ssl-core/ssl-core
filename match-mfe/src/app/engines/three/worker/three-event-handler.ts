@@ -23,7 +23,12 @@ class ThreeEventHandler {
         this.sceneManager.initialize(canvas, proxy);
         break;
       case ThreeEventTypes.Resize:
-        this.sceneManager.resize(payload.width, payload.height);
+        this.sceneManager.resize(
+          payload.top,
+          payload.left,
+          payload.width,
+          payload.height
+        );
         break;
       case ThreeEventTypes.Frame:
         this.sceneManager.render(payload as Frame);
@@ -33,6 +38,9 @@ class ThreeEventHandler {
         break;
       case ThreeEventTypes.Event:
         this.proxyManager.handleEvent(payload as ProxyEvent);
+        break;
+      case ThreeEventTypes.AxisSelected:
+        this.sceneManager.setAxis(payload as any);
         break;
       default:
         throw new Error(`Unknown event type: ${type}`);
