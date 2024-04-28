@@ -2,7 +2,7 @@ module;
 
 export module decision.team_objective:build_up_selector;
 
-import decision.entities;
+import decision.world;
 import decision.utility;
 
 export namespace decision {

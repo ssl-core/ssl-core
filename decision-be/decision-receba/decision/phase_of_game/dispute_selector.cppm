@@ -4,7 +4,7 @@ module;
 
 export module decision.phase_of_game:dispute_selector;
 
-import decision.entities;
+import decision.world;
 import decision.utility;
 import decision.team_objective;
 

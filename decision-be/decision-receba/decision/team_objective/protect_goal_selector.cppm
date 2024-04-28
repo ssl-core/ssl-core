@@ -2,7 +2,7 @@ module;
 
 export module decision.team_objective:protect_goal_selector;
 
-import decision.entities;
+import decision.world;
 import decision.utility;
 
 export namespace decision {

@@ -7,5 +7,5 @@ robocin_cpp_library(
        defensive_transition_selector.cppm
        dispute_selector.cppm
        set_pieces_selector.cppm
-  DEPS entities utility team_objective
+  DEPS world utility team_objective
 )

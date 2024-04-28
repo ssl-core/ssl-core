@@ -10,5 +10,5 @@ robocin_cpp_library(
        high_press_selector.cppm
        possession_selector.cppm
        protect_goal_selector.cppm
-  DEPS utility entities
+  DEPS utility world
 )
