@@ -34,17 +34,6 @@ class BehaviorTree<R(Ts...)> {
   class TaskNode;           // inherits from AbstractNode
   class ValidationTaskNode; // inherits from TaskNode (used with selector nodes for validation-only)
 
-  template <std::derived_from<AbstractNode> Node>
-  class Rootable : public Node {
-    friend class BehaviorTree;
-
-   public:
-    [[nodiscard]] bool abort([[maybe_unused]] Ts... ts) const final { return false; }
-
-   private:
-    static consteval bool is_root() { return true; } // NOLINT(*naming*)
-  };
-
   class DebugNode;
 
   // TODO(joseviccruz): Replace pair result_type with std::expected<Status, Result>.
@@ -61,7 +50,6 @@ class BehaviorTree<R(Ts...)> {
   ~BehaviorTree() = default;
 
   template <std::derived_from<AbstractNode> T>
-    requires(T::is_root())
   explicit BehaviorTree(std::unique_ptr<T> root) : root_(std::move(root)) {
     root_->build();
   }
