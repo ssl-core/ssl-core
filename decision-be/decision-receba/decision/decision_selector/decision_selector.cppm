@@ -4,6 +4,7 @@ module;
 
 export module decision.decision_selector;
 
+import decision.world;
 import decision.utility;
 import decision.phase_of_game;
 
@@ -11,7 +12,7 @@ export namespace decision {
 
 class DecisionSelector : public DecisionBehaviorTree::SelectorNode {
  public:
-  bool abort() { return false; }
+  bool abort(const World& world) const override { return false; }
 
   void build() override {
     add(std::make_unique<InPossessionSelector>());
