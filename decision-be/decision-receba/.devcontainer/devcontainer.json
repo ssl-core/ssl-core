@@ -34,7 +34,6 @@
         "redhat.vscode-yaml"
       ],
       "settings": {
-        "explorer.sortOrder": "type",
         "files.associations": {
           "*.cppm": "cpp",
           "*.ixx": "cpp"
