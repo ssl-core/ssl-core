@@ -60,6 +60,7 @@ class ThreeSceneManager {
     this.listenMouseEvents();
     this.listenChannel();
     this.resize(0, 0, canvas.width, canvas.height);
+    this.loop();
   }
 
   public render(frame: Frame) {
@@ -67,17 +68,11 @@ class ThreeSceneManager {
       return;
     }
 
-    this.isRendering = true;
+    const { field, robots, balls } = frame;
 
-    self.requestAnimationFrame(() => {
-      const { field, robots, balls } = frame;
-
-      this.renderField(field);
-      this.renderRobots(robots);
-      this.renderBalls(balls);
-      this.update();
-      this.isRendering = false;
-    });
+    this.renderField(field);
+    this.renderRobots(robots);
+    this.renderBalls(balls);
   }
 
   public tick() {
@@ -97,7 +92,6 @@ class ThreeSceneManager {
     this.camera.updateProjectionMatrix();
     this.renderer.setSize(width, height, false);
     this.canvasDOM?.setSize({ top, left, width, height });
-    this.update();
   }
 
   public setAxis(axis: any) {
@@ -252,6 +246,18 @@ class ThreeSceneManager {
     };
 
     self.postMessage(syncMessage);
+  }
+
+  private loop() {
+    if (!this.renderer) {
+      throw new Error("Renderer not initialized");
+    }
+
+    this.renderer.setAnimationLoop(() => {
+      this.isRendering = true;
+      this.tick();
+      this.isRendering = false;
+    });
   }
 }
 
