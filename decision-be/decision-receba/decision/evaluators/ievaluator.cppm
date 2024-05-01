@@ -1,5 +1,7 @@
 export module decision.evaluators:ievaluator;
 
+import decision.world;
+
 export namespace decision {
 
 class IEvaluator {
@@ -14,7 +16,7 @@ class IEvaluator {
 
   virtual ~IEvaluator() = default;
 
-  virtual void run() = 0;
+  virtual void run(const World& world) = 0;
   virtual void reset() = 0;
 };
 
