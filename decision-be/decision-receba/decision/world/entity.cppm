@@ -4,7 +4,7 @@ module;
 
 #include <vector>
 
-export module decision.world:world_entity;
+export module decision.world:entity;
 
 import :robot;
 
