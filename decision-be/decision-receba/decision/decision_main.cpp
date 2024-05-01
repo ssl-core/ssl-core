@@ -5,9 +5,11 @@
 
 import decision.utility;
 import decision.decision_selector;
+import decision.game_plan;
 
 using decision::DecisionBehaviorTree;
 using decision::DecisionSelector;
+using decision::Coach;
 
 int main() {
   DecisionBehaviorTree tree{std::make_unique<DecisionSelector>()};
@@ -26,5 +28,10 @@ int main() {
 
   auto root = tree.debug();
   dfs_debug(*root);
+
+  Coach coach;
+  auto game_plan = coach.run({});
+  coach.reset();
+
   return 0;
 }
