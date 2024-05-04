@@ -70,3 +70,65 @@ macro(robocin_cpp_project_setup)
   endif ()
 
 endmacro()
+
+# additional mbed-os project setup
+# named parameters:
+#  TARGET: the microcontroller
+#  BUILD_TYPE: the cmake build type (default: CMAKE_BUILD_TYPE)
+#  TOOLCHAIN: the mbed-os toolchain
+macro(robocin_mbed_setup)
+  cmake_parse_arguments(
+    ARG                                  # prefix of output variables
+    ""                                   # list of names of the boolean arguments
+    "TARGET;BUILD_TYPE;TOOLCHAIN"      # list of names of mono-valued arguments
+    ""                                   # list of names of multi-valued arguments
+    ${ARGN}                              # arguments of the function to parse (ARGN contains all the arguments after the function name)
+  )
+  set(ROBOCIN_EMBEDDED_DEVELOPMENT TRUE CACHE INTERNAL "")
+
+  if (NOT ARG_TARGET)
+    message(FATAL_ERROR "robocin_mbed_setup: TARGET is required.")
+  endif ()
+  set(TARGET ${ARG_TARGET})
+  string(TOUPPER ${TARGET} TARGET)
+
+  set(BUILD_TYPE ${CMAKE_BUILD_TYPE})
+  if (ARG_BUILD_TYPE)
+    set(BUILD_TYPE ${ARG_BUILD_TYPE})
+  endif ()
+  string(TOLOWER ${BUILD_TYPE} BUILD_TYPE)
+
+  if (NOT ARG_TOOLCHAIN)
+    message(FATAL_ERROR "robocin_mbed_setup: TOOLCHAIN is required.")
+  endif ()
+  set(TOOLCHAIN ${ARG_TOOLCHAIN})
+  string(TOUPPER ${TOOLCHAIN} TOOLCHAIN)
+
+  set(MBED_BUILD_CONFIG_CMAKE_FILE "mbed_config.cmake")
+  set(MBED_TOOLS_CLI "mbed-tools")
+
+  if (NOT EXISTS "${CMAKE_CURRENT_BINARY_DIR}/${MBED_BUILD_CONFIG_CMAKE_FILE}")
+    message(STATUS "robocin_mbed_setup: generating required mbed-os files")
+    execute_process(
+      WORKING_DIRECTORY ${CMAKE_CURRENT_LIST_DIR}
+      COMMAND ${MBED_TOOLS_CLI} deploy
+      OUTPUT_QUIET
+    )
+
+    execute_process(
+      WORKING_DIRECTORY ${CMAKE_CURRENT_LIST_DIR}
+      COMMAND ${MBED_TOOLS_CLI} configure -m ${TARGET} -b ${BUILD_TYPE} -t ${TOOLCHAIN} -o ${CMAKE_CURRENT_BINARY_DIR}
+      OUTPUT_QUIET
+    )
+    message(STATUS "robocin_mbed_setup: mbed-os files generated successfully")
+  endif ()
+
+  set(MBED_PATH ${CMAKE_CURRENT_SOURCE_DIR}/mbed-os CACHE INTERNAL "")
+  set(MBED_CONFIG_PATH ${CMAKE_CURRENT_BINARY_DIR} CACHE INTERNAL "")
+
+  include(${MBED_PATH}/tools/cmake/app.cmake)
+
+  add_subdirectory(${MBED_PATH})
+
+  message(STATUS "Mbed OS configured: ${TARGET} - ${BUILD_TYPE} - ${TOOLCHAIN}")
+endmacro()

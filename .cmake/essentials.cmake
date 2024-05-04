@@ -42,6 +42,8 @@ endfunction()
 include(GNUInstallDirs) # provided by CMake
 
 ########################################################################################################################
+if (NOT ROBOCIN_EMBEDDED_DEVELOPMENT) ##################################################################################
+########################################################################################################################
 
 # find Threads package
 find_package(Threads REQUIRED)
@@ -107,6 +109,8 @@ find_package(ZeroMQ CONFIG REQUIRED HINTS "/usr/local/libzmq" "/opt/libzmq")
 find_package(cppzmq CONFIG REQUIRED HINTS "/usr/local/cppzmq" "/opt/cppzmq")
 message(STATUS "Using cppzmq: ${cppzmq_VERSION}")
 
+########################################################################################################################
+endif () ###############################################################################################################
 ########################################################################################################################
 
 # add cpp library
@@ -531,5 +535,17 @@ function(robocin_cpp_proto_library)
   )
 
 endfunction(robocin_cpp_proto_library)
+
+########################################################################################################################
+
+# Add mbed-os cpp executable
+# It wraps the robocin_cpp_executable call and add 'robocin_cpp_executable' at end
+function(robocin_mbed_cpp_executable)
+  cmake_parse_arguments(ARG "" "NAME" "" ${ARGN})
+
+  robocin_cpp_executable(${ARGN})
+
+  mbed_set_post_build(${ARG_NAME})
+endfunction(robocin_mbed_cpp_executable)
 
 ########################################################################################################################
