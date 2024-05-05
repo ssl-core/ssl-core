@@ -1,9 +1,10 @@
 import StatsJS from "three/examples/jsm/libs/stats.module.js";
 
 class Stats {
-  private statsjs = new StatsJS();
+  private statsjs: StatsJS;
 
   constructor(parent: ShadowRoot | HTMLElement) {
+    this.statsjs = new StatsJS();
     this.statsjs.dom.style.position = "absolute";
     this.statsjs.dom.style.top = "0px";
     parent.appendChild(this.statsjs.dom);

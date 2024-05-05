@@ -11,30 +11,31 @@ import {
   Vector2,
   Vector3,
 } from "three";
-import { OrbitControls } from "three/examples/jsm/Addons.js";
 
 import ThreeElementProxyReceiver from "../proxy/three-element-proxy-receiver";
 import ThreeSceneObjectPool from "./three-scene-object-pool";
 import ThreeBaseObject from "../objects/three-base-object";
 import Channels from "../../../../config/channels";
 import constants from "../../../../config/constants";
+import OrbitNavigation from "../lib/orbit-navigation";
 
 class ThreeSceneManager {
   private canvas: OffscreenCanvas | null;
   private canvasDOM: ThreeElementProxyReceiver | null;
   private renderer: WebGLRenderer | null;
+  private orbitNavigation: OrbitNavigation | null;
   private isRendering: boolean;
   private camera: PerspectiveCamera;
   private scene: Scene;
   private channel: BroadcastChannel;
   private pool: ThreeSceneObjectPool;
   private raycaster: Raycaster;
-  private orbitControls: OrbitControls | null;
 
   constructor() {
     this.canvas = null;
     this.canvasDOM = null;
     this.renderer = null;
+    this.orbitNavigation = null;
     this.isRendering = false;
     this.camera = new PerspectiveCamera();
     this.scene = new Scene();
@@ -45,7 +46,6 @@ class ThreeSceneManager {
       constants.numBalls
     );
     this.raycaster = new Raycaster();
-    this.orbitControls = null;
   }
 
   public initialize(
@@ -54,7 +54,7 @@ class ThreeSceneManager {
   ) {
     this.setCanvas(canvas, canvasDOM);
     this.setCameraPosition();
-    this.setOrbitControls();
+    this.setOrbitNavigation();
     this.setLighting();
     this.setGrid();
     this.listenMouseEvents();
@@ -95,17 +95,18 @@ class ThreeSceneManager {
   }
 
   public setAxis(axis: any) {
-    if (!this.orbitControls) {
-      throw new Error("OrbitControls not initialized");
+    if (!this.orbitNavigation) {
+      throw new Error("Orbit navigation not initialized");
     }
 
-    let distance = this.camera.position.distanceTo(this.orbitControls.target);
+    const target = this.orbitNavigation.getTarget();
+    const distance = this.camera.position.distanceTo(target);
     this.camera.position.copy(
       new Vector3(axis.direction.x, axis.direction.y, axis.direction.z)
         .multiplyScalar(distance)
-        .add(this.orbitControls.target)
+        .add(target)
     );
-    this.camera.lookAt(this.orbitControls.target);
+    this.camera.lookAt(target);
   }
 
   private update() {
@@ -114,6 +115,7 @@ class ThreeSceneManager {
     }
 
     this.renderer.render(this.scene, this.camera);
+    this.orbitNavigation?.update();
     this.sync();
   }
 
@@ -207,14 +209,18 @@ class ThreeSceneManager {
       if (intersects.length > 0) {
         const object = intersects[0].object.parent as ThreeBaseObject;
 
-        if (!object.isSelectable()) {
+        if (!object.isSelectable() || !this.orbitNavigation) {
           return;
         }
 
         object.select();
+        this.orbitNavigation.follow(object);
+      } else {
+        if (!this.orbitNavigation) {
+          return;
+        }
 
-        this.orbitControls!.target = object.position;
-        this.orbitControls!.update();
+        this.orbitNavigation.unfollow();
       }
     });
   }
@@ -225,18 +231,13 @@ class ThreeSceneManager {
     });
   }
 
-  private setOrbitControls() {
-    if (!this.renderer || !this.canvasDOM) {
+  private setOrbitNavigation() {
+    if (!this.canvasDOM) {
       throw new Error("Elements not initialized");
     }
 
-    // @ts-ignore
-    this.orbitControls = new OrbitControls(this.camera, this.canvasDOM);
-    this.orbitControls.target.set(0, 0, 0);
-    this.orbitControls.minDistance = 1;
-    this.orbitControls.maxDistance = 20;
-    this.orbitControls.enablePan = false;
-    this.orbitControls.update();
+    this.orbitNavigation = new OrbitNavigation(this.camera, this.canvasDOM);
+    this.orbitNavigation.initialize();
   }
 
   private sync() {
