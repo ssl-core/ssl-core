@@ -7,7 +7,7 @@ import OrientationGizmo from "./lib/orientation-gizmo";
 import Stats from "./lib/stats";
 
 class ThreeRenderEngine extends BaseRenderEngine {
-  private parentElement: HTMLElement;
+  private gui: HTMLElement;
   private canvas: HTMLCanvasElement;
   private worker: Worker;
   private observer: ResizeObserver | null;
@@ -17,19 +17,21 @@ class ThreeRenderEngine extends BaseRenderEngine {
   constructor(root: ShadowRoot) {
     super(root);
 
-    this.parentElement = root.host.parentElement!;
+    this.gui = document.createElement("div");
     this.canvas = document.createElement("canvas");
     this.worker = new ThreeWorker();
     this.observer = null;
-    this.orientationGizmo = new OrientationGizmo(this.root);
-    this.stats = new Stats(this.root);
+    this.orientationGizmo = new OrientationGizmo(this.gui);
+    this.stats = new Stats(this.gui);
   }
 
   public initialize() {
     this.appendCanvas();
+    this.appendGUI();
     this.initializeWorker();
     this.initializeOrientationGizmo();
     this.initializeStats();
+    this.enablePointerEvents();
     this.addResizeObserver();
     this.listenSyncMessages();
   }
@@ -47,6 +49,17 @@ class ThreeRenderEngine extends BaseRenderEngine {
     this.canvas.width = this.parentElement.clientWidth;
     this.canvas.height = this.parentElement.clientHeight;
     this.root.appendChild(this.canvas);
+  }
+
+  private appendGUI() {
+    this.gui.style.position = "absolute";
+    this.gui.style.top = "0";
+    this.gui.style.left = "0";
+    this.gui.style.width = "100%";
+    this.gui.style.height = "100%";
+    this.gui.style.zIndex = "100";
+    this.gui.style.pointerEvents = "none";
+    this.root.appendChild(this.gui);
   }
 
   private initializeWorker() {
@@ -101,6 +114,14 @@ class ThreeRenderEngine extends BaseRenderEngine {
         this.stats.update();
       }
     );
+  }
+
+  private enablePointerEvents() {
+    for (const child of this.gui.children) {
+      if (child instanceof HTMLElement) {
+        child.style.pointerEvents = "auto";
+      }
+    }
   }
 }
 

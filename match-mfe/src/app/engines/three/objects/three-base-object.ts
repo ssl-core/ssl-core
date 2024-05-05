@@ -24,6 +24,7 @@ abstract class ThreeBaseObject extends Group {
     }
 
     this.selected = true;
+    this.onSelect();
   }
 
   public deselect() {
@@ -32,7 +33,12 @@ abstract class ThreeBaseObject extends Group {
     }
 
     this.selected = false;
+    this.onDeselect();
   }
+
+  protected onSelect() {}
+
+  protected onDeselect() {}
 
   public abstract update(): void;
   protected abstract addMeshes(): void;

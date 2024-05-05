@@ -167,6 +167,7 @@ class ThreeSceneManager {
   }
 
   private setCameraPosition() {
+    this.camera.up.set(0, 0, 1);
     this.camera.position.set(0, 0, 12);
     this.camera.lookAt(0, 0, 0);
   }
@@ -201,25 +202,22 @@ class ThreeSceneManager {
 
       const selectableObjects = this.pool.getSelectableObjects();
       const intersects = this.raycaster.intersectObjects(selectableObjects);
+      const intersected =
+        intersects.length > 0 &&
+        (intersects[0].object.parent as ThreeBaseObject);
 
       for (const object of selectableObjects) {
         object.deselect();
       }
 
-      if (intersects.length > 0) {
-        const object = intersects[0].object.parent as ThreeBaseObject;
+      if (!this.orbitNavigation) {
+        return;
+      }
 
-        if (!object.isSelectable() || !this.orbitNavigation) {
-          return;
-        }
-
-        object.select();
-        this.orbitNavigation.follow(object);
+      if (intersected && intersected.isSelectable()) {
+        intersected.select();
+        this.orbitNavigation.follow(intersected);
       } else {
-        if (!this.orbitNavigation) {
-          return;
-        }
-
         this.orbitNavigation.unfollow();
       }
     });

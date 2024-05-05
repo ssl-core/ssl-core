@@ -83,8 +83,8 @@ class OrientationGizmo {
     this.selectedAxis = null;
     this.canvas = document.createElement("canvas");
     this.canvas.style.position = "absolute";
-    this.canvas.style.top = "0";
-    this.canvas.style.right = "0";
+    this.canvas.style.top = "0.5rem";
+    this.canvas.style.right = "0.5rem";
     this.context = this.canvas.getContext("2d")!;
     this.canvas.width = OrientationGizmo.options.size;
     this.canvas.height = OrientationGizmo.options.size;

@@ -29,6 +29,12 @@ const constants = {
     color: "#224725",
   },
   robot: {
+    selection: {
+      radius: 0.14,
+      color: "#FFFFFF",
+      opacity: 0.75,
+      segments: 48,
+    },
     chassis: {
       radius: 0.09,
       height: 0.147,
