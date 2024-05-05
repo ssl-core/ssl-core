@@ -28,7 +28,7 @@ mkdir -p "${TMP_DIR}"
 git clone --branch "v${VERSION}" --depth 1 --shallow-submodules "https://github.com/ninja-build/ninja.git" -o ninja "${TMP_DIR}"
 
 pushd "${TMP_DIR}" || exit 1
-cmake -B build      
+cmake -B build
 cmake --build build -j "$(nproc)"
 mv -f "build/ninja" "${DEST_DIR}/ninja"
 popd || exit 1
