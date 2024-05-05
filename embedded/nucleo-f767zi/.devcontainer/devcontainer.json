@@ -60,17 +60,26 @@
         "cmake.showSystemKits": false,
         "cmake.ignoreKitEnv": true,
         "cmake.options.advanced": {
-          "build": {
-            "statusBarVisibility": "visible",
-            "projectStatusVisibility": "visible"
+          "workflow": {
+            "statusBarVisibility": "hidden"
+          },
+          "kit": {
+            "statusBarVisibility": "hidden"
+          },
+          "cpack": {
+            "statusBarVisibility": "hidden"
+          },
+          "launchTarget": {
+            "statusBarVisibility": "hidden"
           },
           "launch": {
-            "statusBarVisibility": "hidden",
-            "projectStatusVisibility": "hidden"
+            "statusBarVisibility": "hidden"
           },
           "debug": {
-            "statusBarVisibility": "hidden",
-            "projectStatusVisibility": "hidden"
+            "statusBarVisibility": "hidden"
+          },
+          "build": {
+            "statusBarVisibility": "visible"
           }
         },
         // Code Spell Checker Settings
