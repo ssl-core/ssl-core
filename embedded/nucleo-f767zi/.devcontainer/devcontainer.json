@@ -1,7 +1,7 @@
 {
   "name": "C++",
   "build": {
-    "context": "./../..",
+    "context": "./../../..",
     "dockerfile": "Dockerfile"
   },
   "runArgs": [
@@ -57,19 +57,20 @@
         "cmake.buildDirectory": "${workspaceFolder}/build",
         "cmake.cmakePath": "cmake",
         "cmake.generator": "Ninja",
-        "cmake.showSystemKits": true,
-        "cmake.additionalKits": [
-          "${workspaceFolder}/../.vscode/cmake-kits.json"
-        ],
+        "cmake.showSystemKits": false,
+        "cmake.ignoreKitEnv": true,
         "cmake.options.advanced": {
           "build": {
-            "statusBarVisibility": "visible"
+            "statusBarVisibility": "visible",
+            "projectStatusVisibility": "visible"
           },
           "launch": {
-            "statusBarVisibility": "visible"
+            "statusBarVisibility": "hidden",
+            "projectStatusVisibility": "hidden"
           },
           "debug": {
-            "statusBarVisibility": "visible"
+            "statusBarVisibility": "hidden",
+            "projectStatusVisibility": "hidden"
           }
         },
         // Code Spell Checker Settings

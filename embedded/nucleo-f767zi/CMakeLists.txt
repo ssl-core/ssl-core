@@ -2,14 +2,14 @@
 
 cmake_minimum_required(VERSION 3.29)
 
-list(APPEND CMAKE_MODULE_PATH ${CMAKE_CURRENT_LIST_DIR}/../.cmake)
+list(APPEND CMAKE_MODULE_PATH ${CMAKE_CURRENT_LIST_DIR}/../../.cmake)
 
 include(project)
 
 ########################################################################################################################
 
 robocin_mbed_setup(TARGET NUCLEO_F767ZI TOOLCHAIN GCC_ARM)
-project(embedded LANGUAGES CXX)
+project(nucleo-f767zi LANGUAGES CXX)
 
 ########################################################################################################################
 
