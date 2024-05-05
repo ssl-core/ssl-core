@@ -42,19 +42,19 @@ endfunction()
 include(GNUInstallDirs) # provided by CMake
 
 ########################################################################################################################
-if (NOT ROBOCIN_EMBEDDED_DEVELOPMENT) ##################################################################################
-########################################################################################################################
 
 # find Threads package
-find_package(Threads REQUIRED)
+find_package(Threads QUIET)
 
 ########################################################################################################################
 
 # Find abseil installation
 # It enable the following variables:
 #   absl::...                             the abseil libraries (https://abseil.io/docs/cpp/guides)
-find_package(absl CONFIG REQUIRED HINTS "/usr/local/absl" "/opt/absl" "/usr/local/protobuf" "/opt/protobuf")
-message(STATUS "Using absl: ${absl_VERSION}")
+find_package(absl CONFIG QUIET HINTS "/usr/local/absl" "/opt/absl" "/usr/local/protobuf" "/opt/protobuf")
+if (absl_FOUND)
+  message(STATUS "Using absl: ${absl_VERSION}")
+endif ()
 
 ########################################################################################################################
 
@@ -67,12 +67,14 @@ message(STATUS "Using absl: ${absl_VERSION}")
 
 # find GTest installation
 # looks for GTest cmake config files installed by GTest's cmake installation.
-find_package(GTest CONFIG REQUIRED HINTS "/usr/local/googletest" "/opt/googletest")
-message(STATUS "Using GTest: ${GTest_VERSION}")
+find_package(GTest CONFIG QUIET HINTS "/usr/local/googletest" "/opt/googletest")
+if (GTest_FOUND)
+  message(STATUS "Using GTest: ${GTest_VERSION}")
 
-include(GoogleTest) # provided by CMake
+  include(GoogleTest) # provided by CMake
 
-enable_testing() # enable testing for the entire project
+  enable_testing() # enable testing for the entire project
+endif ()
 
 ########################################################################################################################
 
@@ -83,8 +85,10 @@ enable_testing() # enable testing for the entire project
 
 # find Google Benchmark installation
 # looks for Google Benchmark cmake config files installed by Google Benchmark's cmake installation.
-find_package(benchmark CONFIG HINTS "/usr/local/benchmark" "/opt/benchmark")
-message(STATUS "Using Google Benchmark: ${benchmark_VERSION}")
+find_package(benchmark CONFIG QUIET HINTS "/usr/local/benchmark" "/opt/benchmark")
+if (benchmark_FOUND)
+  message(STATUS "Using Google Benchmark: ${benchmark_VERSION}")
+endif ()
 
 ########################################################################################################################
 
@@ -93,9 +97,11 @@ message(STATUS "Using Google Benchmark: ${benchmark_VERSION}")
 # It enable the following variables:
 #   protobuf::libprotobuf                 the protobuf library
 #   $<TARGET_FILE:protobuf::protoc>       the protobuf compiler
-find_package(utf8_range CONFIG HINTS "/usr/local/protobuf" "/opt/protobuf") # protobuf dependency.
-find_package(Protobuf CONFIG REQUIRED HINTS "/usr/local/protobuf" "/opt/protobuf")
-message(STATUS "Using Protobuf: ${Protobuf_VERSION}")
+find_package(utf8_range CONFIG QUIET HINTS "/usr/local/protobuf" "/opt/protobuf") # protobuf dependency.
+find_package(Protobuf CONFIG QUIET HINTS "/usr/local/protobuf" "/opt/protobuf")
+if (Protobuf_FOUND)
+  message(STATUS "Using Protobuf: ${Protobuf_VERSION}")
+endif ()
 
 ########################################################################################################################
 
@@ -105,12 +111,12 @@ message(STATUS "Using Protobuf: ${Protobuf_VERSION}")
 
 # Find cppzmq installation
 # Looks for cppzmq cmake config files installed by cppzmq's cmake installation.
-find_package(ZeroMQ CONFIG REQUIRED HINTS "/usr/local/libzmq" "/opt/libzmq")
-find_package(cppzmq CONFIG REQUIRED HINTS "/usr/local/cppzmq" "/opt/cppzmq")
-message(STATUS "Using cppzmq: ${cppzmq_VERSION}")
+find_package(ZeroMQ CONFIG QUIET HINTS "/usr/local/libzmq" "/opt/libzmq")
+find_package(cppzmq CONFIG QUIET HINTS "/usr/local/cppzmq" "/opt/cppzmq")
+if (cppzmq_FOUND)
+  message(STATUS "Using cppzmq: ${cppzmq_VERSION}")
+endif ()
 
-########################################################################################################################
-endif () ###############################################################################################################
 ########################################################################################################################
 
 # add cpp library
@@ -205,6 +211,11 @@ function(robocin_cpp_library)
   endif ()
 
   # installing steps:
+  if (ROBOCIN_CROSS_COMPILING)
+    # installation is not allowed when cross compiling
+    return()
+  endif ()
+
   #  - include directories to be used by other projects
   target_include_directories(${ARG_NAME} INTERFACE
           $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}>
@@ -276,6 +287,10 @@ function(robocin_cpp_test)
           ${ARGN}                                                         # arguments of the function to parse (ARGN contains all the arguments after the function name)
   )
 
+  if (ROBOCIN_CROSS_COMPILING)
+    message(FATAL_ERROR "robocin_cpp_test: unit testing support is not available for cross compiling.")
+  endif ()
+
   # check if at least one source file is given with suffix '_test.cpp'
   if (NOT ARG_SRCS)
     message(FATAL_ERROR "robocin_cpp_test: no source files given.")
@@ -337,6 +352,10 @@ function(robocin_cpp_benchmark_test)
           "HDRS;SRCS;MODS;DEPS;MACROS;COMPILE_OPTIONS;COMPILE_FEATURES"   # list of names of multi-valued arguments
           ${ARGN}                                                         # arguments of the function to parse (ARGN contains all the arguments after the function name)
   )
+
+  if (ROBOCIN_CROSS_COMPILING)
+    message(FATAL_ERROR "robocin_cpp_benchmark_test: benchmark testing support is not available for cross compiling.")
+  endif ()
 
   # check if at least one source file is given with suffix '_benchmark.cpp'
   if (NOT ARG_SRCS)
@@ -435,6 +454,10 @@ function(robocin_cpp_executable)
     target_compile_features(${ARG_NAME} ${ARG_COMPILE_FEATURES})
   endif ()
 
+  if (ROBOCIN_MBED_PROJECT)
+    mbed_set_post_build(${ARG_NAME})
+  endif ()
+
 endfunction(robocin_cpp_executable)
 
 ########################################################################################################################
@@ -455,6 +478,10 @@ function(robocin_cpp_proto_library)
           "PROTOS;DEPS;MACROS;COMPILE_OPTIONS;COMPILE_FEATURES"   # list of names of multi-valued arguments
           ${ARGN}                                                 # arguments of the function to parse
   )
+
+  if (ROBOCIN_CROSS_COMPILING)
+    message(FATAL_ERROR "robocin_cpp_proto_library: proto library support is not available for cross compiling.")
+  endif ()
 
   # if there isn't at least one proto file, then the library is not created
   if (NOT ARG_PROTOS)
@@ -535,17 +562,5 @@ function(robocin_cpp_proto_library)
   )
 
 endfunction(robocin_cpp_proto_library)
-
-########################################################################################################################
-
-# Add mbed-os cpp executable
-# It wraps the robocin_cpp_executable call and add 'robocin_cpp_executable' at end
-function(robocin_mbed_cpp_executable)
-  cmake_parse_arguments(ARG "" "NAME" "" ${ARGN})
-
-  robocin_cpp_executable(${ARGN})
-
-  mbed_set_post_build(${ARG_NAME})
-endfunction(robocin_mbed_cpp_executable)
 
 ########################################################################################################################
