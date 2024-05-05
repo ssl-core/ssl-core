@@ -22,6 +22,10 @@ _The base image for C++ development with `ssl-core`_.
 
 _The base image for Python development with `ssl-core`_.
 
+### [ssl-core-cpp-mbed-base.Dockerfile](ssl-core-cpp-mbed-base.Dockerfile)
+
+_The base image for Embedded development with `ssl-core`_.
+
 ## Scripts
 
 ### [benchmark](scripts/benchmark.sh)
