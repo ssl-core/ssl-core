@@ -2,12 +2,12 @@ FROM robocin/ssl-core-cpp-base:latest
 
 ARG MBED_OS_VER=mbed-os-6.17.0
 
-RUN apt install python3 python3-pip -y
+RUN apt install python3 python3-pip python-is-python3 -y
 
 # ------------------------------------------------------------------------------
 # Install Python modules (which are not included in requirements.txt)
 RUN set -x \
-  && pip3 install -U \
+  && pip install -U \
   mbed-cli \
   mbed-tools \
   && : # last line
@@ -16,34 +16,29 @@ RUN set -x \
 WORKDIR /tmp/
 RUN set -x \
   && wget -q https://github.com/ARMmbed/mbed-os/raw/${MBED_OS_VER}/requirements.txt \
-  && pip3 install -r requirements.txt  \
+  && pip install -r requirements.txt  \
   && rm requirements.txt \
   && : # last line
 
 # ------------------------------------------------------------------------------
 # Install arm-none-eabi-gcc
-WORKDIR /opt/mbed-os-toolchain
+WORKDIR /tmp/
 RUN set -x \
   && [ "$(uname -m)" = "aarch64" ] && \
   TARBALL="arm-gnu-toolchain-13.2.rel1-aarch64-arm-none-eabi.tar.xz" || \
   TARBALL="arm-gnu-toolchain-13.2.rel1-x86_64-arm-none-eabi.tar.xz" \
   && wget -q https://developer.arm.com/-/media/Files/downloads/gnu/13.2.rel1/binrel/${TARBALL} \
   && tar -xf ${TARBALL} \
-  && mv $(find . -maxdepth 1 -type d -regex '.*arm-none-eabi.*') arm-none-eabi \
+  && rsync -av --remove-source-files $(find . -maxdepth 1 -type d -regex '.*arm-none-eabi.*')/ /usr/local/ \
   && rm ${TARBALL} \
   && : # last line
 
 # ------------------------------------------------------------------------------
 # Configure mbed build system
 RUN set -x \
-  && mbed config -G GCC_ARM_PATH /opt/mbed-os-toolchain/arm-none-eabi/bin/ \
+  && mbed config -G GCC_ARM_PATH /usr/local/bin/ \
   && mbed toolchain -G -s GCC_ARM \
   && : # last line
-
-# ------------------------------------------------------------------------------
-# Configure environment variables
-ENV MBED_GCC_ARM_PATH=/opt/mbed-os-toolchain/arm-none-eabi/bin/
-ENV PATH="${PATH}:${MBED_GCC_ARM_PATH}"
 
 # ------------------------------------------------------------------------------
 # Display, check and save environment settings

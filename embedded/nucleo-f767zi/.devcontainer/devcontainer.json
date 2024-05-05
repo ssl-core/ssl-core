@@ -51,7 +51,7 @@
         "clangd.path": "clangd",
         "clangd.checkUpdates": false,
         "clangd.arguments": [
-          "--query-driver=/opt/mbed-os-toolchain/arm-none-eabi/bin/arm-none-eabi-g++" // TODO: move arm-none-eabi to usr/local/
+          "--query-driver=/usr/local/bin/arm-none-eabi-g++"
         ],
         // CMake Settings
         "cmake.buildDirectory": "${workspaceFolder}/build",

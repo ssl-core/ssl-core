@@ -108,7 +108,7 @@ macro(robocin_mbed_setup)
   set(MBED_TOOLS_CLI "mbed-tools")
 
   if (NOT EXISTS "${CMAKE_CURRENT_BINARY_DIR}/${MBED_BUILD_CONFIG_CMAKE_FILE}")
-    message(STATUS "robocin_mbed_setup: generating required mbed-os files")
+    message(STATUS "Generating required Mbed OS files...")
     execute_process(
       WORKING_DIRECTORY ${CMAKE_CURRENT_LIST_DIR}
       COMMAND ${MBED_TOOLS_CLI} deploy
@@ -120,7 +120,7 @@ macro(robocin_mbed_setup)
       COMMAND ${MBED_TOOLS_CLI} configure -m ${TARGET} -b ${BUILD_TYPE} -t ${TOOLCHAIN} -o ${CMAKE_CURRENT_BINARY_DIR}
       OUTPUT_QUIET
     )
-    message(STATUS "robocin_mbed_setup: mbed-os files generated successfully")
+    message(STATUS "Mbed OS files generated successfully.")
   endif ()
 
   set(MBED_PATH ${CMAKE_CURRENT_SOURCE_DIR}/mbed-os CACHE INTERNAL "")
