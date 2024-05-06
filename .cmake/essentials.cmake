@@ -119,6 +119,10 @@ endif ()
 # Find cppzmq installation
 # Looks for cppzmq cmake config files installed by cppzmq's cmake installation.
 find_package(ZeroMQ CONFIG QUIET HINTS "/usr/local/libzmq" "/opt/libzmq")
+if (ZeroMQ_FOUND)
+  message(STATUS "Using ZeroMQ: ${ZeroMQ_VERSION}")
+endif ()
+
 find_package(cppzmq CONFIG QUIET HINTS "/usr/local/cppzmq" "/opt/cppzmq")
 if (cppzmq_FOUND)
   message(STATUS "Using cppzmq: ${cppzmq_VERSION}")
