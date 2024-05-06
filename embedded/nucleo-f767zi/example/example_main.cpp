@@ -8,6 +8,6 @@
 // mbedflash simple -i ${BINARY} --target_id ${TARGET_ID} // flash
 
 int main() {
-  example::println("Hello, {}-{}!", "nucleo", "f767zi");
+  robocin::println("Hello, {}-{}!", "nucleo", "f767zi");
   return 0;
 }

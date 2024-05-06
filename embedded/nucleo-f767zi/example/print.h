@@ -21,7 +21,7 @@ using [[deprecated("use 'std::println' instead.")]] std::println;
 #include <cstdio>
 #include <format>
 
-namespace example {
+namespace robocin {
 
 template <class... Args>
 void print(std::FILE* stream, std::format_string<Args...> fmt, Args&&... args) {
@@ -45,7 +45,7 @@ void println(std::format_string<Args...> fmt, Args&&... args) {
   std::fputc('\n', stdout);
 }
 
-} // namespace example
+} // namespace robocin
 
 #endif
 
