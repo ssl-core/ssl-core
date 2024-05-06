@@ -74,7 +74,7 @@ endmacro()
 # additional mbed-os project setup
 # named parameters:
 #  TARGET: the microcontroller
-#  BUILD_TYPE: the cmake build type (default: CMAKE_BUILD_TYPE)
+#  BUILD_TYPE: the microcontroller dependencies build type (default: CMAKE_BUILD_TYPE)
 #  TOOLCHAIN: the mbed-os toolchain
 macro(robocin_mbed_setup)
   cmake_parse_arguments(
@@ -84,8 +84,7 @@ macro(robocin_mbed_setup)
     ""                                   # list of names of multi-valued arguments
     ${ARGN}                              # arguments of the function to parse (ARGN contains all the arguments after the function name)
   )
-  set(ROBOCIN_CROSS_COMPILING TRUE CACHE INTERNAL "")
-  set(ROBOCIN_MBED_PROJECT TRUE CACHE INTERNAL "")
+  set(ROBOCIN_EMBEDDED_CROSS_COMPILING TRUE CACHE INTERNAL "")
 
   if (NOT ARG_TARGET)
     message(FATAL_ERROR "robocin_mbed_setup: TARGET is required.")

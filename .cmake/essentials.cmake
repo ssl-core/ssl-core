@@ -222,7 +222,7 @@ function(robocin_cpp_library)
   endif ()
 
   # installing steps:
-  if (ROBOCIN_CROSS_COMPILING)
+  if (ROBOCIN_EMBEDDED_CROSS_COMPILING)
     # installation is not allowed when cross compiling
     return()
   endif ()
@@ -298,7 +298,7 @@ function(robocin_cpp_test)
           ${ARGN}                                                         # arguments of the function to parse (ARGN contains all the arguments after the function name)
   )
 
-  if (ROBOCIN_CROSS_COMPILING)
+  if (ROBOCIN_EMBEDDED_CROSS_COMPILING)
     message(FATAL_ERROR "robocin_cpp_test: unit testing support is not available for cross compiling.")
   endif ()
 
@@ -364,7 +364,7 @@ function(robocin_cpp_benchmark_test)
           ${ARGN}                                                         # arguments of the function to parse (ARGN contains all the arguments after the function name)
   )
 
-  if (ROBOCIN_CROSS_COMPILING)
+  if (ROBOCIN_EMBEDDED_CROSS_COMPILING)
     message(FATAL_ERROR "robocin_cpp_benchmark_test: benchmark testing support is not available for cross compiling.")
   endif ()
 
@@ -465,7 +465,7 @@ function(robocin_cpp_executable)
     target_compile_features(${ARG_NAME} ${ARG_COMPILE_FEATURES})
   endif ()
 
-  if (ROBOCIN_MBED_PROJECT)
+  if (ROBOCIN_EMBEDDED_CROSS_COMPILING)
     mbed_set_post_build(${ARG_NAME})
   endif ()
 
@@ -490,7 +490,7 @@ function(robocin_cpp_proto_library)
           ${ARGN}                                                 # arguments of the function to parse
   )
 
-  if (ROBOCIN_CROSS_COMPILING)
+  if (ROBOCIN_EMBEDDED_CROSS_COMPILING)
     message(FATAL_ERROR "robocin_cpp_proto_library: proto library support is not available for cross compiling.")
   endif ()
 
