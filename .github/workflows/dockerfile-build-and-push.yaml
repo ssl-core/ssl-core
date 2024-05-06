@@ -61,3 +61,4 @@ jobs:
           file: ${{ github.event.inputs.full-name }}
           push: true
           tags: "${{ secrets.DOCKER_HUB_ID }}/${{ env.file-name }}:${{ env.tag-name }}"
+          platforms: linux/amd64,linux/arm64
