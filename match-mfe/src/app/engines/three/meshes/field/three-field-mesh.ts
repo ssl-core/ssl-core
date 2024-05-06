@@ -10,6 +10,7 @@ class ThreeFieldMesh extends ThreeBaseMesh {
 
   constructor(length?: number, width?: number, boundary?: number) {
     super();
+    this.receiveShadow = true;
     this.length = length || 0;
     this.width = width || 0;
     this.boundary = boundary || 0;

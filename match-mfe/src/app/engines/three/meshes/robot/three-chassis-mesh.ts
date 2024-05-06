@@ -6,6 +6,8 @@ import constants from "../../../../../config/constants";
 class ThreeChassisMesh extends ThreeBaseMesh {
   constructor() {
     super();
+    this.castShadow = true;
+
     this.buildMesh();
   }
 
@@ -21,6 +23,7 @@ class ThreeChassisMesh extends ThreeBaseMesh {
   protected buildMaterial() {
     return new MeshPhongMaterial({
       color: constants.robot.chassis.color,
+      shininess: 10,
       fog: false,
     });
   }

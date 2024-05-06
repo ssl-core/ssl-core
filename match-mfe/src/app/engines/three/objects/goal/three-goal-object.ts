@@ -92,6 +92,7 @@ class ThreeGoalObject extends ThreeBaseObject {
     );
     const material = new MeshPhongMaterial({
       color: constants.field.goal.color,
+      fog: false,
     });
 
     return new Mesh(geometry, material);

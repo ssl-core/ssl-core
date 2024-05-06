@@ -26,7 +26,7 @@ const constants = {
       thickness: 0.02,
       color: "#000000",
     },
-    color: "#224725",
+    color: "#04451F",
   },
   robot: {
     selection: {

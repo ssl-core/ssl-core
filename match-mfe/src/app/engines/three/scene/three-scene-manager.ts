@@ -1,6 +1,5 @@
 import {
   Color,
-  HemisphereLight,
   DirectionalLight,
   PerspectiveCamera,
   Scene,
@@ -10,6 +9,9 @@ import {
   Raycaster,
   Vector2,
   Vector3,
+  SRGBColorSpace,
+  AmbientLight,
+  PCFSoftShadowMap,
 } from "three";
 
 import ThreeElementProxyReceiver from "../proxy/three-element-proxy-receiver";
@@ -122,18 +124,18 @@ class ThreeSceneManager {
   private setLighting() {
     this.scene.background = new Color(constants.background);
 
-    const directionalLight = new DirectionalLight("#FFFFFF", 8);
-    directionalLight.position.set(-1, 2, 4).normalize();
-    directionalLight.lookAt(0, 0, 0);
-    this.scene.add(directionalLight);
+    const ambientLight = new AmbientLight("#FFFFFF", 2);
+    this.scene.add(ambientLight);
 
-    const light = new HemisphereLight("#FFFFFF", "#080808", 4.5);
-    light.position.set(-1, 2, 4);
-    this.scene.add(light);
+    const directionalLight = new DirectionalLight("#FFFFFF", 12);
+    directionalLight.position.set(0, 0, 8).normalize();
+    directionalLight.lookAt(0, 0, 0);
+    directionalLight.castShadow = true;
+    this.scene.add(directionalLight);
   }
 
   private setGrid() {
-    const fog = new Fog(constants.background, 4, 40);
+    const fog = new Fog(constants.background, 4, 36);
     this.scene.fog = fog;
 
     const grid = new GridHelper(200, 200, 0xffffff, 0xffffff);
@@ -180,8 +182,13 @@ class ThreeSceneManager {
     this.canvasDOM = canvasDOM;
     this.renderer = new WebGLRenderer({
       canvas,
+      powerPreference: "high-performance",
       antialias: true,
+      alpha: true,
     });
+    this.renderer.outputColorSpace = SRGBColorSpace;
+    this.renderer.shadowMap.enabled = true;
+    this.renderer.shadowMap.type = PCFSoftShadowMap;
   }
 
   private listenMouseEvents() {
