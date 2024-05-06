@@ -1,12 +1,23 @@
 #ifndef ROBOCIN_NETWORK_ZMQ_SUBSCRIBER_SOCKET_H
 #define ROBOCIN_NETWORK_ZMQ_SUBSCRIBER_SOCKET_H
 
-#include <gtest/gtest_prod.h>
+#include "robocin/version/version.h"
+
 #include <span>
 #include <string>
 #include <string_view>
+
+#if defined(__robocin_lib_zmq) and __robocin_lib_zmq >= 202405L
+#if defined(__robocin_lib_cppzmq) and __robocin_lib_cppzmq >= 202405L
+
 #include <zmq.h>
 #include <zmq.hpp>
+
+#if defined(__robocin_lib_googletest)
+#include <gtest/gtest_prod.h>
+#else
+#define FRIEND_TEST(...)
+#endif
 
 namespace robocin {
 
@@ -66,5 +77,8 @@ class IZmqSubscriberSocket {
 using ZmqSubscriberSocket = IZmqSubscriberSocket<zmq::context_t, zmq::socket_t>;
 
 } // namespace robocin
+
+#endif
+#endif
 
 #endif // ROBOCIN_NETWORK_ZMQ_SUBSCRIBER_SOCKET_H
