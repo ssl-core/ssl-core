@@ -7,6 +7,7 @@ ARG   LLVM_VERSION='18'
 ARG  CMAKE_VERSION='3.29.0'
 ARG  NINJA_VERSION='1.11.1'
 ARG    BUF_VERSION='1.28.1'
+ARG   GRPC_VERSION='1.54.0'
 ARG LIBZMQ_VERSION='4.3.5'
 ARG CPPZMQ_VERSION='4.10.0'
 
@@ -20,11 +21,10 @@ RUN apt update && apt upgrade -y && \
   bash cmake.sh ${CMAKE_VERSION} && \
   bash ninja.sh ${NINJA_VERSION} && \
   \
-  bash       absl.sh '/usr/local' && \
   bash googletest.sh '/usr/local' && \
   bash  benchmark.sh '/usr/local' && \
   \
-  bash protobuf.sh '/usr/local' && \
+  bash grpc.sh ${GRPC_VERSION} '/usr/local' && \
   \
   bash libzmq.sh ${LIBZMQ_VERSION} '/usr/local' && \
   bash cppzmq.sh ${CPPZMQ_VERSION} '/usr/local' && \
