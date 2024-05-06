@@ -14,9 +14,10 @@ class OrientationGizmo {
     fontColor: "#151515",
     fontYAdjust: 0,
     colors: {
-      x: ["#f73c3c", "#942424"],
-      y: ["#6ccb26", "#417a17"],
-      z: ["#178cf0", "#0e5490"],
+      x: ["#fd5b5d", "#983738"],
+      y: ["#38e2b3", "#22886b"],
+      z: ["#2b99ff", "#1a5c99"],
+      other: ["#4c4c4c", "#323232"],
     },
   };
 
@@ -58,19 +59,22 @@ class OrientationGizmo {
         axis: "-x",
         direction: new Vector3(-1, 0, 0),
         size: OrientationGizmo.options.bubbleSizeSecondary,
-        color: OrientationGizmo.options.colors.x,
+        color: OrientationGizmo.options.colors.other,
+        line: OrientationGizmo.options.lineWidth,
       },
       {
         axis: "-y",
         direction: new Vector3(0, -1, 0),
         size: OrientationGizmo.options.bubbleSizeSecondary,
-        color: OrientationGizmo.options.colors.y,
+        color: OrientationGizmo.options.colors.other,
+        line: OrientationGizmo.options.lineWidth,
       },
       {
         axis: "-z",
         direction: new Vector3(0, 0, -1),
         size: OrientationGizmo.options.bubbleSizeSecondary,
-        color: OrientationGizmo.options.colors.z,
+        color: OrientationGizmo.options.colors.other,
+        line: OrientationGizmo.options.lineWidth,
       },
     ];
     this.center = new Vector3(
