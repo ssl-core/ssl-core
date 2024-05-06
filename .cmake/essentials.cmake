@@ -45,6 +45,9 @@ include(GNUInstallDirs) # provided by CMake
 
 # find Threads package
 find_package(Threads QUIET)
+if (Threads_FOUND)
+  message(STATUS "Using Threads: ${Threads_FOUND}")
+endif ()
 
 ########################################################################################################################
 
@@ -53,7 +56,7 @@ find_package(Threads QUIET)
 #   absl::...                             the abseil libraries (https://abseil.io/docs/cpp/guides)
 find_package(absl CONFIG QUIET HINTS "/usr/local/absl" "/opt/absl" "/usr/local/protobuf" "/opt/protobuf")
 if (absl_FOUND)
-  message(STATUS "Using absl: ${absl_VERSION}")
+  message(STATUS "Using absl: ${absl_DIR}")
 endif ()
 
 ########################################################################################################################
@@ -98,6 +101,10 @@ endif ()
 #   protobuf::libprotobuf                 the protobuf library
 #   $<TARGET_FILE:protobuf::protoc>       the protobuf compiler
 find_package(utf8_range CONFIG QUIET HINTS "/usr/local/protobuf" "/opt/protobuf") # protobuf dependency.
+if (utf8_range_FOUND)
+  message(STATUS "Using utf8_range: ${utf8_range_DIR}")
+endif ()
+
 find_package(Protobuf CONFIG QUIET HINTS "/usr/local/protobuf" "/opt/protobuf")
 if (Protobuf_FOUND)
   message(STATUS "Using Protobuf: ${Protobuf_VERSION}")
