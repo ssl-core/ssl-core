@@ -25,10 +25,13 @@ echo -e "\x1B[01;93mInstalling or updating ninja...\n\u001b[0m"
 rm -rf "${TMP_DIR}"
 mkdir -p "${TMP_DIR}"
 
-wget "https://github.com/ninja-build/ninja/releases/download/v${VERSION}/ninja-linux.zip" -O "${TMP_DIR}/ninja.zip"
-unzip "${TMP_DIR}/ninja.zip" -d "${TMP_DIR}/ninja-${VERSION}"
+git clone --branch "v${VERSION}" --depth 1 --shallow-submodules "https://github.com/ninja-build/ninja.git" -o ninja "${TMP_DIR}"
 
-mv -f "${TMP_DIR}/ninja-${VERSION}/ninja" "${DEST_DIR}/ninja"
+pushd "${TMP_DIR}" || exit 1
+cmake -B build
+cmake --build build -j "$(nproc)"
+mv -f "build/ninja" "${DEST_DIR}/ninja"
+popd || exit 1
 
 rm -rf "${TMP_DIR}"
 
