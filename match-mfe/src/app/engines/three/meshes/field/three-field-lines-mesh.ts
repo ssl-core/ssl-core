@@ -2,7 +2,7 @@ import {
   LineMaterial,
   LineSegments2,
   LineSegmentsGeometry,
-} from "three/examples/jsm/Addons.js";
+} from "three/addons";
 
 import constants from "../../../../../config/constants";
 
@@ -19,6 +19,7 @@ class ThreeFieldLinesMesh extends LineSegments2 {
     penaltyWidth?: number
   ) {
     super();
+    this.receiveShadow = true;
     this.length = length || 0;
     this.width = width || 0;
     this.penaltyDepth = penaltyDepth || 0;
@@ -55,9 +56,7 @@ class ThreeFieldLinesMesh extends LineSegments2 {
       ...this.centerCirclePoints(),
     ];
 
-    return new LineSegmentsGeometry()
-      .setPositions(points)
-      .translate(0, 0, constants.clippingEpsilon);
+    return new LineSegmentsGeometry().setPositions(points);
   }
 
   private buildMaterial() {
@@ -65,6 +64,12 @@ class ThreeFieldLinesMesh extends LineSegments2 {
       color: constants.field.line.color,
       linewidth: constants.field.line.width,
       worldUnits: true,
+      dashed: false,
+      alphaToCoverage: true,
+      toneMapped: false,
+      polygonOffset: true,
+      polygonOffsetFactor: 1,
+      polygonOffsetUnits: 1,
     });
   }
 

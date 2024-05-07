@@ -1,5 +1,6 @@
 const constants = {
   background: "#1B1C1F",
+  multiplyEpsilon: 1.001,
   epsilon: 0.001,
   clippingEpsilon: 0.01,
   numRobots: 22,
@@ -32,7 +33,7 @@ const constants = {
     selection: {
       radius: 0.14,
       color: "#FFFFFF",
-      opacity: 0.75,
+      opacity: 0.32,
       segments: 48,
     },
     chassis: {

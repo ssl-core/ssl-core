@@ -1,9 +1,8 @@
-import { PolarGridHelper } from "three";
-
 import ThreeBaseObject from "../three-base-object";
 import ThreeChassisMesh from "../../meshes/robot/three-chassis-mesh";
 import ThreeWheelMesh from "../../meshes/robot/three-wheel-mesh";
 import ThreeDotMesh from "../../meshes/robot/three-dot-mesh";
+import ThreeRobotSelectionMesh from "../../meshes/robot/three-robot-selection-mesh";
 import constants from "../../../../../config/constants";
 import { degreesToRadians } from "../../../../../utils/math";
 
@@ -12,7 +11,7 @@ class ThreeRobotObject extends ThreeBaseObject {
   private robotId: number;
   private robotColor: RobotColor;
   private dots: ThreeDotMesh[];
-  private grid: PolarGridHelper | null;
+  private selectionMesh: ThreeRobotSelectionMesh | null;
 
   constructor(robotId?: number, robotColor?: RobotColor) {
     super();
@@ -21,7 +20,7 @@ class ThreeRobotObject extends ThreeBaseObject {
     this.robotId = robotId || 0;
     this.robotColor = robotColor || "yellow";
     this.dots = [];
-    this.grid = null;
+    this.selectionMesh = null;
 
     this.addMeshes();
   }
@@ -59,40 +58,19 @@ class ThreeRobotObject extends ThreeBaseObject {
   }
 
   public onSelect() {
-    if (this.grid) {
+    if (!this.selectionMesh) {
       return;
     }
 
-    this.grid = new PolarGridHelper(
-      constants.robot.selection.radius,
-      0,
-      1,
-      constants.robot.selection.segments,
-      constants.robot.selection.color,
-      constants.robot.selection.color
-    );
-
-    if (this.grid.material instanceof Array === false) {
-      this.grid.material.opacity = constants.robot.selection.opacity;
-      this.grid.material.transparent = true;
-    }
-
-    this.grid.rotation.x = Math.PI / 2;
-    this.grid.position.z =
-      -constants.robot.chassis.height / 2 -
-      constants.robot.chassis.bottomHeight +
-      constants.clippingEpsilon;
-
-    this.add(this.grid);
+    this.selectionMesh.visible = true;
   }
 
   public onDeselect() {
-    if (!this.grid) {
+    if (!this.selectionMesh) {
       return;
     }
 
-    this.remove(this.grid);
-    this.grid = null;
+    this.selectionMesh.visible = false;
   }
 
   protected addMeshes() {
@@ -118,6 +96,11 @@ class ThreeRobotObject extends ThreeBaseObject {
       const wheel = new ThreeWheelMesh(angle);
       this.add(wheel);
     }
+
+    this.selectionMesh = new ThreeRobotSelectionMesh();
+    this.selectionMesh.position.set(0, 0, 0);
+    this.selectionMesh.visible = false;
+    this.add(this.selectionMesh);
   }
 
   private needsToRedraw(params: Robot) {

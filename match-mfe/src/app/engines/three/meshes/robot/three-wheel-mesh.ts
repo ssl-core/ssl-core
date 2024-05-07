@@ -33,8 +33,8 @@ class ThreeWheelMesh extends ThreeBaseMesh {
     const radius =
       constants.robot.chassis.radius - constants.robot.wheels.thickness / 2;
     const positionAngle = degreesToRadians(angle);
-    const x = radius * Math.cos(positionAngle);
-    const y = radius * Math.sin(positionAngle);
+    const x = radius * Math.cos(positionAngle) * constants.multiplyEpsilon;
+    const y = radius * Math.sin(positionAngle) * constants.multiplyEpsilon;
     const z =
       constants.robot.chassis.height / 2 -
       constants.robot.wheels.radius +

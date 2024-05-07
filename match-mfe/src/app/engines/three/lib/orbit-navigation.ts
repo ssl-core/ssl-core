@@ -1,5 +1,5 @@
 import { Camera, Vector3 } from "three";
-import { OrbitControls } from "three/examples/jsm/Addons.js";
+import { OrbitControls } from "three/addons";
 
 import ThreeElementProxyReceiver from "../proxy/three-element-proxy-receiver";
 import ThreeBaseObject from "../objects/three-base-object";

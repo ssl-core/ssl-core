@@ -185,6 +185,7 @@ class ThreeSceneManager {
       powerPreference: "high-performance",
       antialias: true,
       alpha: true,
+      logarithmicDepthBuffer: true,
     });
     this.renderer.outputColorSpace = SRGBColorSpace;
     this.renderer.shadowMap.enabled = true;
