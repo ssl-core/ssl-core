@@ -10,7 +10,7 @@ ARG MBED_OS_VERSION='mbed-os-6.17.0'
 
 RUN set -x && \
   apt update && apt upgrade -y && \
-  apt install python3 python3-pip python-is-python3 -y && \
+  apt install python3 python3-pip python-is-python3 cargo -y && \
   : # last line
 
 COPY containers/scripts /tmp/scripts
