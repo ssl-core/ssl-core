@@ -16,7 +16,7 @@ if [ -z "${PARENT_DIR}" ]; then
   PARENT_DIR="/usr/local"
 fi
 
-GOOGLETEST_DIR="${PARENT_DIR}/googletest"
+GOOGLETEST_DIR="${PARENT_DIR}"
 TMP_GIT_REPO_DIR="/tmp/googletest"
 
 echo -e "\x1B[01;93m\nInstalling or updating googletest...\n\u001b[0m"
@@ -27,11 +27,6 @@ mkdir -p "${TMP_GIT_REPO_DIR}"
 git clone --recurse-submodules "https://github.com/google/googletest.git" -o googletest "${TMP_GIT_REPO_DIR}"
 
 mkdir -p "${TMP_GIT_REPO_DIR}"
-
-# removes the directory if it exists to avoid errors
-rm -rf "${GOOGLETEST_DIR}"
-
-mkdir -p "${GOOGLETEST_DIR}"
 
 pushd "${TMP_GIT_REPO_DIR}" || exit 1
 cmake -B build \

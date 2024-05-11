@@ -22,7 +22,7 @@ if [ -z "${PARENT_DIR}" ]; then
   PARENT_DIR="/usr/local"
 fi
 
-CPPZMQ_DIR="${PARENT_DIR}/cppzmq"
+CPPZMQ_DIR="${PARENT_DIR}"
 TMP_CPPZMQ="/tmp/cppzmq"
 
 rm -rf "${TMP_CPPZMQ}"

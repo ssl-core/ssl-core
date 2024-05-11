@@ -22,7 +22,7 @@ if [ -z "${PARENT_DIR}" ]; then
   PARENT_DIR="/usr/local"
 fi
 
-LIBZMQ_DIR="${PARENT_DIR}/libzmq"
+LIBZMQ_DIR="${PARENT_DIR}"
 TMP_LIBZMQ="/tmp/libzmq"
 
 rm -rf "${TMP_LIBZMQ}"

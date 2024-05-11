@@ -16,7 +16,7 @@ if [ -z "${PARENT_DIR}" ]; then
   PARENT_DIR="/usr/local"
 fi
 
-ABSL_DIR="${PARENT_DIR}/absl"
+ABSL_DIR="${PARENT_DIR}"
 TMP_GIT_REPO_DIR="/tmp/absl"
 
 rm -rf "${TMP_GIT_REPO_DIR}"
@@ -25,11 +25,6 @@ mkdir -p "${TMP_GIT_REPO_DIR}"
 git clone --recurse-submodules "https://github.com/abseil/abseil-cpp.git" -o absl "${TMP_GIT_REPO_DIR}"
 
 mkdir -p "${TMP_GIT_REPO_DIR}"
-
-# removes the directory if it exists to avoid errors
-rm -rf "${ABSL_DIR}"
-
-mkdir -p "${ABSL_DIR}"
 
 pushd "${TMP_GIT_REPO_DIR}" || exit 1
 cmake -B build \
