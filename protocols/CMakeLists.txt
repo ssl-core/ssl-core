@@ -33,6 +33,11 @@ robocin_cpp_proto_library(
   PROTOS ${common_protos}
 )
 
+robocin_cpp_nanopb_library(
+  NAME common_nanopb
+  PROTOS ${common_protos}
+)
+
 get_protobufs("protocols/vision" vision_protos)
 
 robocin_cpp_proto_library(

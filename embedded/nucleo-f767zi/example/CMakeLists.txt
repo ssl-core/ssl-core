@@ -4,8 +4,13 @@ robocin_cpp_library(
     SRCS print.cpp
 )
 
+robocin_cpp_nanopb_library(
+    NAME example_nanopb
+    PROTOS example.proto
+)
+
 robocin_cpp_executable(
     NAME example_main
     SRCS example_main.cpp
-    DEPS mbed-os print
+    DEPS mbed-os print example_nanopb
 )
