@@ -628,13 +628,14 @@ function(robocin_cpp_nanopb_library)
     file(RELATIVE_PATH proto_relative_file ${ROBOCIN_PROJECT_PATH} ${proto_absolute_file})
     file(RELATIVE_PATH proto_relative_path ${ROBOCIN_PROJECT_PATH} ${proto_absolute_path})
 
-    set(proto_hdr_file "${CMAKE_BINARY_DIR}/${proto_relative_path}/${proto_name}.pb.h")
-    set(proto_src_file "${CMAKE_BINARY_DIR}/${proto_relative_path}/${proto_name}.pb.c")
+    set(proto_hdr_file "${CMAKE_BINARY_DIR}/${proto_relative_path}/${proto_name}.nanopb.h")
+    set(proto_src_file "${CMAKE_BINARY_DIR}/${proto_relative_path}/${proto_name}.nanopb.c")
 
     add_custom_command(
             OUTPUT "${proto_hdr_file}" "${proto_src_file}"
             COMMAND ${NANOPB_GENERATOR}
-            ARGS --proto-path ${ROBOCIN_PROJECT_PATH}
+            ARGS --extension ".nanopb"
+                 --proto-path ${ROBOCIN_PROJECT_PATH}
                  --proto-path ${ROBOCIN_REPOSITORY_PATH}/protocols
                  --output-dir "${CMAKE_BINARY_DIR}"
                  "${proto_relative_file}"
