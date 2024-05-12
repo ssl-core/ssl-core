@@ -3,13 +3,12 @@
 
 #include "robocin/version/version.h"
 
-#include <span>
-#include <string>
-#include <string_view>
-
 #if defined(__robocin_lib_zmq) and __robocin_lib_zmq >= 202405L
 #if defined(__robocin_lib_cppzmq) and __robocin_lib_cppzmq >= 202405L
 
+#include <span>
+#include <string>
+#include <string_view>
 #include <zmq.h>
 #include <zmq.hpp>
 

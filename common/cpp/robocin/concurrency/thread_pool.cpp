@@ -1,5 +1,7 @@
 #include "robocin/concurrency/thread_pool.h"
 
+#if defined(__robocin_lib_std_concurrency) and __robocin_lib_std_concurrency >= 202405L
+
 #include <functional>
 
 namespace robocin {
@@ -44,3 +46,5 @@ void ThreadPool::workLoop() {
 }
 
 } // namespace robocin
+
+#endif
