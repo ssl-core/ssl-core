@@ -166,12 +166,12 @@ function(robocin_cpp_library)
   if (NOT ARG_MODS)
     # if there isn't at least one header file, then the library is not created
     if (NOT ARG_HDRS)
-      message(FATAL_ERROR "robocin_cpp_library: no header files given.")
+      message(FATAL_ERROR "robocin_cpp_library (${ARG_NAME}): no header files given.")
     endif ()
 
     # if there isn't at least one source file, then the library is not created
     if (NOT ARG_SRCS)
-      message(FATAL_ERROR "robocin_cpp_library: no source files given.")
+      message(FATAL_ERROR "robocin_cpp_library (${ARG_NAME}): no source files given.")
     endif ()
   endif ()
 
@@ -181,7 +181,7 @@ function(robocin_cpp_library)
       get_filename_component(config_last_extension ${CONFIG_FILE} LAST_EXT)
 
       if (NOT ${config_last_extension} STREQUAL ".in")
-        message(FATAL_ERROR "robocin_cpp_library: invalid extension '${config_last_extension}' for configurable file '${CONFIG_FILE}'.")
+        message(FATAL_ERROR "robocin_cpp_library (${ARG_NAME}): invalid extension '${config_last_extension}' for configurable file '${CONFIG_FILE}'.")
       endif ()
 
       get_filename_component(config_absolute_file ${CONFIG_FILE} ABSOLUTE)
@@ -205,10 +205,10 @@ function(robocin_cpp_library)
       if (CMAKE_CXX_STANDARD GREATER_EQUAL 20)
         target_compile_features(${ARG_NAME} PUBLIC cxx_std_${CMAKE_CXX_STANDARD})
       else ()
-        message(FATAL_ERROR "robocin_cpp_library: modules are only supported with C++20 or newer.")
+        message(FATAL_ERROR "robocin_cpp_library (${ARG_NAME}): modules are only supported with C++20 or newer.")
       endif ()
     else ()
-      message(WARNING "robocin_cpp_library: CMAKE_CXX_STANDARD is not defined when adding modules to library '${ARG_NAME}'. Using C++20 as default.")
+      message(WARNING "robocin_cpp_library (${ARG_NAME}): CMAKE_CXX_STANDARD is not defined when adding modules to library '${ARG_NAME}'. Using C++20 as default.")
       target_compile_features(${ARG_NAME} PUBLIC cxx_std_20)
     endif ()
 
@@ -231,12 +231,6 @@ function(robocin_cpp_library)
 
   if (ARG_COMPILE_FEATURES)
     target_compile_features(${ARG_NAME} ${ARG_COMPILE_FEATURES})
-  endif ()
-
-  # installing steps:
-  if (ROBOCIN_EMBEDDED_CROSS_COMPILING)
-    # installation is not allowed when cross compiling
-    return()
   endif ()
 
   #  - include directories to be used by other projects
@@ -311,18 +305,19 @@ function(robocin_cpp_test)
   )
 
   if (ROBOCIN_EMBEDDED_CROSS_COMPILING)
-    message(FATAL_ERROR "robocin_cpp_test: unit testing support is not available for cross compiling.")
+    message(WARNING "robocin_cpp_test (${ARG_NAME}): unit testing support is not available for cross compiling.")
+    return()
   endif ()
 
   # check if at least one source file is given with suffix '_test.cpp'
   if (NOT ARG_SRCS)
-    message(FATAL_ERROR "robocin_cpp_test: no source files given.")
+    message(FATAL_ERROR "robocin_cpp_test (${ARG_NAME}): no source files given.")
   else ()
     set(FILTERED_SRCS ${ARG_SRCS})
     list(FILTER FILTERED_SRCS INCLUDE REGEX "_test\\.cpp$")
 
     if (NOT FILTERED_SRCS)
-      message(FATAL_ERROR "robocin_cpp_test: no source files given with suffix '_test.cpp'.")
+      message(FATAL_ERROR "robocin_cpp_test (${ARG_NAME}): no source files given with suffix '_test.cpp'.")
     endif ()
   endif ()
 
@@ -377,18 +372,19 @@ function(robocin_cpp_benchmark_test)
   )
 
   if (ROBOCIN_EMBEDDED_CROSS_COMPILING)
-    message(FATAL_ERROR "robocin_cpp_benchmark_test: benchmark testing support is not available for cross compiling.")
+    message(WARNING "robocin_cpp_benchmark_test (${ARG_NAME}): benchmark testing support is not available for cross compiling.")
+    return()
   endif ()
 
   # check if at least one source file is given with suffix '_benchmark.cpp'
   if (NOT ARG_SRCS)
-    message(FATAL_ERROR "robocin_cpp_benchmark_test: no source files given.")
+    message(FATAL_ERROR "robocin_cpp_benchmark_test (${ARG_NAME}): no source files given.")
   else ()
     set(FILTERED_SRCS ${ARG_SRCS})
     list(FILTER FILTERED_SRCS INCLUDE REGEX "_benchmark\\.cpp$")
 
     if (NOT FILTERED_SRCS)
-      message(FATAL_ERROR "robocin_cpp_benchmark_test: no source files given with suffix '_benchmark.cpp'.")
+      message(FATAL_ERROR "robocin_cpp_benchmark_test (${ARG_NAME}): no source files given with suffix '_benchmark.cpp'.")
     endif ()
   endif ()
 
@@ -442,13 +438,13 @@ function(robocin_cpp_executable)
 
   # check if at least one source file is given with suffix '_main.cpp'
   if (NOT ARG_SRCS)
-    message(FATAL_ERROR "robocin_cpp_executable: no source files given.")
+    message(FATAL_ERROR "robocin_cpp_executable (${ARG_NAME}): no source files given.")
   else ()
     set(FILTERED_SRCS ${ARG_SRCS})
     list(FILTER FILTERED_SRCS INCLUDE REGEX "_main\\.cpp$")
 
     if (NOT FILTERED_SRCS)
-      message(FATAL_ERROR "robocin_cpp_executable: no source files given with suffix '_main.cpp'.")
+      message(FATAL_ERROR "robocin_cpp_executable (${ARG_NAME}): no source files given with suffix '_main.cpp'.")
     endif ()
   endif ()
 
@@ -503,12 +499,13 @@ function(robocin_cpp_proto_library)
   )
 
   if (ROBOCIN_EMBEDDED_CROSS_COMPILING)
-    message(FATAL_ERROR "robocin_cpp_proto_library: proto library support is not available for cross compiling.")
+    message(WARNING "robocin_cpp_proto_library (${ARG_NAME}): proto library support is not available for cross compiling.")
+    return()
   endif ()
 
   # if there isn't at least one proto file, then the library is not created
   if (NOT ARG_PROTOS)
-    message(WARNING "robocin_cpp_proto_library: no proto files given for library '${ARG_NAME}'.")
+    message(WARNING "robocin_cpp_proto_library (${ARG_NAME}): no proto files given for library '${ARG_NAME}'.")
     return()
   endif ()
 
@@ -607,7 +604,7 @@ function(robocin_cpp_nanopb_library)
 
   # if there isn't at least one proto file, then the library is not created
   if (NOT ARG_PROTOS)
-    message(WARNING "robocin_cpp_nanopb_library: no proto files given for library '${ARG_NAME}'.")
+    message(WARNING "robocin_cpp_nanopb_library (${ARG_NAME}): no proto files given for library '${ARG_NAME}'.")
     return()
   endif ()
 
@@ -651,12 +648,6 @@ function(robocin_cpp_nanopb_library)
 
   if (ARG_COMPILE_OPTIONS)
     target_compile_options(${ARG_NAME} ${ARG_COMPILE_OPTIONS})
-  endif ()
-
-  # installing steps:
-  if (ROBOCIN_EMBEDDED_CROSS_COMPILING)
-    # installation is not allowed when cross compiling
-    return()
   endif ()
 
   # installing steps:
