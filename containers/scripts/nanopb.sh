@@ -45,7 +45,7 @@ tar -xvf "${TMP_NANOPB}/nanopb-${VERSION}.tar.gz" -C "${TMP_NANOPB}"
 rm -rf "${TMP_NANOPB}/nanopb-${VERSION}.tar.gz"
 
 pushd "${TMP_NANOPB}/nanopb-${VERSION}" || exit 1
-cmake -B build -S . ${CMAKE_ARGS}
+cmake -B build -S . ${CMAKE_ARGS[@]}
 cmake --build build -j "$(nproc)"
 cmake --install build
 popd || exit 1
