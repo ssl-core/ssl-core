@@ -9,6 +9,11 @@ endif ()
 
 ########################################################################################################################
 
+#define the repository path to be used in the code
+get_filename_component(ROBOCIN_REPOSITORY_PATH "${CMAKE_CURRENT_LIST_DIR}/.." ABSOLUTE)
+
+########################################################################################################################
+
 # define the project path to be used in the code
 if (NOT ROBOCIN_PROJECT_PATH)
   message(FATAL_ERROR "essentials: ROBOCIN_PROJECT_PATH is not defined.")
@@ -219,6 +224,7 @@ function(robocin_cpp_library)
   target_include_directories(${ARG_NAME} PRIVATE ${CMAKE_BINARY_DIR})
 
   target_compile_definitions(${ARG_NAME} PRIVATE ROBOCIN_PROJECT_NAME="${ROBOCIN_PROJECT_NAME}")
+  target_compile_definitions(${ARG_NAME} PRIVATE ROBOCIN_REPOSITORY_PATH="${ROBOCIN_REPOSITORY_PATH}")
   target_compile_definitions(${ARG_NAME} PRIVATE ROBOCIN_PROJECT_PATH="${ROBOCIN_PROJECT_PATH}")
 
   if (ARG_MACROS)
@@ -328,6 +334,7 @@ function(robocin_cpp_test)
   target_include_directories(${ARG_NAME} PRIVATE ${CMAKE_BINARY_DIR})
 
   target_compile_definitions(${ARG_NAME} PRIVATE ROBOCIN_PROJECT_NAME="${ROBOCIN_PROJECT_NAME}")
+  target_compile_definitions(${ARG_NAME} PRIVATE ROBOCIN_REPOSITORY_PATH="${ROBOCIN_REPOSITORY_PATH}")
   target_compile_definitions(${ARG_NAME} PRIVATE ROBOCIN_PROJECT_PATH="${ROBOCIN_PROJECT_PATH}")
 
   if (ARG_MODS)
@@ -395,6 +402,7 @@ function(robocin_cpp_benchmark_test)
   target_include_directories(${ARG_NAME} PRIVATE ${CMAKE_BINARY_DIR})
 
   target_compile_definitions(${ARG_NAME} PRIVATE ROBOCIN_PROJECT_NAME="${ROBOCIN_PROJECT_NAME}")
+  target_compile_definitions(${ARG_NAME} PRIVATE ROBOCIN_REPOSITORY_PATH="${ROBOCIN_REPOSITORY_PATH}")
   target_compile_definitions(${ARG_NAME} PRIVATE ROBOCIN_PROJECT_PATH="${ROBOCIN_PROJECT_PATH}")
 
   if (ARG_MODS)
@@ -455,6 +463,7 @@ function(robocin_cpp_executable)
   target_include_directories(${ARG_NAME} PRIVATE ${CMAKE_BINARY_DIR})
 
   target_compile_definitions(${ARG_NAME} PRIVATE ROBOCIN_PROJECT_NAME="${ROBOCIN_PROJECT_NAME}")
+  target_compile_definitions(${ARG_NAME} PRIVATE ROBOCIN_REPOSITORY_PATH="${ROBOCIN_REPOSITORY_PATH}")
   target_compile_definitions(${ARG_NAME} PRIVATE ROBOCIN_PROJECT_PATH="${ROBOCIN_PROJECT_PATH}")
 
   if (ARG_MODS)
@@ -526,8 +535,9 @@ function(robocin_cpp_proto_library)
             OUTPUT "${proto_hdr_file}" "${proto_src_file}"
             COMMAND $<TARGET_FILE:protobuf::protoc>
             ARGS --proto_path ${ROBOCIN_PROJECT_PATH}
-            --cpp_out "${CMAKE_BINARY_DIR}"
-            "${proto_relative_file}"
+                 --proto_path ${ROBOCIN_REPOSITORY_PATH}/protocols
+                 --cpp_out "${CMAKE_BINARY_DIR}"
+                 "${proto_relative_file}"
             DEPENDS "${proto_absolute_file}"
             WORKING_DIRECTORY ${ROBOCIN_PROJECT_PATH}
     )
@@ -625,8 +635,9 @@ function(robocin_cpp_nanopb_library)
             OUTPUT "${proto_hdr_file}" "${proto_src_file}"
             COMMAND ${NANOPB_GENERATOR}
             ARGS --proto-path ${ROBOCIN_PROJECT_PATH}
-            --output-dir "${CMAKE_BINARY_DIR}"
-            "${proto_relative_file}"
+                 --proto-path ${ROBOCIN_REPOSITORY_PATH}/protocols
+                 --output-dir "${CMAKE_BINARY_DIR}"
+                 "${proto_relative_file}"
             DEPENDS "${proto_absolute_file}"
             WORKING_DIRECTORY ${ROBOCIN_PROJECT_PATH}
     )
