@@ -6,9 +6,9 @@ ARG     GCC_VERSION='13'
 ARG    LLVM_VERSION='18'
 ARG   CMAKE_VERSION='3.29.2'
 ARG   NINJA_VERSION='1.11.1'
-ARG  NANOPB_VERSION='0.4.8'
 ARG     BUF_VERSION='1.28.1'
 ARG MBED_OS_VERSION='mbed-os-6.17.0'
+ARG  NANOPB_VERSION='0.4.8'
 
 RUN set -x && \
   apt update && apt upgrade -y && \
@@ -26,7 +26,6 @@ RUN set -x && \
   bash ninja.sh ${NINJA_VERSION} && \
   \
   bash protobuf.sh '/usr/local' && \
-  bash nanopb.sh ${NANOPB_VERSION} '/usr/local' "-DCMAKE_C_COMPILER=arm-none-eabi-gcc -DCMAKE_C_FLAGS='--specs=nosys.specs'" && \
   \
   bash buf.sh ${BUF_VERSION} '/usr/local/bin' && \
   \
@@ -59,6 +58,10 @@ RUN set -x \
   && rsync -av --remove-source-files $(find . -maxdepth 1 -type d -regex '.*arm-none-eabi.*')/ /usr/local/ \
   && rm ${TARBALL} \
   && : # last line
+
+RUN set -x \
+  bash nanopb.sh ${NANOPB_VERSION} '/usr/local' "-DCMAKE_C_COMPILER=arm-none-eabi-gcc -DCMAKE_C_FLAGS='--specs=nosys.specs'" && \
+  : # last line
 
 # Configure mbed build system
 RUN set -x \
