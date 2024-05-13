@@ -4,6 +4,7 @@
 #include "pb_common.h"
 #include "pb_decode.h"
 #include "pb_encode.h"
+#include "robocin/utility/fuzzy_compare.h"
 
 #include <version>
 
@@ -16,7 +17,7 @@
 // pip install --upgrade google-api-python-client
 
 int main() {
-  robocin::println("Hello, {}-{}!", "nucleo", "f767zi");
+  robocin::println("Hello, {}-{}-{}!", "nucleo", "f767zi", robocin::fuzzyIsZero(0.0));
 
   example_ExampleNanoPb2 example = {
       .integer = 10,

@@ -7,10 +7,11 @@ robocin_cpp_library(
 robocin_cpp_nanopb_library(
     NAME example_nanopb
     PROTOS example.proto
+    DEPS protocols::common_nanopb
 )
 
 robocin_cpp_executable(
     NAME example_main
     SRCS example_main.cpp
-    DEPS mbed-os print example_nanopb
+    DEPS mbed-os print example_nanopb common::fuzzy_compare
 )
