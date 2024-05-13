@@ -6,6 +6,8 @@ ARG     GCC_VERSION='13'
 ARG    LLVM_VERSION='18'
 ARG   CMAKE_VERSION='3.29.2'
 ARG   NINJA_VERSION='1.11.1'
+ARG  NANOPB_VERSION='0.4.8'
+ARG     BUF_VERSION='1.28.1'
 ARG MBED_OS_VERSION='mbed-os-6.17.0'
 
 RUN set -x && \
@@ -23,7 +25,13 @@ RUN set -x && \
   bash cmake.sh ${CMAKE_VERSION} && \
   bash ninja.sh ${NINJA_VERSION} && \
   \
-  rm -rf /tmp/scripts
+  bash protobuf.sh '/usr/local' && \
+  bash nanopb.sh ${NANOPB_VERSION} '/usr/local' "-DCMAKE_C_COMPILER=arm-none-eabi-gcc -DCMAKE_C_FLAGS='--specs=nosys.specs'" && \
+  \
+  bash buf.sh ${BUF_VERSION} '/usr/local/bin' && \
+  \
+  rm -rf /tmp/scripts \
+  && : # last line
 
 # Install Python modules (which are not included in requirements.txt)
 RUN set -x \
