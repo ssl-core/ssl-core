@@ -29,55 +29,58 @@ RUN set -x && \
   \
   bash buf.sh ${BUF_VERSION} '/usr/local/bin' && \
   \
-  rm -rf /tmp/scripts \
-  && : # last line
+  : # last line
 
 # Install Python modules (which are not included in requirements.txt)
-RUN set -x \
-  && pip install -U \
-  mbed-cli \
-  mbed-tools \
-  && : # last line
+RUN set -x && \
+  pip install -U mbed-cli mbed-tools && \
+  : # last line
 
 WORKDIR /tmp/
 
 # Set up mbed environment
-RUN set -x \
-  && wget -q https://github.com/ARMmbed/mbed-os/raw/${MBED_OS_VERSION}/requirements.txt \
-  && pip install -r requirements.txt  \
-  && rm requirements.txt \
-  && : # last line
+RUN set -x && \
+  wget -q https://github.com/ARMmbed/mbed-os/raw/${MBED_OS_VERSION}/requirements.txt && \
+  pip install -r requirements.txt && \
+  rm requirements.txt && \
+  : # last line
 
 # Install arm-none-eabi-gcc
-RUN set -x \
-  && [ "$(uname -m)" = "aarch64" ] && \
+RUN set -x && \
+  [ "$(uname -m)" = "aarch64" ] && \
   TARBALL="arm-gnu-toolchain-13.2.rel1-aarch64-arm-none-eabi.tar.xz" || \
-  TARBALL="arm-gnu-toolchain-13.2.rel1-x86_64-arm-none-eabi.tar.xz" \
-  && wget -q https://developer.arm.com/-/media/Files/downloads/gnu/13.2.rel1/binrel/${TARBALL} \
-  && tar -xf ${TARBALL} \
-  && rsync -av --remove-source-files $(find . -maxdepth 1 -type d -regex '.*arm-none-eabi.*')/ /usr/local/ \
-  && rm ${TARBALL} \
-  && : # last line
+  TARBALL="arm-gnu-toolchain-13.2.rel1-x86_64-arm-none-eabi.tar.xz" && \
+  wget -q https://developer.arm.com/-/media/Files/downloads/gnu/13.2.rel1/binrel/${TARBALL} && \
+  tar -xf ${TARBALL} && \
+  rsync -av --remove-source-files $(find . -maxdepth 1 -type d -regex '.*arm-none-eabi.*')/ /usr/local/ && \
+  rm ${TARBALL} && \
+  : # last line
 
-RUN set -x \
+# Install nanopb
+WORKDIR /tmp/scripts
+
+RUN set -x && \
   bash nanopb.sh ${NANOPB_VERSION} '/usr/local' "-DCMAKE_C_COMPILER=arm-none-eabi-gcc -DCMAKE_C_FLAGS='--specs=nosys.specs'" && \
+  \
+  rm -rf /tmp/scripts && \
+  \
   : # last line
 
 # Configure mbed build system
-RUN set -x \
-  && mbed config -G GCC_ARM_PATH /usr/local/bin/ \
-  && mbed toolchain -G -s GCC_ARM \
-  && : # last line
+RUN set -x && \
+  mbed config -G GCC_ARM_PATH /usr/local/bin/ && \
+  mbed toolchain -G -s GCC_ARM && \
+  : # last line
 
 WORKDIR /
 
 # Display, check and save environment settings
-RUN set -x -o pipefail \
-  && arm-none-eabi-gcc --version | grep arm-none-eabi-gcc | tee env_settings \
-  && cmake --version | grep version | tee -a env_settings \
-  && python --version 2>&1 | tee -a env_settings \
-  && (echo -n 'mbed-cli ' && mbed --version) | tee -a env_settings \
-  && (echo -n 'mbed-greentea ' && mbedgt --version | grep ^[0-9]) | tee -a env_settings \
-  && (echo -n 'mbed-host-tests ' && mbedhtrun --version) | tee -a env_settings \
-  && (echo -n 'mbed-tools ' && mbed-tools --version) | tee -a env_settings \
-  && : # LAST LINE
+RUN set -x -o pipefail && \
+  arm-none-eabi-gcc --version | grep arm-none-eabi-gcc | tee env_settings && \
+  cmake --version | grep version | tee -a env_settings && \
+  python --version 2>&1 | tee -a env_settings && \
+  (echo -n 'mbed-cli ' && mbed --version) | tee -a env_settings && \
+  (echo -n 'mbed-greentea ' && mbedgt --version | grep ^[0-9]) | tee -a env_settings && \
+  (echo -n 'mbed-host-tests ' && mbedhtrun --version) | tee -a env_settings && \
+  (echo -n 'mbed-tools ' && mbed-tools --version) | tee -a env_settings && \
+  : # LAST LINE
