@@ -51,6 +51,3 @@ cmake --install build
 popd || exit 1
 
 rm -rf "${TMP_NANOPB}"
-
-# changes the owner of the directory to the current user
-chown "${CURRENT_USER}":"${CURRENT_USER}" "${NANOPB_DIR}" -R

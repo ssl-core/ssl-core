@@ -40,6 +40,3 @@ cmake --install build
 popd || exit 1
 
 rm -rf "${TMP_GIT_REPO_DIR}"
-
-# changes the owner of the directory to the current user
-chown "${CURRENT_USER}":"${CURRENT_USER}" "${BENCHMARK_DIR}" -R
