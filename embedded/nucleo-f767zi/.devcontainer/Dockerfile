@@ -2,17 +2,6 @@ FROM robocin/ssl-core-cpp-mbed-base:latest
 
 RUN pip install mbed-flasher
 
-COPY containers/scripts /tmp/scripts
-
-WORKDIR /tmp/scripts
-RUN set -x && apt update && apt upgrade -y && \
-  \
-  bash protobuf.sh '/usr/local' && \
-  bash nanopb.sh '0.4.8' '/usr/local' "-DCMAKE_C_COMPILER=arm-none-eabi-gcc -DCMAKE_C_FLAGS='--specs=nosys.specs'" && \
-  \
-  rm -rf /tmp/scripts && \
-  : # last line
-
 COPY .cmake/ /tmp/.cmake/
 COPY common/ /tmp/common/
 COPY protocols/ /tmp/protocols/

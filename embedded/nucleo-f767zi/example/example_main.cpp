@@ -16,6 +16,9 @@
 
 // pip install --upgrade google-api-python-client
 
+// template <class T>
+// using nanopbish = ...;
+
 int main() {
   robocin::println("Hello, {}-{}-{}!", "nucleo", "f767zi", robocin::fuzzyIsZero(0.0));
 
