@@ -1,6 +1,5 @@
+#include "experiments/database/mongodb/vision/db/irepository_factory.h"
 #include "protocols/vision/frame.pb.h"
-#include "vision/db/irepository_factory.h"
-#include "vision/db/repository_factory_mapping.h"
 
 #include <iostream>
 #include <vector>
@@ -17,24 +16,20 @@ struct TestInputs {
 };
 
 int main() {
-  std::cout << "Creating factory and frame repository"
-            << "\n";
+  std::cout << "Creating factory and frame repository" << "\n";
   const auto kFactory = RepositoryFactoryMapping{}[RepositoryType::MongoDb];
 
   std::unique_ptr<IFrameRepository> frame_repository = kFactory->createFrameRepository();
   std::future<bool> connection_status = frame_repository->connect();
 
   if (connection_status.wait(); connection_status.get()) {
-    std::cout << "Connected to the database."
-              << "\n";
+    std::cout << "Connected to the database." << "\n";
   } else {
-    std::cout << "Failed to connect to the database."
-              << "\n";
+    std::cout << "Failed to connect to the database." << "\n";
     return 1;
   }
 
-  std::cout << "Creating test inputs"
-            << "\n";
+  std::cout << "Creating test inputs" << "\n";
   std::vector<TestInputs> test_inputs = {{0, "save"},
                                          {0, "save"},
                                          {1, "find"},

@@ -2,7 +2,7 @@
 #define ROBOCIN_NETWORK_ZMQ_SUBSCRIBER_SOCKET_H
 
 #include <gtest/gtest_prod.h>
-#include <span>
+#include <ranges>
 #include <string>
 #include <string_view>
 #include <zmq.h>
@@ -26,7 +26,8 @@ class IZmqSubscriberSocket {
       context_(n_threads),
       socket_(context_, zmq::socket_type::sub) {}
 
-  void connect(std::string_view address, std::span<const std::string_view> topics) {
+  template <std::ranges::range T>
+  void connect(std::string_view address, const T& topics) {
     socket_.connect(std::string{address});
     for (const auto& topic : topics) {
       socket_.set(zmq::sockopt::subscribe, topic);
@@ -35,8 +36,8 @@ class IZmqSubscriberSocket {
 
   receive_type receive() {
     if (zmq::message_t zmq_topic; socket_.recv(zmq_topic, zmq::recv_flags::dontwait)) {
-      if (zmq::message_t zmq_result; socket_.recv(zmq_result, zmq::recv_flags::dontwait)) {
-        return {.topic = zmq_topic.to_string(), .message = zmq_result.to_string()};
+      if (zmq::message_t zmq_message; socket_.recv(zmq_message, zmq::recv_flags::dontwait)) {
+        return {.topic = zmq_topic.to_string(), .message = zmq_message.to_string()};
       }
     }
 

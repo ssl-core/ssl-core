@@ -13,11 +13,13 @@ class FrameRepositoryMongoDb : public IMongoDbRepository<int64_t, protocols::vis
   ~FrameRepositoryMongoDb() override = default;
 
   void save(const protocols::vision::Frame& frame) final;
+  void saveMany(const std::vector<protocols::vision::Frame>& frames) final;
+
   void remove(const int64_t& key) final;
 
   [[nodiscard]] std::optional<protocols::vision::Frame> find(const int64_t& key) final;
-  [[nodiscard]] std::optional<std::vector<protocols::vision::Frame>> findRange(const int64_t& key_lower_bound,
-                                                             const int64_t& key_upper_bound) final;
+  [[nodiscard]] std::vector<protocols::vision::Frame>
+  findRange(const int64_t& key_lower_bound, const int64_t& key_upper_bound) final;
 };
 
 } // namespace vision

@@ -14,6 +14,10 @@ enum class RepositoryType {
 class IRepositoryFactory {
  public:
   [[nodiscard]] virtual std::unique_ptr<IFrameRepository> createFrameRepository() const = 0;
+
+  [[nodiscard]] virtual std::unique_ptr<IFrameRepository> createFrameRepository(const int id) const
+      = 0;
+
   // TODO($ISSUE_N): Add other repositories for Ball, Robot...
 
   virtual ~IRepositoryFactory() = default;

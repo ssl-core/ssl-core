@@ -6,6 +6,9 @@
 #include <future>
 #include <mongocxx/client.hpp>
 #include <mongocxx/instance.hpp>
+#include <mongocxx/pool.hpp>
+
+// rest of your code
 
 namespace vision {
 
@@ -21,9 +24,9 @@ class IMongoDbRepository : public IRepository<Id, Data> {
   virtual ~IMongoDbRepository() = default;
 
   explicit IMongoDbRepository(const MongoDbRepositoryBuildArgs& args) :
-      client_{mongocxx::uri{args.uri}},
-      db_{client_[args.db_name]},
-      collection_{db_[args.collection_name]} {}
+      pool_{mongocxx::uri{args.uri}},
+      db_{args.db_name},
+      collection_(args.collection_name) {}
 
   std::future<bool> connect() final {
     using namespace std::chrono_literals;
@@ -41,16 +44,18 @@ class IMongoDbRepository : public IRepository<Id, Data> {
         int64_t rounded_elapsed_time = kSleepTime.count() * (1 + attempt);
 
         try {
-          db_.drop();
-          db_.run_command(kPing.view());
+          auto client = pool_.acquire();
+          auto db = (*client)[db_];
+          db.drop();
+          db.run_command(kPing.view());
 
-          std::cout << "connected to MongoDB after " << rounded_elapsed_time << "s.\n";
+          std::cout << "connected to MongoDB after " << rounded_elapsed_time << "s." << std::endl;
 
           return true;
         } catch (const std::exception& e) {
-          std::cerr << "error while connecting to MongoDB: " << e.what() << ".\n";
+          std::cerr << "error while connecting to MongoDB: " << e.what() << "." << std::endl;
           std::cerr << "retrying in " << kSleepTime.count()
-                    << " seconds (total: " << rounded_elapsed_time << "s)...\n";
+                    << " seconds (total: " << rounded_elapsed_time << "s)..." << std::endl;
 
           std::this_thread::sleep_for(kSleepTime);
         }
@@ -62,10 +67,10 @@ class IMongoDbRepository : public IRepository<Id, Data> {
 
  protected:
   // NOLINTBEGIN(*non-private*)
-  mongocxx::instance instance_;
-  mongocxx::client client_;
-  mongocxx::database db_;
-  mongocxx::collection collection_;
+  mongocxx::instance instance_{};
+  mongocxx::pool pool_;
+  std::string db_;
+  std::string collection_;
   // NOLINTEND(*non-private*)
 };
 

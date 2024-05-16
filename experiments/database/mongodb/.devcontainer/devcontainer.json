@@ -1,7 +1,7 @@
 {
   "name": "C++",
   "build": {
-    "context": "./../../..",
+    "context": "./../../../..",
     "dockerfile": "Dockerfile"
   },
   "runArgs": [
