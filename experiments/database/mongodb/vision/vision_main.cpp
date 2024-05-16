@@ -1,5 +1,6 @@
-#include "experiments/database/mongodb/vision/db/irepository_factory.h"
 #include "protocols/vision/frame.pb.h"
+#include "vision/db/irepository_factory.h"
+#include "vision/db/repository_factory_mapping.h"
 
 #include <iostream>
 #include <vector>
@@ -16,20 +17,20 @@ struct TestInputs {
 };
 
 int main() {
-  std::cout << "Creating factory and frame repository" << "\n";
+  std::cout << "Creating factory and frame repository." << std::endl;
   const auto kFactory = RepositoryFactoryMapping{}[RepositoryType::MongoDb];
 
   std::unique_ptr<IFrameRepository> frame_repository = kFactory->createFrameRepository();
   std::future<bool> connection_status = frame_repository->connect();
 
   if (connection_status.wait(); connection_status.get()) {
-    std::cout << "Connected to the database." << "\n";
+    std::cout << "Connected to the database." << std::endl;
   } else {
-    std::cout << "Failed to connect to the database." << "\n";
+    std::cout << "Failed to connect to the database." << std::endl;
     return 1;
   }
 
-  std::cout << "Creating test inputs" << "\n";
+  std::cout << "Creating test inputs" << std::endl;
   std::vector<TestInputs> test_inputs = {{0, "save"},
                                          {0, "save"},
                                          {1, "find"},
@@ -52,10 +53,10 @@ int main() {
 
     } else if (operation == "find_range") {
       std::cout << "fetching range 1 >= key <= " << record_id << ")...\n";
-      if (auto result = frame_repository->findRange(1, record_id)) {
+      if (auto result = frame_repository->findRange(1, record_id); !result.empty()) {
         std::cout << "retrieved frames \n";
-        for (const auto& frame : *result) {
-          std::cout << frame.DebugString() << "\n";
+        for (const auto& frame : result) {
+          std::cout << frame.DebugString() << std::endl;
         }
       } else {
         std::cout << "frames not found.\n";
