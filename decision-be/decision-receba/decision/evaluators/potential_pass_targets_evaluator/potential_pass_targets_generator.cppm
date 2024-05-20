@@ -2,10 +2,10 @@ module;
 
 #include "robocin/macros/builder.h"
 
-export module decision.generators:potential_pass_targets_generator;
+export module decision.evaluators:potential_pass_targets_evaluator.potential_pass_targets_generator;
 
 import decision.world;
-import :igenerator;
+import :potential_pass_targets_evaluator.igenerator;
 
 export namespace decision {
 

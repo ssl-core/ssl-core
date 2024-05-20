@@ -6,8 +6,9 @@ robocin_cpp_library(
        score_chance_evaluator.cppm
        pass_interception_evaluator.cppm
        potential_pass_targets_evaluator.cppm
+       potential_pass_targets_evaluator/igenerator.cppm
+       potential_pass_targets_evaluator/potential_pass_targets_generator.cppm
   DEPS observer_ptr
-       generators
        world
        common::builder
 )
