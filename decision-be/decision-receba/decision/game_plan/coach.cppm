@@ -8,12 +8,6 @@ import decision.evaluators;
 import :entity;
 import :icoach;
 
-namespace {
-
-//
-
-}
-
 export namespace decision {
 
 class Coach : public ICoach {

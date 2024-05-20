@@ -1,4 +1,4 @@
 export module decision.generators;
 
 export import :igenerator;
-export import :field_grid_map_generator.cppm
+export import :potential_pass_targets_generator;
