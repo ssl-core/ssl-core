@@ -6,7 +6,8 @@ export module decision.evaluators:potential_pass_targets_evaluator;
 
 import decision.world;
 import :ievaluator;
-import decision.generators;
+import :potential_pass_targets_evaluator.igenerator;
+import :potential_pass_targets_evaluator.potential_pass_targets_generator;
 
 export namespace decision {
 
