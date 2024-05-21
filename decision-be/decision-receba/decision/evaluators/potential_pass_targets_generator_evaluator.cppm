@@ -2,10 +2,10 @@ module;
 
 #include "robocin/macros/builder.h"
 
-export module decision.evaluators:potential_pass_targets_evaluator.potential_pass_targets_generator;
+export module decision.evaluators:potential_pass_targets_generator_evaluator;
 
 import decision.world;
-import :potential_pass_targets_evaluator.igenerator;
+import :ievaluator;
 
 export namespace decision {
 
@@ -17,8 +17,9 @@ class PotentialPassTargets::Builder final {
   BuilderOf(PotentialPassTargets);
 };
 
-class PotentialPassTargetsGenerator : public IGenerator {
+class PotentialPassTargetsGeneratorEvaluator : public IEvaluator {
  public:
+  // Implement something like the field grid positioning from ssl-unification
   void run(const World& world) override {}
 
   void reset() override {}

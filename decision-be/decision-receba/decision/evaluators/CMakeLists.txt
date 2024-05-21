@@ -5,9 +5,7 @@ robocin_cpp_library(
        individual_marking_evaluator.cppm
        score_chance_evaluator.cppm
        pass_interception_evaluator.cppm
-       potential_pass_targets_evaluator.cppm
-       potential_pass_targets_evaluator/igenerator.cppm
-       potential_pass_targets_evaluator/potential_pass_targets_generator.cppm
+       potential_pass_targets_generator_evaluator.cppm
   DEPS observer_ptr
        world
        common::builder

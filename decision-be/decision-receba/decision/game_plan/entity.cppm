@@ -12,6 +12,7 @@ class GamePlan final {
   BuildableWith(Builder);
 
   Getter(Default, IndividualMarking, IndividualMarking);
+  Getter(Default, PotentialPassTargets, PotentialPassTargets);
   Getter(Default, ScoreChanceMap, ScoreChanceMap);
   Getter(Default, PassInterceptionMap, PassInterceptionMap);
 };
@@ -20,6 +21,7 @@ class GamePlan::Builder final {
   BuilderOf(GamePlan);
 
   Setter(IndividualMarking);
+  Setter(PotentialPassTargets);
   Setter(ScoreChanceMap);
   Setter(PassInterceptionMap);
 };
