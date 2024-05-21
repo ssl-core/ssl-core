@@ -5,6 +5,7 @@
 #include <bsoncxx/json.hpp>
 #include <google/protobuf/util/json_util.h>
 #include <iostream>
+#include <protocols/vision/frame.pb.h>
 
 namespace vision {
 namespace {
@@ -27,7 +28,7 @@ MongoDbDocument toMongoDbDocument(const Frame& frame) {
   document << "_id" << static_cast<int64_t>(frame.properties().serial_id());
 
   MongoDbArray balls_array{};
-  for (const auto& ball : frame.balls()) {
+  for (const Ball& ball : frame.balls()) {
     MongoDbDocument ball_doc{};
     ball_doc << "confidence" << ball.confidence();
     ball_doc << "position" << bsoncxx::builder::stream::open_array << ball.position().x()
@@ -38,7 +39,7 @@ MongoDbDocument toMongoDbDocument(const Frame& frame) {
   }
 
   MongoDbArray robots_array{};
-  for (const auto& robot : frame.robots()) {
+  for (const Robot& robot : frame.robots()) {
     MongoDbDocument robot_doc{};
 
     robot_doc << "confidence" << robot.confidence();
@@ -127,7 +128,8 @@ void FrameRepositoryMongoDb::saveMany(const std::vector<Frame>& frames) {
     auto collection = (*client)[db_][collection_];
 
     std::vector<MongoDbDocument> documents;
-    for (auto& frame : frames) {
+    documents.reserve(frames.size());
+    for (const auto& frame : frames) {
       documents.push_back(toMongoDbDocument(frame));
     }
 
