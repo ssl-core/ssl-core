@@ -1,0 +1,55 @@
+version: '3'
+services:
+  mongodb1:
+    build:
+      context: ./mongoDb/mongodb1
+      dockerfile: .devcontainer/Dockerfile
+    container_name: mongodb1
+    depends_on:
+      - mongodb2
+      - mongodb3
+    ports:
+      - 27017:27017
+    volumes:
+      - mongodb_data:/data/db
+
+  mongodb2:
+    build:
+      context: ./mongoDb/mongodb2
+      dockerfile: .devcontainer/Dockerfile
+    container_name: mongodb2
+    ports:
+      - 27018:27017
+    volumes:
+      - mongodb_data2:/data/db
+
+  mongodb3:
+    build:
+      context: ./mongoDb/mongodb3
+      dockerfile: .devcontainer/Dockerfile
+    container_name: mongodb3
+    ports:
+      - 27019:27017
+    volumes:
+      - mongodb_data3:/data/db
+
+  vision:
+    build:
+      context: .
+      dockerfile: vision-be/vision-panettone/.devcontainer/Dockerfile
+      args:
+        - SOURCE_DIRECTORY=vision-be/vision-panettone
+    working_dir: /workspaces/vision-be/vision-panettone
+    container_name: vision
+    command: ["bin/vision_main"]
+    volumes:
+      - /tmp:/tmp
+    ports:
+      - 8080:8080
+    depends_on:
+      - mongodb1
+
+volumes:
+  mongodb_data:
+  mongodb_data2:
+  mongodb_data3:

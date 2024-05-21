@@ -16,6 +16,10 @@ message Frame {
     google.protobuf.Timestamp created_at = 2;
     // The expected rate of frames generated.
     float fps = 3;
+    // The incremental unique id of the frame considering the referee status,
+    // it should be incremented only when the game is running, skipping 
+    // useless states.
+    uint64 effective_serial_id = 4;
   }
 
   // The generation properties of the frame.

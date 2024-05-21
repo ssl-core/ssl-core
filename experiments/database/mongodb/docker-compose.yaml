@@ -1,0 +1,69 @@
+# docker-compose -f docker-compose.yaml up --build
+
+version: '3'
+
+services:
+  mongodb1:
+    image: mongo:7.0
+    command: ["--replSet", "rs0", "--bind_ip_all", "--port", "27017"]
+    ports:
+      - 27017:27017
+    container_name: mongodb1
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    healthcheck:
+      test: echo "try { rs.status() } catch (err) { rs.initiate({_id:'rs0',members:[{_id:0,host:'host.docker.internal:27017',priority:1},{_id:1,host:'host.docker.internal:27018',priority:0.5},{_id:2,host:'host.docker.internal:27019',priority:0.5}]}) }" | mongosh --port 27017 --quiet
+      interval: 5s
+      timeout: 30s
+      start_period: 0s
+      retries: 30
+    volumes:
+      - "mongodb1_data:/data/db"
+      - "mongodb1_config:/data/configdb"
+
+  mongodb2:
+    image: mongo:7.0
+    command: ["--replSet", "rs0", "--bind_ip_all", "--port", "27018"]
+    ports:
+      - 27018:27018
+    container_name: mongodb2
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    volumes:
+      - "mongodb2_data:/data/db"
+      - "mongodb2_config:/data/configdb"
+
+  mongodb3:
+    image: mongo:7.0
+    command: ["--replSet", "rs0", "--bind_ip_all", "--port", "27019"]
+    ports:
+      - 27019:27019
+    container_name: mongodb3
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    volumes:
+      - "mongodb3_data:/data/db"
+      - "mongodb3_config:/data/configdb"
+
+  vision:
+    build:
+      context: ./../../..
+      dockerfile: experiments/database/mongodb/.devcontainer/Dockerfile
+      args:
+        - SOURCE_DIRECTORY=experiments/database/mongodb
+    working_dir: /workspaces/experiments/database/mongodb
+    command: ["bin/vision_main"]
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    volumes:
+      - /tmp:/tmp
+    depends_on:      
+      - mongodb1
+  
+volumes:
+  mongodb1_data:
+  mongodb2_data:
+  mongodb3_data:
+  mongodb1_config:
+  mongodb2_config:
+  mongodb3_config:
