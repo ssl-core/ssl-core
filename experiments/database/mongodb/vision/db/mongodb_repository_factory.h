@@ -12,8 +12,7 @@ class MongoDbRepositoryFactory : public IRepositoryFactory {
 
   [[nodiscard]] std::unique_ptr<IFrameRepository> createFrameRepository() const override;
 
-  [[nodiscard]] std::unique_ptr<IFrameRepository>
-  createFrameRepository(const int id) const override;
+  [[nodiscard]] std::unique_ptr<IFrameRepository> createFrameRepository(int id) const override;
 };
 
 } // namespace vision
