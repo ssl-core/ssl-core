@@ -15,6 +15,7 @@ class GamePlan final {
   Getter(Default, PotentialPassTargets, PotentialPassTargets);
   Getter(Default, ScoreChanceMap, ScoreChanceMap);
   Getter(Default, PassInterceptionMap, PassInterceptionMap);
+  Getter(Default, RatedPotentialPassTargets, RatedPotentialPassTargets);
 };
 
 class GamePlan::Builder final {
@@ -24,6 +25,7 @@ class GamePlan::Builder final {
   Setter(PotentialPassTargets);
   Setter(ScoreChanceMap);
   Setter(PassInterceptionMap);
+  Setter(RatedPotentialPassTargets);
 };
 
 } // namespace decision
