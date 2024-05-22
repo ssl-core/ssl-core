@@ -22,7 +22,7 @@ if [ -z "${PARENT_DIR}" ]; then
   PARENT_DIR="/usr/local"
 fi
 
-PROTOBUF_DIR="${PARENT_DIR}/protobuf"
+PROTOBUF_DIR="${PARENT_DIR}"
 TMP_PROTOBUF="/tmp/protobuf"
 
 echo -e "\x1B[01;93m\nInstalling or updating protobuf...\n\u001b[0m"
@@ -33,11 +33,6 @@ mkdir -p "${TMP_PROTOBUF}"
 wget "https://github.com/protocolbuffers/protobuf/releases/download/v21.10/protobuf-cpp-${VERSION}.tar.gz" -O "${TMP_PROTOBUF}/protobuf-${VERSION}.tar.gz"
 tar -xvf "${TMP_PROTOBUF}/protobuf-${VERSION}.tar.gz" -C "${TMP_PROTOBUF}"
 rm -rf "${TMP_PROTOBUF}/protobuf-${VERSION}.tar.gz"
-
-# removes the directory if it exists to avoid errors
-rm -rf "${PROTOBUF_DIR}"
-
-mkdir -p "${PROTOBUF_DIR}"
 
 pushd "${TMP_PROTOBUF}/protobuf-${VERSION}" || exit 1
 cmake -B build \
@@ -51,6 +46,3 @@ cmake --install build
 popd || exit 1
 
 rm -rf "${TMP_PROTOBUF}"
-
-# changes the owner of the directory to the current user
-chown "${CURRENT_USER}":"${CURRENT_USER}" "${PROTOBUF_DIR}" -R

@@ -24,6 +24,3 @@ fi
 
 curl -sSL "https://github.com/bufbuild/buf/releases/download/v${VERSION}/buf-$(uname -s)-$(uname -m)" -o "${PARENT_DIR}/buf"
 chmod +x "${PARENT_DIR}/buf"
-
-# changes the owner of the directory to the current user
-chown "${CURRENT_USER}":"${CURRENT_USER}" "${PARENT_DIR}/buf"
