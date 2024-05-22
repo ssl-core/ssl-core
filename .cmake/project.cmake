@@ -84,7 +84,7 @@ macro(robocin_mbed_setup)
     ""                                   # list of names of multi-valued arguments
     ${ARGN}                              # arguments of the function to parse (ARGN contains all the arguments after the function name)
   )
-  set(ROBOCIN_EMBEDDED_CROSS_COMPILING TRUE CACHE INTERNAL "")
+  set(ROBOCIN_EMBEDDED_MBED_CROSS_COMPILING TRUE CACHE INTERNAL "")
 
   if (NOT ARG_TARGET)
     message(FATAL_ERROR "robocin_mbed_setup: TARGET is required.")

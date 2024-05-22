@@ -310,8 +310,8 @@ function(robocin_cpp_test)
           ${ARGN}                                                         # arguments of the function to parse (ARGN contains all the arguments after the function name)
   )
 
-  if (ROBOCIN_EMBEDDED_CROSS_COMPILING)
-    message(WARNING "robocin_cpp_test (${ARG_NAME}): unit testing support is not available for cross compiling.")
+  if (NOT GTest_FOUND)
+    message(WARNING "robocin_cpp_test (${ARG_NAME}): unit testing support is not available without GTest library.")
     return()
   endif ()
 
@@ -378,8 +378,8 @@ function(robocin_cpp_benchmark_test)
           ${ARGN}                                                         # arguments of the function to parse (ARGN contains all the arguments after the function name)
   )
 
-  if (ROBOCIN_EMBEDDED_CROSS_COMPILING)
-    message(WARNING "robocin_cpp_benchmark_test (${ARG_NAME}): benchmark testing support is not available for cross compiling.")
+  if (NOT benchmark_FOUND)
+    message(WARNING "robocin_cpp_benchmark_test (${ARG_NAME}): benchmark testing support is not available without benchmark library.")
     return()
   endif ()
 
@@ -482,7 +482,7 @@ function(robocin_cpp_executable)
     target_compile_features(${ARG_NAME} ${ARG_COMPILE_FEATURES})
   endif ()
 
-  if (ROBOCIN_EMBEDDED_CROSS_COMPILING)
+  if (ROBOCIN_EMBEDDED_MBED_CROSS_COMPILING)
     mbed_set_post_build(${ARG_NAME})
   endif ()
 
@@ -507,8 +507,8 @@ function(robocin_cpp_proto_library)
           ${ARGN}                                                 # arguments of the function to parse
   )
 
-  if (ROBOCIN_EMBEDDED_CROSS_COMPILING)
-    message(WARNING "robocin_cpp_proto_library (${ARG_NAME}): proto library support is not available for cross compiling.")
+  if (NOT Protobuf_FOUND)
+    message(WARNING "robocin_cpp_proto_library (${ARG_NAME}): proto library support is not available without Protobuf library.")
     return()
   endif ()
 
@@ -611,6 +611,11 @@ function(robocin_cpp_nanopb_library)
           "PROTOS;DEPS;MACROS;COMPILE_OPTIONS;COMPILE_FEATURES"   # list of names of multi-valued arguments
           ${ARGN}                                                 # arguments of the function to parse
   )
+
+  if (NOT nanopb_FOUND)
+    message(WARNING "robocin_cpp_nanopb_library (${ARG_NAME}): nanopbp library support is not available without nanopb library.")
+    return()
+  endif ()
 
   # if there isn't at least one proto file, then the library is not created
   if (NOT ARG_PROTOS)
