@@ -6,7 +6,7 @@ list(APPEND CMAKE_MODULE_PATH ${CMAKE_CURRENT_LIST_DIR}/../.cmake)
 
 include(project)
 
-project(protocols LANGUAGES CXX)
+project(protocols LANGUAGES C CXX)
 
 ########################################################################################################################
 
