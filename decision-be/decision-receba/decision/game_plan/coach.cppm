@@ -22,6 +22,7 @@ class Coach : public ICoach {
     pass_interception_ = make_evaluator<PassInterceptionEvaluator>(potential_pass_targets_generator_evaluator_);
     potential_pass_targets_rater_evaluator_ = make_evaluator<PotentialPassTargetsRaterEvaluator>(pass_interception_, 
                                                                                                  score_chance_);
+    ball_handler_action_selector_evaluator_ = make_evaluator<BallHandlerActionSelectorEvaluator>(potential_pass_targets_rater_evaluator_);
   }
 
   [[nodiscard]] GamePlan getGamePlan() const override {
@@ -31,6 +32,7 @@ class Coach : public ICoach {
         .setScoreChanceMap(score_chance_->getScoreChanceMap())
         .setPassInterceptionMap(pass_interception_->getPassInterceptionMap())
         .setRatedPotentialPassTargets(potential_pass_targets_rater_evaluator_->getRatedPotentialPassTargets())
+        .setBallHandlerAction(ball_handler_action_selector_evaluator_->getBallHandlerAction())
         .build();
   }
 
@@ -40,6 +42,7 @@ class Coach : public ICoach {
   std::unique_ptr<ScoreChanceEvaluator> score_chance_;
   std::unique_ptr<PassInterceptionEvaluator> pass_interception_;
   std::unique_ptr<PotentialPassTargetsRaterEvaluator> potential_pass_targets_rater_evaluator_;
+  std::unique_ptr<BallHandlerActionSelectorEvaluator> ball_handler_action_selector_evaluator_;
 };
 
 } // namespace decision
