@@ -22,6 +22,10 @@ _The base image for C++ development with `ssl-core`_.
 
 _The base image for Python development with `ssl-core`_.
 
+### [ssl-core-cpp-grpc-base.Dockerfile](ssl-core-cpp-grpc-base.Dockerfile)
+
+_The base image for C++ gRPC development with `ssl-core`_.
+
 ### [ssl-core-cpp-mbed-base.Dockerfile](ssl-core-cpp-mbed-base.Dockerfile)
 
 _The base image for Embedded development with `ssl-core`_.
@@ -202,4 +206,20 @@ Install [Abseil](https://abseil.io/) libraries.
 
 ```bash
 bash absl.sh <library_directory>
+```
+
+### [gRPC](scripts/grpc.sh)
+
+Install [gRPC](https://grpc.io/) framework.
+
+- **Arguments:**
+
+  1. `version`: The version of libzmq to install
+  2. `library_directory`: The directory where the library will be installed
+       * *default*: `/usr/local`
+
+- **Usage:**
+
+```bash
+bash grpc.sh <library_directory>
 ```

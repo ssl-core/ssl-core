@@ -123,8 +123,25 @@ endif ()
 #   nanopb::protobuf-nanopb-static                 the nanopb library
 find_package(nanopb CONFIG QUIET HINTS "/opt/nanopb")
 if (nanopb_FOUND)
-  find_program(NANOPB_GENERATOR NAMES nanopb_generator REQUIRED)
-  message(STATUS "Using nanopb: ${nanopb_VERSION} - nanopb_generator at: '${NANOPB_GENERATOR}'")
+  find_program(NANOPB_GENERATOR NAMES nanopb_generator REQUIRED HINTS "/opt/nanopb")
+  message(STATUS "Using nanopb: ${nanopb_VERSION}")
+  message(STATUS "Using nanopb_generator: ${NANOPB_GENERATOR}")
+endif ()
+
+########################################################################################################################
+
+# Find gRPC installation
+# It enable the following variables:
+#   gRPC::grpc++_reflection               the gRPC++ reflection library
+#   gRPC::grpc++                          the gRPC++ library
+#   $<TARGET_FILE:gRPC::grpc_cpp_plugin>  the gRPC++ plugin executable
+# reference: https://github.com/grpc/grpc/blob/master/examples/cpp/cmake/common.cmake
+
+# Find gRPC installation
+# Looks for gRPC cmake config files installed by gRPC's cmake installation.
+find_package(gRPC CONFIG QUIET HINTS "/opt/grpc")
+if (gRPC_FOUND)
+  message(STATUS "Using gRPC: ${gRPC_VERSION}")
 endif ()
 
 ########################################################################################################################
@@ -561,6 +578,10 @@ function(robocin_cpp_proto_library)
     target_compile_options(${ARG_NAME} ${ARG_COMPILE_OPTIONS})
   endif ()
 
+  if (ARG_COMPILE_FEATURES)
+    target_compile_features(${ARG_NAME} ${ARG_COMPILE_FEATURES})
+  endif ()
+
   # installing steps:
   #  - include directories to be used by other projects
   target_include_directories(${ARG_NAME} INTERFACE
@@ -595,7 +616,7 @@ endfunction(robocin_cpp_proto_library)
 
 ########################################################################################################################
 
-# Add cpp proto library
+# Add cpp nanopb library
 # Named parameters:
 #  NAME: name of the library
 #  PROTOS: proto files
@@ -613,7 +634,7 @@ function(robocin_cpp_nanopb_library)
   )
 
   if (NOT nanopb_FOUND)
-    message(WARNING "robocin_cpp_nanopb_library (${ARG_NAME}): nanopbp library support is not available without nanopb library.")
+    message(WARNING "robocin_cpp_nanopb_library (${ARG_NAME}): nanopb library support is not available without nanopb library.")
     return()
   endif ()
 
@@ -667,6 +688,10 @@ function(robocin_cpp_nanopb_library)
     target_compile_options(${ARG_NAME} ${ARG_COMPILE_OPTIONS})
   endif ()
 
+  if (ARG_COMPILE_FEATURES)
+    target_compile_features(${ARG_NAME} ${ARG_COMPILE_FEATURES})
+  endif ()
+
   # installing steps:
   #  - include directories to be used by other projects
   target_include_directories(${ARG_NAME} INTERFACE
@@ -698,5 +723,121 @@ function(robocin_cpp_nanopb_library)
   )
 
 endfunction(robocin_cpp_nanopb_library)
+
+########################################################################################################################
+
+# Add cpp grpc library
+# Named parameters:
+#  NAME: name of the library
+#  PROTOS: (grpc) proto files
+#  DEPS: dependencies
+#  MACROS: macros
+#  COMPILE_OPTIONS: compile options
+#  COMPILE_FEATURES: compile features
+function(robocin_cpp_grpc_library)
+  cmake_parse_arguments(
+          ARG                                                     # prefix of output variables
+          ""                                                      # list of names of the boolean arguments
+          "NAME"                                                  # list of names of mono-valued arguments
+          "PROTOS;DEPS;MACROS;COMPILE_OPTIONS;COMPILE_FEATURES"   # list of names of multi-valued arguments
+          ${ARGN}                                                 # arguments of the function to parse
+  )
+
+  if (NOT gRPC_FOUND)
+    message(WARNING "robocin_cpp_grpc_library (${ARG_NAME}): grpc library support is not available without gRPC library.")
+    return()
+  endif ()
+
+  # if there isn't at least one proto file, then the library is not created
+  if (NOT ARG_PROTOS)
+    message(WARNING "robocin_cpp_grpc_library (${ARG_NAME}): no proto files given for library '${ARG_NAME}'.")
+    return()
+  endif ()
+
+  set(proto_hdrs)
+  set(proto_srcs)
+  set(grpc_hdrs)
+  set(grpc_srcs)
+
+  foreach (PROTO ${ARG_PROTOS})
+    get_filename_component(proto_name ${PROTO} NAME_WE)
+    get_filename_component(proto_absolute_file ${PROTO} ABSOLUTE)
+    get_filename_component(proto_absolute_path ${proto_absolute_file} DIRECTORY)
+    file(RELATIVE_PATH proto_relative_file ${ROBOCIN_PROJECT_PATH} ${proto_absolute_file})
+    file(RELATIVE_PATH proto_relative_path ${ROBOCIN_PROJECT_PATH} ${proto_absolute_path})
+
+    set(proto_hdr_file "${CMAKE_BINARY_DIR}/${proto_relative_path}/${proto_name}.pb.h")
+    set(proto_src_file "${CMAKE_BINARY_DIR}/${proto_relative_path}/${proto_name}.pb.cc")
+    set(grpc_hdr_file "${CMAKE_BINARY_DIR}/${proto_relative_path}/${proto_name}.grpc.pb.h")
+    set(grpc_src_file "${CMAKE_BINARY_DIR}/${proto_relative_path}/${proto_name}.grpc.pb.cc")
+
+    add_custom_command(
+            OUTPUT "${proto_hdr_file}" "${proto_src_file}" "${grpc_hdr_file}" "${grpc_src_file}"
+            COMMAND $<TARGET_FILE:protobuf::protoc>
+            ARGS --proto_path ${ROBOCIN_PROJECT_PATH}
+            --cpp_out "${CMAKE_BINARY_DIR}"
+            --grpc_out "${CMAKE_BINARY_DIR}"
+            --plugin=protoc-gen-grpc=$<TARGET_FILE:gRPC::grpc_cpp_plugin>
+            "${proto_relative_file}"
+            DEPENDS "${proto_absolute_file}"
+            WORKING_DIRECTORY ${ROBOCIN_PROJECT_PATH}
+    )
+
+    list(APPEND proto_hdrs ${proto_hdr_file})
+    list(APPEND proto_srcs ${proto_src_file})
+    list(APPEND grpc_hdrs ${grpc_hdr_file})
+    list(APPEND grpc_srcs ${grpc_src_file})
+
+  endforeach (PROTO)
+
+  add_library(${ARG_NAME} ${proto_hdrs} ${proto_srcs} ${grpc_hdrs} ${grpc_srcs})
+  target_link_libraries(${ARG_NAME} PUBLIC protobuf::libprotobuf gRPC::grpc++ gRPC::grpc++_reflection ${ARG_DEPS}) # link library with given dependencies
+
+  target_include_directories(${ARG_NAME} PRIVATE ${ROBOCIN_PROJECT_PATH})
+  target_include_directories(${ARG_NAME} PRIVATE ${CMAKE_BINARY_DIR})
+
+  if (ARG_MACROS)
+    target_compile_definitions(${ARG_NAME} ${ARG_MACROS})
+  endif ()
+
+  if (ARG_COMPILE_OPTIONS)
+    target_compile_options(${ARG_NAME} ${ARG_COMPILE_OPTIONS})
+  endif ()
+
+  if (ARG_COMPILE_FEATURES)
+    target_compile_features(${ARG_NAME} ${ARG_COMPILE_FEATURES})
+  endif ()
+
+  # installing steps:
+  #  - include directories to be used by other projects
+  target_include_directories(${ARG_NAME} INTERFACE
+          $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}>
+          $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>
+  )
+  #  - install header files preserving the directory structure
+  foreach (HDR_FILE ${proto_hdrs} ${grpc_hdrs})
+    file(RELATIVE_PATH header_relative_path ${ROBOCIN_PROJECT_PATH} ${CMAKE_CURRENT_SOURCE_DIR})
+
+    get_filename_component(header_relative_subdirectory ${HDR_FILE} DIRECTORY)
+    file(RELATIVE_PATH header_relative_subdirectory ${CMAKE_CURRENT_BINARY_DIR} ${header_relative_subdirectory})
+
+    robocin_concatenate_paths("${header_relative_path}" "${header_relative_subdirectory}" header_relative_path)
+    robocin_concatenate_paths("${CMAKE_INSTALL_INCLUDEDIR}" "${header_relative_path}" header_install_path)
+
+    install(FILES ${HDR_FILE} DESTINATION "${header_install_path}")
+  endforeach ()
+
+  #  - install the project's library
+  install(TARGETS ${ARG_NAME} EXPORT "${PROJECT_NAME}Targets")
+
+  #  - install CMake configuration files
+  install(
+          EXPORT "${PROJECT_NAME}Targets"
+          NAMESPACE "${PROJECT_NAME}::"
+          FILE "${PROJECT_NAME}Config.cmake"
+          DESTINATION "${CMAKE_INSTALL_LIBDIR}/cmake/${PROJECT_NAME}"
+  )
+
+endfunction(robocin_cpp_grpc_library)
 
 ########################################################################################################################
