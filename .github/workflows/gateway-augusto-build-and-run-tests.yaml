@@ -22,6 +22,8 @@ jobs:
           subFolder: gateway/gateway-augusto
           configFile: gateway/gateway-augusto/.devcontainer/devcontainer.json
           runCmd: |
+            set -e
+
             ${cpp_compiler} --version
 
             cmake -B build \
@@ -29,6 +31,8 @@ jobs:
                 -G Ninja \
                 -DCMAKE_CXX_COMPILER=${cpp_compiler}
 
-            cmake --build .
+            cmake --build build
 
             ctest --test-dir build
+
+            cat non_existent_file.txt
