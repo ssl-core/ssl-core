@@ -29,6 +29,6 @@ jobs:
                 -G Ninja \
                 -DCMAKE_CXX_COMPILER=${cpp_compiler}
 
-            cmake --build build
+            cmake --build .
 
-            ctest --test-dir .
+            ctest --test-dir build
