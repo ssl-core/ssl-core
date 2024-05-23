@@ -18,10 +18,10 @@ jobs:
       - uses: actions/checkout@v4
       - uses: devcontainers/ci@v0.3
         with:
-          configFile: gateway/gateway-augusto/.devcontainer/devcontainer.json
+          push: never
+          platform: linux/amd64,linux/arm64
+          subFolder: gateway/gateway-augusto
           runCmd: |
-            pushd gateway/gateway-augusto || exit -1
-
             ${cpp_compiler} --version
 
             cmake -B build \
@@ -32,5 +32,3 @@ jobs:
             cmake --build build
 
             ctest --test-dir build
-
-            popd || exit -1
