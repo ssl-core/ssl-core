@@ -12,15 +12,29 @@ jobs:
   build_run_tests_and_install:
     strategy:
       matrix:
-        compiler: [g++, clang++]
+        compiler:
+          [
+            { c: clang, cpp: clang++, flags: "" },
+            { c: gcc, cpp: g++, flags: "" },
+            {
+              c: arm-none-eabi-gcc,
+              cpp: arm-none-eabi-g++,
+              flags: "-DCMAKE_C_FLAGS='--specs=nosys.specs' -DCMAKE_CXX_FLAGS='--specs=nosys.specs'",
+            },
+          ]
     runs-on: ubuntu-latest
-    container: robocin/ssl-core-cpp-base:latest
+    container: robocin/ssl-core-cpp-mbed-base:latest
     steps:
       - uses: actions/checkout@v3
       - working-directory: common/cpp
         shell: bash
         run: |
-          cmake -B build -S . -G Ninja -DCMAKE_CXX_COMPILER=${{ matrix.compiler }}
+          cmake -B build \
+                -S . \
+                -G Ninja \
+                -DCMAKE_C_COMPILER=${{ matrix.compiler.c }} \
+                -DCMAKE_CXX_COMPILER=${{ matrix.compiler.cpp }} \
+                ${{ matrix.compiler.flags }}
           cmake --build build
       - working-directory: common/cpp
         shell: bash
