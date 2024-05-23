@@ -19,6 +19,7 @@ jobs:
       - uses: devcontainers/ci@v0.3
         with:
           env: cpp_compiler
+          platform: linux/amd64,linux/arm64
           subFolder: gateway/gateway-augusto
           configFile: gateway/gateway-augusto/.devcontainer/devcontainer.json
           runCmd: |
