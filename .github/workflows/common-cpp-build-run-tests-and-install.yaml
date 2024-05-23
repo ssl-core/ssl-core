@@ -24,7 +24,9 @@ jobs:
             { compiler: g++, flags: "" },
           ]
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
+      - shell: bash
+        run: ${{ matrix.cmake.compiler }} --version
       - working-directory: common/cpp
         shell: bash
         run: |
