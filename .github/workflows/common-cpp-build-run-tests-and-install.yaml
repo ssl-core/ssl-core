@@ -1,0 +1,32 @@
+name: "Common C++ Library: Build, Run Tests and Install"
+on:
+  pull_request:
+    paths: ["common/cpp/**"]
+  push:
+    branches:
+      - main
+    paths: ["common/cpp/**"]
+  workflow_dispatch:
+
+jobs:
+  build_run_tests_and_install:
+    strategy:
+      matrix:
+        compiler: [g++, clang++]
+    runs-on: ubuntu-latest
+    container: robocin/ssl-core-cpp-base:latest
+    steps:
+      - uses: actions/checkout@v3
+      - working-directory: common/cpp
+        shell: bash
+        run: |
+          cmake -B build -S . -G Ninja -DCMAKE_CXX_COMPILER=${{ matrix.compiler }}
+          cmake --build build
+      - working-directory: common/cpp
+        shell: bash
+        run: |
+          ctest --test-dir build
+      - working-directory: common/cpp
+        shell: bash
+        run: |
+          cmake --install build
