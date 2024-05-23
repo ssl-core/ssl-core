@@ -48,6 +48,6 @@ jobs:
       - uses: actions/checkout@v3
       - shell: bash
         run: |
-          for file in $(find common/cpp -type f -regex '.*\.\(h\|c\|hh\|cc\|h++\|c++\|hxx\|cxx\|H\|C\|hpp\|cpp\|ixx\|cppm\)'); do
+          for file in $(find . -type f -regex '.*\.\(h\|c\|hh\|cc\|h++\|c++\|hxx\|cxx\|H\|C\|hpp\|cpp\|ixx\|cppm\)'); do
             clang-format --dry-run --Werror -i "${file}"
           done
