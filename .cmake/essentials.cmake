@@ -75,7 +75,7 @@ endif ()
 
 # find GTest installation
 # looks for GTest cmake config files installed by GTest's cmake installation.
-find_package(GTest CONFIG QUIET HINTS "/opt/googletest")
+find_package(GTest CONFIG QUIET HINTS "/usr/local/googletest" "/opt/googletest")
 if (GTest_FOUND)
   message(STATUS "Using GTest: ${GTest_VERSION}")
 
