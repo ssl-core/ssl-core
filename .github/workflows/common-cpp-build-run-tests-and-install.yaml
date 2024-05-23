@@ -14,15 +14,14 @@ jobs:
     container: robocin/ssl-core-cpp-mbed-base:latest
     strategy:
       matrix:
-        compiler:
+        cmake:
           [
-            { c: clang, cpp: clang++, flags: "" },
-            { c: gcc, cpp: g++, flags: "" },
             {
-              c: arm-none-eabi-gcc,
-              cpp: arm-none-eabi-g++,
-              flags: "-DCMAKE_C_FLAGS='--specs=nosys.specs' -DCMAKE_CXX_FLAGS='--specs=nosys.specs'",
+              compiler: arm-none-eabi-g++,
+              flags: "-DCMAKE_CXX_FLAGS='--specs=nosys.specs'",
             },
+            { compiler: clang++, flags: "" },
+            { compiler: g++, flags: "" },
           ]
     steps:
       - uses: actions/checkout@v3
@@ -32,9 +31,8 @@ jobs:
           cmake -B build \
                 -S . \
                 -G Ninja \
-                -DCMAKE_C_COMPILER=${{ matrix.compiler.c }} \
-                -DCMAKE_CXX_COMPILER=${{ matrix.compiler.cpp }} \
-                ${{ matrix.compiler.flags }}
+                -DCMAKE_CXX_COMPILER=${{ matrix.cmake.compiler }} \
+                ${{ matrix.cmake.flags }}
           cmake --build build
       - working-directory: common/cpp
         shell: bash
