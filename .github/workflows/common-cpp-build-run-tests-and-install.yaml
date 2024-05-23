@@ -11,30 +11,31 @@ on:
 jobs:
   build_run_tests_and_install:
     runs-on: ubuntu-latest
-    container: robocin/ssl-core-cpp-mbed-base:latest
     strategy:
       matrix:
-        cmake:
+        cpp:
           [
             {
+              container: ssl-core-cpp-mbed-base,
               compiler: arm-none-eabi-g++,
               flags: "-DCMAKE_CXX_FLAGS='--specs=nosys.specs'",
             },
-            { compiler: clang++, flags: "" },
-            { compiler: g++, flags: "" },
+            { container: ssl-core-cpp-base, compiler: clang++, flags: "" },
+            { container: ssl-core-cpp-base, compiler: g++, flags: "" },
           ]
+    container: robocin/${{matrix.cpp.container}}:latest
     steps:
       - uses: actions/checkout@v4
       - shell: bash
-        run: ${{ matrix.cmake.compiler }} --version
+        run: ${{ matrix.cpp.compiler }} --version
       - working-directory: common/cpp
         shell: bash
         run: |
           cmake -B build \
                 -S . \
                 -G Ninja \
-                -DCMAKE_CXX_COMPILER=${{ matrix.cmake.compiler }} \
-                ${{ matrix.cmake.flags }}
+                -DCMAKE_CXX_COMPILER=${{ matrix.cpp.compiler }} \
+                ${{ matrix.cpp.flags }}
           cmake --build build
       - working-directory: common/cpp
         shell: bash
