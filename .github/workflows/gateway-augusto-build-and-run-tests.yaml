@@ -21,6 +21,7 @@ jobs:
           push: never
           platform: linux/amd64,linux/arm64
           subFolder: gateway/gateway-augusto
+          configFile: gateway/gateway-augusto/.devcontainer/devcontainer.json
           runCmd: |
             ${cpp_compiler} --version
 
