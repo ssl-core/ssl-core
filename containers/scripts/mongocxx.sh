@@ -22,7 +22,7 @@ if [ -z "${PARENT_DIR}" ]; then
   PARENT_DIR="/usr/local"
 fi
 
-MONGODB_DIR="${PARENT_DIR}/mongocxx"
+MONGODB_DIR="${PARENT_DIR}"
 TMP_MONGODB="/tmp/mongocxx"
 
 rm -rf "${TMP_MONGODB}"
@@ -45,5 +45,3 @@ cmake --install build
 popd || exit 1
 
 rm -rf "${TMP_MONGODB}"
-
-chown "${CURRENT_USER}":"${CURRENT_USER}" "${MONGODB_DIR}" -R # changes the owner of the directory to the current user
