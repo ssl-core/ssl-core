@@ -1,4 +1,4 @@
-FROM robocin/ssl-core-cpp-base:latest
+FROM robocin/ssl-core-cpp-base:latest AS devcontainer
 
 COPY .cmake/ /tmp/.cmake/
 COPY common/ /tmp/common/
