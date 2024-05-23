@@ -1,0 +1,53 @@
+name: "C/C++: clang-format"
+on:
+  pull_request:
+    paths:
+      [
+        "**.h",
+        "**.c",
+        "**.hh",
+        "**.cc",
+        '**.h\+\+',
+        '**.c\+\+',
+        "**.hxx",
+        "**.cxx",
+        "**.H",
+        "**.C",
+        "**.hpp",
+        "**.cpp",
+        "**.ixx",
+        "**.cppm",
+      ]
+  push:
+    branches:
+      - main
+    paths:
+      [
+        "**.h",
+        "**.c",
+        "**.hh",
+        "**.cc",
+        '**.h\+\+',
+        '**.c\+\+',
+        "**.hxx",
+        "**.cxx",
+        "**.H",
+        "**.C",
+        "**.hpp",
+        "**.cpp",
+        "**.ixx",
+        "**.cppm",
+      ]
+  workflow_dispatch:
+
+jobs:
+  clang_format:
+    runs-on: ubuntu-latest
+    container: robocin/ssl-core-cpp-base:latest
+    steps:
+      - uses: actions/checkout@v3
+      - shell: bash
+        run: |
+          for file in $(find common/cpp -type f -regex '.*\.\(h\|c\|hh\|cc\|h++\|c++\|hxx\|cxx\|H\|C\|hpp\|cpp\|ixx\|cppm\)'); do
+            clang-format --dry-run --Werror -i "${file}"
+          done
