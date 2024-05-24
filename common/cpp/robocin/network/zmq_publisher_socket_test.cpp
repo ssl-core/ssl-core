@@ -22,7 +22,7 @@ constexpr size_t kBytesSent = 42;
 
 class MockZmqContext {
  public:
-  explicit MockZmqContext(int /*unused*/){};
+  explicit MockZmqContext(int /*unused*/) {};
 };
 
 class MockZmqSocket {
