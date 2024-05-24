@@ -34,5 +34,3 @@ jobs:
             cmake --build build
 
             ctest --test-dir build
-
-            cat non_existent_file.txt
