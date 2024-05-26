@@ -1,8 +1,14 @@
-import { defineConfig } from "vite";
+import { defineConfig } from "vitest/config";
 import { viteAwesomeSvgLoader } from "vite-awesome-svg-loader";
 
 export default defineConfig({
   plugins: [viteAwesomeSvgLoader()],
+  test: {
+    environment: "jsdom",
+    coverage: {
+      reporter: ["text", "json-summary", "json"],
+    },
+  },
   build: {
     rollupOptions: {
       input: {
