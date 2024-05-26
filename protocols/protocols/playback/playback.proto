@@ -4,28 +4,57 @@ package protocols.playback;
 
 import "google/protobuf/duration.proto";
 import "google/protobuf/timestamp.proto";
-import "protocols/common/geometry.proto";
+import "protocols/common/game_command.proto";
+import "protocols/common/game_event.proto";
+import "protocols/common/game_stage.proto";
+import "protocols/common/match_type.proto";
 import "protocols/common/robot_id.proto";
-import "protocols/common/time.proto";
+import "protocols/common/geometry.proto";
+
+message Playback {
+  google.protobuf.Timestamp first_vision_timestamp = 1;
+  google.protobuf.Timestamp vision_timestamp = 2;
+
+  uint64 detection_id = 3;
+
+  repeated Ball balls = 4;
+  Team home_team = 5;
+  Team away_team = 6;
+  Field field = 7;
+
+  bool is_home_team_on_positive_half = 8;
+
+  common.GameStage game_stage = 9;
+  optional google.protobuf.Duration game_stage_time_left = 10;
+
+  uint64 total_commands_issued = 11;
+  google.protobuf.Timestamp command_issued_timestamp = 12;
+  common.GameCommand command = 13;
+  common.GameCommand next_command = 14;
+
+  common.MatchType match_type = 15;
+  optional string game_status_description = 16;
+
+  repeated common.GameEvent game_events = 17;
+  repeated GameEventsProposal game_events_proposals = 18;
+}
 
 message Ball {
-  float confidence = 1;
-  common.Point3Df position = 2;
-  common.Point3Df velocity = 3;
+  common.Point3Df position = 1;
+  common.Point3Df velocity = 2;
 
-  reserved 4;
+  reserved 3;
   reserved "acceleration";
 }
 
 message Robot {
-  float confidence = 1;
-  common.RobotId robot_id = 2;
-  common.Point2Df position = 3;
-  float angle = 4;
-  common.Point2Df velocity = 6;
-  float angular_velocity = 7;
+  common.RobotId robot_id = 1;
+  common.Point2Df position = 2;
+  float angle = 3;
+  common.Point2Df velocity = 4;
+  float angular_velocity = 5;
 
-  reserved 8;
+  reserved 6;
   reserved "acceleration";
 
   message PhysicalAttributes {
@@ -34,21 +63,20 @@ message Robot {
     float dribbler_width = 3;
     float wheel_radius = 4;
   }
-
-  PhysicalAttributes physical_attributes = 9;
+  PhysicalAttributes physical_attributes = 7;
 
   message Feedback {
     optional bool dribbler_ball_contact = 1;
     optional float kick_charge_percentage = 2;
     optional float battery_percentage = 3;
-    reserved 5; // TODO: electric_current (definir nome melhor)
 
     message Wheel {
-      int wheel_id = 1;
-      float motor_speed = 2; // TODO: rename to engine or keep motor
+      int32 wheel_id = 1;
+      float motor_speed = 2;
     }
-    repeated Wheel wheels = 6;
+    repeated Wheel wheels = 4;
   }
+  Feedback feedback = 8;
 }
 
 message Field {
@@ -60,177 +88,41 @@ message Field {
   float penalty_area_width = 6;
   float boundary_width = 7;
   float goal_center_to_penalty_mark = 8;
-
-  // TODO: field lines from ssl-vision.
 }
 
-enum MatchType {
-  MATCH_TYPE_UNKNOWN_MATCH = 0;
-  MATCH_TYPE_GROUP_PHASE = 1;
-  MATCH_TYPE_ELIMINATION_PHASE = 2;
-  MATCH_TYPE_FRIENDLY = 3;
-}
-
-message Stage {
-  enum Type {
-    TYPE_UNKNOWN = 0;
-    TYPE_NORMAL_FIRST_HALF_PRE = 1;
-    TYPE_NORMAL_FIRST_HALF = 2;
-    TYPE_NORMAL_HALF_TIME = 3;
-    TYPE_NORMAL_SECOND_HALF_PRE = 4;
-    TYPE_NORMAL_SECOND_HALF = 5;
-    TYPE_EXTRA_TIME_BREAK = 6;
-    TYPE_EXTRA_FIRST_HALF_PRE = 7;
-    TYPE_EXTRA_FIRST_HALF = 8;
-    TYPE_EXTRA_HALF_TIME = 9;
-    TYPE_EXTRA_SECOND_HALF_PRE = 10;
-    TYPE_EXTRA_SECOND_HALF = 11;
-    TYPE_PENALTY_SHOOTOUT_BREAK = 12;
-    TYPE_PENALTY_SHOOTOUT = 13;
-    TYPE_POST_GAME = 14;
-  }
-
-  Type type = 1;
-  optional google.protobuf.Duration time_left = 2;
-}
 
 message Team {
   string name = 1;
   uint32 score = 2;
-  uint32 yellow_cards = 3;
 
-  repeated google.protobuf.Duration time_to_expire_active_yellow_cards = 4;
+  repeated Robot robots = 3;
+  common.RobotId goalkeeper_id = 4;
 
-  uint32 red_cards = 5;
+  uint32 yellow_cards = 5;
+  repeated google.protobuf.Duration time_to_expire_active_yellow_cards = 6;
 
-  uint32 timeouts_left = 6;
-  google.protobuf.Duration total_timeout_time_left = 7;
+  uint32 red_cards = 7;
 
-  int32 goalkeeper_id = 8;
+  uint32 timeouts_left = 8;
+  google.protobuf.Duration total_timeout_time_left = 9;
 
-  uint32 total_fouls_committed = 9;
+  uint32 total_fouls_committed = 10;
 
-  uint32 consecutive_ball_placement_failures = 10;
-  bool is_ball_placement_enabled = 11;
-  bool has_ball_placement_failures_reached = 12;
+  uint32 consecutive_ball_placement_failures = 11;
+  bool is_ball_placement_enabled = 12;
+  bool has_ball_placement_failures_reached_maximum = 13;
 
-  uint32 max_allowed_robots = 13;
+  uint32 maximum_allowed_robots = 14;
 
-  bool is_robot_substitution_requested = 14;
+  bool is_robot_substitution_requested = 15;
+  bool is_bot_substitution_allowed = 16;
 
-  bool is_bot_substitution_allowed = 15;
-
-  uint32 bot_substitutions_left = 16;
-
-  uint32 bot_substitution_time_left = 17;
-
-  repeated Robot robots = 18;
+  uint32 robot_substitutions_left = 17;
+  google.protobuf.Duration robot_substitution_time_left = 18;
 }
 
-message Command {
-  message Halt {}
-  message InGame {}
-  message Stop {}
-
-  message BallPlacement {
-    Point2D position = 1;
-    google.protobuf.Duration remaining_time = 2;
-  }
-
-  message PrepareKickoff {}
-  message Kickoff {
-    google.protobuf.Duration remaining_time = 1;
-  }
-
-  message PreparePenalty {}
-  message Penalty {
-    google.protobuf.Duration remaining_time = 1;
-  }
-
-  message PrepareDirectFreeKick {}
-  message DirectFreeKick {
-    google.protobuf.Duration remaining_time = 1;
-  }
-
-  message PrepareIndirectFreeKick {}
-  message IndirectFreeKick {
-    google.protobuf.Duration remaining_time = 1;
-  }
-
-  message Timeout {}
-
-  message Interval {}
-
-  oneof command {
-    Halt halt = 1;
-    InGame in_game = 2;
-    Stop stop = 3;
-
-    BallPlacement home_ball_placement = 4;
-    BallPlacement away_ball_placement = 5;
-
-    PrepareKickoff home_prepare_kickoff = 6;
-    PrepareKickoff away_prepare_kickoff = 7;
-
-    Kickoff home_kickoff = 8;
-    Kickoff away_kickoff = 9;
-
-    PreparePenalty home_prepare_penalty = 10;
-    PreparePenalty away_prepare_penalty = 11;
-    Penalty home_penalty = 12;
-    Penalty away_penalty = 13;
-
-    PrepareDirectFreeKick home_prepare_direct_free_kick = 14;
-    PrepareDirectFreeKick away_prepare_direct_free_kick = 15;
-
-    DirectFreeKick home_direct_free_kick = 16;
-    DirectFreeKick away_direct_free_kick = 17;
-
-    PrepareIndirectFreeKick home_prepare_indirect_free_kick = 18;
-    PrepareIndirectFreeKick away_prepare_indirect_free_kick = 19;
-
-    IndirectFreeKick home_indirect_free_kick = 20;
-    IndirectFreeKick away_indirect_free_kick = 21;
-
-    Timeout home_timeout = 22;
-    Timeout away_timeout = 23;
-
-    Interval interval = 24;
-  }
-
-  google.protobuf.Timestamp issued_timestamp = 25;
-  uint64 total_commands_issued = 26;
-}
-
-message Playback {
-  google.protobuf.Timestamp first_vision_timestamp = 1;
-  google.protobuf.Timestamp vision_timestamp = 1;
-  uint64 frame_id = 1; // gr sim ou perception?
-
-  repeated Ball balls = 2;
-  Team home_team = 5;
-  Team away_team = 6;
-  Field field = 3;
-
-  Stage stage = 4;
-  Command command = 5;
-
-  bool is_home_team_on_positive_half = 7;
-
-  MatchType match_type = 8;
-
-  optional string match_status_description = 9;
-
-  repeated GameEvent game_events = 16;
-
-  message GameEventsProposal {
-    // Unique ID of this proposal
-    optional string id = 3;
-    // The proposed game events
-    repeated GameEvent game_events = 1;
-    // Whether the proposal events were accepted
-    optional bool accepted = 2;
-  }
-
-  repeated GameEventsProposal game_events_proposal = 17;
+message GameEventsProposal {
+  string proposal_id = 1;
+  repeated common.GameEvent game_events = 2;
+  bool was_accepted = 3;
 }
