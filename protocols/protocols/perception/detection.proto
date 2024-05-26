@@ -1,6 +1,6 @@
 syntax = "proto3";
 
-package protocols.vision;
+package protocols.perception;
 
 import "google/protobuf/timestamp.proto";
 import "protocols/common/geometry.proto";
