@@ -1,0 +1,67 @@
+syntax = "proto3";
+
+package protocols.common;
+
+import "google/protobuf/duration.proto";
+import "protocols/common/geometry.proto";
+
+message GameCommand {
+  oneof command {
+    Halt halt = 1;
+    InGame in_game = 2;
+    Stop stop = 3;
+
+    BallPlacement home_ball_placement = 4;
+    BallPlacement away_ball_placement = 5;
+
+    PrepareKickoff home_prepare_kickoff = 6;
+    PrepareKickoff away_prepare_kickoff = 7;
+
+    Kickoff home_kickoff = 8;
+    Kickoff away_kickoff = 9;
+
+    PreparePenalty home_prepare_penalty = 10;
+    PreparePenalty away_prepare_penalty = 11;
+    Penalty home_penalty = 12;
+    Penalty away_penalty = 13;
+
+    PrepareDirectFreeKick home_prepare_direct_free_kick = 14;
+    PrepareDirectFreeKick away_prepare_direct_free_kick = 15;
+
+    DirectFreeKick home_direct_free_kick = 16;
+    DirectFreeKick away_direct_free_kick = 17;
+
+    Timeout home_timeout = 18;
+    Timeout away_timeout = 19;
+
+    Interval interval = 20;
+  }
+
+  message Halt {}
+  message InGame {}
+  message Stop {}
+
+  message BallPlacement {
+    Point2Df position = 1;
+    google.protobuf.Duration remaining_time = 2;
+  }
+
+  message PrepareKickoff {}
+  message Kickoff {
+    google.protobuf.Duration remaining_time = 1;
+  }
+
+  message PreparePenalty {}
+  message Penalty {
+    google.protobuf.Duration remaining_time = 1;
+  }
+
+  message PrepareDirectFreeKick {}
+  message DirectFreeKick {
+    google.protobuf.Duration remaining_time = 1;
+  }
+
+  message Timeout {}
+
+  message Interval {}
+}
