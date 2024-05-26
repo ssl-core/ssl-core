@@ -12,6 +12,12 @@
 #include <zmq.h>
 #include <zmq.hpp>
 
+#if defined(__robocin_lib_googletest)
+#include <gtest/gtest_prod.h>
+#else
+#define FRIEND_TEST(...)
+#endif
+
 namespace robocin {
 
 struct ZmqDatagram {
@@ -71,5 +77,8 @@ class IZmqSubscriberSocket {
 using ZmqSubscriberSocket = IZmqSubscriberSocket<zmq::context_t, zmq::socket_t>;
 
 } // namespace robocin
+
+#endif
+#endif
 
 #endif // ROBOCIN_NETWORK_ZMQ_SUBSCRIBER_SOCKET_H
