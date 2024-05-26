@@ -1,0 +1,467 @@
+syntax = "proto3";
+
+package protocols.common;
+
+import "google/protobuf/duration.proto";
+import "google/protobuf/timestamp.proto";
+import "protocols/common/geometry.proto";
+import "protocols/common/robot_id.proto";
+import "protocols/common/time.proto";
+
+message GameEvent {
+  enum Team {
+    TEAM_UNSPECIFIED = 0;
+    TEAM_HOME = 1;
+    TEAM_AWAY = 2;
+  }
+
+  repeated string sources = 1;
+
+  oneof event {
+    // Ball out of field events (stopping)
+
+    BallLeftField ball_left_field_touch_line = 6;
+    BallLeftField ball_left_field_goal_line = 7;
+    AimlessKick aimless_kick = 11;
+
+    // Stopping Fouls
+
+    RobotTooCloseToDefenseArea robot_too_close_to_defense_area = 19;
+    RobotInDefenseArea robot_in_defense_area = 31;
+    BallLeftFieldBoundary ball_left_field_boundary = 43;
+    GoalkeeperHeldBall goalkeeper_held_ball = 13;
+    RobotDribbledBallTooFar robot_dribbled_ball_too_far = 17;
+
+    RobotPushedRobot robot_pushed_robot = 24;
+    RobotHeldBallDeliberately robot_held_ball_deliberately = 26;
+    RobotTippedOver robot_tipped_over = 27;
+
+    // Non-Stopping Fouls
+
+    RobotTouchedBallInDefenseArea robot_touched_ball_in_defense_area = 15;
+    RobotKickedBallTooFast robot_kicked_ball_too_fast = 18;
+    RobotCrashUnique robot_crash_unique = 22;
+    RobotCrashDrawn robot_crash_drawn = 21;
+
+    // Fouls while ball out of play
+
+    RobotTooCloseToKickPoint robot_too_close_to_kick_point = 29;
+    RobotTooFastInStop robot_too_fast_in_stop = 28;
+    RobotInterferedBallPlacement robot_interfered_ball_placement = 20;
+
+    // Scoring goals
+
+    Goal possible_goal = 39;
+    Goal goal = 8;
+    Goal invalid_goal = 44;
+
+    // Other events
+
+    RobotDoubleTouchedBall robot_double_touched_ball = 14;
+    BallPlacementSucceeded ball_placement_succeeded = 5;
+    PenaltyKickFailed penalty_kick_failed = 45;
+
+    NoProgressInGame no_progress_in_game = 2;
+    BallPlacementFailed bal_placement_failed = 3;
+    MultipleCards multiple_cards = 32;
+    MultipleFouls multiple_fouls = 34;
+    RobotSubstitution robot_substitution = 37;
+    TooManyRobots too_many_robots = 38;
+    ChallengeFlag challenge_flag = 46;
+    EmergencyStop emergency_stop = 47;
+
+    UnsportingBehaviorMinor unsporting_behavior_minor = 35;
+    UnsportingBehaviorMajor unsporting_behavior_major = 36;
+  }
+
+  // the ball left the field normally
+  message BallLeftField {
+    // the team that last touched the ball
+    Team by_team = 1;
+    // the robot that last touched the ball
+    RobotId by_robot = 2;
+    // the position where the ball left the field [mm]
+    Point2Df position = 3;
+  }
+  // the ball left the field via goal line and a team committed an aimless kick
+  message AimlessKick {
+    // the team that last touched the ball
+    Team by_team = 1;
+    // the robot that last touched the ball
+    RobotId by_robot = 2;
+    // the position where the ball left the field [mm]
+    Point2Df position = 3;
+    // the position where the ball was last touched [mm]
+    Point2Df kick_position = 4;
+  }
+  // a team shot a goal
+  message Goal {
+    // the team that scored the goal
+    Team by_team = 1;
+    // the team that shot the goal (different from by_team for own goals)
+    Team kicking_team = 6;
+    // the robot that shot the goal
+    RobotId kicking_robot = 2;
+    // the position where the ball entered the goal [mm]
+    Point2Df position = 3;
+    // the position where the ball was kicked (for deciding if this was a valid
+    // goal) [mm]
+    Point2Df kick_position = 4;
+    // the maximum height the ball reached during the goal kick (for deciding if
+    // this was a valid goal) [mm]
+    float max_ball_height = 5;
+    // number of robots of scoring team when the ball entered the goal (for
+    // deciding if this was a valid goal)
+    uint32 num_of_robots_of_scoring_team = 7;
+    // The UNIX timestamp [μs] when the scoring team last touched the ball
+    google.protobuf.Timestamp last_touch_by_scoring_team_timestamp = 8;
+    // An additional message with e.g. a reason for invalid goals
+    optional string message = 9;
+  }
+  // the ball entered the goal directly during an indirect free kick
+  message IndirectGoal {
+    // the team that tried to shoot the goal
+    Team by_team = 1;
+    // the robot that kicked the ball - at least the team must be set
+    RobotId by_robot = 2;
+    // the position where the ball entered the goal [mm]
+    Point2Df position = 3;
+    // the position where the ball was kicked [mm]
+    Point2Df kick_position = 4;
+  }
+  // the ball entered the goal, but was initially chipped
+  message ChippedGoal {
+    // the team that tried to shoot the goal
+    Team by_team = 1;
+    // the robot that kicked the ball
+    RobotId by_robot = 2;
+    // the position where the ball entered the goal [mm]
+    Point2Df position = 3;
+    // the position where the ball was kicked [mm]
+    Point2Df kick_position = 4;
+    // the maximum height [mm] of the ball, before it entered the goal and since
+    // the last kick [mm]
+    float max_ball_height = 5;
+  }
+  // a robot moved too fast while the game was stopped
+  message RobotTooFastInStop {
+    // the team that found guilty
+    Team by_team = 1;
+    // the robot that was too fast
+    RobotId by_robot = 2;
+    // the position of the robot [mm]
+    Point2Df position = 3;
+    // the robot speed [mm/s]
+    float speed = 4;
+  }
+  // a robot of the defending team got too close to the kick point during a free
+  // kick
+  message RobotTooCloseToKickPoint {
+    // the team that was found guilty
+    Team by_team = 1;
+    // the robot that violates the distance to the kick point
+    RobotId by_robot = 2;
+    // the position of the robot [mm]
+    Point2Df position = 3;
+    // the distance [mm] from robot to the kick point (including the minimum
+    // radius)
+    float distance = 4;
+  }
+  // two robots crashed into each other with similar speeds
+  message RobotCrashDrawn {
+    // the robot of home team
+    RobotId home_robot_id = 1;
+    // the robot of way team
+    RobotId away_robot_id = 2;
+    // the position of the crash (center between both robot) [mm]
+    Point2Df position = 3;
+    // the calculated crash speed [mm/s] of the two robot
+    float crash_speed = 4;
+    // the difference [mm/s] of the velocity of the two robot
+    float speed_diff = 5;
+    // the angle [rad] in the range [0, π] of the robot velocity vectors
+    // an angle of 0 rad (  0°) means, the robot barely touched each other
+    // an angle of π rad (180°) means, the robot crashed frontal into each other
+    float crash_angle = 6;
+  }
+  // two robots crashed into each other and one team was found guilty to due
+  // significant speed difference
+  message RobotCrashUnique {
+    // the team that caused the crash
+    Team by_team = 1;
+    // the robot that caused the crash
+    uint32 violator = 2;
+    // the robot of the opposite team that was involved in the crash
+    uint32 victim = 3;
+    // the position of the crash (center between both robots) [mm]
+    Point2Df position = 4;
+    // the calculated crash speed vector [mm/s] of the two robots
+    float crash_speed = 5;
+    // the difference [mm/s] of the velocity of the two robots
+    float speed_diff = 6;
+    // the angle [rad] in the range [0, π] of the robot velocity vectors
+    // an angle of 0 rad (  0°) means, the robots barely touched each other
+    // an angle of π rad (180°) means, the robots crashed frontal into each other
+    float crash_angle = 7;
+  }
+  // a robot pushed another robot over a significant distance
+  message RobotPushedRobot {
+    // the team that pushed the other team
+    Team by_team = 1;
+    // the robot that pushed the other bot
+    uint32 violator = 2;
+    // the robot of the opposite team that was pushed
+    uint32 victim = 3;
+    // the position of the push (center between both robots) [mm]
+    Point2Df position = 4;
+    // the pushed distance [mm]
+    float pushed_distance = 5;
+  }
+  // a robot tipped over
+  message RobotTippedOver {
+    // the team that found guilty
+    Team by_team = 1;
+    // the robot that tipped over
+    RobotId by_robot = 2;
+    // the position of the robot [mm]
+    Point2Df position = 3;
+    // the position of the ball at the moment when this foul occurred [mm]
+    Point2Df ball_position = 4;
+  }
+  // a robot other than the keeper was fully located inside its own defense
+  // and touched the ball
+  message RobotInDefenseArea {
+    // the team that found guilty
+    Team by_team = 1;
+    // the robot that is inside the penalty area
+    RobotId by_robot = 2;
+    // the position of the robot [mm]
+    Point2Df position = 3;
+    // the distance [mm] from robot case to the nearest point outside the defense
+    // area
+    float distance = 4;
+  }
+  // a robot other than the keeper was partially located inside its own
+  // defense area and touched the ball
+  message RobotInDefenseAreaPartially {
+    // the team that found guilty
+    Team by_team = 1;
+    // the robot that is partially inside the penalty area
+    RobotId by_robot = 2;
+    // the position of the bot
+    Point2Df position = 3;
+    // the distance [mm] that the robot is inside the penalty area
+    float distance = 4;
+    // the position of the ball at the moment when this foul occurred [mm]
+    Point2Df ball_position = 5;
+  }
+  // an robot touched the ball inside the opponent defense area
+  message RobotTouchedBallInDefenseArea {
+    // the team that found guilty
+    Team by_team = 1;
+    // the robot that is inside the penalty area
+    RobotId by_robot = 2;
+    // the position of the robot [mm]
+    Point2Df position = 3;
+    // the distance [mm] that the robot is inside the penalty area
+    float distance = 4;
+  }
+  // a robot kicked the ball too fast
+  message RobotKickedBallTooFast {
+    // the team that found guilty
+    Team by_team = 1;
+    // the robot that kicked too fast
+    RobotId by_robot = 2;
+    // the position of the ball at the time of the highest speed [mm]
+    Point2Df position = 3;
+    // the absolute initial ball speed (kick speed) [mm/s]
+    float initial_ball_speed = 4;
+    // was the ball chipped?
+    bool chipped = 5;
+  }
+  // a robot dribbled to ball too far
+  message RobotDribbledBallTooFar {
+    // the team that found guilty
+    Team by_team = 1;
+    // the robot that dribbled too far
+    RobotId by_robot = 2;
+    // the position where the dribbling started [mm]
+    Point2Df start = 3;
+    // the position where the maximum dribbling distance was reached [mm]
+    Point2Df end = 4;
+  }
+  // an robot touched the opponent robot inside defense area
+  message RobotTouchedOpponentInDefenseArea {
+    // the team that found guilty
+    Team by_team = 1;
+    // the robot that touched the opponent robot
+    RobotId by_robot = 2;
+    // the robot of the opposite team that was touched
+    RobotId victim = 4;
+    // the position of the contact point between both robots [mm]
+    Point2Df position = 3;
+  }
+  // an robot touched the ball multiple times when it was not allowed to
+  message RobotDoubleTouchedBall {
+    // the team that found guilty
+    Team by_team = 1;
+    // the robot that touched the ball twice
+    RobotId by_robot = 2;
+    // the position of the ball when it was first touched [mm]
+    Point2Df position = 3;
+  }
+  // an robot was located too near to the opponent defense area during stop
+  // or free kick
+  message RobotTooCloseToDefenseArea {
+    // the team that found guilty
+    Team by_team = 1;
+    // the robot that is too close to the defense area
+    RobotId by_robot = 2;
+    // the position of the robot [mm]
+    Point2Df position = 3;
+    // the distance [mm] of the robot to the penalty area
+    float distance = 4;
+    // the position of the ball at the moment when this foul occurred [mm]
+    Point2Df ball_position = 5;
+  }
+  // a robot held the ball for too long
+  message RobotHeldBallDeliberately {
+    // the team that found guilty
+    Team by_team = 1;
+    // the robot that holds the ball
+    RobotId by_robot = 2;
+    // the position of the ball [mm]
+    Point2Df position = 3;
+    // the duration [s] that the robot hold the ball
+    google.protobuf.Duration duration = 4;
+  }
+  // a robot interfered the ball placement of the other team
+  message RobotInterferedBallPlacement {
+    // the team that found guilty
+    Team by_team = 1;
+    // the robot that interfered the placement
+    RobotId by_robot = 2;
+    // the position of the robot [mm]
+    Point2Df position = 3;
+  }
+  // a team collected multiple cards (yellow and red), which results in a
+  // penalty kick
+  message MultipleCards {
+    // the team that received multiple yellow cards
+    Team by_team = 1;
+  }
+  // a team collected multiple fouls, which results in a yellow card
+  message MultipleFouls {
+    // the team that collected multiple fouls
+    Team by_team = 1;
+  }
+  // a team failed to place the ball multiple times in a row
+  message MultipleBallPlacementFailures {
+    // the team that failed multiple times
+    Team by_team = 1;
+  }
+  // timeout waiting for the attacking team to perform the free kick
+  message KickTimeout {
+    // the team that that should have kicked
+    Team by_team = 1;
+    // the position of the ball [mm]
+    Point2Df position = 2;
+    // the time [s] that was waited
+    float time = 3;
+  }
+  // game was stuck
+  message NoProgressInGame {
+    // the position of the ball
+    Point2Df position = 1;
+    // the time [s] that was waited
+    float time = 2;
+  }
+  // ball placement failed
+  message BallPlacementFailed {
+    // the team that failed
+    Team by_team = 1;
+    // the remaining distance [mm] from ball to placement position
+    float remaining_distance = 2;
+  }
+  // a team was found guilty for minor unsporting behavior
+  message UnsportingBehaviorMinor {
+    // the team that found guilty
+    Team by_team = 1;
+    // an explanation of the situation and decision
+    string reason = 2;
+  }
+  // a team was found guilty for major unsporting behavior
+  message UnsportingBehaviorMajor {
+    // the team that found guilty
+    Team by_team = 1;
+    // an explanation of the situation and decision
+    string reason = 2;
+  }
+  // a keeper held the ball in its defense area for too long
+  message GoalkeeperHeldBall {
+    // the team that found guilty
+    Team by_team = 1;
+    // the position of the ball [mm]
+    Point2Df position = 2;
+    // the duration [s] that the keeper hold the ball
+    google.protobuf.Duration duration = 3;
+  }
+  // a team successfully placed the ball
+  message BallPlacementSucceeded {
+    // the team that did the placement
+    Team by_team = 1;
+    // the time [s] taken for placing the ball
+    google.protobuf.Duration duration = 2;
+    // the distance [mm] between placement position and actual ball position
+    float precision = 3;
+    // the distance [mm] between the initial ball position and the placement
+    // position
+    float distance = 4;
+  }
+  // both teams are prepared - all conditions are met to continue (with kickoff
+  // or penalty kick)
+  message Prepared {
+    // the time [s] taken for preparing
+    google.protobuf.Duration duration = 1;
+  }
+  // robots are being substituted by a team
+  message RobotSubstitution {
+    // the team that substitutes robots
+    Team by_team = 1;
+  }
+  // A challenge flag, requested by a team previously, is flagged
+  message ChallengeFlag {
+    // the team that substitutes robots
+    Team by_team = 1;
+  }
+  // An emergency stop, requested by team previously, occurred
+  message EmergencyStop {
+    // the team that substitutes robots
+    Team by_team = 1;
+  }
+  // a team has too many robots on the field
+  message TooManyRobots {
+    // the team that has too many robots
+    Team by_team = 1;
+    // number of robots allowed at the moment
+    int32 num_robots_allowed = 2;
+    // number of robots currently on the field
+    int32 num_robots_on_field = 3;
+    // the position of the ball at the moment when this foul occurred [mm]
+    Point2Df ball_position = 4;
+  }
+  // a robot chipped the ball over the field boundary out of the playing surface
+  message BallLeftFieldBoundary {
+    // the team that has too many robots
+    Team by_team = 1;
+    // the position of the ball [mm]
+    Point2Df position = 2;
+  }
+  // the penalty kick failed (by time or by keeper)
+  message PenaltyKickFailed {
+    // the team that last touched the ball
+    Team by_team = 1;
+    // the position of the ball at the moment of this event [mm]
+    Point2Df position = 2;
+  }
+}
