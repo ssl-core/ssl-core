@@ -3,10 +3,10 @@ FROM mcr.microsoft.com/devcontainers/base:ubuntu
 SHELL ["/bin/bash", "-c"]
 
 ARG               GCC_VERSION='13'
-ARG ARM_NONE_EABI_GCC_VERSION='13.2.rel1'
 ARG              LLVM_VERSION='18'
 ARG             CMAKE_VERSION='3.29.3'
 ARG             NINJA_VERSION='1.11.1'
+ARG ARM_NONE_EABI_GCC_VERSION='13.2.rel1'
 ARG          PROTOBUF_VERSION='3.21.10'
 ARG            NANOPB_VERSION='0.4.8'
 ARG               BUF_VERSION='1.28.1'
@@ -21,11 +21,12 @@ RUN set -x && \
   apt update && apt upgrade -y && \
   apt install python3 python3-pip python-is-python3 cargo -y && \
   \
-  bash   gcc.sh                           ${GCC_VERSION} && \
-  bash arm-none-eabi-gcc.sh ${ARM_NONE_EABI_GCC_VERSION} && \
-  bash  llvm.sh                          ${LLVM_VERSION} && \
-  bash cmake.sh                         ${CMAKE_VERSION} && \
-  bash ninja.sh                         ${NINJA_VERSION} && \
+  bash   gcc.sh   ${GCC_VERSION} && \
+  bash  llvm.sh  ${LLVM_VERSION} && \
+  bash cmake.sh ${CMAKE_VERSION} && \
+  bash ninja.sh ${NINJA_VERSION} && \
+  \
+  bash arm-none-eabi-gcc.sh ${ARM_NONE_EABI_GCC_VERSION} '/usr/local' && \
   \
   bash protobuf.sh ${PROTOBUF_VERSION} '/usr/local' && \
   bash nanopb.sh ${NANOPB_VERSION} '/usr/local' ${NANOPB_CMAKE_ARGS} && \
