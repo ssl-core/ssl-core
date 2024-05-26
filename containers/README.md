@@ -28,7 +28,7 @@ _The base image for C++ gRPC development with `ssl-core`_.
 
 ### [ssl-core-cpp-mbed-base.Dockerfile](ssl-core-cpp-mbed-base.Dockerfile)
 
-_The base image for Embedded development with `ssl-core`_, based on [ARMmbed/mbed-os-docker-images](https://github.com/ARMmbed/mbed-os-docker-images).
+_The base image for Mbed OS Embedded development with `ssl-core`_, based on [ARMmbed/mbed-os-docker-images](https://github.com/ARMmbed/mbed-os-docker-images).
 
 ## Scripts
 
