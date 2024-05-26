@@ -244,3 +244,19 @@ Install [arm-none-eabi-gcc](https://developer.arm.com/downloads/-/arm-gnu-toolch
 ```bash
 bash arm-none-eabi-gcc.sh <version> <library_directory>
 ```
+
+### [nanopb](scripts/nanopb.sh)
+
+Install [nanopb](https://jpa.kapsi.fi/nanopb/), the plain-C protobuf library.
+
+- **Arguments:**
+
+  1. `version`: The version of nanopb to install
+  2. `library_directory`: The directory where the library will be installed
+       * *default*: `/usr/local`
+
+- **Usage:**
+
+```bash
+bash nanopb.sh <version> <library_directory>
+```
