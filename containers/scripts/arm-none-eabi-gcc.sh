@@ -38,7 +38,7 @@ wget "https://developer.arm.com/-/media/Files/downloads/gnu/${VERSION}/binrel/${
 tar -xf "${TMP_ARM_NONE_EABI_GCC}/${TARBALL}" -C "${TMP_ARM_NONE_EABI_GCC}"
 
 pushd "${TMP_ARM_NONE_EABI_GCC}" || exit 1
-rsync -av --remove-source-files $(find . -maxdepth 1 -type d -regex '.*arm-none-eabi.*') "${ARM_NONE_EABI_GCC_DIR}"
+rsync -av --remove-source-files $(find . -maxdepth 1 -type d -regex '.*arm-none-eabi.*')/ "${ARM_NONE_EABI_GCC_DIR}"
 popd || exit 1
 
 rm -rf "${TMP_ARM_NONE_EABI_GCC}"
