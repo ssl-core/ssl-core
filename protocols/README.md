@@ -20,4 +20,4 @@ Protocol Buffers offer numerous advantages, such as efficient serialization, pla
 
 - [`protocols/third_party`](protocols/third_party/README.md): Contains third-party protobufs that are used across the project.
 - [`protocols/common`](protocols/common/README.md): Contains common protobufs that are used across the project.
-- [`protocols/vision`](protocols/vision/README.md): Contains the vision service output protobufs.
+- [`protocols/perception`](protocols/perception/README.md): Contains the perception service output protobufs.

@@ -6,19 +6,19 @@ import "google/protobuf/timestamp.proto";
 import "protocols/common/geometry.proto";
 import "protocols/common/robot_id.proto";
 
-// Frame is the message sent by the vision service to the rest of the system.
-message Frame {
-  // Properties is the message describing the properties of the frame.
+// Detection is the message sent by the vision service to the rest of the system.
+message Detection {
+  // Properties is the message describing the properties of the detection.
   message Properties {
-    // The incremental unique id of the frame.
+    // The incremental unique id of the detection.
     uint64 serial_id = 1;
-    // The unix timestamp of the frame creation.
+    // The unix timestamp of the detection creation.
     google.protobuf.Timestamp created_at = 2;
-    // The expected rate of frames generated.
+    // The expected rate of detections generated.
     float fps = 3;
   }
 
-  // The generation properties of the frame.
+  // The generation properties of the detection.
   Properties properties = 1;
 
   // The list of detected balls, in order of confidence.
@@ -86,9 +86,29 @@ message Robot {
   // The physical attributes of the robot.
   PhysicalAttributes physical_attributes = 9;
 
-  // TODO(#34): add robot feedback.
-  reserved 10;
-  reserved "feedback";
+  // Feedback is the message describing the feedback from the robot.
+  message Feedback {
+    // Indicates if the dribbler has contact with the ball.
+    optional bool dribbler_ball_contact = 1;
+    // The charge percentage of the kick mechanism (from 0 to 1).
+    optional float kick_charge_percentage = 2;
+    // The battery percentage (from 0 to 1).
+    optional float battery_percentage = 3;
+
+    // Wheel is the message describing the state of an individual wheel.
+    message Wheel {
+      // The identifier for the wheel.
+      int32 wheel_id = 1;
+      // The speed of the motor for the wheel.
+      float motor_speed = 2;
+    }
+
+    // The list of wheels and their respective states.
+    repeated Wheel wheels = 4;
+  }
+
+  // The feedback from the robot.
+  Feedback feedback = 10;
 }
 
 // Field is the message describing the game field.
