@@ -47,6 +47,36 @@ message Ball {
   reserved "acceleration";
 }
 
+message Team {
+  string name = 1;
+  uint32 score = 2;
+
+  repeated Robot robots = 3;
+  common.RobotId goalkeeper_id = 4;
+
+  uint32 yellow_cards = 5;
+  repeated google.protobuf.Duration time_to_expire_active_yellow_cards = 6;
+
+  uint32 red_cards = 7;
+
+  uint32 timeouts_left = 8;
+  google.protobuf.Duration total_timeout_time_left = 9;
+
+  uint32 total_fouls_committed = 10;
+
+  uint32 consecutive_ball_placement_failures = 11;
+  bool is_ball_placement_enabled = 12;
+  bool has_ball_placement_failures_reached_maximum = 13;
+
+  uint32 maximum_allowed_robots = 14;
+
+  bool is_robot_substitution_requested = 15;
+  bool is_bot_substitution_allowed = 16;
+
+  uint32 robot_substitutions_left = 17;
+  google.protobuf.Duration robot_substitution_time_left = 18;
+}
+
 message Robot {
   common.RobotId robot_id = 1;
   common.Point2Df position = 2;
@@ -88,36 +118,6 @@ message Field {
   float penalty_area_width = 6;
   float boundary_width = 7;
   float goal_center_to_penalty_mark = 8;
-}
-
-message Team {
-  string name = 1;
-  uint32 score = 2;
-
-  repeated Robot robots = 3;
-  common.RobotId goalkeeper_id = 4;
-
-  uint32 yellow_cards = 5;
-  repeated google.protobuf.Duration time_to_expire_active_yellow_cards = 6;
-
-  uint32 red_cards = 7;
-
-  uint32 timeouts_left = 8;
-  google.protobuf.Duration total_timeout_time_left = 9;
-
-  uint32 total_fouls_committed = 10;
-
-  uint32 consecutive_ball_placement_failures = 11;
-  bool is_ball_placement_enabled = 12;
-  bool has_ball_placement_failures_reached_maximum = 13;
-
-  uint32 maximum_allowed_robots = 14;
-
-  bool is_robot_substitution_requested = 15;
-  bool is_bot_substitution_allowed = 16;
-
-  uint32 robot_substitutions_left = 17;
-  google.protobuf.Duration robot_substitution_time_left = 18;
 }
 
 message GameEventsProposal {
