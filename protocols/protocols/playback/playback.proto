@@ -7,9 +7,9 @@ import "google/protobuf/timestamp.proto";
 import "protocols/common/game_command.proto";
 import "protocols/common/game_event.proto";
 import "protocols/common/game_stage.proto";
+import "protocols/common/geometry.proto";
 import "protocols/common/match_type.proto";
 import "protocols/common/robot_id.proto";
-import "protocols/common/geometry.proto";
 
 message Playback {
   google.protobuf.Timestamp first_vision_timestamp = 1;
@@ -89,7 +89,6 @@ message Field {
   float boundary_width = 7;
   float goal_center_to_penalty_mark = 8;
 }
-
 
 message Team {
   string name = 1;

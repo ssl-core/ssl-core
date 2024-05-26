@@ -50,7 +50,7 @@ message GameEvent {
 
     UnsportingBehaviorMinor unsporting_behavior_minor = 33;
     UnsportingBehaviorMajor unsporting_behavior_major = 34;
-}
+  }
 
   enum Team {
     TEAM_UNSPECIFIED = 0;
