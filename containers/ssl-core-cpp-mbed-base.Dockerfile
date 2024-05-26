@@ -42,7 +42,7 @@ WORKDIR /
 # set up mbed environment and configure mbed build system
 RUN set -x && \
   \
-  pip install -U mbed-cli mbed-tools mbed-flash && \
+  pip install -U mbed-cli mbed-tools mbed-flasher && \
   \
   wget -q https://github.com/ARMmbed/mbed-os/raw/${MBED_OS_VERSION}/requirements.txt && \
   pip install -r requirements.txt && \
