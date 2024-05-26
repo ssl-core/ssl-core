@@ -12,17 +12,17 @@ class SocketHandler {
     this.eventBus = eventBus;
   }
 
-  public initialize() {
-    this.worker.postMessage({
-      type: "connect",
-      payload: { address: this.address },
-    });
-
+  public connect() {
+    this.send("connect", { address: this.address });
     this.handleWorkerMessages();
   }
 
-  public terminate() {
+  public disconnect() {
     this.worker.terminate();
+  }
+
+  private send(type: string, payload: any) {
+    this.worker.postMessage({ type, payload });
   }
 
   private handleWorkerMessages() {

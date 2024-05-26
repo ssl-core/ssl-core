@@ -3,6 +3,7 @@ import { PlaybackUpdateEvent } from "../../events/playback-update";
 import { inject } from "../services/global-provider";
 import { html } from "../../utils/literals";
 import { formatTime } from "../../utils/time";
+import SocketHandler from "../../lib/socket/socket-handler";
 
 type PlayerMFESliderState = {
   currentTime: number;
@@ -19,6 +20,7 @@ class PlayerMFESlider extends HTMLElement {
   private state: PlayerMFESliderState;
   private elements: PlayerMFESliderElements;
   private eventBus: EventBus;
+  private socketHandler: SocketHandler;
 
   constructor() {
     super();
@@ -32,6 +34,7 @@ class PlayerMFESlider extends HTMLElement {
       slider: null,
     };
     this.eventBus = inject<EventBus>("eventBus")!;
+    this.socketHandler = inject<SocketHandler>("socketHandler")!;
   }
 
   public connectedCallback() {

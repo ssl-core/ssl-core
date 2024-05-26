@@ -8,9 +8,20 @@ class PlayerMFEActions extends HTMLElement {
 
   public connectedCallback() {
     this.render();
+    this.querySelectorAll(".actions__button").forEach((element) =>
+      element.addEventListener("click", () => {
+        alert("Not implemented yet");
+      })
+    );
   }
 
-  public disconnectedCallback() {}
+  public disconnectedCallback() {
+    this.querySelectorAll(".actions__button").forEach((element) =>
+      element.removeEventListener("click", () => {
+        alert("Not implemented yet");
+      })
+    );
+  }
 
   public render() {
     this.innerHTML = html`

@@ -39,7 +39,9 @@ class PlayerMFE extends HTMLElement {
     this.listenToEvents();
   }
 
-  public disconnectedCallback() {}
+  public disconnectedCallback() {
+    this.socketHandler.disconnect();
+  }
 
   public render() {
     this.root.innerHTML = html`
@@ -58,7 +60,7 @@ class PlayerMFE extends HTMLElement {
   }
 
   private listenToEvents() {
-    this.socketHandler.initialize();
+    this.socketHandler.connect();
 
     this.eventBus.subscribe("frame", () => {
       this.state.currentTime += 1;
@@ -74,6 +76,7 @@ class PlayerMFE extends HTMLElement {
 
   private provideDependencies() {
     provide("eventBus", this.eventBus);
+    provide("socketHandler", this.socketHandler);
   }
 }
 
