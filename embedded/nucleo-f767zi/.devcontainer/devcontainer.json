@@ -1,8 +1,9 @@
 {
-  "name": "C++",
+  "name": "C++: NUCLEO-F767ZI Cross Compiling",
   "build": {
     "context": "./../../..",
-    "dockerfile": "Dockerfile"
+    "dockerfile": "./../Dockerfile",
+    "target": "devcontainer"
   },
   "runArgs": [
     "-e",

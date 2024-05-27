@@ -1,6 +1,4 @@
-FROM robocin/ssl-core-cpp-mbed-base:latest
-
-RUN pip install mbed-flasher
+FROM robocin/ssl-core-cpp-mbed-base:latest AS devcontainer
 
 COPY .cmake/ /tmp/.cmake/
 COPY common/ /tmp/common/
