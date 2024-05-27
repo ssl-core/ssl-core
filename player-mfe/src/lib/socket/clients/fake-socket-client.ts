@@ -8,15 +8,17 @@ class TestSocketClient implements SocketClient {
   private socket: number | null;
   private lastFrame: Frame | null;
   private fps: number;
+  private isPlaying: boolean;
 
   constructor(fps: number) {
     this.socket = null;
     this.lastFrame = null;
     this.fps = fps;
+    this.isPlaying = false;
   }
 
   public connect(_address: string) {
-    this.createTestInterval();
+    this.createFakeSocket();
   }
 
   public disconnect() {
@@ -28,6 +30,22 @@ class TestSocketClient implements SocketClient {
     this.socket = null;
   }
 
+  public play() {
+    if (this.isPlaying) {
+      return;
+    }
+
+    this.isPlaying = true;
+  }
+
+  public pause() {
+    if (!this.isPlaying) {
+      return;
+    }
+
+    this.isPlaying = false;
+  }
+
   public send(message: any) {
     if (!this.socket) {
       throw new Error("Socket not initialized");
@@ -36,7 +54,7 @@ class TestSocketClient implements SocketClient {
     console.log("Message received: ", message);
   }
 
-  private createTestInterval() {
+  private createFakeSocket() {
     this.lastFrame = this.createDefaultFrame();
     this.handleFrame(this.lastFrame);
 
@@ -53,8 +71,18 @@ class TestSocketClient implements SocketClient {
         robot.position = this.generateRandomPosition(robot.position);
       }
 
+      this.lastFrame.is_playing = this.isPlaying;
+
       this.handleFrame(this.lastFrame);
     }, 1000 / this.fps);
+  }
+
+  private handleFrame(frame: Frame) {
+    if (!this.isPlaying) {
+      return;
+    }
+
+    self.postMessage(frame);
   }
 
   private createDefaultFrame(): Frame {
@@ -107,6 +135,7 @@ class TestSocketClient implements SocketClient {
     }
 
     return {
+      is_playing: this.isPlaying,
       serial_id: 0,
       effective_serial_id: 0,
       created_at: new Date().toISOString(),
@@ -154,10 +183,6 @@ class TestSocketClient implements SocketClient {
     }
 
     return newPosition as T;
-  }
-
-  private handleFrame(frame: Frame) {
-    self.postMessage(frame);
   }
 }
 

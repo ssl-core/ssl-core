@@ -3,6 +3,7 @@ import SocketHandler from "../lib/socket/socket-handler";
 import { provide } from "./services/global-provider";
 import { PlaybackUpdateEvent } from "../events/playback-update";
 import { html } from "../utils/literals";
+import { Frame } from "../entities/frame";
 
 import styles from "./styles/main.css?inline";
 
@@ -12,6 +13,7 @@ import "./components/player-mfe-info";
 import "./components/player-mfe-actions";
 
 type PlayerMFEState = {
+  isPlaying: boolean;
   currentTime: number;
   duration: number;
 };
@@ -28,6 +30,7 @@ class PlayerMFE extends HTMLElement {
     this.eventBus = new EventBus();
     this.socketHandler = new SocketHandler("0.0.0.0", this.eventBus);
     this.state = {
+      isPlaying: false,
       currentTime: 0,
       duration: 0,
     };
@@ -62,11 +65,13 @@ class PlayerMFE extends HTMLElement {
   private listenToEvents() {
     this.socketHandler.connect();
 
-    this.eventBus.subscribe("frame", () => {
+    this.eventBus.subscribe("frame", (frame: Frame) => {
       this.state.currentTime += 1;
       this.state.duration = 100;
+      this.state.isPlaying = frame.is_playing;
 
       const event: PlaybackUpdateEvent = {
+        isPlaying: this.state.isPlaying,
         currentTime: this.state.currentTime,
         duration: this.state.duration,
       };

@@ -3,9 +3,11 @@ import { Frame } from "../../../entities/frame";
 
 class WebSocketClient implements SocketClient {
   private socket: WebSocket | null;
+  private isPlaying: boolean;
 
   constructor() {
     this.socket = null;
+    this.isPlaying = false;
   }
 
   public connect(address: string) {
@@ -21,6 +23,22 @@ class WebSocketClient implements SocketClient {
 
     this.socket.removeEventListener("message", this.handleMessage);
     this.socket.close();
+  }
+
+  public play() {
+    if (!this.socket) {
+      throw new Error("Socket not initialized");
+    }
+
+    this.isPlaying = true;
+  }
+
+  public pause() {
+    if (!this.socket) {
+      throw new Error("Socket not initialized");
+    }
+
+    this.isPlaying = false;
   }
 
   public send(message: any) {
@@ -55,6 +73,10 @@ class WebSocketClient implements SocketClient {
   }
 
   private handleFrame(frame: Frame) {
+    if (!this.isPlaying) {
+      return;
+    }
+
     self.postMessage({ type: "frame", payload: frame });
   }
 }

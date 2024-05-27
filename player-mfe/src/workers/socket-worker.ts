@@ -9,6 +9,12 @@ self.onmessage = (event) => {
     case "connect":
       socketClient.connect(payload.address as string);
       break;
+    case "play":
+      socketClient.play();
+      break;
+    case "pause":
+      socketClient.pause();
+      break;
     default:
       throw new Error(`Unknown event type: ${type}`);
   }

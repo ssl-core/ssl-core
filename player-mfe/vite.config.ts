@@ -4,7 +4,7 @@ import { viteAwesomeSvgLoader } from "vite-awesome-svg-loader";
 export default defineConfig({
   plugins: [viteAwesomeSvgLoader()],
   test: {
-    environment: "jsdom",
+    environment: "happy-dom",
     coverage: {
       reporter: ["text", "json-summary", "json"],
     },

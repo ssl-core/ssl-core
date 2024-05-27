@@ -21,7 +21,15 @@ class SocketHandler {
     this.worker.terminate();
   }
 
-  private send(type: string, payload: any) {
+  public playLiveStream() {
+    this.send("play");
+  }
+
+  public pauseLiveStream() {
+    this.send("pause");
+  }
+
+  private send(type: string, payload: any = {}) {
     this.worker.postMessage({ type, payload });
   }
 
