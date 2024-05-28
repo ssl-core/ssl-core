@@ -1,0 +1,56 @@
+syntax = "proto3";
+
+package protocols.playback;
+
+import "google/protobuf/timestamp.proto";
+import "protocols/common/geometry.proto";
+import "protocols/common/robot_id.proto";
+
+message TrackedDetection {
+  string source_unique_id = 1;
+  string source_software_name = 2;
+  repeated SourceCapability source_capabilities = 3 [packed = true];
+
+  uint32 serial_id = 4;
+
+  repeated Ball balls = 5;
+  repeated Robot robots = 6;
+
+  enum SourceCapability {
+    SOURCE_CAPABILITY_UNSPECIFIED = 0;
+    SOURCE_CAPABILITY_DETECT_FLYING_BALLS = 1;
+    SOURCE_CAPABILITY_DETECT_MULTIPLE_BALLS = 2;
+    SOURCE_CAPABILITY_DETECT_KICKED_BALLS = 3;
+  }
+
+  message Ball {
+    float confidence = 1;
+
+    common.Point3Df position = 2;
+    common.Point3Df velocity = 3;
+
+    optional KickInformation kick_information = 4;
+
+    message KickInformation {
+      common.RobotId robot_id = 1;
+
+      common.Point2Df start_position = 2;
+      common.Point3Df start_velocity = 3;
+      google.protobuf.Timestamp start_timestamp = 4;
+
+      common.Point2Df predicted_stop_position = 5;
+      google.protobuf.Timestamp predicted_stop_timestamp = 6;
+    }
+  }
+
+  message Robot {
+    common.RobotId robot_id = 1;
+    float confidence = 2;
+
+    common.Point2Df position = 3;
+    float angle = 4;
+
+    common.Point2Df velocity = 5;
+    float angular_velocity = 6;
+  }
+}

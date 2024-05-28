@@ -1,0 +1,34 @@
+syntax = "proto3";
+
+package protocols.playback;
+
+import "protocols/common/geometry.proto";
+import "protocols/common/robot_id.proto";
+
+message RawDetection {
+  repeated Camera cameras = 1;
+
+  message Camera {
+    uint32 camera_id = 1;
+    uint32 serial_id = 2;
+
+    repeated Ball balls = 3;
+    repeated Robot robots = 4;
+
+    message Ball {
+      float confidence = 1;
+
+      common.Point3Df position = 2;
+    }
+
+    message Robot {
+      common.RobotId robot_id = 1;
+      float confidence = 2;
+
+      common.Point2Df position = 3;
+      float angle = 4;
+
+      float height = 5;
+    }
+  }
+}
