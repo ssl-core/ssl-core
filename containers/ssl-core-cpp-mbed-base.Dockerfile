@@ -62,4 +62,5 @@ RUN set -x -o pipefail && \
   (echo -n 'mbed-greentea ' && mbedgt --version | grep ^[0-9]) | tee -a env_settings && \
   (echo -n 'mbed-host-tests ' && mbedhtrun --version) | tee -a env_settings && \
   (echo -n 'mbed-tools ' && mbed-tools --version) | tee -a env_settings && \
+  (echo -n 'mbed-flasher ' && mbedflash version) | tee -a env_settings && \
   : # last line
