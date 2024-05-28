@@ -61,60 +61,40 @@ message GameEvent {
   message BallLeftField {
     Team by_team = 1;
     RobotId by_robot = 2;
-    Point2Df position = 3;
+    Point2Df left_field_position = 3;
+  }
+
+  message BallLeftFieldBoundary {
+    Team by_team = 1;
+    Point2Df left_field_boundary_position = 2;
   }
 
   message AimlessKick {
     Team by_team = 1;
     RobotId by_robot = 2;
-    Point2Df position = 3;
+    Point2Df left_field_position = 3;
     Point2Df kick_position = 4;
   }
 
-  message Goal {
+  message GoalkeeperHeldBall {
     Team by_team = 1;
-    Team kicking_team = 2;
-    RobotId kicking_robot = 3;
-    Point2Df position = 4;
-    Point2Df kick_position = 5;
-    float max_ball_height = 6;
-    uint32 num_of_robots_of_scoring_team = 7;
-    google.protobuf.Timestamp last_touch_by_scoring_team_timestamp = 8;
-
-    optional string message = 9;
+    Point2Df ball_position = 2;
+    google.protobuf.Duration duration = 3;
   }
 
-  message RobotTooFastInStop {
+  message RobotTooCloseToDefenseArea {
     Team by_team = 1;
     RobotId by_robot = 2;
-    Point2Df position = 3;
-    float speed = 4;
+    Point2Df robot_position = 3;
+    float distance_to_defense_area = 4;
+    Point2Df ball_position = 5;
   }
 
-  message RobotTooCloseToKickPoint {
+  message RobotInDefenseArea {
     Team by_team = 1;
     RobotId by_robot = 2;
-    Point2Df position = 3;
-    float distance = 4;
-  }
-
-  message RobotCrashDrawn {
-    RobotId home_robot_id = 1;
-    RobotId away_robot_id = 2;
-    Point2Df position = 3;
-    float crash_speed = 4;
-    float speed_difference = 5;
-    float crash_angle = 6;
-  }
-
-  message RobotCrashUnique {
-    Team by_team = 1;
-    RobotId violator_robot = 2;
-    RobotId victim_robot = 3;
-    Point2Df position = 4;
-    float crash_speed = 5;
-    float speed_difference = 6;
-    float crash_angle = 7;
+    Point2Df robot_position = 3;
+    float distance_to_nearest_point_outside_area = 4;
   }
 
   message RobotPushedRobot {
@@ -125,67 +105,90 @@ message GameEvent {
     float pushed_distance = 5;
   }
 
-  message RobotTippedOver {
+  message RobotHeldBallDeliberately {
     Team by_team = 1;
     RobotId by_robot = 2;
-    Point2Df position = 3;
-    Point2Df ball_position = 4;
-  }
-
-  message RobotInDefenseArea {
-    Team by_team = 1;
-    RobotId by_robot = 2;
-    Point2Df position = 3;
-    float distance = 4;
-  }
-
-  message RobotTouchedBallInDefenseArea {
-    Team by_team = 1;
-    RobotId by_robot = 2;
-    Point2Df position = 3;
-    float distance = 4;
-  }
-
-  message RobotKickedBallTooFast {
-    Team by_team = 1;
-    RobotId by_robot = 2;
-    Point2Df position = 3;
-    float initial_ball_speed = 4;
-    bool chipped = 5;
+    Point2Df ball_position = 3;
+    google.protobuf.Duration duration = 4;
   }
 
   message RobotDribbledBallTooFar {
     Team by_team = 1;
     RobotId by_robot = 2;
-    Point2Df start = 3;
-    Point2Df end = 4;
+    Point2Df start_position = 3;
+    Point2Df end_position = 4;
   }
 
-  message RobotDoubleTouchedBall {
+  message RobotTippedOver {
     Team by_team = 1;
     RobotId by_robot = 2;
-    Point2Df position = 3;
+    Point2Df robot_position = 3;
+    Point2Df ball_position = 4;
   }
 
-  message RobotTooCloseToDefenseArea {
+  message RobotTouchedBallInDefenseArea {
     Team by_team = 1;
     RobotId by_robot = 2;
-    Point2Df position = 3;
-    float distance = 4;
-    Point2Df ball_position = 5;
+    Point2Df robot_position = 3;
+    float distance_to_nearest_point_outside_area = 4;
   }
 
-  message RobotHeldBallDeliberately {
+  message RobotKickedBallTooFast {
     Team by_team = 1;
     RobotId by_robot = 2;
-    Point2Df position = 3;
-    google.protobuf.Duration duration = 4;
+    Point2Df ball_at_highest_speed_position = 3;
+    float initial_ball_speed = 4;
+    bool was_chipped_kick = 5;
+  }
+
+  message RobotCrashUnique {
+    Team by_team = 1;
+    RobotId violator_robot = 2;
+    RobotId victim_robot = 3;
+    Point2Df crash_position = 4;
+    float crash_speed = 5;
+    float speed_difference = 6;
+    float crash_angle = 7;
+  }
+
+  message RobotCrashDrawn {
+    RobotId home_robot_id = 1;
+    RobotId away_robot_id = 2;
+    Point2Df crash_position = 3;
+    float crash_speed = 4;
+    float speed_difference = 5;
+    float crash_angle = 6;
+  }
+
+  message RobotTooFastInStop {
+    Team by_team = 1;
+    RobotId by_robot = 2;
+    Point2Df robot_position = 3;
+    float robot_speed = 4;
+  }
+
+  message RobotTooCloseToKickPoint {
+    Team by_team = 1;
+    RobotId by_robot = 2;
+    Point2Df robot_position = 3;
+    float robot_distance = 4;
   }
 
   message RobotInterferedBallPlacement {
     Team by_team = 1;
     RobotId by_robot = 2;
-    Point2Df position = 3;
+    Point2Df robot_position = 3;
+  }
+
+  message RobotDoubleTouchedBall {
+    Team by_team = 1;
+    RobotId by_robot = 2;
+    Point2Df ball_position = 3;
+  }
+
+  message NoProgressInGame {
+    Point2Df ball_position = 1;
+    google.protobuf.Duration duration = 2;
   }
 
   message MultipleCards {
@@ -196,9 +199,18 @@ message GameEvent {
     Team by_team = 1;
   }
 
-  message NoProgressInGame {
-    Point2Df position = 1;
+  message TooManyRobots {
+    Team by_team = 1;
+    uint32 num_robots_allowed = 2;
+    uint32 num_robots_on_field = 3;
+    Point2Df ball_position = 4;
+  }
+
+  message BallPlacementSucceeded {
+    Team by_team = 1;
     google.protobuf.Duration duration = 2;
+    float distance_to_placement_target = 3;
+    float distance_from_start_position = 4;
   }
 
   message BallPlacementFailed {
@@ -206,27 +218,22 @@ message GameEvent {
     float remaining_distance = 2;
   }
 
-  message UnsportingBehaviorMinor {
+  message PenaltyKickFailed {
     Team by_team = 1;
-    string reason = 2;
+    Point2Df ball_position = 2;
   }
 
-  message UnsportingBehaviorMajor {
+  message Goal {
     Team by_team = 1;
-    string reason = 2;
-  }
+    Team kicking_team = 2;
+    RobotId kicking_robot = 3;
+    Point2Df ball_position_when_scored = 4;
+    Point2Df kick_position = 5;
+    float max_ball_height = 6;
+    uint32 num_of_robots_of_scoring_team = 7;
+    google.protobuf.Timestamp last_touch_by_scoring_team_timestamp = 8;
 
-  message GoalkeeperHeldBall {
-    Team by_team = 1;
-    Point2Df position = 2;
-    google.protobuf.Duration duration = 3;
-  }
-
-  message BallPlacementSucceeded {
-    Team by_team = 1;
-    google.protobuf.Duration duration = 2;
-    float distance_to_target = 3;
-    float distance_covered = 4;
+    optional string message = 9;
   }
 
   message RobotSubstitution {
@@ -241,20 +248,13 @@ message GameEvent {
     Team by_team = 1;
   }
 
-  message TooManyRobots {
+  message UnsportingBehaviorMinor {
     Team by_team = 1;
-    int32 num_robots_allowed = 2;
-    int32 num_robots_on_field = 3;
-    Point2Df ball_position = 4;
+    string reason = 2;
   }
 
-  message BallLeftFieldBoundary {
+  message UnsportingBehaviorMajor {
     Team by_team = 1;
-    Point2Df position = 2;
-  }
-
-  message PenaltyKickFailed {
-    Team by_team = 1;
-    Point2Df position = 2;
+    string reason = 2;
   }
 }
