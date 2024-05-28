@@ -56,7 +56,7 @@ message Team {
   uint32 maximum_allowed_robots = 14;
 
   bool is_robot_substitution_requested = 15;
-  bool is_bot_substitution_allowed = 16;
+  bool is_robot_substitution_allowed = 16;
 
   uint32 robot_substitutions_left = 17;
   google.protobuf.Duration robot_substitution_time_left = 18;
