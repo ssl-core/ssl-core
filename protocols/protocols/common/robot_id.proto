@@ -14,5 +14,5 @@ message RobotId {
   // The color of the robot.
   Color color = 1;
   // The number of the robot.
-  int32 number = 2;
+  uint32 number = 2;
 }
