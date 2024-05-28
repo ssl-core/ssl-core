@@ -2,6 +2,8 @@ robocin_cpp_library(
   NAME evaluators
   MODS evaluators.cppm
        ievaluator.cppm
+       ball_interception_evaluator.cppm
+       possible_ball_handler_evaluator.cppm
        individual_marking_evaluator.cppm
        score_chance_evaluator.cppm
        pass_interception_evaluator.cppm

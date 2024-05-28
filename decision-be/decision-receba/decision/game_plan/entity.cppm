@@ -11,6 +11,8 @@ export namespace decision {
 class GamePlan final {
   BuildableWith(Builder);
 
+  Getter(Default, BallInterceptionMap, BallInterceptionMap);
+  Getter(Default, OrderedPossibleBallHandlerList, OrderedPossibleBallHandlerList);
   Getter(Default, IndividualMarking, IndividualMarking);
   Getter(Default, PotentialPassTargets, PotentialPassTargets);
   Getter(Default, ScoreChanceMap, ScoreChanceMap);
@@ -22,6 +24,8 @@ class GamePlan final {
 class GamePlan::Builder final {
   BuilderOf(GamePlan);
 
+  Setter(BallInterceptionMap);
+  Setter(OrderedPossibleBallHandlerList);
   Setter(IndividualMarking);
   Setter(PotentialPassTargets);
   Setter(ScoreChanceMap);

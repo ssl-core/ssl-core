@@ -1,6 +1,8 @@
 export module decision.evaluators;
 
 export import :ievaluator;
+export import :ball_interception_evaluator;
+export import :possible_ball_handler_evaluator;
 export import :individual_marking_evaluator;
 export import :score_chance_evaluator;
 export import :pass_interception_evaluator;
