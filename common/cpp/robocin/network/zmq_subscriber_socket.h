@@ -1,6 +1,8 @@
 #ifndef ROBOCIN_NETWORK_ZMQ_SUBSCRIBER_SOCKET_H
 #define ROBOCIN_NETWORK_ZMQ_SUBSCRIBER_SOCKET_H
 
+#include "robocin/network/zmq_datagram.h"
+
 #include <gtest/gtest_prod.h>
 #include <ranges>
 #include <string>
@@ -10,17 +12,10 @@
 
 namespace robocin {
 
-struct ZmqDatagram {
-  std::string topic;
-  std::string message;
-
-  friend inline bool operator==(const ZmqDatagram& lhs, const ZmqDatagram& rhs) = default;
-};
-
 template <class ZmqContext, class ZmqSocket>
 class IZmqSubscriberSocket {
  public:
-  using receive_type = ZmqDatagram;
+  using datagram_type = ZmqDatagram;
 
   explicit IZmqSubscriberSocket(int n_threads = 1) :
       context_(n_threads),
@@ -34,10 +29,10 @@ class IZmqSubscriberSocket {
     }
   }
 
-  receive_type receive() {
+  datagram_type receive() {
     if (zmq::message_t zmq_topic; socket_.recv(zmq_topic, zmq::recv_flags::dontwait)) {
       if (zmq::message_t zmq_message; socket_.recv(zmq_message, zmq::recv_flags::dontwait)) {
-        return {.topic = zmq_topic.to_string(), .message = zmq_message.to_string()};
+        return {zmq_topic.to_string(), zmq_message.to_string()};
       }
     }
 

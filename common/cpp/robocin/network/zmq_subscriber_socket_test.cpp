@@ -118,7 +118,7 @@ TEST(ZmqSubscriberSocketTest, WhenReceiveTopicIsNullopt) {
   MockZmqSubscriberSocket socket;
 
   EXPECT_CALL(socket.socket_, recv(_, zmq::recv_flags::dontwait)).WillOnce(Return(std::nullopt));
-  ASSERT_EQ(socket.receive(), ZmqDatagram{});
+  ASSERT_TRUE(socket.receive().empty());
 }
 
 TEST(ZmqSubscriberSocketTest, WhenReceiveMessageIsNullopt) {
@@ -127,7 +127,7 @@ TEST(ZmqSubscriberSocketTest, WhenReceiveMessageIsNullopt) {
   EXPECT_CALL(socket.socket_, recv(_, zmq::recv_flags::dontwait))
       .WillOnce(RecvMockFunctor(kDefaultTopic))
       .WillOnce(Return(std::nullopt));
-  ASSERT_EQ(socket.receive(), ZmqDatagram{});
+  ASSERT_TRUE(socket.receive().empty());
 }
 
 TEST(ZmqSubscriberSocketTest, WhenFileDescriptionGetterIsSucceeded) {
