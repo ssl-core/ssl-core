@@ -29,12 +29,17 @@ class ScoreChanceMap::Builder final {
 };
 
 class ScoreChanceEvaluator : public IEvaluator {
+  // All score chance calculations shall be done in this evaluator
  public:
   explicit ScoreChanceEvaluator(observer_ptr<PotentialPassTargetsGeneratorEvaluator>
                                     potential_pass_targets_generator_evaluator) :
       potential_pass_targets_generator_evaluator_(potential_pass_targets_generator_evaluator) {}
 
+  double scoreChanceForAPoint(Point2Df point) {
   // Implement a simplified version of the shadow heuristics
+    return 0.0;
+  }
+
   void run(const World& world) override {
     // PotentialPassTargets potential_pass_targets
     //     = potential_pass_targets_generator_evaluator_->getPotentialPassTargets();
@@ -49,20 +54,5 @@ class ScoreChanceEvaluator : public IEvaluator {
  private:
   observer_ptr<PotentialPassTargetsGeneratorEvaluator> potential_pass_targets_generator_evaluator_;
 };
-
-// class GenericScoreChanceEvaluator : public IEvaluator {
-//  public:
-//   // Implement a simplified version of the shadow heuristics
-//   void run(const World& world, Point2Df point) override {
-//     // Execute the evaluation
-//     // Return the value of the evaluation?
-//   }
-
-//   void reset() override {}
-
-//   // [[nodiscard]] ScoreChanceMap getScoreChanceMap() const {
-//   //   return {};
-//   // }
-// };
 
 } // namespace decision
