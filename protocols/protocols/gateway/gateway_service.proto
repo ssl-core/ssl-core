@@ -2,9 +2,9 @@ syntax = "proto3";
 
 package protocols.gateway;
 
+import "google/protobuf/timestamp.proto";
 import "protocols/common/game_event.proto";
 import "protocols/playback/sample.proto";
-import "google/protobuf/timestamp.proto";
 
 service GatewayService {
   rpc GetLivestream(stream GetLivestreamRequest) returns (stream GetLivestreamResponse);
