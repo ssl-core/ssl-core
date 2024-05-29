@@ -6,6 +6,8 @@
 #if defined(__robocin_lib_zmq) and __robocin_lib_zmq >= 202405L
 #if defined(__robocin_lib_cppzmq) and __robocin_lib_cppzmq >= 202405L
 
+#include "robocin/network/zmq_datagram.h"
+
 #include <string_view>
 #include <zmq.h>
 #include <zmq.hpp>
@@ -21,18 +23,21 @@ namespace robocin {
 template <class ZmqSocket, class ZmqContext>
 class IZmqPublisherSocket {
  public:
+  using datagram_type = ZmqDatagram;
+
   explicit IZmqPublisherSocket(int n_threads = 1) :
       context_(n_threads),
       socket_(context_, zmq::socket_type::pub) {}
 
   void bind(std::string_view address) { socket_.bind(std::string{address}); }
 
-  void send(std::string_view topic, std::string_view message) { // NOLINT
-    if (zmq::message_t zmq_topic(topic); !socket_.send(zmq_topic, zmq::send_flags::sndmore)) {
+  void send(const datagram_type& datagram) { // NOLINT
+    if (zmq::message_t zmq_topic(datagram.topic());
+        !socket_.send(zmq_topic, zmq::send_flags::sndmore)) {
       throw std::runtime_error("failed to send topic.");
     }
 
-    if (zmq::message_t zmq_message(message);
+    if (zmq::message_t zmq_message(datagram.message());
         !socket_.send(zmq_message, zmq::send_flags::dontwait)) {
       throw std::runtime_error("failed to send message.");
     }

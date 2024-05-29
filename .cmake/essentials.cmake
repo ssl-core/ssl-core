@@ -256,6 +256,7 @@ function(robocin_cpp_library)
     target_compile_features(${ARG_NAME} ${ARG_COMPILE_FEATURES})
   endif ()
 
+  # installing steps:
   #  - include directories to be used by other projects
   target_include_directories(${ARG_NAME} INTERFACE
           $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}>
@@ -775,10 +776,11 @@ function(robocin_cpp_grpc_library)
             OUTPUT "${proto_hdr_file}" "${proto_src_file}" "${grpc_hdr_file}" "${grpc_src_file}"
             COMMAND $<TARGET_FILE:protobuf::protoc>
             ARGS --proto_path ${ROBOCIN_PROJECT_PATH}
-            --cpp_out "${CMAKE_BINARY_DIR}"
-            --grpc_out "${CMAKE_BINARY_DIR}"
-            --plugin=protoc-gen-grpc=$<TARGET_FILE:gRPC::grpc_cpp_plugin>
-            "${proto_relative_file}"
+                 --proto_path ${ROBOCIN_REPOSITORY_PATH}/protocols
+                 --cpp_out "${CMAKE_BINARY_DIR}"
+                 --grpc_out "${CMAKE_BINARY_DIR}"
+                 --plugin=protoc-gen-grpc=$<TARGET_FILE:gRPC::grpc_cpp_plugin>
+                 "${proto_relative_file}"
             DEPENDS "${proto_absolute_file}"
             WORKING_DIRECTORY ${ROBOCIN_PROJECT_PATH}
     )

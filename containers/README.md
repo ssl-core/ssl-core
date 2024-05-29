@@ -28,7 +28,7 @@ _The base image for C++ gRPC development with `ssl-core`_.
 
 ### [ssl-core-cpp-mbed-base.Dockerfile](ssl-core-cpp-mbed-base.Dockerfile)
 
-_The base image for Embedded development with `ssl-core`_.
+_The base image for Mbed OS Embedded development with `ssl-core`_, based on [ARMmbed/mbed-os-docker-images](https://github.com/ARMmbed/mbed-os-docker-images).
 
 ## Scripts
 
@@ -174,13 +174,14 @@ Install [Protocol Buffers](https://developers.google.com/protocol-buffers) libra
 
 - **Arguments:**
 
+  1. `version`: The version of protobuf to install
   1. `library_directory`: The directory where the library will be installed
        * *default*: `/usr/local`
 
 - **Usage:**
 
 ```bash
-bash protobuf.sh <library_directory>
+bash protobuf.sh <version> <directory>
 ```
 
 ### [protoc](scripts/protoc.sh)
@@ -189,9 +190,13 @@ Install [Protocol Buffers](https://developers.google.com/protocol-buffers) compi
 
 - **Arguments:**
 
-  1. `version`: The version of Protoc to install
+  1. `version`: The version of protoc to install
   2. `directory`: The directory where the `bin` and `include` directories will be installed
        * *default*: `/usr/local`
+
+```bash
+bash protoc.sh <version> <library_directory>
+```
 
 ### [absl](scripts/absl.sh)
 
@@ -221,5 +226,37 @@ Install [gRPC](https://grpc.io/) framework.
 - **Usage:**
 
 ```bash
-bash grpc.sh <library_directory>
+bash grpc.sh <version> <library_directory>
+```
+
+### [arm-none-eabi-gcc](scripts/arm-none-eabi-gcc.sh)
+
+Install [arm-none-eabi-gcc](https://developer.arm.com/downloads/-/arm-gnu-toolchain-downloads), the Arm GNU Toolchain.
+
+- **Arguments:**
+
+  1. `version`: The version of arm-none-eabi-gcc to install
+  2. `library_directory`: The directory where the library will be installed
+       * *default*: `/usr/local`
+
+- **Usage:**
+
+```bash
+bash arm-none-eabi-gcc.sh <version> <library_directory>
+```
+
+### [nanopb](scripts/nanopb.sh)
+
+Install [nanopb](https://jpa.kapsi.fi/nanopb/), the plain-C protobuf library.
+
+- **Arguments:**
+
+  1. `version`: The version of nanopb to install
+  2. `library_directory`: The directory where the library will be installed
+       * *default*: `/usr/local`
+
+- **Usage:**
+
+```bash
+bash nanopb.sh <version> <library_directory>
 ```

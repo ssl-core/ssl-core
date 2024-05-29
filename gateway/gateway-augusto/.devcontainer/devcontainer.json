@@ -1,5 +1,5 @@
 {
-  "name": "Gateway Augusto",
+  "name": "C++: Gateway Augusto",
   "build": {
     "context": "./../../..",
     "dockerfile": "./../Dockerfile",
