@@ -26,7 +26,8 @@ message GetReplayChunkRequest {
 }
 
 message GetReplayChunkResponse {
-  repeated playback.Sample samples = 1;
+  google.protobuf.Timestamp last_timestamp = 1;
+  repeated playback.Sample samples = 2;
 }
 
 message GetGameEventsRequest {}
