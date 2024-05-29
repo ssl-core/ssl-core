@@ -8,48 +8,50 @@ import "protocols/common/geometry.proto";
 import "protocols/common/robot_id.proto";
 
 message GameEvent {
+  google.protobuf.Timestamp timestamp = 1;
+
   oneof event {
-    BallLeftField ball_left_field_touch_line = 1;
-    BallLeftField ball_left_field_goal_line = 2;
-    BallLeftFieldBoundary ball_left_field_boundary = 3;
-    AimlessKick aimless_kick = 4;
-
-    GoalkeeperHeldBall goalkeeper_held_ball = 5;
-    RobotTooCloseToDefenseArea robot_too_close_to_defense_area = 6;
-    RobotInDefenseArea robot_in_defense_area = 7;
-    RobotPushedRobot robot_pushed_robot = 8;
-    RobotHeldBallDeliberately robot_held_ball_deliberately = 9;
-    RobotDribbledBallTooFar robot_dribbled_ball_too_far = 10;
-    RobotTippedOver robot_tipped_over = 11;
-    RobotTouchedBallInDefenseArea robot_touched_ball_in_defense_area = 12;
-    RobotKickedBallTooFast robot_kicked_ball_too_fast = 13;
-    RobotCrashUnique robot_crash_unique = 14;
-    RobotCrashDrawn robot_crash_drawn = 15;
-    RobotTooFastInStop robot_too_fast_in_stop = 16;
-    RobotTooCloseToKickPoint robot_too_close_to_kick_point = 17;
-    RobotInterferedBallPlacement robot_interfered_ball_placement = 18;
-    RobotDoubleTouchedBall robot_double_touched_ball = 19;
-
-    NoProgressInGame no_progress_in_game = 20;
-    MultipleCards multiple_cards = 21;
-    MultipleFouls multiple_fouls = 22;
-    TooManyRobots too_many_robots = 23;
-
-    BallPlacementSucceeded ball_placement_succeeded = 24;
-    BallPlacementFailed ball_placement_failed = 25;
-
-    PenaltyKickFailed penalty_kick_failed = 26;
-
-    Goal possible_goal = 27;
-    Goal goal = 28;
-    Goal invalid_goal = 29;
-
-    RobotSubstitution robot_substitution = 30;
-    ChallengeFlag challenge_flag = 31;
-    EmergencyStop emergency_stop = 32;
-
-    UnsportingBehaviorMinor unsporting_behavior_minor = 33;
-    UnsportingBehaviorMajor unsporting_behavior_major = 34;
+    BallLeftField ball_left_field_touch_line = 2;
+    BallLeftField ball_left_field_goal_line = 3;
+    BallLeftFieldBoundary ball_left_field_boundary = 4;
+    AimlessKick aimless_kick = 5;
+    
+    GoalkeeperHeldBall goalkeeper_held_ball = 6;
+    RobotTooCloseToDefenseArea robot_too_close_to_defense_area = 7;
+    RobotInDefenseArea robot_in_defense_area = 8;
+    RobotPushedRobot robot_pushed_robot = 9;
+    RobotHeldBallDeliberately robot_held_ball_deliberately = 10;
+    RobotDribbledBallTooFar robot_dribbled_ball_too_far = 11;
+    RobotTippedOver robot_tipped_over = 12;
+    RobotTouchedBallInDefenseArea robot_touched_ball_in_defense_area = 13;
+    RobotKickedBallTooFast robot_kicked_ball_too_fast = 14;
+    RobotCrashUnique robot_crash_unique = 15;
+    RobotCrashDrawn robot_crash_drawn = 16;
+    RobotTooFastInStop robot_too_fast_in_stop = 17;
+    RobotTooCloseToKickPoint robot_too_close_to_kick_point = 18;
+    RobotInterferedBallPlacement robot_interfered_ball_placement = 19;
+    RobotDoubleTouchedBall robot_double_touched_ball = 20;
+    
+    NoProgressInGame no_progress_in_game = 21;
+    MultipleCards multiple_cards = 22;
+    MultipleFouls multiple_fouls = 23;
+    TooManyRobots too_many_robots = 24;
+    
+    BallPlacementSucceeded ball_placement_succeeded = 25;
+    BallPlacementFailed ball_placement_failed = 26;
+    
+    PenaltyKickFailed penalty_kick_failed = 27;
+    
+    Goal possible_goal = 28;
+    Goal goal = 29;
+    Goal invalid_goal = 30;
+    
+    RobotSubstitution robot_substitution = 31;
+    ChallengeFlag challenge_flag = 32;
+    EmergencyStop emergency_stop = 33;
+    
+    UnsportingBehaviorMinor unsporting_behavior_minor = 34;
+    UnsportingBehaviorMajor unsporting_behavior_major = 35;
   }
 
   enum Team {
