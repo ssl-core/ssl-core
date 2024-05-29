@@ -15,7 +15,7 @@ message GameEvent {
     BallLeftField ball_left_field_goal_line = 3;
     BallLeftFieldBoundary ball_left_field_boundary = 4;
     AimlessKick aimless_kick = 5;
-    
+
     GoalkeeperHeldBall goalkeeper_held_ball = 6;
     RobotTooCloseToDefenseArea robot_too_close_to_defense_area = 7;
     RobotInDefenseArea robot_in_defense_area = 8;
@@ -31,25 +31,25 @@ message GameEvent {
     RobotTooCloseToKickPoint robot_too_close_to_kick_point = 18;
     RobotInterferedBallPlacement robot_interfered_ball_placement = 19;
     RobotDoubleTouchedBall robot_double_touched_ball = 20;
-    
+
     NoProgressInGame no_progress_in_game = 21;
     MultipleCards multiple_cards = 22;
     MultipleFouls multiple_fouls = 23;
     TooManyRobots too_many_robots = 24;
-    
+
     BallPlacementSucceeded ball_placement_succeeded = 25;
     BallPlacementFailed ball_placement_failed = 26;
-    
+
     PenaltyKickFailed penalty_kick_failed = 27;
-    
+
     Goal possible_goal = 28;
     Goal goal = 29;
     Goal invalid_goal = 30;
-    
+
     RobotSubstitution robot_substitution = 31;
     ChallengeFlag challenge_flag = 32;
     EmergencyStop emergency_stop = 33;
-    
+
     UnsportingBehaviorMinor unsporting_behavior_minor = 34;
     UnsportingBehaviorMajor unsporting_behavior_major = 35;
   }
