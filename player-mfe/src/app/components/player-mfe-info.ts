@@ -1,5 +1,4 @@
 import { html } from "../../utils/literals";
-import { liveIcon } from "../../utils/icons";
 
 class PlayerMFEInfo extends HTMLElement {
   constructor() {
@@ -15,13 +14,10 @@ class PlayerMFEInfo extends HTMLElement {
   public render() {
     this.innerHTML = html`
       <div class="info">
-        <div class="info__type">${liveIcon}</div>
-        <div class="info__container">
-          <span class="info__container__title">Live</span>
-          <span class="info__container__subtitle">
-            RobôCIn x Tigers Mannheim
-          </span>
-        </div>
+        <button class="info__live-button" aria-label="Toggle live">
+          <div class="info__live-button__circle"></div>
+          <span class="info__live-button__text">Live</span>
+        </button>
       </div>
     `;
   }

@@ -6,4 +6,3 @@ export { default as settingsIcon } from "../app/assets/settings.svg";
 export { default as maximizeIcon } from "../app/assets/maximize.svg";
 export { default as minimizeIcon } from "../app/assets/minimize.svg";
 export { default as uploadIcon } from "../app/assets/upload.svg";
-export { default as liveIcon } from "../app/assets/live.svg";

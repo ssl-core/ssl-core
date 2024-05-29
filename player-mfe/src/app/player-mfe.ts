@@ -49,12 +49,12 @@ class PlayerMFE extends HTMLElement {
   public render() {
     this.root.innerHTML = html`
       <div class="container">
-        <player-mfe-info></player-mfe-info>
+        <player-mfe-slider></player-mfe-slider>
         <div class="container__controls">
+          <player-mfe-info></player-mfe-info>
           <player-mfe-controls></player-mfe-controls>
-          <player-mfe-slider></player-mfe-slider>
+          <player-mfe-actions></player-mfe-actions>
         </div>
-        <player-mfe-actions></player-mfe-actions>
       </div>
       <style>
         ${styles}

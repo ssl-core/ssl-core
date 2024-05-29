@@ -1,7 +1,3 @@
-player-mfe-info, player-mfe-actions {
-  flex: 1;
-}
-
 .actions {
   display: flex;
   justify-content: flex-end;
@@ -31,40 +27,34 @@ player-mfe-info, player-mfe-actions {
   flex: 1;
 }
 
-.info__type {
+.info__live-button {
   display: flex;
   justify-content: center;
   align-items: center;
-  width: 3rem;
-  height: 3rem;
+  border: 1px solid #FFFFFF22;
   border-radius: 0.5rem;
+  gap: 0.5rem;
+  padding: 0.5rem 1rem;
+}
+
+.info__live-button__circle {
+  border-radius: 50%;
+  width: 0.5rem;
+  height: 0.5rem;
   background-color: #EF4444;
-  color: white;
 }
 
-.info__container {
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: flex-start;
-}
-
-.info__container__title {
+.info__live-button__text {
   font-size: 14px;
-  font-weight: 600;
-}
-
-.info__container__subtitle {
-  font-size: 12px;
-  font-weight: 400;
-  color: #C6C6CD;
+  font-weight: 500;
+  color: #FFFFFF;
 }
 
 .controls {
   display: flex;
   justify-content: center;
   align-items: center;
-  padding: 0.5rem;
+  padding: 0rem 0.5rem;
   gap: 1rem;
   border: 0;
 }
@@ -84,14 +74,13 @@ player-mfe-info, player-mfe-actions {
 .controls__play {
   border: 0;
   border-radius: 50%;
-  width: 2rem;
-  height: 2rem;
+  width: 2.5rem;
+  height: 2.5rem;
   display: flex;
   align-items: center;
   justify-content: center;
   background-color: #FFFFFF;
   color: #000000;
-  font-size: 20px;
 }
 
 .slider {
@@ -109,7 +98,7 @@ player-mfe-info, player-mfe-actions {
 
 .slider__seek-bar {
   appearance: none;
-  width: 40rem;
+  flex: 1;
   height: 4px;
   background: #6A6A78;
   border-radius: 2px;
