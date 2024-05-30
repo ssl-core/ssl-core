@@ -2,9 +2,11 @@ import EventBus from "../../lib/event-bus/event-bus";
 import SocketHandler from "../../lib/socket/socket-handler";
 import { html } from "../../utils/literals";
 import {
+  forward5SecIcon,
   forwardIcon,
   pauseIcon,
   playIcon,
+  rewind5SecIcon,
   rewindIcon,
 } from "../../utils/icons";
 import { inject } from "../services/global-provider";
@@ -14,6 +16,8 @@ type PlayerMFEControlsElements = {
   playButton: HTMLButtonElement | null;
   rewindButton: HTMLButtonElement | null;
   forwardButton: HTMLButtonElement | null;
+  rewind5Button: HTMLButtonElement | null;
+  forward5Button: HTMLButtonElement | null;
 };
 
 type PlayerMFEControlsState = {
@@ -34,6 +38,8 @@ class PlayerMFEControls extends HTMLElement {
       playButton: null,
       rewindButton: null,
       forwardButton: null,
+      rewind5Button: null,
+      forward5Button: null,
     };
     this.state = {
       isPlaying: false,
@@ -51,6 +57,14 @@ class PlayerMFEControls extends HTMLElement {
   public render() {
     this.innerHTML = html`
       <div class="controls">
+        <button
+          id="rewind-5-button"
+          class="controls__button"
+          aria-label="Rewind 5 seconds"
+          data-testid="rewind-5-button"
+        >
+          ${rewind5SecIcon}
+        </button>
         <button
           id="rewind-button"
           class="controls__button"
@@ -75,6 +89,14 @@ class PlayerMFEControls extends HTMLElement {
         >
           ${forwardIcon}
         </button>
+        <button
+          id="forward-5-button"
+          class="controls__button"
+          aria-label="Forward 5 seconds"
+          data-testid="forward-5-button"
+        >
+          ${forward5SecIcon}
+        </button>
       </div>
     `;
 
@@ -82,6 +104,9 @@ class PlayerMFEControls extends HTMLElement {
       playButton: this.querySelector<HTMLButtonElement>("#play-button"),
       rewindButton: this.querySelector<HTMLButtonElement>("#rewind-button"),
       forwardButton: this.querySelector<HTMLButtonElement>("#forward-button"),
+      rewind5Button: this.querySelector<HTMLButtonElement>("#rewind-5-button"),
+      forward5Button:
+        this.querySelector<HTMLButtonElement>("#forward-5-button"),
     };
   }
 
