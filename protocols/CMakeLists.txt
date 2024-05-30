@@ -42,6 +42,7 @@ robocin_cpp_nanopb_library(
 robocin_cpp_grpc_library(
   NAME grpcs
   PROTOS ${services_only}
+  DEPS protobufs
 )
 
 ########################################################################################################################
