@@ -1,4 +1,4 @@
-FROM robocin/ssl-core-cpp-base:latest
+FROM robocin/ssl-core-cpp-grpc:manual-multiplatform
 
 ARG SOURCE_DIRECTORY
 
@@ -21,6 +21,7 @@ RUN \
 COPY . /workspaces/
 
 RUN \
+  apt-get install nlohmann-json3-dev -y && \
   if [ -z "${SOURCE_DIRECTORY}" ]; then \
   rm -rf /workspaces/; \
   else \
