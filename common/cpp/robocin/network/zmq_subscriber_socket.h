@@ -52,6 +52,21 @@ class IZmqSubscriberSocket {
   void close() { socket_.close(); }
 
   [[nodiscard]] int fd() const { return socket_.get(zmq::sockopt::fd); }
+  
+  IZmqSubscriberSocket(IZmqSubscriberSocket&& other) noexcept
+      : context_(std::move(other.context_)),
+        socket_(std::move(other.socket_)) {}
+
+  IZmqSubscriberSocket& operator=(IZmqSubscriberSocket&& other) noexcept {
+    if (this != &other) {
+      context_ = std::move(other.context_);
+      socket_ = std::move(other.socket_);
+    }
+    return *this;
+  }
+
+  IZmqSubscriberSocket(const IZmqSubscriberSocket&) = delete;
+  IZmqSubscriberSocket& operator=(const IZmqSubscriberSocket&) = delete;
 
  private:
   ZmqContext context_;
