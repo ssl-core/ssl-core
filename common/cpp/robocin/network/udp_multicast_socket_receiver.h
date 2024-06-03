@@ -1,6 +1,10 @@
 #ifndef ROBOCIN_NETWORK_UPD_MULTICAST_SOCKET_RECEIVER_H
 #define ROBOCIN_NETWORK_UPD_MULTICAST_SOCKET_RECEIVER_H
 
+#include "robocin/version/version.h"
+
+#if defined(__robocin_lib_arpa_inet) and __robocin_lib_arpa_inet >= 202405L
+
 #include <string>
 
 namespace robocin {
@@ -34,5 +38,7 @@ class UdpMulticastSocketReceiver : public IUdpMulticastSocketReceiver {
 };
 
 } // namespace robocin
+
+#endif
 
 #endif // ROBOCIN_NETWORK_UPD_MULTICAST_SOCKET_RECEIVER_H

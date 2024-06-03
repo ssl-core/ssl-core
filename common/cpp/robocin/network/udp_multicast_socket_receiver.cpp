@@ -1,5 +1,7 @@
 #include "robocin/network/udp_multicast_socket_receiver.h"
 
+#if defined(__robocin_lib_arpa_inet) and __robocin_lib_arpa_inet >= 202405L
+
 #include <arpa/inet.h>
 #include <cerrno>
 #include <fcntl.h>
@@ -77,3 +79,5 @@ std::string UdpMulticastSocketReceiver::receive() const {
 }
 
 } // namespace robocin
+
+#endif

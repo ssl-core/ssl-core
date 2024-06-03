@@ -1,6 +1,11 @@
 #ifndef ROBOCIN_NETWORK_ZMQ_DATAGRAM_H
 #define ROBOCIN_NETWORK_ZMQ_DATAGRAM_H
 
+#include "robocin/version/version.h"
+
+#if defined(__robocin_lib_zmq) and __robocin_lib_zmq >= 202405L
+#if defined(__robocin_lib_cppzmq) and __robocin_lib_cppzmq >= 202405L
+
 #include <string>
 #include <string_view>
 
@@ -23,5 +28,8 @@ class ZmqDatagram {
 };
 
 } // namespace robocin
+
+#endif
+#endif
 
 #endif // ROBOCIN_NETWORK_ZMQ_DATAGRAM_H

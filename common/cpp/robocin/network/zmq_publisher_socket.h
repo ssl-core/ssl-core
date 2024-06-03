@@ -1,12 +1,22 @@
 #ifndef ROBOCIN_NETWORK_ZMQ_PUBLISHER_SOCKET_H
 #define ROBOCIN_NETWORK_ZMQ_PUBLISHER_SOCKET_H
 
+#include "robocin/version/version.h"
+
+#if defined(__robocin_lib_zmq) and __robocin_lib_zmq >= 202405L
+#if defined(__robocin_lib_cppzmq) and __robocin_lib_cppzmq >= 202405L
+
 #include "robocin/network/zmq_datagram.h"
 
-#include <gtest/gtest_prod.h>
 #include <string_view>
 #include <zmq.h>
 #include <zmq.hpp>
+
+#if defined(__robocin_lib_googletest) and __robocin_lib_googletest >= 202405L
+#include <gtest/gtest_prod.h>
+#else
+#define FRIEND_TEST(...)
+#endif
 
 namespace robocin {
 
@@ -52,5 +62,8 @@ class IZmqPublisherSocket {
 using ZmqPublisherSocket = IZmqPublisherSocket<zmq::socket_t, zmq::context_t>;
 
 } // namespace robocin
+
+#endif
+#endif
 
 #endif // ROBOCIN_NETWORK_ZMQ_PUBLISHER_SOCKET_H
