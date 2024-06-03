@@ -1,6 +1,14 @@
 version: "3"
 
 services:
+  simulator:
+    image: roboticserlangen/simulatorcli:commit-6a4e1c06533b
+    restart: unless-stopped
+    container_name: simulator
+    environment:
+      GEOMETRY: "2020"
+      REALISM: "RC2021"
+
   gateway:
     build:
       context: .
@@ -14,6 +22,8 @@ services:
       - /tmp:/tmp
       - ./:/app
     network_mode: host
+    depends_on:
+    - simulator
 
   perception:
     build:

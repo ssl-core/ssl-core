@@ -1,5 +1,7 @@
 #include "perception/network/message_consumer.h"
 
+#include <iostream>
+
 namespace perception {
 
 MessageConsumer::MessageConsumer() {
@@ -12,6 +14,7 @@ std::vector<MessageConsumer::Datagram> MessageConsumer::receiveAll() {
   std::vector<Datagram> datagrams{};
   while (true) {
     auto datagram = vision_sub_.receive();
+    std::cout << "Received vision datagram." << std::endl;
     if (datagram.empty()) {
       break;
     }
