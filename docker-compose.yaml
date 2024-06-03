@@ -1,0 +1,30 @@
+version: "3"
+
+services:
+  gateway:
+    build:
+      context: .
+      dockerfile: gateway/gateway-augusto/.devcontainer/Dockerfile
+      args:
+        - SOURCE_DIRECTORY=gateway/gateway-augusto
+    working_dir: /workspaces/gateway/gateway-augusto
+    container_name: gateway
+    command: ["bin/gateway_main"]
+    volumes:
+      - /tmp:/tmp
+      - ./:/app
+    network_mode: host
+
+  perception:
+    build:
+      context: .
+      dockerfile: perception/perception-brutus/.devcontainer/Dockerfile
+      args:
+        - SOURCE_DIRECTORY=perception/perception-brutus
+    working_dir: /workspaces/perception/perception-brutus
+    container_name: perception
+    command: ["bin/perception_main"]
+    volumes:
+      - /tmp:/tmp
+    depends_on:
+      - gateway
