@@ -14,6 +14,7 @@ void MessageProducer::send(const Detection& detection) {
   std::string message;
   detection.SerializeToString(&message);
   Datagram datagram{address::kDetectionPublisherTopic, message};
+  std::cout << "Publishing detection: " << detection.DebugString() << std::endl;
   detection_pub_.send(datagram);
 }
 

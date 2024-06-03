@@ -1,8 +1,5 @@
 #include "perception/controller/consumer_controller.h"
 
-#include <utility>
-#include <vector>
-
 namespace perception {
 
 ConsumerController::ConsumerController(std::shared_ptr<Deque> deque) : deque_(std::move(deque)) {

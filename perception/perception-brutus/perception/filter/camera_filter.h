@@ -20,6 +20,11 @@ using protocols::perception::Detection;
 class CameraFilter {
  public:
   explicit CameraFilter() = default;
+  ~CameraFilter() = default;
+  CameraFilter(const CameraFilter& other) = default;
+  CameraFilter(CameraFilter&& other) = default;
+  CameraFilter& operator=(const CameraFilter& other) = default;
+  CameraFilter& operator=(CameraFilter&& other) = default;
 
   /**
    * @brief Gets the last detection produced by the filter.
@@ -35,10 +40,11 @@ class CameraFilter {
   Detection filter(const RawDetection& raw_detection);
 
  private:
-  Detection last_detection_;                     /**< The last produced detection. */
-  int64_t serial_id_{};                          /**< The serial ID for detections. */
-  std::map<RobotID, RobotFilter> robots_filter_; /**< Filters for individual robots. */
-  std::deque<BallFilter> balls_filter_;          /**< Filters for ball detections. */
+  Detection last_detection_; /**< The last produced detection. */
+  int64_t serial_id_{};      /**< The serial ID for detections. */
+  std::map<RobotID, std::unique_ptr<RobotFilter>>
+      robot_filters_;                   /**< Filters for individual robots. */
+  std::deque<BallFilter> ball_filters_; /**< Filters for ball detections. */
 
   /**
    * @brief Filters raw robot detections.

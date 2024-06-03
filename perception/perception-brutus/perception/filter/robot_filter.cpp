@@ -4,6 +4,8 @@
 
 namespace perception {
 
+RobotFilter::RobotFilter(const RawRobot& robot) : last_robot_(robot) { update(robot); };
+
 void RobotFilter::update(const RawRobot& robot) {
   // TODO(#ISSUE_N): Create the RobotFilter update method.
   last_robot_ = robot;

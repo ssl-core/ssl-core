@@ -48,7 +48,7 @@ robocin_cpp_grpc_library(
 robocin_cpp_proto_library(
   NAME perception
   PROTOS ${perception_protos}
-  DEPS common
+  DEPS common third_party
 )
 
 ########################################################################################################################

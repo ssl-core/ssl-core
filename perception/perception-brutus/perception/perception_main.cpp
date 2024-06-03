@@ -31,7 +31,7 @@ void consumerRun(std::shared_ptr<VisionPacketsDeque>& deque) {
 }
 
 int main() {
-  std::cout << "Vision is runnning!" << std::endl;
+  std::cout << "Perception is runnning!" << std::endl;
 
   std::shared_ptr<VisionPacketsDeque> deque = std::make_shared<VisionPacketsMutexDeque>();
 

@@ -1,5 +1,8 @@
 #include "perception/filter/camera_filter.h"
 
+#include "ball_filter.h"
+#include "robot_filter.h"
+
 namespace perception {
 
 using protocols::common::RobotId_Color;
@@ -45,16 +48,18 @@ Detection CameraFilter::filter(const RawDetection& raw_detection) {
 std::vector<RawRobot> CameraFilter::filterRobots(const std::vector<RawRobot>& robots) {
   for (const auto& robot : robots) {
     auto robot_id = robot.getID();
-    if (robots_filter_.find(robot_id) == robots_filter_.end()) {
-      robots_filter_[robot_id] = RobotFilter();
+    if (robot_filters_.find(robot_id) == robot_filters_.end()) {
+      auto new_robot_filter = RobotFilter(robot);
+      robot_filters_[robot_id] = std::make_unique<RobotFilter>(new_robot_filter);
+    } else {
+      robot_filters_[robot_id]->update(robot);
     }
-    robots_filter_[robot.getID()].update(robot);
   }
 
   std::vector<RawRobot> filtered_robots;
-  filtered_robots.reserve(robots_filter_.size());
-  for (const auto& [_, filter] : robots_filter_) {
-    filtered_robots.push_back(filter.getRobot());
+  filtered_robots.reserve(robot_filters_.size());
+  for (const auto& [_, filter] : robot_filters_) {
+    filtered_robots.push_back(filter->getRobot());
   }
   return filtered_robots;
 }
@@ -63,17 +68,22 @@ std::vector<RawBall> CameraFilter::filterBalls(const std::vector<RawBall>& raw_b
 
   for (const auto& ball : raw_balls) {
     bool ball_filter_found = false;
-    for (auto& ball_filter : balls_filter_) {
+    for (auto& ball_filter : ball_filters_) {
       if (ball_filter.update(ball)) {
         ball_filter_found = true;
         break;
       }
     }
+
+    if (not ball_filter_found) {
+      BallFilter new_ball_filter(ball);
+      ball_filters_.push_back(new_ball_filter);
+    }
   }
 
   std::vector<RawBall> filtered_balls;
-  filtered_balls.reserve(balls_filter_.size());
-  for (const auto& ball_filter : balls_filter_) {
+  filtered_balls.reserve(ball_filters_.size());
+  for (const auto& ball_filter : ball_filters_) {
     filtered_balls.push_back(ball_filter.getBall());
   }
   return filtered_balls;

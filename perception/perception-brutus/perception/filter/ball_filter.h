@@ -14,7 +14,13 @@ namespace perception {
  */
 class BallFilter {
  public:
-  explicit BallFilter();
+  explicit BallFilter(const RawBall& ball);
+
+  ~BallFilter() = default;
+  BallFilter(const BallFilter& other) = default;
+  BallFilter(BallFilter&& other) = default;
+  BallFilter& operator=(const BallFilter& other) = default;
+  BallFilter& operator=(BallFilter&& other) = default;
 
   /**
    * @brief Updates the ball filter with new raw ball data.
