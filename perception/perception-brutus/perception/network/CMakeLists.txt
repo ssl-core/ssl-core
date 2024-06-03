@@ -9,5 +9,5 @@ robocin_cpp_library(
   NAME message_producer
   HDRS message_producer.h
   SRCS message_producer.cpp
-  DEPS common::network protocols::perception
+  DEPS common::network protocols::protobufs
 )

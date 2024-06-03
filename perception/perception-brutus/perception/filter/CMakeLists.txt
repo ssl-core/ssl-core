@@ -19,7 +19,7 @@ robocin_cpp_library(
   DEPS ball_filter
        robot_filter
        raw_detection
-       protocols::perception
+       protocols::protobufs
 )
 
 robocin_cpp_library(

@@ -4,7 +4,7 @@ services:
   gateway:
     build:
       context: .
-      dockerfile: gateway/gateway-augusto/.devcontainer/Dockerfile
+      dockerfile: gateway/gateway-augusto/Dockerfile
       args:
         - SOURCE_DIRECTORY=gateway/gateway-augusto
     working_dir: /workspaces/gateway/gateway-augusto
@@ -18,7 +18,7 @@ services:
   perception:
     build:
       context: .
-      dockerfile: perception/perception-brutus/.devcontainer/Dockerfile
+      dockerfile: perception/perception-brutus/Dockerfile
       args:
         - SOURCE_DIRECTORY=perception/perception-brutus
     working_dir: /workspaces/perception/perception-brutus

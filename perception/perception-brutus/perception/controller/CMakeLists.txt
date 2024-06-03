@@ -8,14 +8,14 @@ robocin_cpp_library(
   NAME vision_packets
   HDRS vision_packets.h
   SRCS vision_packets.cpp
-  DEPS protocols::third_party common::network
+  DEPS protocols::protobufs common::network
 )
 
 robocin_cpp_library(
   NAME vision_packets_processor
   HDRS vision_packets_processor.h
   SRCS vision_packets_processor.cpp
-  DEPS vision_packets vision_filter protocols::perception raw_detection_converter
+  DEPS vision_packets vision_filter protocols::protobufs raw_detection_converter
 )
 
 robocin_cpp_library(

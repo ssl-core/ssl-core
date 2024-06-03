@@ -2,7 +2,8 @@
   "name": "C++",
   "build": {
     "context": "./../../..",
-    "dockerfile": "Dockerfile"
+    "dockerfile": "./../Dockerfile",
+    "target": "devcontainer"
   },
   "runArgs": [
     "-e",
