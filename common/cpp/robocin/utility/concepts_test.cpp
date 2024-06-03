@@ -1,5 +1,6 @@
 #include "robocin/utility/concepts.h"
 
+#include <google/protobuf/message_lite.h>
 #include <gtest/gtest.h>
 
 namespace robocin {

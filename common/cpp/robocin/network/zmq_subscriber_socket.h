@@ -1,26 +1,31 @@
 #ifndef ROBOCIN_NETWORK_ZMQ_SUBSCRIBER_SOCKET_H
 #define ROBOCIN_NETWORK_ZMQ_SUBSCRIBER_SOCKET_H
 
-#include <gtest/gtest_prod.h>
+#include "robocin/version/version.h"
+
+#if defined(__robocin_lib_zmq) and __robocin_lib_zmq >= 202405L
+#if defined(__robocin_lib_cppzmq) and __robocin_lib_cppzmq >= 202405L
+
+#include "robocin/network/zmq_datagram.h"
+
 #include <ranges>
 #include <string>
 #include <string_view>
 #include <zmq.h>
 #include <zmq.hpp>
 
+#if defined(__robocin_lib_googletest)
+#include <gtest/gtest_prod.h>
+#else
+#define FRIEND_TEST(...)
+#endif
+
 namespace robocin {
-
-struct ZmqDatagram {
-  std::string topic;
-  std::string message;
-
-  friend inline bool operator==(const ZmqDatagram& lhs, const ZmqDatagram& rhs) = default;
-};
 
 template <class ZmqContext, class ZmqSocket>
 class IZmqSubscriberSocket {
  public:
-  using receive_type = ZmqDatagram;
+  using datagram_type = ZmqDatagram;
 
   explicit IZmqSubscriberSocket(int n_threads = 1) :
       context_(n_threads),
@@ -34,10 +39,10 @@ class IZmqSubscriberSocket {
     }
   }
 
-  receive_type receive() {
+  datagram_type receive() {
     if (zmq::message_t zmq_topic; socket_.recv(zmq_topic, zmq::recv_flags::dontwait)) {
       if (zmq::message_t zmq_message; socket_.recv(zmq_message, zmq::recv_flags::dontwait)) {
-        return {.topic = zmq_topic.to_string(), .message = zmq_message.to_string()};
+        return {zmq_topic.to_string(), zmq_message.to_string()};
       }
     }
 
@@ -67,5 +72,8 @@ class IZmqSubscriberSocket {
 using ZmqSubscriberSocket = IZmqSubscriberSocket<zmq::context_t, zmq::socket_t>;
 
 } // namespace robocin
+
+#endif
+#endif
 
 #endif // ROBOCIN_NETWORK_ZMQ_SUBSCRIBER_SOCKET_H

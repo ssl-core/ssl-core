@@ -1,6 +1,10 @@
 #ifndef ROBOCIN_UTILITY_THREAD_POOL_H
 #define ROBOCIN_UTILITY_THREAD_POOL_H
 
+#include "robocin/version/version.h"
+
+#if defined(__robocin_lib_std_concurrency) and __robocin_lib_std_concurrency >= 202405L
+
 #include <condition_variable>
 #include <functional>
 #include <future>
@@ -93,5 +97,7 @@ std::future<std::invoke_result_t<F, Args...>> ThreadPool::enqueue(F&& f, Args&&.
 }
 
 } // namespace robocin
+
+#endif
 
 #endif // ROBOCIN_UTILITY_THREAD_POOL_H
