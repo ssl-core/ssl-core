@@ -21,9 +21,8 @@ AsynchronousSocketsController::AsynchronousSocketsController() {
 
 void AsynchronousSocketsController::run() {
   while (true) {
-    auto datagram = subscriber_.receive();
-    if (!datagram.message.empty()) {
-      publisher_.send(datagram.topic, datagram.message);
+    if (auto datagram = subscriber_.receive(); !datagram.empty()) {
+      publisher_.send(datagram);
     }
   }
 }
