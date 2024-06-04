@@ -9,7 +9,7 @@ endif ()
 
 ########################################################################################################################
 
-#define the repository path to be used in the code
+# define the repository path to be used in the code
 get_filename_component(ROBOCIN_REPOSITORY_PATH "${CMAKE_CURRENT_LIST_DIR}/.." ABSOLUTE)
 
 ########################################################################################################################
@@ -56,8 +56,8 @@ endif ()
 
 ########################################################################################################################
 
-# Find abseil installation
-# It enable the following variables:
+# find abseil installation
+# it enable the following variables:
 #   absl::...                             the abseil libraries (https://abseil.io/docs/cpp/guides)
 find_package(absl CONFIG QUIET HINTS "/opt/absl" "/opt/protobuf")
 if (absl_FOUND)
@@ -66,15 +66,13 @@ endif ()
 
 ########################################################################################################################
 
-# find Google Test package
+# find GTest installation
+# looks for GTest cmake config files installed by GTest's cmake installation.
 # it enable the following variables:
 #   GTest::gtest                          the gtest library
 #   GTest::gtest_main                     the gtest_main library, which is used to link against the main function
 #   GTest::gmock                          the gmock library
 #   GTest::gmock_main                     the gmock_main library, which is used to link against the main function
-
-# find GTest installation
-# looks for GTest cmake config files installed by GTest's cmake installation.
 find_package(GTest CONFIG QUIET HINTS "/usr/local/googletest" "/opt/googletest")
 if (GTest_FOUND)
   message(STATUS "Using GTest: ${GTest_VERSION}")
@@ -86,13 +84,11 @@ endif ()
 
 ########################################################################################################################
 
-# find Google Benchmark package
+# find Google Benchmark installation
+# looks for Google Benchmark cmake config files installed by Google Benchmark's cmake installation.
 # it enable the following variables:
 #   benchmark::benchmark                  the benchmark library
 #   benchmark::benchmark_main             the benchmark_main library, which is used to link against the main function
-
-# find Google Benchmark installation
-# looks for Google Benchmark cmake config files installed by Google Benchmark's cmake installation.
 find_package(benchmark CONFIG QUIET HINTS "/opt/benchmark")
 if (benchmark_FOUND)
   message(STATUS "Using Google Benchmark: ${benchmark_VERSION}")
@@ -100,9 +96,9 @@ endif ()
 
 ########################################################################################################################
 
-# Find Protobuf installation
-# Looks for protobuf cmake config files installed by Protobuf's cmake installation.
-# It enable the following variables:
+# find Protobuf installation
+# looks for protobuf cmake config files installed by Protobuf's cmake installation.
+# it enable the following variables:
 #   protobuf::libprotobuf                 the protobuf library
 #   $<TARGET_FILE:protobuf::protoc>       the protobuf compiler
 find_package(utf8_range CONFIG QUIET HINTS "/opt/protobuf") # protobuf dependency.
@@ -117,9 +113,9 @@ endif ()
 
 ########################################################################################################################
 
-# Find nanopb installation
-# Looks for nanopb cmake config files installed by nanopb's cmake installation.
-# It enable the following variable:
+# find nanopb installation
+# looks for nanopb cmake config files installed by nanopb's cmake installation.
+# it enable the following variable:
 #   nanopb::protobuf-nanopb-static                 the nanopb library
 find_package(nanopb CONFIG QUIET HINTS "/opt/nanopb")
 if (nanopb_FOUND)
@@ -130,15 +126,13 @@ endif ()
 
 ########################################################################################################################
 
-# Find gRPC installation
-# It enable the following variables:
+# find gRPC installation
+# looks for gRPC cmake config files installed by gRPC's cmake installation.
+# it enable the following variables:
 #   gRPC::grpc++_reflection               the gRPC++ reflection library
 #   gRPC::grpc++                          the gRPC++ library
 #   $<TARGET_FILE:gRPC::grpc_cpp_plugin>  the gRPC++ plugin executable
 # reference: https://github.com/grpc/grpc/blob/master/examples/cpp/cmake/common.cmake
-
-# Find gRPC installation
-# Looks for gRPC cmake config files installed by gRPC's cmake installation.
 find_package(gRPC CONFIG QUIET HINTS "/opt/grpc")
 if (gRPC_FOUND)
   message(STATUS "Using gRPC: ${gRPC_VERSION}")
@@ -146,12 +140,10 @@ endif ()
 
 ########################################################################################################################
 
-# Find cppzmq package
-# It enable the following variables:
+# find cppzmq installation
+# looks for cppzmq cmake config files installed by cppzmq's cmake installation.
+# it enable the following variables:
 #   cppzmq                                the cppzmq library
-
-# Find cppzmq installation
-# Looks for cppzmq cmake config files installed by cppzmq's cmake installation.
 find_package(ZeroMQ CONFIG QUIET HINTS "/usr/local/libzmq" "/opt/libzmq")
 if (ZeroMQ_FOUND)
   message(STATUS "Using ZeroMQ: ${ZeroMQ_VERSION}")
