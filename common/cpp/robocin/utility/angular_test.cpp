@@ -16,7 +16,6 @@ template <class>
 class FloatingPointTest : public Test {};
 TYPED_TEST_SUITE(FloatingPointTest, FloatingPointTestTypes);
 
-// degreesToRadians --------------------------------------------------------------------------------
 TYPED_TEST(FloatingPointTest, DegreesToRadiansGivenPiFractions) {
   using T = TypeParam;
 
@@ -29,7 +28,6 @@ TYPED_TEST(FloatingPointTest, DegreesToRadiansGivenPiFractions) {
   }
 }
 
-// radiansToDegrees --------------------------------------------------------------------------------
 TYPED_TEST(FloatingPointTest, RadiansToDegreesGivenPiFractions) {
   using T = TypeParam;
 
@@ -42,7 +40,6 @@ TYPED_TEST(FloatingPointTest, RadiansToDegreesGivenPiFractions) {
   }
 }
 
-// normalizeAngle ----------------------------------------------------------------------------------
 TYPED_TEST(FloatingPointTest, NormalizeAngleGivenAnglesBetweenPiAndMinusPi) {
   using T = TypeParam;
 
@@ -84,7 +81,6 @@ TYPED_TEST(FloatingPointTest, NormalizeAngleGivenAnglesLessThanMinusPi) {
   EXPECT_NEAR(normalizeAngle<T>(11 * kPi / 3), -kPi / 3, kEpsilon); // 660.0 degrees
 }
 
-// smallestAngleDiff -------------------------------------------------------------------------------
 TYPED_TEST(FloatingPointTest, SmallestAngleDiffGivenAnglesBetweenPiAndMinusPi) {
   using T = TypeParam;
 
@@ -121,7 +117,6 @@ TYPED_TEST(FloatingPointTest, SmallestAngleDiffGivenAnglesOutsidePiAndMinusPi) {
   EXPECT_NEAR((smallestAngleDiff<T, T>(3 * kPi / 2, -5 * kPi / 2)), 0.0, kEpsilon);
 }
 
-// absSmallestAngleDiff ----------------------------------------------------------------------------
 TYPED_TEST(FloatingPointTest, AbsSmallestAngleDiffGivenAnglesBetweenPiAndMinusPi) {
   using T = TypeParam;
 
