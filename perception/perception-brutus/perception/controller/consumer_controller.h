@@ -22,9 +22,9 @@ class ConsumerController : IController {
  public:
   /**
    * @brief Constructs a ConsumerController object.
-   * @param deque Pointer to a blocking deque from which vision packets will be consumed.
+   * @param deque Reference to a blocking deque from which vision packets will be consumed.
    */
-  explicit ConsumerController(std::shared_ptr<Deque> deque);
+  explicit ConsumerController(Deque& deque);
 
   /**
    * @brief Starts the controller's run loop to consume and process vision packets.
@@ -36,8 +36,7 @@ class ConsumerController : IController {
   void run() override;
 
  private:
-  std::shared_ptr<Deque>
-      deque_; /**< Pointer to the blocking deque containing vision packets to be consumed. */
+  Deque& deque_; /**< Reference to the blocking deque containing vision packets to be consumed. */
   VisionPacketsProcessor processor_; /**< Processor for handling vision packets. */
   MessageProducer message_producer_; /**< Producer for handling outgoing messages. */
 };

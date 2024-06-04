@@ -1,18 +1,16 @@
 #include "perception/controller/producer_controller.h"
 
-#include <utility>
-
 namespace perception {
 
-ProducerController::ProducerController(std::shared_ptr<Deque> deque) : deque_(std::move(deque)) {
-  message_consumer_ = MessageConsumer();
-}
+ProducerController::ProducerController(Deque& deque) : deque_(deque) {}
 
 void ProducerController::run() {
+  std::cout << "Running producer controller..." << std::endl;
   while (true) {
     auto datagrams = message_consumer_.receiveAll();
     if (!datagrams.empty()) {
-      deque_->put(VisionPackets(datagrams));
+      std::cout << "Put vision packets into deque." << std::endl;
+      deque_.put(VisionPackets(datagrams));
     }
   }
 }

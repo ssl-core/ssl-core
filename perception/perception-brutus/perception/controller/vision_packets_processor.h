@@ -20,10 +20,12 @@ using Detection = protocols::perception::Detection;
 class VisionPacketsProcessor {
 
  public:
-  /**
-   * @brief Default constructor for VisionPacketsProcessor.
-   */
   explicit VisionPacketsProcessor() = default;
+  ~VisionPacketsProcessor() = default;
+  VisionPacketsProcessor(const VisionPacketsProcessor&) = delete;
+  VisionPacketsProcessor& operator=(const VisionPacketsProcessor&) = delete;
+  VisionPacketsProcessor(VisionPacketsProcessor&&) = delete;
+  VisionPacketsProcessor& operator=(VisionPacketsProcessor&&) = delete;
 
   /**
    * @brief Processes a collection of vision packets and generates a detection.

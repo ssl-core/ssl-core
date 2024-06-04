@@ -21,7 +21,6 @@ services:
     volumes:
       - /tmp:/tmp
       - ./:/app
-    network_mode: host
     depends_on:
     - simulator
 

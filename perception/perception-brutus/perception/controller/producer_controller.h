@@ -6,8 +6,6 @@
 #include "perception/network/message_consumer.h"
 #include "robocin/concurrency/blocking_deque.h"
 
-#include <memory>
-
 namespace perception {
 
 /**
@@ -23,9 +21,9 @@ class ProducerController : IController {
  public:
   /**
    * @brief Constructs a ProducerController object.
-   * @param deque Pointer to a blocking deque where vision packets will be added.
+   * @param deque Reference to a blocking deque where vision packets will be added.
    */
-  explicit ProducerController(std::shared_ptr<Deque> deque);
+  explicit ProducerController(Deque& deque);
 
   /**
    * @brief Starts the controller's run loop to consume and process messages.
@@ -36,8 +34,7 @@ class ProducerController : IController {
   void run() override;
 
  private:
-  std::shared_ptr<Deque>
-      deque_; /**< Pointer to the blocking deque where vision packets will be added. */
+  Deque& deque_; /**< Reference to the blocking deque where vision packets will be added. */
   MessageConsumer message_consumer_; /**< Consumer for handling incoming messages. */
 };
 

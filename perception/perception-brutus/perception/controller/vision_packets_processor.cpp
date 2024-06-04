@@ -11,13 +11,14 @@ using Field = protocols::perception::Field;
 
 // TODO(#ISSUE_N): It may disappear and move logic to filter itself.
 Detection VisionPacketsProcessor::process(const std::vector<VisionPackets>& resources) {
+  std::cout << "Processing vision packets..." << std::endl;
   std::vector<RawPacket> raw_packets;
   for (const auto& resource : resources) {
-    raw_packets.insert(raw_packets.end(),
-                       resource.rawPackets().begin(),
-                       resource.rawPackets().end());
+    auto raw_packets = resource.rawPackets();
+    raw_packets.insert(raw_packets.end(), raw_packets.begin(), raw_packets.end());
   }
 
+  std::cout << "Converting packets to raw_detections..." << std::endl;
   std::vector<RawDetection> raw_detections;
   for (const auto& packet : raw_packets) {
     if (packet.has_detection()) {
@@ -25,6 +26,7 @@ Detection VisionPacketsProcessor::process(const std::vector<VisionPackets>& reso
     }
   }
 
+  std::cout << "Filter raw detections..." << std::endl;
   Detection detection = filter_.process(raw_detections);
 
   // TODO(#ISSUE_N): Build Field object with latest detection instead of the first one.
@@ -46,7 +48,8 @@ Detection VisionPacketsProcessor::process(const std::vector<VisionPackets>& reso
     }
   }
 
-  return filter_.process(raw_detections);
+  std::cout << "Return filtered detection..." << std::endl;
+  return detection;
 }
 
 } // namespace perception
