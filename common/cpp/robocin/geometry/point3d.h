@@ -12,16 +12,13 @@ struct Point3D {
   value_type x, y, z;
 };
 
-// Deduction guides --------------------------------------------------------------------------------
 Point3D() -> Point3D<double>;
 
 template <class T, class U, class V>
 Point3D(T, U, V) -> Point3D<std::common_type_t<T, U, V>>;
 
-// Aliases -----------------------------------------------------------------------------------------
 using Point3Df = Point3D<float>;
 using Point3Dd = Point3D<double>;
-using Point3Dld = Point3D<long double>;
 using Point3Di = Point3D<int>;
 
 } // namespace robocin
