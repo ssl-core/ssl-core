@@ -22,7 +22,7 @@ constexpr size_t kBytesSent = 42;
 
 class MockZmqContext {
  public:
-  explicit MockZmqContext(int /*unused*/){};
+  explicit MockZmqContext(int /*unused*/) {};
 };
 
 class MockZmqSocket {
@@ -38,12 +38,14 @@ using MockZmqPublisherSocket = IZmqPublisherSocket<MockZmqSocket, MockZmqContext
 
 TEST(ZmqPublisherSocketTest, WhenBindIsSucceeded) {
   MockZmqPublisherSocket socket;
+
   EXPECT_CALL(socket.socket_, bind(Eq(kAddress)));
   socket.bind(kAddress);
 }
 
 TEST(ZmqPublisherSocketTest, WhenBindThrowsZmqError) {
   MockZmqPublisherSocket socket;
+
   EXPECT_CALL(socket.socket_, bind(Eq(kAddress))).WillOnce(Throw(zmq::error_t{}));
   EXPECT_THROW(socket.bind(kAddress), zmq::error_t);
 }
@@ -57,7 +59,7 @@ TEST(ZmqPublisherSocketTest, WhenSendIsSucceeded) {
       .WillOnce(Return(kBytesSent));
   EXPECT_CALL(socket.socket_, send(Eq(std::cref(zmq_message)), Eq(zmq::send_flags::dontwait)))
       .WillOnce(Return(kBytesSent));
-  EXPECT_NO_THROW(socket.send(kDefaultTopic, kDefaultMessage));
+  EXPECT_NO_THROW(socket.send({kDefaultTopic, kDefaultMessage}));
 }
 
 TEST(ZmqPublisherSocketTest, WhenSendThrowsZmqErrorForTopic) {
@@ -66,7 +68,7 @@ TEST(ZmqPublisherSocketTest, WhenSendThrowsZmqErrorForTopic) {
 
   EXPECT_CALL(socket.socket_, send(Eq(std::cref(zmq_topic)), Eq(zmq::send_flags::sndmore)))
       .WillOnce(Throw(zmq::error_t{}));
-  EXPECT_THROW(socket.send(kDefaultTopic, kDefaultMessage), zmq::error_t);
+  EXPECT_THROW(socket.send({kDefaultTopic, kDefaultMessage}), zmq::error_t);
 }
 
 TEST(ZmqPublisherSocketTest, WhenSendThrowsZmqErrorForMessage) {
@@ -78,7 +80,7 @@ TEST(ZmqPublisherSocketTest, WhenSendThrowsZmqErrorForMessage) {
       .WillOnce(Return(kBytesSent));
   EXPECT_CALL(socket.socket_, send(Eq(std::cref(zmq_message)), Eq(zmq::send_flags::dontwait)))
       .WillOnce(Throw(zmq::error_t{}));
-  EXPECT_THROW(socket.send(kDefaultTopic, kDefaultMessage), zmq::error_t);
+  EXPECT_THROW(socket.send({kDefaultTopic, kDefaultMessage}), zmq::error_t);
 }
 
 TEST(ZmqPublisherSocketTest, WhenSendThrowsRuntimeErrorForTopic) {
@@ -87,7 +89,7 @@ TEST(ZmqPublisherSocketTest, WhenSendThrowsRuntimeErrorForTopic) {
 
   EXPECT_CALL(socket.socket_, send(Eq(std::cref(zmq_topic)), Eq(zmq::send_flags::sndmore)))
       .WillOnce(Return(std::nullopt));
-  ASSERT_THROW(socket.send(kDefaultTopic, kDefaultMessage), std::runtime_error);
+  ASSERT_THROW(socket.send({kDefaultTopic, kDefaultMessage}), std::runtime_error);
 }
 
 TEST(ZmqPublisherSocketTest, WhenSendThrowsRuntimeErrorForMessage) {
@@ -99,7 +101,7 @@ TEST(ZmqPublisherSocketTest, WhenSendThrowsRuntimeErrorForMessage) {
       .WillOnce(Return(kBytesSent));
   EXPECT_CALL(socket.socket_, send(Eq(std::cref(zmq_message)), Eq(zmq::send_flags::dontwait)))
       .WillOnce(Return(std::nullopt));
-  ASSERT_THROW(socket.send(kDefaultTopic, kDefaultMessage), std::runtime_error);
+  ASSERT_THROW(socket.send({kDefaultTopic, kDefaultMessage}), std::runtime_error);
 }
 
 TEST(ZmqPublisherSocketTest, WhenCloseIsSucceeded) {

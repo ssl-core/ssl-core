@@ -22,7 +22,7 @@ if [ -z "${PARENT_DIR}" ]; then
   PARENT_DIR="/usr/local"
 fi
 
-CPPZMQ_DIR="${PARENT_DIR}/cppzmq"
+CPPZMQ_DIR="${PARENT_DIR}"
 TMP_CPPZMQ="/tmp/cppzmq"
 
 rm -rf "${TMP_CPPZMQ}"
@@ -44,5 +44,3 @@ cmake --install build
 popd || exit 1
 
 rm -rf "${TMP_CPPZMQ}"
-
-chown "${CURRENT_USER}":"${CURRENT_USER}" "${CPPZMQ_DIR}" -R # changes the owner of the directory to the current user

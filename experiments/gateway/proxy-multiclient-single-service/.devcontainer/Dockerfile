@@ -1,7 +1,5 @@
 FROM robocin/ssl-core-cpp-base:latest
 
-SHELL ["/bin/bash", "-c"]
-
 COPY .cmake/ /tmp/.cmake/
 COPY common/ /tmp/common/
 

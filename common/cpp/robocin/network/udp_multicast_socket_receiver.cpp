@@ -1,5 +1,7 @@
 #include "robocin/network/udp_multicast_socket_receiver.h"
 
+#if defined(__robocin_lib_arpa_inet) and __robocin_lib_arpa_inet >= 202405L
+
 #include <arpa/inet.h>
 #include <cerrno>
 #include <fcntl.h>
@@ -21,9 +23,7 @@ UdpMulticastSocketReceiver::UdpMulticastSocketReceiver(size_t size) :
     fd_(socket(AF_INET, SOCK_DGRAM, 0)),
     size_(size) {}
 
-void UdpMulticastSocketReceiver::connect(std::string_view ip_address,
-                                         std::string_view inet_address,
-                                         int port) const {
+void UdpMulticastSocketReceiver::connect(std::string_view ip_address, int port) const {
   if (::setsockopt(fd_,
                    SOL_SOCKET,
                    SO_REUSEADDR,
@@ -35,7 +35,7 @@ void UdpMulticastSocketReceiver::connect(std::string_view ip_address,
 
   if (::ip_mreqn membership{
           .imr_multiaddr = {.s_addr = ::inet_addr(std::string{ip_address}.data())},
-          .imr_address = {.s_addr = ::inet_addr(std::string{inet_address}.data())},
+          .imr_address = {.s_addr = ::htonl(INADDR_ANY)},
       };
       ::setsockopt(fd_, IPPROTO_IP, IP_ADD_MEMBERSHIP, &membership, sizeof(membership)) == -1) {
     throw std::runtime_error("failed to set IP_ADD_MEMBERSHIP.");
@@ -43,8 +43,8 @@ void UdpMulticastSocketReceiver::connect(std::string_view ip_address,
 
   if (::sockaddr_in udp_addr{
           .sin_family = AF_INET,
-          .sin_port = htons(port),
-          .sin_addr = {.s_addr = ::inet_addr(std::string{ip_address}.data())},
+          .sin_port = ::htons(port),
+          .sin_addr = {.s_addr = INADDR_ANY},
       };
       ::bind(fd_,
              reinterpret_cast<::sockaddr*>(&udp_addr), // NOLINT(*reinterpret-cast*)
@@ -79,3 +79,5 @@ std::string UdpMulticastSocketReceiver::receive() const {
 }
 
 } // namespace robocin
+
+#endif

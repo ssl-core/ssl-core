@@ -35,5 +35,3 @@ rsync -a --include="*/***" --exclude="*" "${TMP_DIR}/protoc-${VERSION}/" "${PARE
 rm -rf "${TMP_DIR}"
 
 chmod +x "${PARENT_DIR}/bin/protoc"
-
-chown "${CURRENT_USER}":"${CURRENT_USER}" "${PARENT_DIR}" -R # changes the owner of the directory to the current user

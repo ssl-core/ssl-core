@@ -16,12 +16,8 @@ if [ -z "${PARENT_DIR}" ]; then
   PARENT_DIR="/usr/local"
 fi
 
-GOOGLETEST_DIR="${PARENT_DIR}/googletest"
+GOOGLETEST_DIR="${PARENT_DIR}"
 TMP_GIT_REPO_DIR="/tmp/googletest"
-
-echo -e "\x1B[01;93mInstalling git...\n\u001b[0m"
-
-apt install git -y
 
 echo -e "\x1B[01;93m\nInstalling or updating googletest...\n\u001b[0m"
 
@@ -32,9 +28,6 @@ git clone --recurse-submodules "https://github.com/google/googletest.git" -o goo
 
 mkdir -p "${TMP_GIT_REPO_DIR}"
 
-rm -rf "${GOOGLETEST_DIR}" # removes the directory if it exists to avoid errors
-mkdir -p "${GOOGLETEST_DIR}"
-
 pushd "${TMP_GIT_REPO_DIR}" || exit 1
 cmake -B build \
       -S . \
@@ -44,5 +37,3 @@ cmake --install build
 popd || exit 1
 
 rm -rf "${TMP_GIT_REPO_DIR}"
-
-chown "${CURRENT_USER}":"${CURRENT_USER}" "${GOOGLETEST_DIR}" -R # changes the owner of the directory to the current user

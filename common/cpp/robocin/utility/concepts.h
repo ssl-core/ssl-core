@@ -2,12 +2,19 @@
 #define ROBOCIN_UTILITY_CONCEPTS_H
 
 #include <concepts>
-#include <google/protobuf/message_lite.h>
+#include <string>
+#include <type_traits>
 
 namespace robocin {
 
 template <class T>
-concept protobufish = std::derived_from<std::remove_cvref_t<T>, ::google::protobuf::MessageLite>;
+concept protobufish = requires(std::remove_cvref_t<T> proto) {
+  { proto.DebugString() } -> std::convertible_to<std::string>;
+  { proto.ShortDebugString() } -> std::convertible_to<std::string>;
+};
+
+template <class T>
+concept arithmetic = std::is_arithmetic_v<std::remove_cvref_t<T>>;
 
 } // namespace robocin
 
