@@ -81,6 +81,9 @@
           },
           "build": {
             "statusBarVisibility": "visible"
+          },
+          "buildTarget": {
+            "statusBarVisibility": "visible"
           }
         },
         // Code Spell Checker Settings
