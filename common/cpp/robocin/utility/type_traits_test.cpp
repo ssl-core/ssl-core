@@ -6,33 +6,33 @@
 namespace robocin {
 
 TEST(CommonTypeForComparison, GivenTwoIntsReturnsDouble) {
-  using expected_t = common_floating_point_for_comparison_t<int, int>;
+  using Result = common_floating_point_for_comparison_t<int, int>;
 
-  EXPECT_TRUE((std::same_as<expected_t, double>) );
+  EXPECT_TRUE((std::same_as<Result, double>) );
 }
 
 TEST(CommonTypeForComparison, GivenIntAndFloatReturnsFloat) {
-  using expected_t = common_floating_point_for_comparison_t<int, float>;
+  using Result = common_floating_point_for_comparison_t<int, float>;
 
-  EXPECT_TRUE((std::same_as<expected_t, float>) );
+  EXPECT_TRUE((std::same_as<Result, float>) );
 }
 
 TEST(CommonTypeForComparison, GivenIntAndDoubleReturnsDouble) {
-  using expected_t = common_floating_point_for_comparison_t<int, double>;
+  using Result = common_floating_point_for_comparison_t<int, double>;
 
-  EXPECT_TRUE((std::same_as<expected_t, double>) );
+  EXPECT_TRUE((std::same_as<Result, double>) );
 }
 
 TEST(CommonTypeForComparison, GivenFloatAndDoubleReturnsFloat) {
-  using expected_t = common_floating_point_for_comparison_t<float, double>;
+  using Result = common_floating_point_for_comparison_t<float, double>;
 
-  EXPECT_TRUE((std::same_as<expected_t, float>) );
+  EXPECT_TRUE((std::same_as<Result, float>) );
 }
 
 TEST(CommonTypeForComparison, GivenIntAndFloatAndDoubleReturnsFloat) {
-  using expected_t = common_floating_point_for_comparison_t<int, float, double>;
+  using Result = common_floating_point_for_comparison_t<int, float, double>;
 
-  EXPECT_TRUE((std::same_as<expected_t, float>) );
+  EXPECT_TRUE((std::same_as<Result, float>) );
 }
 
 } // namespace robocin

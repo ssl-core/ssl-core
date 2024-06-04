@@ -1,10 +1,6 @@
-// For format details, see https://aka.ms/devcontainer.json.
 {
-  "name": "C++",
-  "build": {
-    "context": "./../../..",
-    "dockerfile": "Dockerfile"
-  },
+  "name": "Common C++ Library",
+  "image": "robocin/ssl-core-cpp-base:latest",
   "runArgs": [
     "-e",
     "DISPLAY=${env:DISPLAY}",
@@ -13,22 +9,26 @@
   "customizations": {
     "vscode": {
       "extensions": [
+        // Docker
+        "ms-azuretools.vscode-docker",
+        // Live Share
+        "ms-vsliveshare.vsliveshare",
         // C/C++ Extension Pack
         "ms-vscode.cpptools-extension-pack",
         // clangd
         "llvm-vs-code-extensions.vscode-clangd",
+        // Buf - Protobuf Language Support
+        "bufbuild.vscode-buf",
         // GitLens - Git supercharged
         "eamodio.gitlens",
         // GitHub Copilot
         "GitHub.copilot",
         // Code Spell Checker
         "streetsidesoftware.code-spell-checker",
+        // Markdown
+        "yzhang.markdown-all-in-one",
         // YAML
-        "redhat.vscode-yaml",
-        // Buf - Protobuf Language Support
-        "bufbuild.vscode-buf",
-        // Python
-        "ms-python.python"
+        "redhat.vscode-yaml"
       ],
       "settings": {
         "files.associations": {
@@ -85,6 +85,9 @@
           "editor.tabSize": 2,
           "editor.formatOnSave": true,
           "editor.defaultFormatter": "redhat.vscode-yaml"
+        },
+        "[markdown]": {
+          "editor.formatOnSave": true
         }
       }
     }

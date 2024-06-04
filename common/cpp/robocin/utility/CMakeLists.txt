@@ -1,3 +1,17 @@
+if (NOT ROBOCIN_NON_DEFAULT_EPSILON)
+  if (NOT ROBOCIN_FLOAT_EPSILON)
+    set(ROBOCIN_FLOAT_EPSILON "1e-2F")
+  endif ()
+
+  if (NOT ROBOCIN_DOUBLE_EPSILON)
+    set(ROBOCIN_DOUBLE_EPSILON "1e-4")
+  endif ()
+
+  if (NOT ROBOCIN_LONG_DOUBLE_EPSILON)
+    set(ROBOCIN_LONG_DOUBLE_EPSILON "1e-6L")
+  endif ()
+endif ()
+
 if (NOT ROBOCIN_FLOAT_EPSILON AND NOT ROBOCIN_DOUBLE_EPSILON AND NOT ROBOCIN_LONG_DOUBLE_EPSILON)
   message(WARNING "No epsilon value has been set: ROBOCIN_FLOAT_EPSILON, ROBOCIN_DOUBLE_EPSILON, ROBOCIN_LONG_DOUBLE_EPSILON.\n"
           "It is recommended to set epsilon values to avoid numerical instabilities.\n"
@@ -23,13 +37,12 @@ robocin_cpp_library(
   NAME concepts
   HDRS concepts.h
   SRCS concepts.cpp
-  DEPS protobuf::libprotobuf
 )
 
 robocin_cpp_test(
   NAME concepts_test
   SRCS concepts_test.cpp
-  DEPS concepts
+  DEPS concepts protobuf::libprotobuf
 )
 
 robocin_cpp_library(

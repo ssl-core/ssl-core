@@ -1,11 +1,17 @@
 name: "Buf: Lint and Formatting Checker"
-on: [pull_request]
+on:
+  pull_request:
+    paths: ["protocols/**"]
+  push:
+    branches:
+      - main
+    paths: ["protocols/**"]
 
 jobs:
   lint-check:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - uses: bufbuild/buf-setup-action@v1
         with:
           github_token: ${{ github.token }}
@@ -21,7 +27,7 @@ jobs:
   formatting-check:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - uses: bufbuild/buf-setup-action@v1
         with:
           github_token: ${{ github.token }}

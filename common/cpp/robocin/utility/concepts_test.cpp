@@ -1,5 +1,6 @@
 #include "robocin/utility/concepts.h"
 
+#include <google/protobuf/message_lite.h>
 #include <gtest/gtest.h>
 
 namespace robocin {
@@ -25,7 +26,6 @@ template <class>
 class ArithmeticTest : public Test {};
 TYPED_TEST_SUITE(ArithmeticTest, ArithmeticTestTypes);
 
-// protobufish -------------------------------------------------------------------------------------
 TEST(ProtobufishTest, IsProtobufish) {
   struct Protobufish : ::google::protobuf::MessageLite {};
 
@@ -52,7 +52,6 @@ TEST(ProtobufishTest, IsNotProtobufish) {
   EXPECT_FALSE(protobufish<const volatile NotProtobufish&&>);
 }
 
-// arithmetic --------------------------------------------------------------------------------------
 TYPED_TEST(ArithmeticTest, IsArithmetic) {
   using T = TypeParam;
 
