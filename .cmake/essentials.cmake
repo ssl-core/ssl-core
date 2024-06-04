@@ -73,7 +73,7 @@ endif ()
 #   GTest::gtest_main                     the gtest_main library, which is used to link against the main function
 #   GTest::gmock                          the gmock library
 #   GTest::gmock_main                     the gmock_main library, which is used to link against the main function
-find_package(GTest CONFIG QUIET HINTS "/usr/local/googletest" "/opt/googletest")
+find_package(GTest CONFIG QUIET HINTS "/opt/googletest")
 if (GTest_FOUND)
   message(STATUS "Using GTest: ${GTest_VERSION}")
 
@@ -144,12 +144,12 @@ endif ()
 # looks for cppzmq cmake config files installed by cppzmq's cmake installation.
 # it enable the following variables:
 #   cppzmq                                the cppzmq library
-find_package(ZeroMQ CONFIG QUIET HINTS "/usr/local/libzmq" "/opt/libzmq")
+find_package(ZeroMQ CONFIG QUIET HINTS "/opt/libzmq")
 if (ZeroMQ_FOUND)
   message(STATUS "Using ZeroMQ: ${ZeroMQ_VERSION}")
 endif ()
 
-find_package(cppzmq CONFIG QUIET HINTS "/usr/local/cppzmq" "/opt/cppzmq")
+find_package(cppzmq CONFIG QUIET HINTS "/opt/cppzmq")
 if (cppzmq_FOUND)
   message(STATUS "Using cppzmq: ${cppzmq_VERSION}")
 endif ()
