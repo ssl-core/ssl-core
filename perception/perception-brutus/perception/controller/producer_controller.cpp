@@ -9,7 +9,6 @@ void ProducerController::run() {
   while (true) {
     auto datagrams = message_consumer_.receiveAll();
     if (!datagrams.empty()) {
-      std::cout << "Put vision packets into deque." << std::endl;
       deque_.put(VisionPackets(datagrams));
     }
   }
