@@ -34,10 +34,11 @@ robocin_cpp_proto_library(
   PROTOS ${protos_only}
 )
 
-robocin_cpp_nanopb_library(
-  NAME nanopbs
-  PROTOS ${protos_only}
-)
+# TODO(#121): add robots' communication protocols
+# robocin_cpp_nanopb_library(
+#   NAME nanopbs
+#   PROTOS ...
+# )
 
 robocin_cpp_grpc_library(
   NAME grpcs

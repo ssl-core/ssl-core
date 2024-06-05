@@ -16,8 +16,9 @@ project(nucleo-f767zi LANGUAGES CXX)
 find_package(common CONFIG REQUIRED)
 message(STATUS "Using common: '${common_DIR}'")
 
-find_package(protocols CONFIG REQUIRED)
-message(STATUS "Using protocols: '${protocols_DIR}'")
+# TODO(#121): add robots' communication protocols
+# find_package(protocols CONFIG REQUIRED)
+# message(STATUS "Using protocols: '${protocols_DIR}'")
 
 ########################################################################################################################
 
