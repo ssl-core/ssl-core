@@ -74,7 +74,7 @@ endmacro()
 # additional mbed-os project setup
 # named parameters:
 #  TARGET: the microcontroller
-#  BUILD_TYPE: the microcontroller dependencies build type (default: CMAKE_BUILD_TYPE)
+#  BUILD_TYPE: the microcontroller dependencies build type (default: CMAKE_BUILD_TYPE, if not set, 'Debug')
 #  TOOLCHAIN: the mbed-os toolchain
 macro(robocin_mbed_setup)
   cmake_parse_arguments(
@@ -92,7 +92,11 @@ macro(robocin_mbed_setup)
   set(TARGET ${ARG_TARGET})
   string(TOUPPER ${TARGET} TARGET)
 
-  set(BUILD_TYPE ${CMAKE_BUILD_TYPE})
+  set(DEFAULT_BUILD_TYPE ${CMAKE_BUILD_TYPE})
+  if (NOT DEFAULT_BUILD_TYPE)
+    set(DEFAULT_BUILD_TYPE "Debug")
+  endif ()
+  set(BUILD_TYPE ${DEFAULT_BUILD_TYPE})
   if (ARG_BUILD_TYPE)
     set(BUILD_TYPE ${ARG_BUILD_TYPE})
   endif ()
@@ -128,7 +132,7 @@ macro(robocin_mbed_setup)
 
   include(${MBED_PATH}/tools/cmake/app.cmake)
 
-  add_subdirectory(${MBED_PATH})
+  add_subdirectory(${MBED_PATH} EXCLUDE_FROM_ALL)
 
   message(STATUS "Mbed OS configured: ${TARGET} - ${BUILD_TYPE} - ${TOOLCHAIN}")
 endmacro()
