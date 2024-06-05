@@ -55,6 +55,9 @@
         "cmake.cmakePath": "cmake",
         "cmake.generator": "Ninja",
         "cmake.options.advanced": {
+          "variant": {
+            "statusBarVisibility": "visible"
+          },
           "build": {
             "statusBarVisibility": "visible"
           },
