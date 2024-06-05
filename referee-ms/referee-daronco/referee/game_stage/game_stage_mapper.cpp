@@ -1,5 +1,8 @@
 #include "referee/game_stage/game_stage_mapper.h"
 
+#include <protocols/common/game_stage.pb.h>
+#include <protocols/third_party/game_controller/referee.pb.h>
+
 namespace referee {
 namespace {
 

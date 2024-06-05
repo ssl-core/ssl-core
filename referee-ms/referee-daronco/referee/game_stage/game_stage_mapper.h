@@ -6,10 +6,25 @@
 
 namespace referee {
 
-class GameStageMapper {
+class IGameStageMapper {
  public:
-  static ::protocols::common::GameStage
+  IGameStageMapper() = default;
+
+  IGameStageMapper(const IGameStageMapper&) = delete;
+  IGameStageMapper& operator=(const IGameStageMapper&) = delete;
+  IGameStageMapper(IGameStageMapper&&) = delete;
+  IGameStageMapper& operator=(IGameStageMapper&&) = delete;
+
+  virtual ~IGameStageMapper() = default;
+
+  virtual ::protocols::common::GameStage
   gameStageFromRefereeStage(::protocols::third_party::game_controller::Referee::Stage stage);
+};
+
+class GameStageMapper : public IGameStageMapper {
+ public:
+  ::protocols::common::GameStage gameStageFromRefereeStage(
+      ::protocols::third_party::game_controller::Referee::Stage stage) override;
 };
 
 } // namespace referee
