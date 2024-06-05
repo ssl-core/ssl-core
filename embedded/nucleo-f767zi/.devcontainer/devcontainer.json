@@ -79,6 +79,9 @@
           "debug": {
             "statusBarVisibility": "hidden"
           },
+          "variant": {
+            "statusBarVisibility": "visible"
+          },
           "build": {
             "statusBarVisibility": "visible"
           },
