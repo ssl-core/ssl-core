@@ -121,6 +121,11 @@ macro(robocin_mbed_setup)
 
     execute_process(
       WORKING_DIRECTORY ${CMAKE_CURRENT_LIST_DIR}
+      COMMAND rm -rf mbed-os/.git
+    )
+
+    execute_process(
+      WORKING_DIRECTORY ${CMAKE_CURRENT_LIST_DIR}
       COMMAND ${MBED_TOOLS_CLI} configure -m ${TARGET} -b ${BUILD_TYPE} -t ${TOOLCHAIN} -o ${CMAKE_CURRENT_BINARY_DIR}
       OUTPUT_QUIET
     )
