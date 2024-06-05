@@ -13,7 +13,7 @@ class GameEventMapper {
   GameEventMapper(bool home_is_blue_team, ::robocin::observer_ptr<::google::protobuf::Arena> arena);
 
   ::robocin::observer_ptr<::protocols::common::GameEvent> fromTimestampAndGameControllerEvent(
-      const ::google::protobuf::Timestamp& timestamp,
+      std::unique_ptr<google::protobuf::Timestamp> timestamp,
       const ::protocols::third_party::game_controller::GameEvent& game_event);
 
  private:
