@@ -80,7 +80,7 @@ macro(robocin_mbed_setup)
   cmake_parse_arguments(
     ARG                                  # prefix of output variables
     ""                                   # list of names of the boolean arguments
-    "TARGET;BUILD_TYPE;TOOLCHAIN"      # list of names of mono-valued arguments
+    "TARGET;BUILD_TYPE;TOOLCHAIN"        # list of names of mono-valued arguments
     ""                                   # list of names of multi-valued arguments
     ${ARGN}                              # arguments of the function to parse (ARGN contains all the arguments after the function name)
   )
