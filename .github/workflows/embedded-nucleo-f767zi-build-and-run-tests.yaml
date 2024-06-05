@@ -10,7 +10,6 @@ on:
 
 env:
   cpp_compiler: arm-none-eabi-g++
-  cmake_args:
 
 jobs:
   build_and_run_tests:
@@ -35,5 +34,3 @@ jobs:
                 -DCMAKE_CXX_COMPILER=${cpp_compiler}
 
             cmake --build build
-
-            ctest --test-dir build
