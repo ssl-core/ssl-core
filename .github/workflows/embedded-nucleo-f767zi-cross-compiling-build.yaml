@@ -1,4 +1,4 @@
-name: "Embedded NUCLEO-F767ZI: Build and Run Tests"
+name: "Embedded NUCLEO-F767ZI: Cross Compiling Build"
 on:
   pull_request:
     paths: ["embedded/nucleo-f767zi/**"]
@@ -12,7 +12,7 @@ env:
   cpp_compiler: arm-none-eabi-g++
 
 jobs:
-  build_and_run_tests:
+  build:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
