@@ -1,0 +1,69 @@
+syntax = "proto3";
+
+package protocols.referee;
+
+import "google/protobuf/duration.proto";
+import "google/protobuf/timestamp.proto";
+import "protocols/common/game_command.proto";
+import "protocols/common/game_event.proto";
+import "protocols/common/game_stage.proto";
+import "protocols/common/match_type.proto";
+import "protocols/common/robot_id.proto";
+
+message GameStatus {
+  string source_id = 1;
+  optional string description = 2;
+  google.protobuf.Timestamp timestamp = 3;
+  common.MatchType match_type = 4;
+
+  Team home_team = 5;
+  Team away_team = 6;
+  bool is_home_team_on_positive_half = 7;
+
+  common.GameStage game_stage = 8;
+  optional google.protobuf.Duration game_stage_time_left = 9;
+
+  uint64 total_commands_issued = 10;
+  google.protobuf.Timestamp command_issued_timestamp = 11;
+  common.GameCommand command = 12;
+  common.GameCommand next_command = 13;
+
+  repeated common.GameEvent game_events = 14;
+  repeated GameEventsProposal game_events_proposals = 15;
+
+  message Team {
+    string name = 1;
+    uint32 score = 2;
+
+    repeated common.RobotId robot_ids = 3;
+    common.RobotId goalkeeper_id = 4;
+
+    uint32 yellow_cards = 5;
+    repeated google.protobuf.Duration time_to_expire_active_yellow_cards = 6;
+
+    uint32 red_cards = 7;
+
+    uint32 timeouts_left = 8;
+    google.protobuf.Duration total_timeout_time_left = 9;
+
+    uint32 total_fouls_committed = 10;
+
+    uint32 consecutive_ball_placement_failures = 11;
+    bool is_ball_placement_enabled = 12;
+    bool has_ball_placement_failures_reached_maximum = 13;
+
+    uint32 maximum_allowed_robots = 14;
+
+    bool is_robot_substitution_requested = 15;
+    bool is_robot_substitution_allowed = 16;
+
+    uint32 robot_substitutions_left = 17;
+    google.protobuf.Duration robot_substitution_time_left = 18;
+  }
+
+  message GameEventsProposal {
+    string proposal_id = 1;
+    repeated common.GameEvent game_events = 2;
+    bool was_accepted = 3;
+  }
+}

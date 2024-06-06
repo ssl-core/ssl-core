@@ -1,0 +1,14 @@
+syntax = "proto3";
+
+package protocols.playback;
+
+message Field {
+  float length = 1;
+  float width = 2;
+  float goal_depth = 3;
+  float goal_width = 4;
+  float penalty_area_depth = 5;
+  float penalty_area_width = 6;
+  float boundary_width = 7;
+  float goal_center_to_penalty_mark = 8;
+}
