@@ -1,0 +1,9 @@
+syntax = "proto3";
+
+package protocols.common;
+
+enum Team {
+  TEAM_UNSPECIFIED = 0;
+  TEAM_HOME = 1;
+  TEAM_AWAY = 2;
+}

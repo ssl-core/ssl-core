@@ -6,6 +6,7 @@ import "google/protobuf/duration.proto";
 import "google/protobuf/timestamp.proto";
 import "protocols/common/geometry.proto";
 import "protocols/common/robot_id.proto";
+import "protocols/common/team.proto";
 
 message GameEvent {
   google.protobuf.Timestamp timestamp = 1;
@@ -52,12 +53,6 @@ message GameEvent {
 
     UnsportingBehaviorMinor unsporting_behavior_minor = 34;
     UnsportingBehaviorMajor unsporting_behavior_major = 35;
-  }
-
-  enum Team {
-    TEAM_UNSPECIFIED = 0;
-    TEAM_HOME = 1;
-    TEAM_AWAY = 2;
   }
 
   message BallLeftField {
