@@ -2,32 +2,21 @@ syntax = "proto3";
 
 package protocols.gateway;
 
-import "google/protobuf/timestamp.proto";
 import "protocols/common/game_event.proto";
 import "protocols/playback/sample.proto";
 
 service GatewayService {
-  rpc GetLivestream(stream GetLivestreamRequest) returns (stream GetLivestreamResponse);
-  rpc GetReplayChunk(stream GetReplayChunkRequest) returns (stream GetReplayChunkResponse);
+  rpc ReceiveLivestream(stream ReceiveLivestreamRequest) returns (stream ReceiveLivestreamResponse);
   rpc GetGameEvents(GetGameEventsRequest) returns (GetGameEventsResponse);
 
   // TODO(#111): add parameters rpc.
   // TODO(#112): add mouse and keyboard events rpc.
 }
 
-message GetLivestreamRequest {}
+message ReceiveLivestreamRequest {}
 
-message GetLivestreamResponse {
+message ReceiveLivestreamResponse {
   playback.Sample sample = 1;
-}
-
-message GetReplayChunkRequest {
-  google.protobuf.Timestamp start_timestamp = 1;
-}
-
-message GetReplayChunkResponse {
-  google.protobuf.Timestamp last_timestamp = 1;
-  repeated playback.Sample samples = 2;
 }
 
 message GetGameEventsRequest {}
