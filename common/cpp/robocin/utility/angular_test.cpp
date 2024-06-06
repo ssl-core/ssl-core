@@ -117,7 +117,7 @@ TYPED_TEST(FloatingPointTest, SmallestAngleDiffGivenAnglesOutsidePiAndMinusPiRan
   EXPECT_NEAR((smallestAngleDiff<T, T>(3 * kPi / 2, -5 * kPi / 2)), 0.0, kEpsilon);
 }
 
-TYPED_TEST(FloatingPointTest, AbsSmallestAngleDiffGivenAnglesBetweenPiAndMinusPi) {
+TYPED_TEST(FloatingPointTest, AbsSmallestAngleDiffGivenAnglesBetweenPiAndMinusPiRange) {
   using T = TypeParam;
 
   static constexpr T kEpsilon = epsilon_v<T>;
