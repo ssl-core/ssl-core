@@ -1,9 +1,0 @@
-syntax = "proto3";
-
-package protocols.common;
-
-import "google/protobuf/descriptor.proto";
-
-extend google.protobuf.EnumValueOptions {
-  optional bool has_duration = 51234;
-}
