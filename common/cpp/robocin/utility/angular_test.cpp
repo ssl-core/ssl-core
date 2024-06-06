@@ -81,7 +81,7 @@ TYPED_TEST(FloatingPointTest, NormalizeAngleGivenAnglesLessThanMinusPi) {
   EXPECT_NEAR(normalizeAngle<T>(11 * kPi / 3), -kPi / 3, kEpsilon); // 660.0 degrees
 }
 
-TYPED_TEST(FloatingPointTest, SmallestAngleDiffGivenAnglesBetweenPiAndMinusPi) {
+TYPED_TEST(FloatingPointTest, SmallestAngleDiffGivenAnglesBetweenPiAndMinusPiRange) {
   using T = TypeParam;
 
   static constexpr T kEpsilon = epsilon_v<T>;
