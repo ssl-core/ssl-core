@@ -1,0 +1,10 @@
+syntax = "proto3";
+
+package protocols.common;
+
+enum MatchType {
+  MATCH_TYPE_UNSPECIFIED = 0;
+  MATCH_TYPE_GROUP_PHASE = 1;
+  MATCH_TYPE_ELIMINATION_PHASE = 2;
+  MATCH_TYPE_FRIENDLY = 3;
+}

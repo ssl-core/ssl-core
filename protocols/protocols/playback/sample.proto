@@ -1,0 +1,23 @@
+syntax = "proto3";
+
+package protocols.playback;
+
+import "google/protobuf/timestamp.proto";
+import "protocols/playback/detection.proto";
+import "protocols/playback/field.proto";
+import "protocols/playback/game_status.proto";
+import "protocols/playback/raw_detection.proto";
+import "protocols/playback/tracked_detection.proto";
+
+message Sample {
+  google.protobuf.Timestamp first_timestamp = 1;
+  google.protobuf.Timestamp timestamp = 2;
+
+  optional Field field = 3;
+
+  optional Detection detection = 4;
+  optional GameStatus game_status = 5;
+
+  optional RawDetection raw_detection = 6;
+  optional TrackedDetection tracked_detection = 7;
+}

@@ -1,0 +1,67 @@
+syntax = "proto3";
+
+package protocols.playback;
+
+import "google/protobuf/timestamp.proto";
+import "protocols/common/geometry.proto";
+import "protocols/common/robot_id.proto";
+
+message Detection {
+  uint64 serial_id = 1;
+  google.protobuf.Timestamp created_at = 2;
+  uint32 expected_frame_rate = 3;
+
+  repeated Ball balls = 4;
+  repeated Robot robots = 5;
+
+  message Ball {
+    float confidence = 1;
+
+    common.Point3Df position = 2;
+    common.Point3Df velocity = 3;
+
+    optional KickInformation kick_information = 4;
+
+    message KickInformation {
+      common.RobotId robot_id = 1;
+
+      common.Point2Df start_position = 2;
+      common.Point3Df start_velocity = 3;
+      google.protobuf.Timestamp start_timestamp = 4;
+
+      common.Point2Df predicted_stop_position = 5;
+      google.protobuf.Timestamp predicted_stop_timestamp = 6;
+    }
+  }
+
+  message Robot {
+    float confidence = 1;
+
+    common.RobotId robot_id = 2;
+
+    common.Point2Df position = 3;
+    float angle = 4;
+
+    common.Point2Df velocity = 5;
+    float angular_velocity = 6;
+
+    float radius = 9;
+    float height = 10;
+    float dribbler_width = 11;
+
+    Feedback feedback = 12;
+
+    message Feedback {
+      optional bool dribbler_ball_contact = 1;
+      optional float kick_charge_percentage = 2;
+      optional float battery_percentage = 3;
+
+      message Wheel {
+        uint32 wheel_id = 1;
+        float motor_speed = 2;
+      }
+
+      repeated Wheel wheels = 4;
+    }
+  }
+}
