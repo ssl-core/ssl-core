@@ -2,22 +2,20 @@ syntax = "proto3";
 
 package protocols.common;
 
-import "protocols/common/descriptors.proto";
-
 enum GameStage {
-  GAME_STAGE_UNSPECIFIED = 0 [(has_duration) = false];
-  GAME_STAGE_NORMAL_FIRST_HALF_PRE = 1 [(has_duration) = false];
-  GAME_STAGE_NORMAL_FIRST_HALF = 2 [(has_duration) = true];
-  GAME_STAGE_NORMAL_HALF_TIME = 3 [(has_duration) = true];
-  GAME_STAGE_NORMAL_SECOND_HALF_PRE = 4 [(has_duration) = false];
-  GAME_STAGE_NORMAL_SECOND_HALF = 5 [(has_duration) = true];
-  GAME_STAGE_EXTRA_TIME_BREAK = 6 [(has_duration) = true];
-  GAME_STAGE_EXTRA_FIRST_HALF_PRE = 7 [(has_duration) = false];
-  GAME_STAGE_EXTRA_FIRST_HALF = 8 [(has_duration) = true];
-  GAME_STAGE_EXTRA_HALF_TIME = 9 [(has_duration) = true];
-  GAME_STAGE_EXTRA_SECOND_HALF_PRE = 10 [(has_duration) = false];
-  GAME_STAGE_EXTRA_SECOND_HALF = 11 [(has_duration) = true];
-  GAME_STAGE_PENALTY_SHOOTOUT_BREAK = 12 [(has_duration) = true];
-  GAME_STAGE_PENALTY_SHOOTOUT = 13 [(has_duration) = false];
-  GAME_STAGE_POST_GAME = 14 [(has_duration) = false];
+  GAME_STAGE_UNSPECIFIED = 0;
+  GAME_STAGE_NORMAL_FIRST_HALF_PRE = 1;
+  GAME_STAGE_NORMAL_FIRST_HALF = 2;
+  GAME_STAGE_NORMAL_HALF_TIME = 3;
+  GAME_STAGE_NORMAL_SECOND_HALF_PRE = 4;
+  GAME_STAGE_NORMAL_SECOND_HALF = 5;
+  GAME_STAGE_EXTRA_TIME_BREAK = 6;
+  GAME_STAGE_EXTRA_FIRST_HALF_PRE = 7;
+  GAME_STAGE_EXTRA_FIRST_HALF = 8;
+  GAME_STAGE_EXTRA_HALF_TIME = 9;
+  GAME_STAGE_EXTRA_SECOND_HALF_PRE = 10;
+  GAME_STAGE_EXTRA_SECOND_HALF = 11;
+  GAME_STAGE_PENALTY_SHOOTOUT_BREAK = 12;
+  GAME_STAGE_PENALTY_SHOOTOUT = 13;
+  GAME_STAGE_POST_GAME = 14;
 }
