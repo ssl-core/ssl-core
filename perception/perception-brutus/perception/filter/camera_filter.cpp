@@ -42,6 +42,7 @@ Detection CameraFilter::filter(const RawDetection& raw_detection) {
     detection_ball.mutable_position()->set_y(filtered_ball.getPosition().y);
   }
 
+  last_detection_ = detection;
   return detection;
 }
 

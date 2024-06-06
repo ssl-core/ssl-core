@@ -13,8 +13,10 @@ using Field = protocols::perception::Field;
 Detection VisionPacketsProcessor::process(const std::vector<VisionPackets>& resources) {
   std::vector<RawPacket> raw_packets;
   for (const auto& resource : resources) {
-    auto raw_packets = resource.rawPackets();
-    raw_packets.insert(raw_packets.end(), raw_packets.begin(), raw_packets.end());
+    auto third_party_raw_packets = resource.rawPackets();
+    raw_packets.insert(raw_packets.end(),
+                       third_party_raw_packets.begin(),
+                       third_party_raw_packets.end());
   }
 
   std::vector<RawDetection> raw_detections;

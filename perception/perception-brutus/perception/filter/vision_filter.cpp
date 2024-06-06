@@ -37,9 +37,11 @@ void VisionFilter::updateDetectionOnCameraFilter(const RawDetection& raw_detecti
 // package "merger" to handle detection, robot and ball merging process separately.
 Detection VisionFilter::merge(const std::vector<Detection>& detections) {
   if (detections.empty()) {
+    std::cout << "[WARNING] No detections to merge." << std::endl;
     return {};
   }
 
+  // TODO(#ISSUE_N): Implement the merge method instead of return the first detection.
   Detection detection = detections.front();
   detection.set_serial_id(serial_id_++);
 
