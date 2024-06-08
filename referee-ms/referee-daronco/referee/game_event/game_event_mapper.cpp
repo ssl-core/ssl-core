@@ -3,23 +3,23 @@
 #include <google/protobuf/arena.h>
 #include <google/protobuf/duration.pb.h>
 #include <google/protobuf/timestamp.pb.h>
+#include <google/protobuf/util/time_util.h>
 #include <protocols/third_party/game_controller/event.pb.h>
 
 namespace referee {
 namespace {
 
 using ::google::protobuf::Arena;
-using ::robocin::observer_ptr;
+using ::google::protobuf::util::TimeUtil;
+using ::robocin::object_ptr;
 
 constexpr float kFMetersToMillimeters = 1e3F;
-constexpr float kFSecondsToNanoseconds = 1e9F;
-constexpr uint64_t kULLSecondsToNanoseconds = 1'000'000'000ULL;
 
 namespace rc {
 
 using GameEvent = ::protocols::common::GameEvent;
 
-using Team = GameEvent::Team;
+using Team = ::protocols::common::Team;
 using RobotId = ::protocols::common::RobotId;
 using Point2Df = ::protocols::common::Point2Df;
 
@@ -109,13 +109,13 @@ Team otherTeam(const Team team) {
 
 class MapperInternal {
  public:
-  MapperInternal(bool home_is_blue_team, observer_ptr<Arena> arena) :
+  MapperInternal(bool home_is_blue_team, object_ptr<Arena> arena) :
       home_is_blue_team_(home_is_blue_team),
       arena_(arena) {}
 
-  observer_ptr<rc::BallLeftField>
+  object_ptr<rc::BallLeftField>
   ballLeftFieldFromBallLeftField(const tp::BallLeftField& ball_left_field) {
-    observer_ptr result = Arena::CreateMessage<rc::BallLeftField>(arena_.get());
+    object_ptr result = Arena::CreateMessage<rc::BallLeftField>(arena_.get());
 
     result->set_by_team(teamFromTeam(ball_left_field.by_team()));
     result->set_allocated_by_robot(
@@ -126,9 +126,9 @@ class MapperInternal {
     return result;
   }
 
-  observer_ptr<rc::BallLeftFieldBoundary>
+  object_ptr<rc::BallLeftFieldBoundary>
   ballLeftFieldBoundaryFromBoundaryCrossing(const tp::BoundaryCrossing& boundary_crossing) {
-    observer_ptr result = Arena::CreateMessage<rc::BallLeftFieldBoundary>(arena_.get());
+    object_ptr result = Arena::CreateMessage<rc::BallLeftFieldBoundary>(arena_.get());
 
     result->set_by_team(teamFromTeam(boundary_crossing.by_team()));
     result->set_allocated_left_field_boundary_position(
@@ -137,8 +137,8 @@ class MapperInternal {
     return result;
   }
 
-  observer_ptr<rc::AimlessKick> aimlessKickFromAimlessKick(const tp::AimlessKick& aimless_kick) {
-    observer_ptr result = Arena::CreateMessage<rc::AimlessKick>(arena_.get());
+  object_ptr<rc::AimlessKick> aimlessKickFromAimlessKick(const tp::AimlessKick& aimless_kick) {
+    object_ptr result = Arena::CreateMessage<rc::AimlessKick>(arena_.get());
 
     result->set_by_team(teamFromTeam(aimless_kick.by_team()));
     result->set_allocated_by_robot(
@@ -149,9 +149,9 @@ class MapperInternal {
     return result;
   }
 
-  observer_ptr<rc::GoalkeeperHeldBall>
+  object_ptr<rc::GoalkeeperHeldBall>
   goalkeeperHeldBallFromKeeperHeldBall(const tp::KeeperHeldBall& keeper_held_ball) {
-    observer_ptr result = Arena::CreateMessage<rc::GoalkeeperHeldBall>(arena_.get());
+    object_ptr result = Arena::CreateMessage<rc::GoalkeeperHeldBall>(arena_.get());
 
     result->set_by_team(teamFromTeam(keeper_held_ball.by_team()));
     result->set_allocated_ball_position(point2DfFromVector2(keeper_held_ball.location()).get());
@@ -160,10 +160,10 @@ class MapperInternal {
     return result;
   }
 
-  observer_ptr<rc::RobotTooCloseToDefenseArea>
+  object_ptr<rc::RobotTooCloseToDefenseArea>
   robotTooCloseToDefenseAreaFromAttackerTooCloseToDefenseArea(
       const tp::AttackerTooCloseToDefenseArea& attacker_too_close_to_defense_area) {
-    observer_ptr result = Arena::CreateMessage<rc::RobotTooCloseToDefenseArea>(arena_.get());
+    object_ptr result = Arena::CreateMessage<rc::RobotTooCloseToDefenseArea>(arena_.get());
 
     result->set_by_team(teamFromTeam(attacker_too_close_to_defense_area.by_team()));
     result->set_allocated_by_robot(
@@ -180,9 +180,9 @@ class MapperInternal {
     return result;
   }
 
-  observer_ptr<rc::RobotInDefenseArea> robotInDefenseAreaFromDefenderInDefenseArea(
+  object_ptr<rc::RobotInDefenseArea> robotInDefenseAreaFromDefenderInDefenseArea(
       const tp::DefenderInDefenseArea& defender_in_defense_area) {
-    observer_ptr result = Arena::CreateMessage<rc::RobotInDefenseArea>(arena_.get());
+    object_ptr result = Arena::CreateMessage<rc::RobotInDefenseArea>(arena_.get());
 
     result->set_by_team(teamFromTeam(defender_in_defense_area.by_team()));
     result->set_allocated_by_robot(robotIdFromTeamAndNumber(defender_in_defense_area.by_team(),
@@ -196,9 +196,9 @@ class MapperInternal {
     return result;
   }
 
-  observer_ptr<rc::RobotPushedRobot>
+  object_ptr<rc::RobotPushedRobot>
   robotPushedRobotFromBotPushedBot(const tp::BotPushedBot& bot_pushed_bot) {
-    observer_ptr result = Arena::CreateMessage<rc::RobotPushedRobot>(arena_.get());
+    object_ptr result = Arena::CreateMessage<rc::RobotPushedRobot>(arena_.get());
 
     result->set_by_team(teamFromTeam(bot_pushed_bot.by_team()));
     result->set_allocated_violator_robot(
@@ -212,9 +212,9 @@ class MapperInternal {
     return result;
   }
 
-  observer_ptr<rc::RobotHeldBallDeliberately> robotHeldBallDeliberatelyFromBotHeldBallDeliberately(
+  object_ptr<rc::RobotHeldBallDeliberately> robotHeldBallDeliberatelyFromBotHeldBallDeliberately(
       const tp::BotHeldBallDeliberately& bot_held_ball_deliberately) {
-    observer_ptr result = Arena::CreateMessage<rc::RobotHeldBallDeliberately>(arena_.get());
+    object_ptr result = Arena::CreateMessage<rc::RobotHeldBallDeliberately>(arena_.get());
 
     result->set_by_team(teamFromTeam(bot_held_ball_deliberately.by_team()));
     result->set_allocated_by_robot(robotIdFromTeamAndNumber(bot_held_ball_deliberately.by_team(),
@@ -228,9 +228,9 @@ class MapperInternal {
     return result;
   }
 
-  observer_ptr<rc::RobotDribbledBallTooFar> robotDribbledBallTooFarFromBotDribbledBallTooFar(
+  object_ptr<rc::RobotDribbledBallTooFar> robotDribbledBallTooFarFromBotDribbledBallTooFar(
       const tp::BotDribbledBallTooFar& bot_dribbled_ball_too_far) {
-    observer_ptr result = Arena::CreateMessage<rc::RobotDribbledBallTooFar>(arena_.get());
+    object_ptr result = Arena::CreateMessage<rc::RobotDribbledBallTooFar>(arena_.get());
 
     result->set_by_team(teamFromTeam(bot_dribbled_ball_too_far.by_team()));
     result->set_allocated_by_robot(robotIdFromTeamAndNumber(bot_dribbled_ball_too_far.by_team(),
@@ -243,9 +243,9 @@ class MapperInternal {
     return result;
   }
 
-  observer_ptr<rc::RobotTippedOver>
+  object_ptr<rc::RobotTippedOver>
   robotTippedOverFromBotTippedOver(const tp::BotTippedOver& bot_tipped_over) {
-    observer_ptr result = Arena::CreateMessage<rc::RobotTippedOver>(arena_.get());
+    object_ptr result = Arena::CreateMessage<rc::RobotTippedOver>(arena_.get());
 
     result->set_by_team(teamFromTeam(bot_tipped_over.by_team()));
     result->set_allocated_by_robot(
@@ -256,10 +256,10 @@ class MapperInternal {
     return result;
   }
 
-  observer_ptr<rc::RobotTouchedBallInDefenseArea>
+  object_ptr<rc::RobotTouchedBallInDefenseArea>
   robotTouchedBallInDefenseAreaFromAttackerTouchedBallInDefenseArea(
       const tp::AttackerTouchedBallInDefenseArea& attacker_touched_ball_in_defense_area) {
-    observer_ptr result = Arena::CreateMessage<rc::RobotTouchedBallInDefenseArea>(arena_.get());
+    object_ptr result = Arena::CreateMessage<rc::RobotTouchedBallInDefenseArea>(arena_.get());
 
     result->set_by_team(teamFromTeam(attacker_touched_ball_in_defense_area.by_team()));
     result->set_allocated_by_robot(
@@ -274,9 +274,9 @@ class MapperInternal {
     return result;
   }
 
-  observer_ptr<rc::RobotKickedBallTooFast> robotKickedBallTooFastFromBotKickedBallTooFast(
+  object_ptr<rc::RobotKickedBallTooFast> robotKickedBallTooFastFromBotKickedBallTooFast(
       const tp::BotKickedBallTooFast& bot_kicked_ball_too_fast) {
-    observer_ptr result = Arena::CreateMessage<rc::RobotKickedBallTooFast>(arena_.get());
+    object_ptr result = Arena::CreateMessage<rc::RobotKickedBallTooFast>(arena_.get());
 
     result->set_by_team(teamFromTeam(bot_kicked_ball_too_fast.by_team()));
     result->set_allocated_by_robot(robotIdFromTeamAndNumber(bot_kicked_ball_too_fast.by_team(),
@@ -291,9 +291,9 @@ class MapperInternal {
     return result;
   }
 
-  observer_ptr<rc::RobotCrashUnique>
+  object_ptr<rc::RobotCrashUnique>
   robotCrashUniqueFromBotCrashUnique(const tp::BotCrashUnique& bot_crash_unique) {
-    observer_ptr result = Arena::CreateMessage<rc::RobotCrashUnique>(arena_.get());
+    object_ptr result = Arena::CreateMessage<rc::RobotCrashUnique>(arena_.get());
 
     result->set_by_team(teamFromTeam(bot_crash_unique.by_team()));
     result->set_allocated_violator_robot(
@@ -310,9 +310,9 @@ class MapperInternal {
     return result;
   }
 
-  observer_ptr<rc::RobotCrashDrawn>
+  object_ptr<rc::RobotCrashDrawn>
   robotCrashDrawnFromBotCrashDrawn(const tp::BotCrashDrawn& bot_crash_drawn) {
-    observer_ptr result = Arena::CreateMessage<rc::RobotCrashDrawn>(arena_.get());
+    object_ptr result = Arena::CreateMessage<rc::RobotCrashDrawn>(arena_.get());
 
     if (home_is_blue_team_) {
       result->set_allocated_home_robot_id(
@@ -334,9 +334,9 @@ class MapperInternal {
     return result;
   }
 
-  observer_ptr<rc::RobotTooFastInStop>
+  object_ptr<rc::RobotTooFastInStop>
   robotTooFastInStopFromBotTooFastInStop(const tp::BotTooFastInStop& bot_too_fast_in_stop) {
-    observer_ptr result = Arena::CreateMessage<rc::RobotTooFastInStop>(arena_.get());
+    object_ptr result = Arena::CreateMessage<rc::RobotTooFastInStop>(arena_.get());
 
     result->set_by_team(teamFromTeam(bot_too_fast_in_stop.by_team()));
     result->set_allocated_by_robot(
@@ -349,10 +349,9 @@ class MapperInternal {
     return result;
   }
 
-  observer_ptr<rc::RobotTooCloseToKickPoint>
-  robotTooCloseToKickPointFromDefenderTooCloseToKickPoint(
+  object_ptr<rc::RobotTooCloseToKickPoint> robotTooCloseToKickPointFromDefenderTooCloseToKickPoint(
       const tp::DefenderTooCloseToKickPoint& defender_too_close_to_kick_point) {
-    observer_ptr result = Arena::CreateMessage<rc::RobotTooCloseToKickPoint>(arena_.get());
+    object_ptr result = Arena::CreateMessage<rc::RobotTooCloseToKickPoint>(arena_.get());
 
     result->set_by_team(teamFromTeam(defender_too_close_to_kick_point.by_team()));
     result->set_allocated_by_robot(
@@ -366,10 +365,10 @@ class MapperInternal {
     return result;
   }
 
-  observer_ptr<rc::RobotInterferedBallPlacement>
+  object_ptr<rc::RobotInterferedBallPlacement>
   robotInterferedBallPlacementFromBotInterferedPlacement(
       const tp::BotInterferedPlacement& bot_interfered_placement) {
-    observer_ptr result = Arena::CreateMessage<rc::RobotInterferedBallPlacement>(arena_.get());
+    object_ptr result = Arena::CreateMessage<rc::RobotInterferedBallPlacement>(arena_.get());
 
     result->set_by_team(teamFromTeam(bot_interfered_placement.by_team()));
     result->set_allocated_by_robot(robotIdFromTeamAndNumber(bot_interfered_placement.by_team(),
@@ -381,9 +380,9 @@ class MapperInternal {
     return result;
   }
 
-  observer_ptr<rc::RobotDoubleTouchedBall> robotDoubleTouchedBallFromAttackerDoubleTouchedBall(
+  object_ptr<rc::RobotDoubleTouchedBall> robotDoubleTouchedBallFromAttackerDoubleTouchedBall(
       const tp::AttackerDoubleTouchedBall& attacker_double_touched_ball) {
-    observer_ptr result = Arena::CreateMessage<rc::RobotDoubleTouchedBall>(arena_.get());
+    object_ptr result = Arena::CreateMessage<rc::RobotDoubleTouchedBall>(arena_.get());
 
     result->set_by_team(teamFromTeam(attacker_double_touched_ball.by_team()));
     result->set_allocated_by_robot(robotIdFromTeamAndNumber(attacker_double_touched_ball.by_team(),
@@ -395,9 +394,9 @@ class MapperInternal {
     return result;
   }
 
-  observer_ptr<rc::NoProgressInGame>
+  object_ptr<rc::NoProgressInGame>
   noProgressInGameFromNoProgressInGame(const tp::NoProgressInGame& no_progress_in_game) {
-    observer_ptr result = Arena::CreateMessage<rc::NoProgressInGame>(arena_.get());
+    object_ptr result = Arena::CreateMessage<rc::NoProgressInGame>(arena_.get());
 
     result->set_allocated_ball_position(point2DfFromVector2(no_progress_in_game.location()).get());
     result->set_allocated_duration(durationFromSeconds(no_progress_in_game.time()).get());
@@ -405,27 +404,27 @@ class MapperInternal {
     return result;
   }
 
-  observer_ptr<rc::MultipleCards>
+  object_ptr<rc::MultipleCards>
   multipleCardsFromMultipleCards(const tp::MultipleCards& multiple_cards) {
-    observer_ptr result = Arena::CreateMessage<rc::MultipleCards>(arena_.get());
+    object_ptr result = Arena::CreateMessage<rc::MultipleCards>(arena_.get());
 
     result->set_by_team(teamFromTeam(multiple_cards.by_team()));
 
     return result;
   }
 
-  observer_ptr<rc::MultipleFouls>
+  object_ptr<rc::MultipleFouls>
   multipleFoulsFromMultipleFouls(const tp::MultipleFouls& multiple_fouls) {
-    observer_ptr result = Arena::CreateMessage<rc::MultipleFouls>(arena_.get());
+    object_ptr result = Arena::CreateMessage<rc::MultipleFouls>(arena_.get());
 
     result->set_by_team(teamFromTeam(multiple_fouls.by_team()));
 
     return result;
   }
 
-  observer_ptr<rc::TooManyRobots>
+  object_ptr<rc::TooManyRobots>
   tooManyRobotsFromTooManyRobots(const tp::TooManyRobots& too_many_robots) {
-    observer_ptr result = Arena::CreateMessage<rc::TooManyRobots>(arena_.get());
+    object_ptr result = Arena::CreateMessage<rc::TooManyRobots>(arena_.get());
 
     result->set_by_team(teamFromTeam(too_many_robots.by_team()));
     result->set_num_robots_allowed(too_many_robots.num_robots_allowed());
@@ -435,9 +434,9 @@ class MapperInternal {
     return result;
   }
 
-  observer_ptr<rc::BallPlacementSucceeded>
+  object_ptr<rc::BallPlacementSucceeded>
   ballPlacementSucceededFromPlacementSucceeded(const tp::PlacementSucceeded& placement_succeeded) {
-    observer_ptr result = Arena::CreateMessage<rc::BallPlacementSucceeded>(arena_.get());
+    object_ptr result = Arena::CreateMessage<rc::BallPlacementSucceeded>(arena_.get());
 
     result->set_by_team(teamFromTeam(placement_succeeded.by_team()));
     result->set_allocated_duration(durationFromSeconds(placement_succeeded.time_taken()).get());
@@ -449,9 +448,9 @@ class MapperInternal {
     return result;
   }
 
-  observer_ptr<rc::BallPlacementFailed>
+  object_ptr<rc::BallPlacementFailed>
   ballPlacementFailedFromPlacementFailed(const tp::PlacementFailed& placement_failed) {
-    observer_ptr result = Arena::CreateMessage<rc::BallPlacementFailed>(arena_.get());
+    object_ptr result = Arena::CreateMessage<rc::BallPlacementFailed>(arena_.get());
 
     result->set_by_team(teamFromTeam(placement_failed.by_team()));
     result->set_remaining_distance(placement_failed.remaining_distance() * kFMetersToMillimeters);
@@ -459,9 +458,9 @@ class MapperInternal {
     return result;
   }
 
-  observer_ptr<rc::PenaltyKickFailed>
+  object_ptr<rc::PenaltyKickFailed>
   penaltyKickFailedFromPenaltyKickFailed(const tp::PenaltyKickFailed& penalty_kick_failed) {
-    observer_ptr result = Arena::CreateMessage<rc::PenaltyKickFailed>(arena_.get());
+    object_ptr result = Arena::CreateMessage<rc::PenaltyKickFailed>(arena_.get());
 
     result->set_by_team(teamFromTeam(penalty_kick_failed.by_team()));
     result->set_allocated_ball_position(point2DfFromVector2(penalty_kick_failed.location()).get());
@@ -469,8 +468,8 @@ class MapperInternal {
     return result;
   }
 
-  observer_ptr<rc::Goal> goalFromGoal(const tp::Goal& goal) {
-    observer_ptr result = Arena::CreateMessage<rc::Goal>(arena_.get());
+  object_ptr<rc::Goal> goalFromGoal(const tp::Goal& goal) {
+    object_ptr result = Arena::CreateMessage<rc::Goal>(arena_.get());
 
     result->set_by_team(teamFromTeam(goal.by_team()));
     result->set_kicking_team(teamFromTeam(goal.kicking_team()));
@@ -487,36 +486,36 @@ class MapperInternal {
     return result;
   }
 
-  observer_ptr<rc::RobotSubstitution>
+  object_ptr<rc::RobotSubstitution>
   robotSubstitutionFromBotSubstitution(const tp::BotSubstitution& bot_substitution) {
-    observer_ptr result = Arena::CreateMessage<rc::RobotSubstitution>(arena_.get());
+    object_ptr result = Arena::CreateMessage<rc::RobotSubstitution>(arena_.get());
 
     result->set_by_team(teamFromTeam(bot_substitution.by_team()));
 
     return result;
   }
 
-  observer_ptr<rc::ChallengeFlag>
+  object_ptr<rc::ChallengeFlag>
   challengeFlagFromChallengeFlag(const tp::ChallengeFlag& challenge_flag) {
-    observer_ptr result = Arena::CreateMessage<rc::ChallengeFlag>(arena_.get());
+    object_ptr result = Arena::CreateMessage<rc::ChallengeFlag>(arena_.get());
 
     result->set_by_team(teamFromTeam(challenge_flag.by_team()));
 
     return result;
   }
 
-  observer_ptr<rc::EmergencyStop>
+  object_ptr<rc::EmergencyStop>
   emergencyStopFromEmergencyStop(const tp::EmergencyStop& emergency_stop) {
-    observer_ptr result = Arena::CreateMessage<rc::EmergencyStop>(arena_.get());
+    object_ptr result = Arena::CreateMessage<rc::EmergencyStop>(arena_.get());
 
     result->set_by_team(teamFromTeam(emergency_stop.by_team()));
 
     return result;
   }
 
-  observer_ptr<rc::UnsportingBehaviorMinor> unsportingBehaviorMinorFromUnsportingBehaviorMinor(
+  object_ptr<rc::UnsportingBehaviorMinor> unsportingBehaviorMinorFromUnsportingBehaviorMinor(
       const tp::UnsportingBehaviorMinor& unsporting_behavior_minor) {
-    observer_ptr result = Arena::CreateMessage<rc::UnsportingBehaviorMinor>(arena_.get());
+    object_ptr result = Arena::CreateMessage<rc::UnsportingBehaviorMinor>(arena_.get());
 
     result->set_by_team(teamFromTeam(unsporting_behavior_minor.by_team()));
     result->set_reason(unsporting_behavior_minor.reason());
@@ -524,9 +523,9 @@ class MapperInternal {
     return result;
   }
 
-  observer_ptr<rc::UnsportingBehaviorMajor> unsportingBehaviorMajorFromUnsportingBehaviorMajor(
+  object_ptr<rc::UnsportingBehaviorMajor> unsportingBehaviorMajorFromUnsportingBehaviorMajor(
       const tp::UnsportingBehaviorMajor& unsporting_behavior_major) {
-    observer_ptr result = Arena::CreateMessage<rc::UnsportingBehaviorMajor>(arena_.get());
+    object_ptr result = Arena::CreateMessage<rc::UnsportingBehaviorMajor>(arena_.get());
 
     result->set_by_team(teamFromTeam(unsporting_behavior_major.by_team()));
     result->set_reason(unsporting_behavior_major.reason());
@@ -535,8 +534,8 @@ class MapperInternal {
   }
 
  private:
-  observer_ptr<rc::RobotId> robotIdFromTeamAndNumber(tp::Team team, uint32_t number) {
-    observer_ptr result = Arena::CreateMessage<rc::RobotId>(arena_.get());
+  object_ptr<rc::RobotId> robotIdFromTeamAndNumber(tp::Team team, uint32_t number) {
+    object_ptr result = Arena::CreateMessage<rc::RobotId>(arena_.get());
 
     result->set_color(robotIdColorFromTeam(team));
     result->set_number(number);
@@ -544,8 +543,8 @@ class MapperInternal {
     return result;
   }
 
-  observer_ptr<rc::Point2Df> point2DfFromVector2(const tp::Vector2& vector2) {
-    observer_ptr result = Arena::CreateMessage<rc::Point2Df>(arena_.get());
+  object_ptr<rc::Point2Df> point2DfFromVector2(const tp::Vector2& vector2) {
+    object_ptr result = Arena::CreateMessage<rc::Point2Df>(arena_.get());
 
     result->set_x(vector2.x() * kFMetersToMillimeters);
     result->set_y(vector2.y() * kFMetersToMillimeters);
@@ -553,48 +552,23 @@ class MapperInternal {
     return result;
   }
 
-  observer_ptr<google::protobuf::Duration> durationFromSeconds(float seconds) {
-    observer_ptr result = Arena::CreateMessage<google::protobuf::Duration>(arena_.get());
-
-    auto whole_seconds = static_cast<int64_t>(seconds);
-    auto nanoseconds = static_cast<int32_t>((seconds - static_cast<float>(whole_seconds))
-                                            * kFSecondsToNanoseconds);
-
-    result->set_seconds(whole_seconds);
-    result->set_nanos(nanoseconds);
-
-    return result;
+  object_ptr<google::protobuf::Duration> durationFromSeconds(float seconds) {
+    return Arena::Create<google::protobuf::Duration>(
+        arena_.get(),
+        TimeUtil::SecondsToDuration(static_cast<int64_t>(seconds)));
   }
 
-  observer_ptr<google::protobuf::Timestamp> timestampFromUnixNanos(uint64_t nanoseconds) {
-    observer_ptr result = Arena::CreateMessage<google::protobuf::Timestamp>(arena_.get());
-
-    uint64_t whole_seconds = nanoseconds / kULLSecondsToNanoseconds;
-    auto nanos = static_cast<int32_t>(nanoseconds % kULLSecondsToNanoseconds);
-
-    result->set_seconds(static_cast<int64_t>(whole_seconds));
-    result->set_nanos(nanos);
-
-    return result;
+  object_ptr<google::protobuf::Timestamp> timestampFromUnixNanos(uint64_t nanoseconds) {
+    return Arena::Create<google::protobuf::Timestamp>(
+        arena_.get(),
+        TimeUtil::NanosecondsToTimestamp(static_cast<int64_t>(nanoseconds)));
   }
 
   [[nodiscard]] rc::Team teamFromTeam(tp::Team by_team) const {
     switch (by_team) {
-      case tp::Team::BLUE: {
-        if (home_is_blue_team_) {
-          return rc::Team::GameEvent_Team_TEAM_HOME;
-        }
-        return rc::Team::GameEvent_Team_TEAM_AWAY;
-      }
-      case tp::Team::YELLOW: {
-        if (home_is_blue_team_) {
-          return rc::Team::GameEvent_Team_TEAM_AWAY;
-        }
-        return rc::Team::GameEvent_Team_TEAM_HOME;
-      }
-      default: {
-        return rc::Team::GameEvent_Team_TEAM_UNSPECIFIED;
-      }
+      case tp::Team::BLUE: return home_is_blue_team_ ? rc::Team::TEAM_HOME : rc::Team::TEAM_AWAY;
+      case tp::Team::YELLOW: return home_is_blue_team_ ? rc::Team::TEAM_AWAY : rc::Team::TEAM_HOME;
+      default: return rc::Team::TEAM_UNSPECIFIED;
     }
     std::unreachable();
   }
@@ -608,24 +582,27 @@ class MapperInternal {
     std::unreachable();
   }
 
-  observer_ptr<Arena> arena_;
+  object_ptr<Arena> arena_;
   bool home_is_blue_team_ = false;
 };
 
 } // namespace
 
-GameEventMapper::GameEventMapper(bool home_is_blue_team, observer_ptr<Arena> arena) :
+GameEventMapper::GameEventMapper(bool home_is_blue_team, object_ptr<Arena> arena) :
     home_is_blue_team_(home_is_blue_team),
     arena_(arena) {}
 
-observer_ptr<rc::GameEvent> GameEventMapper::fromTimestampAndGameControllerEvent(
+object_ptr<rc::GameEvent> GameEventMapper::fromTimestampAndGameControllerEvent(
     std::unique_ptr<google::protobuf::Timestamp> timestamp,
     const tp::GameEvent& game_event) {
   using enum tp::GameEvent::EventCase;
 
-  MapperInternal mapper{home_is_blue_team_, arena_};
+  MapperInternal mapper = {
+      home_is_blue_team_,
+      arena_,
+  };
 
-  observer_ptr result = Arena::CreateMessage<rc::GameEvent>(arena_.get());
+  object_ptr result = Arena::CreateMessage<rc::GameEvent>(arena_.get());
   result->set_allocated_timestamp(timestamp.release());
 
   switch (game_event.event_case()) {
