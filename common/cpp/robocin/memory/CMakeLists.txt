@@ -1,5 +1,5 @@
 robocin_cpp_library(
-  NAME observer_ptr
-  HDRS observer_ptr.h
-  SRCS observer_ptr.cpp
+  NAME object_ptr
+  HDRS object_ptr.h internal/memory_internal.h
+  SRCS object_ptr.cpp
 )
