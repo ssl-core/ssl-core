@@ -17,8 +17,8 @@ class object_ptr { // NOLINT(*naming*)
   using pointer = std::add_pointer_t<element_type>;
 
   constexpr object_ptr() noexcept = default;
-  constexpr object_ptr(std::nullptr_t) noexcept = default;  // NOLINT(*explicit*)
-  constexpr object_ptr(pointer ptr) noexcept : ptr_{ptr} {} // NOLINT(*explicit*)
+  constexpr object_ptr(std::nullptr_t) noexcept : object_ptr{} {} // NOLINT(*explicit*)
+  constexpr object_ptr(pointer ptr) noexcept : ptr_{ptr} {}       // NOLINT(*explicit*)
 
   template <std::convertible_to<pointer> U>
   constexpr object_ptr(U ptr) noexcept : ptr_{ptr} {} // NOLINT(*explicit*)
