@@ -43,7 +43,7 @@ class Duration {
 };
 
 // Caution: When using a duration in milliseconds, make sure that it is sufficiently longer than the
-// generation time of a new detection, because the duration in perception is discrete, for example:
+// generation time of a new detection because the duration in perception is discrete, for example:
 //
 // Let it be a framerate of 60 frames per second. The update time of a new frame, in milliseconds,
 // will be 1000 / 60 ~ 16ms, so any value below 16ms will be considered 0.

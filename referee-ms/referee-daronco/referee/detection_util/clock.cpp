@@ -12,6 +12,8 @@ namespace {
 
 class ClockInternal {
  public:
+  ClockInternal() = default;
+
   void update(Timestamp timestamp, uint32_t framerate) {
     std::unique_lock locker{mutex_};
     framerate_ = framerate;

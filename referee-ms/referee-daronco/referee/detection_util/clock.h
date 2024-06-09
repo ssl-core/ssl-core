@@ -9,11 +9,10 @@
 
 namespace referee::detection_util {
 
-class Timestamp;
-class Duration;
-
 class Clock {
  public:
+  Clock() = delete;
+
   using timestamp_type = Timestamp;
   using duration_type = Duration;
 
