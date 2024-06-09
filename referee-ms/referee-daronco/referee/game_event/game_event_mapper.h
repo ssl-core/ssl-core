@@ -1,9 +1,13 @@
 #ifndef REFEREE_GAME_EVENT_GAME_EVENT_MAPPER_H
 #define REFEREE_GAME_EVENT_GAME_EVENT_MAPPER_H
 
+#include <absl/container/flat_hash_map.h>
 #include <google/protobuf/arena.h>
+#include <google/protobuf/repeated_ptr_field.h>
 #include <protocols/common/game_event.pb.h>
+#include <protocols/referee/game_status.pb.h>
 #include <protocols/third_party/game_controller/event.pb.h>
+#include <protocols/third_party/game_controller/referee.pb.h>
 #include <robocin/memory/object_ptr.h>
 
 namespace referee {
@@ -19,21 +23,32 @@ class IGameEventMapper {
 
   virtual ~IGameEventMapper() = default;
 
-  virtual ::robocin::object_ptr<::protocols::common::GameEvent> fromTimestampAndGameControllerEvent(
-      std::unique_ptr<google::protobuf::Timestamp> timestamp,
-      const ::protocols::third_party::game_controller::GameEvent& game_event);
+  virtual ::robocin::object_ptr<
+      ::google::protobuf::RepeatedPtrField<::protocols::common::GameEvent>>
+  gameEventsFromReferee(const ::protocols::third_party::game_controller::Referee& referee);
+
+  virtual ::robocin::object_ptr<
+      ::google::protobuf::RepeatedPtrField<::protocols::referee::GameStatus::GameEventsProposal>>
+  gameEventsProposalFromReferee(const ::protocols::third_party::game_controller::Referee& referee);
 };
 
 class GameEventMapper : public IGameEventMapper {
  public:
-  GameEventMapper(bool home_is_blue_team, ::robocin::object_ptr<::google::protobuf::Arena> arena);
+  explicit GameEventMapper(::robocin::object_ptr<::google::protobuf::Arena> arena);
 
-  ::robocin::object_ptr<::protocols::common::GameEvent> fromTimestampAndGameControllerEvent(
-      std::unique_ptr<google::protobuf::Timestamp> timestamp,
-      const ::protocols::third_party::game_controller::GameEvent& game_event) override;
+  ::robocin::object_ptr<::google::protobuf::RepeatedPtrField<::protocols::common::GameEvent>>
+  gameEventsFromReferee(const ::protocols::third_party::game_controller::Referee& referee) override;
+
+  ::robocin::object_ptr<
+      ::google::protobuf::RepeatedPtrField<::protocols::referee::GameStatus::GameEventsProposal>>
+  gameEventsProposalFromReferee(
+      const ::protocols::third_party::game_controller::Referee& referee) override;
 
  private:
-  bool home_is_blue_team_;
+  // serialized third party GameEvent as keys.
+  ::absl::flat_hash_map<std::string, ::protocols::common::GameEvent> game_events_map_;
+  ::absl::flat_hash_map<std::string, ::protocols::common::GameEvent> game_events_proposal_map_;
+
   ::robocin::object_ptr<::google::protobuf::Arena> arena_;
 };
 
