@@ -1,6 +1,8 @@
 #ifndef REFEREE_GAME_COMMAND_GAME_COMMAND_MAPPER_H
 #define REFEREE_GAME_COMMAND_GAME_COMMAND_MAPPER_H
 
+#include "referee/detection_util/elapsed_timer.h"
+
 #include <google/protobuf/arena.h>
 #include <protocols/common/game_command.pb.h>
 #include <protocols/common/game_event.pb.h>
@@ -40,9 +42,14 @@ class GameCommandMapper : public IGameCommandMapper {
  private:
   ::robocin::object_ptr<::google::protobuf::Arena> arena_;
 
+  detection_util::ElapsedTimer kickoff_elapsed_timer_{/*started=*/false};
   ::protocols::common::Team team_kicking_kickoff_{::protocols::common::Team::TEAM_UNSPECIFIED};
+
+  detection_util::ElapsedTimer direct_free_kick_elapsed_timer_{/*started=*/false};
   ::protocols::common::Team team_kicking_direct_free_kick_{
       ::protocols::common::Team::TEAM_UNSPECIFIED};
+
+  // penalty does not need a timer to make the transition to another command.
   ::protocols::common::Team team_kicking_penalty_{::protocols::common::Team::TEAM_UNSPECIFIED};
 };
 

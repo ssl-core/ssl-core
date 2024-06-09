@@ -1,5 +1,8 @@
 #include "referee/game_command/game_command_mapper.h"
 
+#include "referee/detection_util/duration.h"
+#include "referee/detection_util/elapsed_timer.h"
+
 #include <algorithm>
 #include <array>
 #include <cmath>
@@ -23,8 +26,15 @@ using ::google::protobuf::Arena;
 using ::google::protobuf::util::TimeUtil;
 using ::robocin::object_ptr;
 
+using detection_util::ElapsedTimer;
+using detection_util::Seconds;
+
+// NOLINTBEGIN(*naming*, *magic-numbers*)
 constexpr auto pNearTheBallDistance = []() { return 300.0F; };
 constexpr auto pSlowerSpeedOfMovingBall = []() { return 300.0F; };
+constexpr auto pKickoffTimeout = []() { return 5ULL; };
+constexpr auto pDirectFreeKickTimeout = []() { return 5ULL; };
+// NOLINTEND(*naming*, *magic-numbers*)
 
 namespace rc {
 
@@ -428,17 +438,23 @@ class FactoryInternal {
 class KickingTeamUtil {
  public:
   KickingTeamUtil(object_ptr<const rc::Detection> detection,
-                  object_ptr<const RefereeUtil> referee_util) :
+                  object_ptr<const RefereeUtil> referee_util,
+                  object_ptr<const ElapsedTimer> kickoff_elapsed_timer, // NOLINT(*swappable*)
+                  object_ptr<const ElapsedTimer> direct_free_kick_elapsed_timer) :
       detection_(detection),
-      referee_util_(referee_util) {}
+      referee_util_(referee_util),
+      kickoff_elapsed_timer_(kickoff_elapsed_timer),
+      direct_free_kick_elapsed_timer_(direct_free_kick_elapsed_timer) {}
 
-  // void update(GameCommandMapper::TeamKicking& team_kicking) {
-  //   team_kicking_kickoff_ = kicking_team_util.getTeamKickingKickoff(team_kicking_kickoff_);
-  //   team_kicking_direct_free_kick_
-  //       = kicking_team_util.getTeamKickingDirectFreeKick(team_kicking_direct_free_kick_);
-  //   team_kicking_penalty_ = kicking_team_util.getTeamKickingPenalty(team_kicking_penalty_);
-  // }
+  void update(rc::Team& team_kicking_kickoff,
+              rc::Team& team_kicking_direct_free_kick, // NOLINT(*swappable*)
+              rc::Team& team_kicking_penalty) {
+    team_kicking_kickoff = getTeamKickingKickoff(team_kicking_kickoff);
+    team_kicking_direct_free_kick = getTeamKickingKickoff(team_kicking_direct_free_kick);
+    team_kicking_penalty = getTeamKickingPenalty(team_kicking_penalty);
+  }
 
+ private:
   [[nodiscard]] rc::Team getTeamKickingKickoff(rc::Team last_team_kicking_kickoff) const {
     if (referee_util_->isPrepareKickoff()) {
       return referee_util_->getTeamFromCommand();
@@ -451,9 +467,13 @@ class KickingTeamUtil {
         return hasAwayTeamMovedBall() ? rc::Team::TEAM_UNSPECIFIED : rc::Team::TEAM_AWAY;
       }
 
-      // if (not kickoff_timer_.elapsed(5s)) {
-      //   return last_team_kicking_kickoff;
-      // }
+      if (!kickoff_elapsed_timer_->isStarted()) {
+        robocin::elog("the kickoff_elapsed_timer has not been initialized.");
+      }
+
+      if (kickoff_elapsed_timer_->elapsed() <= Seconds(pKickoffTimeout())) {
+        return last_team_kicking_kickoff;
+      }
     }
     return rc::Team::TEAM_UNSPECIFIED;
   }
@@ -471,9 +491,13 @@ class KickingTeamUtil {
         return hasAwayTeamMovedBall() ? rc::Team::TEAM_UNSPECIFIED : rc::Team::TEAM_AWAY;
       }
 
-      // if (not free_kick_timer_.elapsed(5s)) {
-      //   return last_team_kicking_direct_free_kick;
-      // }
+      if (!direct_free_kick_elapsed_timer_->isStarted()) {
+        robocin::elog("the kickoff_elapsed_timer has not been initialized.");
+      }
+
+      if (direct_free_kick_elapsed_timer_->elapsed() <= Seconds(pDirectFreeKickTimeout())) {
+        return last_team_kicking_direct_free_kick;
+      }
     }
     return rc::Team::TEAM_UNSPECIFIED;
   }
@@ -496,7 +520,6 @@ class KickingTeamUtil {
     return teamThatMovedBall() == rc::Team::TEAM_AWAY;
   }
 
- private:
   [[nodiscard]] rc::Team teamThatMovedBall() const {
     for (const rc::Robot& robot : detection_->robots()) {
       if (isCloseToBall(robot.position()) and isBallMoving()) {
@@ -550,6 +573,8 @@ class KickingTeamUtil {
 
   object_ptr<const rc::Detection> detection_;
   object_ptr<const RefereeUtil> referee_util_;
+  object_ptr<const ElapsedTimer> kickoff_elapsed_timer_;
+  object_ptr<const ElapsedTimer> direct_free_kick_elapsed_timer_;
 };
 
 } // namespace
@@ -563,18 +588,22 @@ GameCommandMapper::gameCommandFromDetectionAndReferee(object_ptr<const rc::Detec
       referee,
   };
 
-  KickingTeamUtil kicking_team_util{
-      detection,
-      &referee_util,
-  };
-
   FactoryInternal factory{
       referee,
       &referee_util,
       arena_,
   };
 
-  // kicking_team_util.update(team_kicking_);
+  KickingTeamUtil kicking_team_util{
+      detection,
+      &referee_util,
+      &kickoff_elapsed_timer_,
+      &direct_free_kick_elapsed_timer_,
+  };
+
+  kicking_team_util.update(team_kicking_kickoff_,
+                           team_kicking_direct_free_kick_,
+                           team_kicking_penalty_);
 
   if (referee_util.isOutOfGame()) {
     return factory.makeInterval();
@@ -602,11 +631,21 @@ GameCommandMapper::gameCommandFromDetectionAndReferee(object_ptr<const rc::Detec
   }
   if (referee_util.isNormalStart()) {
     if (team_kicking_kickoff_ != rc::Team::TEAM_UNSPECIFIED) {
+      if (!kickoff_elapsed_timer_.isStarted()) {
+        kickoff_elapsed_timer_.start();
+      }
       return factory.makeKickoff(team_kicking_kickoff_);
     }
+    kickoff_elapsed_timer_.stop();
+
     if (team_kicking_direct_free_kick_ != rc::Team::TEAM_UNSPECIFIED) {
+      if (!direct_free_kick_elapsed_timer_.isStarted()) {
+        direct_free_kick_elapsed_timer_.start();
+      }
       return factory.makeDirectFreeKick(team_kicking_direct_free_kick_);
     }
+    direct_free_kick_elapsed_timer_.stop();
+
     if (team_kicking_penalty_ != rc::Team::TEAM_UNSPECIFIED) {
       return factory.makePenalty(team_kicking_penalty_);
     }
