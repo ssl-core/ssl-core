@@ -2,8 +2,6 @@
 #define REFEREE_DETECTION_ELAPSED_TIMER_H
 
 #include "referee/detection_util/clock.h"
-#include "referee/detection_util/duration.h"
-#include "referee/detection_util/timestamp.h"
 
 namespace referee::detection_util {
 

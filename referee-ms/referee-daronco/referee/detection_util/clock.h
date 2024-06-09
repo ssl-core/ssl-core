@@ -1,6 +1,9 @@
 #ifndef REFEREE_DETECTION_CLOCK_H
 #define REFEREE_DETECTION_CLOCK_H
 
+#include "referee/detection_util/duration.h"
+#include "referee/detection_util/timestamp.h"
+
 #include <cstdint>
 #include <protocols/perception/detection.pb.h>
 

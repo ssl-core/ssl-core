@@ -1,8 +1,6 @@
 #ifndef REFEREE_COMMON_DETECTION_DURATION_H
 #define REFEREE_COMMON_DETECTION_DURATION_H
 
-#include "referee/detection_util/clock.h"
-
 #include <compare> // IWYU pragma: keep
 #include <cstdint>
 
