@@ -26,7 +26,6 @@ using ::google::protobuf::Arena;
 using ::google::protobuf::util::TimeUtil;
 using ::robocin::object_ptr;
 
-using detection_util::ElapsedTimer;
 using detection_util::Seconds;
 
 // NOLINTBEGIN(*naming*, *magic-numbers*)
@@ -77,7 +76,7 @@ using ::protocols::third_party::game_controller::Referee_Command_Name;
 
 class RefereeUtil {
  public:
-  explicit RefereeUtil(object_ptr<const tp::Referee> referee) : referee_(referee) {}
+  explicit RefereeUtil(const tp::Referee& referee) : referee_(&referee) {}
 
   [[nodiscard]] bool homeIsBlueTeam() const { return !referee_->blue_team_on_positive_half(); }
 
@@ -166,7 +165,37 @@ class RefereeUtil {
     return referee_->command() == tp::RefereeCommand::Referee_Command_NORMAL_START;
   }
 
+  [[nodiscard]] bool isCurrentActionTimeUnexpired() const {
+    return referee_->current_action_time_remaining() >= 0LL;
+  }
+
+  [[nodiscard]] object_ptr<google::protobuf::Duration>
+  getCurrentActionTimeRemaining(object_ptr<Arena> arena) const {
+    return durationFromMicros(referee_->current_action_time_remaining(), arena);
+  }
+
+  [[nodiscard]] object_ptr<rc::Point2Df> getDesignatedPosition(object_ptr<Arena> arena) const {
+    return point2DfFromPoint(referee_->designated_position(), arena);
+  }
+
  private:
+  static object_ptr<google::protobuf::Duration> durationFromMicros(int64_t microseconds,
+                                                                   object_ptr<Arena> arena) {
+    return Arena::Create<google::protobuf::Duration>(
+        arena.get(),
+        TimeUtil::MicrosecondsToDuration(microseconds));
+  }
+
+  static object_ptr<rc::Point2Df> point2DfFromPoint(const tp::Point& point,
+                                                    object_ptr<Arena> arena) {
+    object_ptr result = Arena::CreateMessage<rc::Point2Df>(arena.get());
+
+    result->set_x(point.x());
+    result->set_y(point.y());
+
+    return result;
+  }
+
   object_ptr<const tp::Referee> referee_;
 };
 
@@ -175,11 +204,8 @@ class FactoryInternal {
       = "team is not home nor away, setting halt.";
 
  public:
-  FactoryInternal(object_ptr<const tp::Referee> referee,
-                  object_ptr<const RefereeUtil> referee_util,
-                  object_ptr<Arena> arena) :
-      referee_(referee),
-      referee_util_(referee_util),
+  FactoryInternal(const RefereeUtil referee_util, object_ptr<Arena> arena) :
+      referee_util_(&referee_util),
       arena_(arena) {}
 
   object_ptr<rc::GameCommand> makeInterval() {
@@ -300,9 +326,9 @@ class FactoryInternal {
     auto make_ball_placement_fn = [this]() {
       object_ptr ball_placement = Arena::CreateMessage<rc::BallPlacement>(arena_.get());
       ball_placement->unsafe_arena_set_allocated_position(
-          point2DfFromPoint(referee_->designated_position()).get());
+          referee_util_->getDesignatedPosition(arena_).get());
       ball_placement->unsafe_arena_set_allocated_remaining_time(
-          durationFromMicros(referee_->current_action_time_remaining()).get());
+          referee_util_->getCurrentActionTimeRemaining(arena_).get());
 
       return ball_placement;
     };
@@ -332,7 +358,7 @@ class FactoryInternal {
     auto make_kickoff_fn = [this]() {
       object_ptr kickoff = Arena::CreateMessage<rc::Kickoff>(arena_.get());
       kickoff->unsafe_arena_set_allocated_remaining_time(
-          durationFromMicros(referee_->current_action_time_remaining()).get());
+          referee_util_->getCurrentActionTimeRemaining(arena_).get());
 
       return kickoff;
     };
@@ -362,7 +388,7 @@ class FactoryInternal {
     auto make_direct_free_kick_fn = [this]() {
       object_ptr direct_free_kick = Arena::CreateMessage<rc::DirectFreeKick>(arena_.get());
       direct_free_kick->unsafe_arena_set_allocated_remaining_time(
-          durationFromMicros(referee_->current_action_time_remaining()).get());
+          referee_util_->getCurrentActionTimeRemaining(arena_).get());
 
       return direct_free_kick;
     };
@@ -392,7 +418,7 @@ class FactoryInternal {
     auto make_penalty_fn = [this]() {
       object_ptr penalty = Arena::CreateMessage<rc::Penalty>(arena_.get());
       penalty->unsafe_arena_set_allocated_remaining_time(
-          durationFromMicros(referee_->current_action_time_remaining()).get());
+          referee_util_->getCurrentActionTimeRemaining(arena_).get());
 
       return penalty;
     };
@@ -433,66 +459,22 @@ class FactoryInternal {
   }
 
  private:
-  object_ptr<rc::Point2Df> point2DfFromPoint(const tp::Point& point) {
-    object_ptr result = Arena::CreateMessage<rc::Point2Df>(arena_.get());
-
-    result->set_x(point.x());
-    result->set_y(point.y());
-
-    return result;
-  }
-
-  object_ptr<google::protobuf::Duration> durationFromMicros(int64_t microseconds) {
-    return Arena::Create<google::protobuf::Duration>(
-        arena_.get(),
-        TimeUtil::MicrosecondsToDuration(microseconds));
-  }
-
-  object_ptr<const tp::Referee> referee_;
   object_ptr<const RefereeUtil> referee_util_;
   object_ptr<Arena> arena_;
 };
 
 class KickingTeamUtil {
  public:
-  KickingTeamUtil(object_ptr<const rc::Detection> detection,
-                  object_ptr<const RefereeUtil> referee_util,
-                  object_ptr<ElapsedTimer> kickoff_elapsed_timer, // NOLINT(*swappable*)
-                  object_ptr<ElapsedTimer> direct_free_kick_elapsed_timer) :
-      detection_(detection),
-      referee_util_(referee_util),
-      kickoff_elapsed_timer_(kickoff_elapsed_timer),
-      direct_free_kick_elapsed_timer_(direct_free_kick_elapsed_timer) {}
+  KickingTeamUtil(const rc::Detection& detection, const RefereeUtil& referee_util) :
+      detection_(&detection),
+      referee_util_(&referee_util) {}
 
   void update(rc::Team& team_kicking_kickoff,
               rc::Team& team_kicking_direct_free_kick, // NOLINT(*swappable*)
               rc::Team& team_kicking_penalty) {
-    if (referee_util_->isNormalStart()) {
-      if (team_kicking_kickoff != rc::Team::TEAM_UNSPECIFIED
-          && !kickoff_elapsed_timer_->isStarted()) {
-        kickoff_elapsed_timer_->start();
-      }
-
-      if (team_kicking_direct_free_kick != rc::Team::TEAM_UNSPECIFIED
-          && !direct_free_kick_elapsed_timer_->isStarted()) {
-        direct_free_kick_elapsed_timer_->start();
-      }
-    }
-
     team_kicking_kickoff = getTeamKickingKickoff(team_kicking_kickoff);
     team_kicking_direct_free_kick = getTeamKickingKickoff(team_kicking_direct_free_kick);
     team_kicking_penalty = getTeamKickingPenalty(team_kicking_penalty);
-
-    if (referee_util_->isNormalStart()) {
-      if (team_kicking_kickoff == rc::Team::TEAM_UNSPECIFIED
-          && kickoff_elapsed_timer_->isStarted()) {
-        kickoff_elapsed_timer_->stop();
-      }
-      if (team_kicking_direct_free_kick == rc::Team::TEAM_UNSPECIFIED
-          && direct_free_kick_elapsed_timer_->isStarted()) {
-        direct_free_kick_elapsed_timer_->stop();
-      }
-    }
   }
 
  private:
@@ -508,11 +490,7 @@ class KickingTeamUtil {
         return rc::Team::TEAM_UNSPECIFIED;
       }
 
-      if (!kickoff_elapsed_timer_->isStarted()) {
-        robocin::elog("the kickoff_elapsed_timer has not been initialized.");
-      }
-
-      if (kickoff_elapsed_timer_->elapsed() <= Seconds(pKickoffTimeout())) {
+      if (referee_util_->isCurrentActionTimeUnexpired()) {
         return last_team_kicking_kickoff;
       }
     }
@@ -532,11 +510,7 @@ class KickingTeamUtil {
         return rc::Team::TEAM_UNSPECIFIED;
       }
 
-      if (!direct_free_kick_elapsed_timer_->isStarted()) {
-        robocin::elog("the direct_free_kick_elapsed_timer has not been initialized.");
-      }
-
-      if (direct_free_kick_elapsed_timer_->elapsed() <= Seconds(pDirectFreeKickTimeout())) {
+      if (referee_util_->isCurrentActionTimeUnexpired()) {
         return last_team_kicking_direct_free_kick;
       }
     }
@@ -603,12 +577,12 @@ class KickingTeamUtil {
     return robot.robot_id().color() == rc::RobotId::COLOR_BLUE ? TEAM_AWAY : TEAM_HOME;
   }
 
-  // TODO($ISSUE_N): replace by common/geometry
+  // TODO(josevicruz): replace by common/geometry
   static float norm(const rc::Point3Df& point) {
     return std::sqrt((point.x() * (point.x())) + (point.y() * point.y()) + (point.z() * point.z()));
   }
 
-  // TODO($ISSUE_N): replace by common/geometry
+  // TODO(josevicruz): replace by common/geometry
   static float distance(const rc::Point2Df& lhs, const rc::Point3Df& rhs) {
     return std::sqrt((rhs.x() - lhs.x()) * (rhs.x() - lhs.x())
                      + (rhs.y() - lhs.y()) * (rhs.y() - lhs.y()));
@@ -616,8 +590,6 @@ class KickingTeamUtil {
 
   object_ptr<const rc::Detection> detection_;
   object_ptr<const RefereeUtil> referee_util_;
-  object_ptr<ElapsedTimer> kickoff_elapsed_timer_;
-  object_ptr<ElapsedTimer> direct_free_kick_elapsed_timer_;
 };
 
 } // namespace
@@ -625,23 +597,20 @@ class KickingTeamUtil {
 GameCommandMapper::GameCommandMapper(object_ptr<Arena> arena) : arena_(arena) {}
 
 object_ptr<rc::GameCommand>
-GameCommandMapper::gameCommandFromDetectionAndReferee(object_ptr<const rc::Detection> detection,
-                                                      object_ptr<const tp::Referee> referee) {
+GameCommandMapper::gameCommandFromDetectionAndReferee(const rc::Detection& detection,
+                                                      const tp::Referee& referee) {
   RefereeUtil referee_util{
       referee,
   };
 
   FactoryInternal factory{
-      referee,
-      &referee_util,
+      referee_util,
       arena_,
   };
 
   KickingTeamUtil kicking_team_util{
       detection,
-      &referee_util,
-      &kickoff_elapsed_timer_,
-      &direct_free_kick_elapsed_timer_,
+      referee_util,
   };
 
   kicking_team_util.update(team_kicking_kickoff_,
@@ -688,7 +657,7 @@ GameCommandMapper::gameCommandFromDetectionAndReferee(object_ptr<const rc::Detec
 
   if (!referee_util.isHalt()) {
     robocin::elog("the expected command was halt, but '{}' was found.",
-                  static_cast<int>(referee->command()));
+                  static_cast<int>(referee.command()));
   }
   return factory.makeHalt();
 }
