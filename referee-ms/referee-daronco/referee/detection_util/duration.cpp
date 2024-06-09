@@ -7,12 +7,12 @@
 namespace referee::detection_util {
 namespace {
 
-constexpr int64_t kMillisPerSecond = 1000LL;
+constexpr int64_t kMillisecondsPerSecond = 1000LL;
 constexpr int64_t kSecondsPerMinute = 60;
 
 } // namespace
 
-int64_t Duration::ms() const { return kMillisPerSecond * frames_ / Clock::framerate(); }
+int64_t Duration::ms() const { return kMillisecondsPerSecond * frames_ / Clock::framerate(); }
 int64_t Duration::frames() const { return frames_; }
 
 Duration& Duration::operator+=(const Duration& other) { return frames_ += other.frames_, *this; }
@@ -31,7 +31,7 @@ Duration Duration::operator+() const { return Duration{*this}; }
 Duration Duration::operator-() const { return Duration{-frames_}; }
 
 Duration Milliseconds(int64_t milliseconds) noexcept {
-  return Duration{(Clock::framerate() * milliseconds) / kMillisPerSecond};
+  return Duration{(Clock::framerate() * milliseconds) / kMillisecondsPerSecond};
 }
 
 Duration Seconds(int64_t seconds) noexcept { return Duration{Clock::framerate() * seconds}; }
