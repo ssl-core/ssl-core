@@ -329,15 +329,21 @@ class FactoryInternal {
   object_ptr<rc::GameCommand> makeKickoff(rc::Team team_kicking_kickoff) {
     object_ptr result = Arena::CreateMessage<rc::GameCommand>(arena_.get());
 
+    auto make_kickoff_fn = [this]() {
+      object_ptr kickoff = Arena::CreateMessage<rc::Kickoff>(arena_.get());
+      kickoff->unsafe_arena_set_allocated_remaining_time(
+          durationFromMicros(referee_->current_action_time_remaining()).get());
+
+      return kickoff;
+    };
+
     switch (team_kicking_kickoff) {
       case rc::Team::TEAM_HOME: {
-        result->unsafe_arena_set_allocated_home_kickoff(
-            Arena::CreateMessage<rc::Kickoff>(arena_.get()));
+        result->unsafe_arena_set_allocated_home_kickoff(make_kickoff_fn().get());
         break;
       }
       case rc::Team::TEAM_AWAY: {
-        result->unsafe_arena_set_allocated_away_kickoff(
-            Arena::CreateMessage<rc::Kickoff>(arena_.get()));
+        result->unsafe_arena_set_allocated_away_kickoff(make_kickoff_fn().get());
         break;
       }
       default: {
@@ -353,15 +359,21 @@ class FactoryInternal {
   object_ptr<rc::GameCommand> makeDirectFreeKick(rc::Team team_kicking_free_kick) {
     object_ptr result = Arena::CreateMessage<rc::GameCommand>(arena_.get());
 
+    auto make_direct_free_kick_fn = [this]() {
+      object_ptr direct_free_kick = Arena::CreateMessage<rc::DirectFreeKick>(arena_.get());
+      direct_free_kick->unsafe_arena_set_allocated_remaining_time(
+          durationFromMicros(referee_->current_action_time_remaining()).get());
+
+      return direct_free_kick;
+    };
+
     switch (team_kicking_free_kick) {
       case rc::Team::TEAM_HOME: {
-        result->unsafe_arena_set_allocated_home_direct_free_kick(
-            Arena::CreateMessage<rc::DirectFreeKick>(arena_.get()));
+        result->unsafe_arena_set_allocated_home_direct_free_kick(make_direct_free_kick_fn().get());
         break;
       }
       case rc::Team::TEAM_AWAY: {
-        result->unsafe_arena_set_allocated_away_direct_free_kick(
-            Arena::CreateMessage<rc::DirectFreeKick>(arena_.get()));
+        result->unsafe_arena_set_allocated_away_direct_free_kick(make_direct_free_kick_fn().get());
         break;
       }
       default: {
@@ -377,15 +389,21 @@ class FactoryInternal {
   object_ptr<rc::GameCommand> makePenalty(rc::Team team_kicking_penalty) {
     object_ptr result = Arena::CreateMessage<rc::GameCommand>(arena_.get());
 
+    auto make_penalty_fn = [this]() {
+      object_ptr penalty = Arena::CreateMessage<rc::Penalty>(arena_.get());
+      penalty->unsafe_arena_set_allocated_remaining_time(
+          durationFromMicros(referee_->current_action_time_remaining()).get());
+
+      return penalty;
+    };
+
     switch (team_kicking_penalty) {
       case rc::Team::TEAM_HOME: {
-        result->unsafe_arena_set_allocated_home_penalty(
-            Arena::CreateMessage<rc::Penalty>(arena_.get()));
+        result->unsafe_arena_set_allocated_home_penalty(make_penalty_fn().get());
         break;
       }
       case rc::Team::TEAM_AWAY: {
-        result->unsafe_arena_set_allocated_home_penalty(
-            Arena::CreateMessage<rc::Penalty>(arena_.get()));
+        result->unsafe_arena_set_allocated_away_penalty(make_penalty_fn().get());
         break;
       }
       default: {
@@ -439,8 +457,8 @@ class KickingTeamUtil {
  public:
   KickingTeamUtil(object_ptr<const rc::Detection> detection,
                   object_ptr<const RefereeUtil> referee_util,
-                  object_ptr<const ElapsedTimer> kickoff_elapsed_timer, // NOLINT(*swappable*)
-                  object_ptr<const ElapsedTimer> direct_free_kick_elapsed_timer) :
+                  object_ptr<ElapsedTimer> kickoff_elapsed_timer, // NOLINT(*swappable*)
+                  object_ptr<ElapsedTimer> direct_free_kick_elapsed_timer) :
       detection_(detection),
       referee_util_(referee_util),
       kickoff_elapsed_timer_(kickoff_elapsed_timer),
@@ -449,9 +467,32 @@ class KickingTeamUtil {
   void update(rc::Team& team_kicking_kickoff,
               rc::Team& team_kicking_direct_free_kick, // NOLINT(*swappable*)
               rc::Team& team_kicking_penalty) {
+    if (referee_util_->isNormalStart()) {
+      if (team_kicking_kickoff != rc::Team::TEAM_UNSPECIFIED
+          && !kickoff_elapsed_timer_->isStarted()) {
+        kickoff_elapsed_timer_->start();
+      }
+
+      if (team_kicking_direct_free_kick != rc::Team::TEAM_UNSPECIFIED
+          && !direct_free_kick_elapsed_timer_->isStarted()) {
+        direct_free_kick_elapsed_timer_->start();
+      }
+    }
+
     team_kicking_kickoff = getTeamKickingKickoff(team_kicking_kickoff);
     team_kicking_direct_free_kick = getTeamKickingKickoff(team_kicking_direct_free_kick);
     team_kicking_penalty = getTeamKickingPenalty(team_kicking_penalty);
+
+    if (referee_util_->isNormalStart()) {
+      if (team_kicking_kickoff == rc::Team::TEAM_UNSPECIFIED
+          && kickoff_elapsed_timer_->isStarted()) {
+        kickoff_elapsed_timer_->stop();
+      }
+      if (team_kicking_direct_free_kick == rc::Team::TEAM_UNSPECIFIED
+          && direct_free_kick_elapsed_timer_->isStarted()) {
+        direct_free_kick_elapsed_timer_->stop();
+      }
+    }
   }
 
  private:
@@ -460,11 +501,11 @@ class KickingTeamUtil {
       return referee_util_->getTeamFromCommand();
     }
     if (referee_util_->isNormalStart()) {
-      if (last_team_kicking_kickoff == rc::Team::TEAM_HOME) {
-        return hasHomeTeamMovedBall() ? rc::Team::TEAM_UNSPECIFIED : rc::Team::TEAM_HOME;
+      if (hasHomeTeamMovedBall() && last_team_kicking_kickoff == rc::Team::TEAM_HOME) {
+        return rc::Team::TEAM_UNSPECIFIED;
       }
-      if (last_team_kicking_kickoff == rc::Team::TEAM_AWAY) {
-        return hasAwayTeamMovedBall() ? rc::Team::TEAM_UNSPECIFIED : rc::Team::TEAM_AWAY;
+      if (hasAwayTeamMovedBall() && last_team_kicking_kickoff == rc::Team::TEAM_AWAY) {
+        return rc::Team::TEAM_UNSPECIFIED;
       }
 
       if (!kickoff_elapsed_timer_->isStarted()) {
@@ -484,15 +525,15 @@ class KickingTeamUtil {
       return referee_util_->getTeamFromCommand();
     }
     if (referee_util_->isNormalStart()) {
-      if (last_team_kicking_direct_free_kick == rc::Team::TEAM_HOME) {
-        return hasHomeTeamMovedBall() ? rc::Team::TEAM_UNSPECIFIED : rc::Team::TEAM_HOME;
+      if (hasHomeTeamMovedBall() && last_team_kicking_direct_free_kick == rc::Team::TEAM_HOME) {
+        return rc::Team::TEAM_UNSPECIFIED;
       }
-      if (last_team_kicking_direct_free_kick == rc::Team::TEAM_AWAY) {
-        return hasAwayTeamMovedBall() ? rc::Team::TEAM_UNSPECIFIED : rc::Team::TEAM_AWAY;
+      if (hasAwayTeamMovedBall() && last_team_kicking_direct_free_kick == rc::Team::TEAM_AWAY) {
+        return rc::Team::TEAM_UNSPECIFIED;
       }
 
       if (!direct_free_kick_elapsed_timer_->isStarted()) {
-        robocin::elog("the kickoff_elapsed_timer has not been initialized.");
+        robocin::elog("the direct_free_kick_elapsed_timer has not been initialized.");
       }
 
       if (direct_free_kick_elapsed_timer_->elapsed() <= Seconds(pDirectFreeKickTimeout())) {
@@ -509,6 +550,8 @@ class KickingTeamUtil {
     if (referee_util_->isNormalStart()) {
       return last_team_kicking_penalty;
     }
+
+    // a spontaneous transition is expected in order to end the penalty.
     return rc::Team::TEAM_UNSPECIFIED;
   }
 
@@ -522,7 +565,7 @@ class KickingTeamUtil {
 
   [[nodiscard]] rc::Team teamThatMovedBall() const {
     for (const rc::Robot& robot : detection_->robots()) {
-      if (isCloseToBall(robot.position()) and isBallMoving()) {
+      if (isCloseToBall(robot.position()) && isBallMoving()) {
         return getTeamFromRobot(robot);
       }
     }
@@ -573,8 +616,8 @@ class KickingTeamUtil {
 
   object_ptr<const rc::Detection> detection_;
   object_ptr<const RefereeUtil> referee_util_;
-  object_ptr<const ElapsedTimer> kickoff_elapsed_timer_;
-  object_ptr<const ElapsedTimer> direct_free_kick_elapsed_timer_;
+  object_ptr<ElapsedTimer> kickoff_elapsed_timer_;
+  object_ptr<ElapsedTimer> direct_free_kick_elapsed_timer_;
 };
 
 } // namespace
@@ -631,29 +674,21 @@ GameCommandMapper::gameCommandFromDetectionAndReferee(object_ptr<const rc::Detec
   }
   if (referee_util.isNormalStart()) {
     if (team_kicking_kickoff_ != rc::Team::TEAM_UNSPECIFIED) {
-      if (!kickoff_elapsed_timer_.isStarted()) {
-        kickoff_elapsed_timer_.start();
-      }
       return factory.makeKickoff(team_kicking_kickoff_);
     }
-    kickoff_elapsed_timer_.stop();
-
     if (team_kicking_direct_free_kick_ != rc::Team::TEAM_UNSPECIFIED) {
-      if (!direct_free_kick_elapsed_timer_.isStarted()) {
-        direct_free_kick_elapsed_timer_.start();
-      }
       return factory.makeDirectFreeKick(team_kicking_direct_free_kick_);
     }
-    direct_free_kick_elapsed_timer_.stop();
-
     if (team_kicking_penalty_ != rc::Team::TEAM_UNSPECIFIED) {
       return factory.makePenalty(team_kicking_penalty_);
     }
+
     return factory.makeInGame();
   }
 
-  if (referee_util.isHalt()) {
-    robocin::elog("unexpected command '{}' is halt.", static_cast<int>(referee->command()));
+  if (!referee_util.isHalt()) {
+    robocin::elog("the expected command was halt, but '{}' was found.",
+                  static_cast<int>(referee->command()));
   }
   return factory.makeHalt();
 }

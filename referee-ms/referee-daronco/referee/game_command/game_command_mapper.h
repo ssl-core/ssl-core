@@ -42,6 +42,7 @@ class GameCommandMapper : public IGameCommandMapper {
  private:
   ::robocin::object_ptr<::google::protobuf::Arena> arena_;
 
+  // TODO(joseviccruz): maybe replace by current_action_time_remaining from third party referee.
   detection_util::ElapsedTimer kickoff_elapsed_timer_{/*started=*/false};
   ::protocols::common::Team team_kicking_kickoff_{::protocols::common::Team::TEAM_UNSPECIFIED};
 
