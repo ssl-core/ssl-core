@@ -18,18 +18,17 @@ message GameStatus {
 
   Team home_team = 5;
   Team away_team = 6;
-  bool is_home_team_on_positive_half = 7;
 
-  common.GameStage game_stage = 8;
-  optional google.protobuf.Duration game_stage_time_left = 9;
+  common.GameStage game_stage = 7;
+  optional google.protobuf.Duration game_stage_time_left = 8;
 
-  uint64 total_commands_issued = 10;
-  google.protobuf.Timestamp command_issued_timestamp = 11;
-  common.GameCommand command = 12;
-  common.GameCommand next_command = 13;
+  uint64 total_commands_issued = 9;
+  google.protobuf.Timestamp command_issued_timestamp = 10;
+  common.GameCommand command = 11;
+  common.GameCommand next_command = 12;
 
-  repeated common.GameEvent game_events = 14;
-  repeated GameEventsProposal game_events_proposals = 15;
+  repeated common.GameEvent game_events = 13;
+  repeated GameEventsProposal game_events_proposals = 14;
 
   message Team {
     string name = 1;
