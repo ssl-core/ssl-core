@@ -9,7 +9,7 @@ import "protocols/common/robot_id.proto";
 message Detection {
   uint64 serial_id = 1;
   google.protobuf.Timestamp created_at = 2;
-  uint32 expected_frame_rate = 3;
+  uint32 expected_framerate = 3;
 
   repeated Ball balls = 4;
   repeated Robot robots = 5;
