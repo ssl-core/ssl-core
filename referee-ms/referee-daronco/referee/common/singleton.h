@@ -3,7 +3,7 @@
 
 #include <concepts>
 
-namespace gateway {
+namespace referee {
 
 template <std::default_initializable T>
 class Singleton {
@@ -26,6 +26,6 @@ class Singleton {
   }
 };
 
-} // namespace gateway
+} // namespace referee
 
 #endif // REFEREE_COMMON_SINGLETON_H
