@@ -25,18 +25,19 @@ class IGameCommandMapper {
   virtual ~IGameCommandMapper() = default;
 
   virtual ::robocin::object_ptr<::protocols::common::GameCommand>
-  gameCommandFromDetectionAndReferee(
-      const ::protocols::perception::Detection& detection,
-      const ::protocols::third_party::game_controller::Referee& referee);
+  fromDetectionAndReferee(const ::protocols::perception::Detection& detection,
+                          const ::protocols::third_party::game_controller::Referee& referee,
+                          bool is_next_command);
 };
 
 class GameCommandMapper : public IGameCommandMapper {
  public:
   explicit GameCommandMapper(::robocin::object_ptr<::google::protobuf::Arena> arena);
 
-  ::robocin::object_ptr<::protocols::common::GameCommand> gameCommandFromDetectionAndReferee(
-      const ::protocols::perception::Detection& detection,
-      const ::protocols::third_party::game_controller::Referee& referee) override;
+  ::robocin::object_ptr<::protocols::common::GameCommand>
+  fromDetectionAndReferee(const ::protocols::perception::Detection& detection,
+                          const ::protocols::third_party::game_controller::Referee& referee,
+                          bool is_next_command) override;
 
  private:
   ::robocin::object_ptr<::google::protobuf::Arena> arena_;

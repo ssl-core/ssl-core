@@ -76,12 +76,14 @@ using ::protocols::third_party::game_controller::Referee_Command_Name;
 
 class RefereeUtil {
  public:
-  explicit RefereeUtil(const tp::Referee& referee) : referee_(&referee) {}
+  explicit RefereeUtil(bool is_next_command, const tp::Referee& referee) :
+      is_next_command_(is_next_command),
+      referee_(&referee) {}
 
   [[nodiscard]] bool homeIsBlueTeam() const { return !referee_->blue_team_on_positive_half(); }
 
   [[nodiscard]] rc::Team getTeamFromCommand() const {
-    std::string_view referee_command_name = tp::Referee_Command_Name(referee_->command());
+    std::string_view referee_command_name = tp::Referee_Command_Name(getCommand());
 
     if (referee_command_name.contains("BLUE")) {
       return homeIsBlueTeam() ? rc::Team::TEAM_HOME : rc::Team::TEAM_AWAY;
@@ -110,7 +112,7 @@ class RefereeUtil {
         tp::RefereeCommand::Referee_Command_TIMEOUT_YELLOW,
     };
 
-    return std::ranges::contains(kTimeouts, referee_->command());
+    return std::ranges::contains(kTimeouts, getCommand());
   }
 
   [[nodiscard]] bool isPrepareKickoff() const {
@@ -119,7 +121,7 @@ class RefereeUtil {
         tp::RefereeCommand::Referee_Command_PREPARE_KICKOFF_YELLOW,
     };
 
-    return std::ranges::contains(kPrepareKickoffs, referee_->command());
+    return std::ranges::contains(kPrepareKickoffs, getCommand());
   }
 
   [[nodiscard]] bool isPreparePenalty() const {
@@ -128,7 +130,7 @@ class RefereeUtil {
         tp::RefereeCommand::Referee_Command_PREPARE_PENALTY_YELLOW,
     };
 
-    return std::ranges::contains(kPreparePenalties, referee_->command());
+    return std::ranges::contains(kPreparePenalties, getCommand());
   }
 
   [[nodiscard]] bool isBallPlacement() const {
@@ -137,7 +139,7 @@ class RefereeUtil {
         tp::RefereeCommand::Referee_Command_BALL_PLACEMENT_YELLOW,
     };
 
-    return std::ranges::contains(kBallPlacements, referee_->command());
+    return std::ranges::contains(kBallPlacements, getCommand());
   }
 
   [[nodiscard]] bool isPrepareDirectFreeKick() const {
@@ -146,23 +148,23 @@ class RefereeUtil {
         tp::RefereeCommand::Referee_Command_DIRECT_FREE_YELLOW,
     };
 
-    return std::ranges::contains(kPrepareDirectFreeKicks, referee_->command());
+    return std::ranges::contains(kPrepareDirectFreeKicks, getCommand());
   }
 
   [[nodiscard]] bool isHalt() const {
-    return referee_->command() == tp::RefereeCommand::Referee_Command_HALT;
+    return getCommand() == tp::RefereeCommand::Referee_Command_HALT;
   }
 
   [[nodiscard]] bool isStop() const {
-    return referee_->command() == tp::RefereeCommand::Referee_Command_STOP;
+    return getCommand() == tp::RefereeCommand::Referee_Command_STOP;
   }
 
   [[nodiscard]] bool isForceStart() const {
-    return referee_->command() == tp::RefereeCommand::Referee_Command_FORCE_START;
+    return getCommand() == tp::RefereeCommand::Referee_Command_FORCE_START;
   }
 
   [[nodiscard]] bool isNormalStart() const {
-    return referee_->command() == tp::RefereeCommand::Referee_Command_NORMAL_START;
+    return getCommand() == tp::RefereeCommand::Referee_Command_NORMAL_START;
   }
 
   [[nodiscard]] bool isCurrentActionTimeUnexpired() const {
@@ -179,6 +181,10 @@ class RefereeUtil {
   }
 
  private:
+  [[nodiscard]] tp::RefereeCommand getCommand() const {
+    return is_next_command_ ? referee_->next_command() : referee_->command();
+  }
+
   static object_ptr<google::protobuf::Duration> durationFromMicros(int64_t microseconds,
                                                                    object_ptr<Arena> arena) {
     return Arena::Create<google::protobuf::Duration>(
@@ -196,6 +202,7 @@ class RefereeUtil {
     return result;
   }
 
+  bool is_next_command_;
   object_ptr<const tp::Referee> referee_;
 };
 
@@ -597,20 +604,22 @@ class KickingTeamUtil {
 GameCommandMapper::GameCommandMapper(object_ptr<Arena> arena) : arena_(arena) {}
 
 object_ptr<rc::GameCommand>
-GameCommandMapper::gameCommandFromDetectionAndReferee(const rc::Detection& detection,
-                                                      const tp::Referee& referee) {
+GameCommandMapper::fromDetectionAndReferee(const rc::Detection& detection,
+                                           const tp::Referee& referee,
+                                           bool is_next_command) {
   RefereeUtil referee_util{
+      is_next_command,
       referee,
-  };
-
-  FactoryInternal factory{
-      referee_util,
-      arena_,
   };
 
   KickingTeamUtil kicking_team_util{
       detection,
       referee_util,
+  };
+
+  FactoryInternal factory{
+      referee_util,
+      arena_,
   };
 
   kicking_team_util.update(team_kicking_kickoff_,
