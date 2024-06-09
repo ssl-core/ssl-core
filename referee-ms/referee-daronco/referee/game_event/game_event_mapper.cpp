@@ -634,6 +634,7 @@ object_ptr<rc::GameEvent> fromGameControllerEvent(const detection_util::Timestam
   };
 
   object_ptr result = Arena::CreateMessage<rc::GameEvent>(arena.get());
+  *result->mutable_sources() = game_event.origin();
 
   /* set timestamp from detection clock */ {
     object_ptr timestamp = Arena::Create<google::protobuf::Timestamp>(arena.get());
