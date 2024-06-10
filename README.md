@@ -46,7 +46,7 @@ All the code developed was done in [Visual Studio Code](https://code.visualstudi
 * [`app-shell`](app-shell/README.md)
 
   Contains the application shell for mounting microfrontends.
-  
+
 * [`common`](common/README.md)
 
   Contains common code and utilities used across the project.
@@ -66,6 +66,10 @@ All the code developed was done in [Visual Studio Code](https://code.visualstudi
 * [`containers`](containers/README.md)
 
   Contains common [Docker](https://www.docker.com) files and scripts used across the project.
+
+* [`embedded`](embedded/README.md)
+
+  Contains the embedded code for the microcontrollers used.
 
 ## How to Contribute
 

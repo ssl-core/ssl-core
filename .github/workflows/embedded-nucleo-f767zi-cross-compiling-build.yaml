@@ -1,0 +1,36 @@
+name: "Embedded NUCLEO-F767ZI: Cross Compiling Build"
+on:
+  pull_request:
+    paths: ["embedded/nucleo-f767zi/**"]
+  push:
+    branches:
+      - main
+    paths: ["embedded/nucleo-f767zi/**"]
+  workflow_dispatch:
+
+env:
+  cpp_compiler: arm-none-eabi-g++
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: devcontainers/ci@v0.3
+        with:
+          env:
+            cpp_compiler
+
+          subFolder: embedded/nucleo-f767zi
+          configFile: embedded/nucleo-f767zi/.devcontainer/devcontainer.json
+          runCmd: |
+            set -e
+
+            ${cpp_compiler} --version
+
+            cmake -B build \
+                -S . \
+                -G Ninja \
+                -DCMAKE_CXX_COMPILER=${cpp_compiler}
+
+            cmake --build build
