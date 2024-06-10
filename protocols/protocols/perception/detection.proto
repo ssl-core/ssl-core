@@ -26,8 +26,8 @@ message Detection {
   uint64 serial_id = 1;
   // The unix timestamp of the detection creation.
   google.protobuf.Timestamp created_at = 2;
-  // The expected rate of detections generated.
-  uint32 frame_rate = 3;
+  // The expected rate of detections generated (in frames per second).
+  uint32 framerate = 3;
 
   // The list of detected balls, in order of confidence.
   repeated Ball balls = 4;
