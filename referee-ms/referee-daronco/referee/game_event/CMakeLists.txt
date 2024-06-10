@@ -2,7 +2,7 @@ robocin_cpp_library(
   NAME game_event_mapper
   HDRS game_event_mapper.h
   SRCS game_event_mapper.cpp
-  DEPS common::object_ptr protocols::protobufs absl::flat_hash_map
+  DEPS common::object_ptr protocols::protobufs absl::flat_hash_map detection_util
 )
 
 robocin_cpp_test(

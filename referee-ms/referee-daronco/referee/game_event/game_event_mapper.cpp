@@ -3,7 +3,6 @@
 #include "referee/detection_util/clock.h"
 #include "referee/detection_util/timestamp.h"
 
-#include <google/protobuf/arena.h>
 #include <google/protobuf/duration.pb.h>
 #include <google/protobuf/repeated_ptr_field.h>
 #include <google/protobuf/timestamp.pb.h>
@@ -12,12 +11,10 @@
 #include <protocols/third_party/game_controller/event.pb.h>
 #include <protocols/third_party/game_controller/referee.pb.h>
 #include <robocin/memory/object_ptr.h>
-#include <tuple>
 
 namespace referee {
 namespace {
 
-using ::google::protobuf::Arena;
 using ::google::protobuf::RepeatedPtrField;
 using ::google::protobuf::util::TimeUtil;
 using ::robocin::object_ptr;
@@ -121,483 +118,436 @@ Team otherTeam(const Team team) {
 
 class MapperInternal {
  public:
-  MapperInternal(bool home_is_blue_team, object_ptr<Arena> arena) :
-      home_is_blue_team_(home_is_blue_team),
-      arena_(arena) {}
+  explicit MapperInternal(bool home_is_blue_team) : home_is_blue_team_(home_is_blue_team) {}
 
-  object_ptr<rc::BallLeftField>
-  ballLeftFieldFromBallLeftField(const tp::BallLeftField& ball_left_field) {
-    object_ptr result = Arena::CreateMessage<rc::BallLeftField>(arena_.get());
+  [[nodiscard]] rc::BallLeftField
+  ballLeftFieldFromBallLeftField(const tp::BallLeftField& ball_left_field) const {
+    rc::BallLeftField result;
 
-    result->set_by_team(teamFromTeam(ball_left_field.by_team()));
-    result->unsafe_arena_set_allocated_by_robot(
-        robotIdFromTeamAndNumber(ball_left_field.by_team(), ball_left_field.by_bot()).get());
-    result->unsafe_arena_set_allocated_left_field_position(
-        point2DfFromVector2(ball_left_field.location()).get());
+    result.set_by_team(teamFromTeam(ball_left_field.by_team()));
+    *result.mutable_by_robot()
+        = robotIdFromTeamAndNumber(ball_left_field.by_team(), ball_left_field.by_bot());
+    *result.mutable_left_field_position() = point2DfFromVector2(ball_left_field.location());
 
     return result;
   }
 
-  object_ptr<rc::BallLeftFieldBoundary>
-  ballLeftFieldBoundaryFromBoundaryCrossing(const tp::BoundaryCrossing& boundary_crossing) {
-    object_ptr result = Arena::CreateMessage<rc::BallLeftFieldBoundary>(arena_.get());
+  [[nodiscard]] rc::BallLeftFieldBoundary
+  ballLeftFieldBoundaryFromBoundaryCrossing(const tp::BoundaryCrossing& boundary_crossing) const {
+    rc::BallLeftFieldBoundary result;
 
-    result->set_by_team(teamFromTeam(boundary_crossing.by_team()));
-    result->unsafe_arena_set_allocated_left_field_boundary_position(
-        point2DfFromVector2(boundary_crossing.location()).get());
-
-    return result;
-  }
-
-  object_ptr<rc::AimlessKick> aimlessKickFromAimlessKick(const tp::AimlessKick& aimless_kick) {
-    object_ptr result = Arena::CreateMessage<rc::AimlessKick>(arena_.get());
-
-    result->set_by_team(teamFromTeam(aimless_kick.by_team()));
-    result->unsafe_arena_set_allocated_by_robot(
-        robotIdFromTeamAndNumber(aimless_kick.by_team(), aimless_kick.by_bot()).get());
-    result->unsafe_arena_set_allocated_left_field_position(
-        point2DfFromVector2(aimless_kick.location()).get());
-    result->unsafe_arena_set_allocated_kick_position(
-        point2DfFromVector2(aimless_kick.kick_location()).get());
+    result.set_by_team(teamFromTeam(boundary_crossing.by_team()));
+    *result.mutable_left_field_boundary_position()
+        = point2DfFromVector2(boundary_crossing.location());
 
     return result;
   }
 
-  object_ptr<rc::GoalkeeperHeldBall>
-  goalkeeperHeldBallFromKeeperHeldBall(const tp::KeeperHeldBall& keeper_held_ball) {
-    object_ptr result = Arena::CreateMessage<rc::GoalkeeperHeldBall>(arena_.get());
+  [[nodiscard]] rc::AimlessKick
+  aimlessKickFromAimlessKick(const tp::AimlessKick& aimless_kick) const {
+    rc::AimlessKick result;
 
-    result->set_by_team(teamFromTeam(keeper_held_ball.by_team()));
-    result->unsafe_arena_set_allocated_ball_position(
-        point2DfFromVector2(keeper_held_ball.location()).get());
-    result->unsafe_arena_set_allocated_duration(
-        durationFromSeconds(keeper_held_ball.duration()).get());
+    result.set_by_team(teamFromTeam(aimless_kick.by_team()));
+    *result.mutable_by_robot()
+        = robotIdFromTeamAndNumber(aimless_kick.by_team(), aimless_kick.by_bot());
+    *result.mutable_left_field_position() = point2DfFromVector2(aimless_kick.location());
+    *result.mutable_kick_position() = point2DfFromVector2(aimless_kick.kick_location());
 
     return result;
   }
 
-  object_ptr<rc::RobotTooCloseToDefenseArea>
+  [[nodiscard]] rc::GoalkeeperHeldBall
+  goalkeeperHeldBallFromKeeperHeldBall(const tp::KeeperHeldBall& keeper_held_ball) const {
+    rc::GoalkeeperHeldBall result;
+
+    result.set_by_team(teamFromTeam(keeper_held_ball.by_team()));
+    *result.mutable_ball_position() = point2DfFromVector2(keeper_held_ball.location());
+    *result.mutable_duration() = durationFromSeconds(keeper_held_ball.duration());
+
+    return result;
+  }
+
+  [[nodiscard]] rc::RobotTooCloseToDefenseArea
   robotTooCloseToDefenseAreaFromAttackerTooCloseToDefenseArea(
-      const tp::AttackerTooCloseToDefenseArea& attacker_too_close_to_defense_area) {
-    object_ptr result = Arena::CreateMessage<rc::RobotTooCloseToDefenseArea>(arena_.get());
+      const tp::AttackerTooCloseToDefenseArea& attacker_too_close_to_defense_area) const {
+    rc::RobotTooCloseToDefenseArea result;
 
-    result->set_by_team(teamFromTeam(attacker_too_close_to_defense_area.by_team()));
-    result->unsafe_arena_set_allocated_by_robot(
-        robotIdFromTeamAndNumber(attacker_too_close_to_defense_area.by_team(),
-                                 attacker_too_close_to_defense_area.by_bot())
-            .get());
-    result->unsafe_arena_set_allocated_robot_position(
-        point2DfFromVector2(attacker_too_close_to_defense_area.location()).get());
-    result->set_distance_to_defense_area(attacker_too_close_to_defense_area.distance()
-                                         * kFMillimetersPerMeters);
-    result->unsafe_arena_set_allocated_ball_position(
-        point2DfFromVector2(attacker_too_close_to_defense_area.ball_location()).get());
-
-    return result;
-  }
-
-  object_ptr<rc::RobotInDefenseArea> robotInDefenseAreaFromDefenderInDefenseArea(
-      const tp::DefenderInDefenseArea& defender_in_defense_area) {
-    object_ptr result = Arena::CreateMessage<rc::RobotInDefenseArea>(arena_.get());
-
-    result->set_by_team(teamFromTeam(defender_in_defense_area.by_team()));
-    result->unsafe_arena_set_allocated_by_robot(
-        robotIdFromTeamAndNumber(defender_in_defense_area.by_team(),
-                                 defender_in_defense_area.by_bot())
-            .get());
-    result->unsafe_arena_set_allocated_robot_position(
-        point2DfFromVector2(defender_in_defense_area.location()).get());
-    result->set_distance_to_nearest_point_outside_area(defender_in_defense_area.distance()
-                                                       * kFMillimetersPerMeters);
+    result.set_by_team(teamFromTeam(attacker_too_close_to_defense_area.by_team()));
+    *result.mutable_by_robot()
+        = robotIdFromTeamAndNumber(attacker_too_close_to_defense_area.by_team(),
+                                   attacker_too_close_to_defense_area.by_bot());
+    *result.mutable_robot_position()
+        = point2DfFromVector2(attacker_too_close_to_defense_area.location());
+    result.set_distance_to_defense_area(attacker_too_close_to_defense_area.distance()
+                                        * kFMillimetersPerMeters);
+    *result.mutable_ball_position()
+        = point2DfFromVector2(attacker_too_close_to_defense_area.ball_location());
 
     return result;
   }
 
-  object_ptr<rc::RobotPushedRobot>
-  robotPushedRobotFromBotPushedBot(const tp::BotPushedBot& bot_pushed_bot) {
-    object_ptr result = Arena::CreateMessage<rc::RobotPushedRobot>(arena_.get());
+  [[nodiscard]] rc::RobotInDefenseArea robotInDefenseAreaFromDefenderInDefenseArea(
+      const tp::DefenderInDefenseArea& defender_in_defense_area) const {
+    rc::RobotInDefenseArea result;
 
-    result->set_by_team(teamFromTeam(bot_pushed_bot.by_team()));
-    result->unsafe_arena_set_allocated_violator_robot(
-        robotIdFromTeamAndNumber(bot_pushed_bot.by_team(), bot_pushed_bot.violator()).get());
-    result->unsafe_arena_set_allocated_victim_robot(
-        robotIdFromTeamAndNumber(tp::otherTeam(bot_pushed_bot.by_team()), bot_pushed_bot.victim())
-            .get());
-    result->unsafe_arena_set_allocated_position(
-        point2DfFromVector2(bot_pushed_bot.location()).get());
-    result->set_pushed_distance(bot_pushed_bot.pushed_distance() * kFMillimetersPerMeters);
+    result.set_by_team(teamFromTeam(defender_in_defense_area.by_team()));
+    *result.mutable_by_robot() = robotIdFromTeamAndNumber(defender_in_defense_area.by_team(),
+                                                          defender_in_defense_area.by_bot());
+    *result.mutable_robot_position() = point2DfFromVector2(defender_in_defense_area.location());
+    result.set_distance_to_nearest_point_outside_area(defender_in_defense_area.distance()
+                                                      * kFMillimetersPerMeters);
 
     return result;
   }
 
-  object_ptr<rc::RobotHeldBallDeliberately> robotHeldBallDeliberatelyFromBotHeldBallDeliberately(
-      const tp::BotHeldBallDeliberately& bot_held_ball_deliberately) {
-    object_ptr result = Arena::CreateMessage<rc::RobotHeldBallDeliberately>(arena_.get());
+  [[nodiscard]] rc::RobotPushedRobot
+  robotPushedRobotFromBotPushedBot(const tp::BotPushedBot& bot_pushed_bot) const {
+    rc::RobotPushedRobot result;
 
-    result->set_by_team(teamFromTeam(bot_held_ball_deliberately.by_team()));
-    result->unsafe_arena_set_allocated_by_robot(
-        robotIdFromTeamAndNumber(bot_held_ball_deliberately.by_team(),
-                                 bot_held_ball_deliberately.by_bot())
-            .get());
-    result->unsafe_arena_set_allocated_ball_position(
-        point2DfFromVector2(bot_held_ball_deliberately.location()).get());
-    result->unsafe_arena_set_allocated_duration(
-        durationFromSeconds(bot_held_ball_deliberately.duration()).get());
-
-    return result;
-  }
-
-  object_ptr<rc::RobotDribbledBallTooFar> robotDribbledBallTooFarFromBotDribbledBallTooFar(
-      const tp::BotDribbledBallTooFar& bot_dribbled_ball_too_far) {
-    object_ptr result = Arena::CreateMessage<rc::RobotDribbledBallTooFar>(arena_.get());
-
-    result->set_by_team(teamFromTeam(bot_dribbled_ball_too_far.by_team()));
-    result->unsafe_arena_set_allocated_by_robot(
-        robotIdFromTeamAndNumber(bot_dribbled_ball_too_far.by_team(),
-                                 bot_dribbled_ball_too_far.by_bot())
-            .get());
-    result->unsafe_arena_set_allocated_start_position(
-        point2DfFromVector2(bot_dribbled_ball_too_far.start()).get());
-    result->unsafe_arena_set_allocated_end_position(
-        point2DfFromVector2(bot_dribbled_ball_too_far.end()).get());
+    result.set_by_team(teamFromTeam(bot_pushed_bot.by_team()));
+    *result.mutable_violator_robot()
+        = robotIdFromTeamAndNumber(bot_pushed_bot.by_team(), bot_pushed_bot.violator());
+    *result.mutable_victim_robot()
+        = robotIdFromTeamAndNumber(tp::otherTeam(bot_pushed_bot.by_team()),
+                                   bot_pushed_bot.victim());
+    *result.mutable_position() = point2DfFromVector2(bot_pushed_bot.location());
+    result.set_pushed_distance(bot_pushed_bot.pushed_distance() * kFMillimetersPerMeters);
 
     return result;
   }
 
-  object_ptr<rc::RobotTippedOver>
-  robotTippedOverFromBotTippedOver(const tp::BotTippedOver& bot_tipped_over) {
-    object_ptr result = Arena::CreateMessage<rc::RobotTippedOver>(arena_.get());
+  [[nodiscard]] rc::RobotHeldBallDeliberately robotHeldBallDeliberatelyFromBotHeldBallDeliberately(
+      const tp::BotHeldBallDeliberately& bot_held_ball_deliberately) const {
+    rc::RobotHeldBallDeliberately result;
 
-    result->set_by_team(teamFromTeam(bot_tipped_over.by_team()));
-    result->unsafe_arena_set_allocated_by_robot(
-        robotIdFromTeamAndNumber(bot_tipped_over.by_team(), bot_tipped_over.by_bot()).get());
-    result->unsafe_arena_set_allocated_robot_position(
-        point2DfFromVector2(bot_tipped_over.location()).get());
-    result->unsafe_arena_set_allocated_ball_position(
-        point2DfFromVector2(bot_tipped_over.ball_location()).get());
+    result.set_by_team(teamFromTeam(bot_held_ball_deliberately.by_team()));
+    *result.mutable_by_robot() = robotIdFromTeamAndNumber(bot_held_ball_deliberately.by_team(),
+                                                          bot_held_ball_deliberately.by_bot());
+    *result.mutable_ball_position() = point2DfFromVector2(bot_held_ball_deliberately.location());
+    *result.mutable_duration() = durationFromSeconds(bot_held_ball_deliberately.duration());
 
     return result;
   }
 
-  object_ptr<rc::RobotTouchedBallInDefenseArea>
+  [[nodiscard]] rc::RobotDribbledBallTooFar robotDribbledBallTooFarFromBotDribbledBallTooFar(
+      const tp::BotDribbledBallTooFar& bot_dribbled_ball_too_far) const {
+    rc::RobotDribbledBallTooFar result;
+
+    result.set_by_team(teamFromTeam(bot_dribbled_ball_too_far.by_team()));
+    *result.mutable_by_robot() = robotIdFromTeamAndNumber(bot_dribbled_ball_too_far.by_team(),
+                                                          bot_dribbled_ball_too_far.by_bot());
+    *result.mutable_start_position() = point2DfFromVector2(bot_dribbled_ball_too_far.start());
+    *result.mutable_end_position() = point2DfFromVector2(bot_dribbled_ball_too_far.end());
+
+    return result;
+  }
+
+  [[nodiscard]] rc::RobotTippedOver
+  robotTippedOverFromBotTippedOver(const tp::BotTippedOver& bot_tipped_over) const {
+    rc::RobotTippedOver result;
+
+    result.set_by_team(teamFromTeam(bot_tipped_over.by_team()));
+    *result.mutable_by_robot()
+        = robotIdFromTeamAndNumber(bot_tipped_over.by_team(), bot_tipped_over.by_bot());
+    *result.mutable_robot_position() = point2DfFromVector2(bot_tipped_over.location());
+    *result.mutable_ball_position() = point2DfFromVector2(bot_tipped_over.ball_location());
+
+    return result;
+  }
+
+  [[nodiscard]] rc::RobotTouchedBallInDefenseArea
   robotTouchedBallInDefenseAreaFromAttackerTouchedBallInDefenseArea(
-      const tp::AttackerTouchedBallInDefenseArea& attacker_touched_ball_in_defense_area) {
-    object_ptr result = Arena::CreateMessage<rc::RobotTouchedBallInDefenseArea>(arena_.get());
+      const tp::AttackerTouchedBallInDefenseArea& attacker_touched_ball_in_defense_area) const {
+    rc::RobotTouchedBallInDefenseArea result;
 
-    result->set_by_team(teamFromTeam(attacker_touched_ball_in_defense_area.by_team()));
-    result->unsafe_arena_set_allocated_by_robot(
-        robotIdFromTeamAndNumber(attacker_touched_ball_in_defense_area.by_team(),
-                                 attacker_touched_ball_in_defense_area.by_bot())
-            .get());
-    result->unsafe_arena_set_allocated_robot_position(
-        point2DfFromVector2(attacker_touched_ball_in_defense_area.location()).get());
-    result->set_distance_to_nearest_point_outside_area(
+    result.set_by_team(teamFromTeam(attacker_touched_ball_in_defense_area.by_team()));
+    *result.mutable_by_robot()
+        = robotIdFromTeamAndNumber(attacker_touched_ball_in_defense_area.by_team(),
+                                   attacker_touched_ball_in_defense_area.by_bot());
+    *result.mutable_robot_position()
+        = point2DfFromVector2(attacker_touched_ball_in_defense_area.location());
+    result.set_distance_to_nearest_point_outside_area(
         attacker_touched_ball_in_defense_area.distance() * kFMillimetersPerMeters);
 
     return result;
   }
 
-  object_ptr<rc::RobotKickedBallTooFast> robotKickedBallTooFastFromBotKickedBallTooFast(
-      const tp::BotKickedBallTooFast& bot_kicked_ball_too_fast) {
-    object_ptr result = Arena::CreateMessage<rc::RobotKickedBallTooFast>(arena_.get());
+  [[nodiscard]] rc::RobotKickedBallTooFast robotKickedBallTooFastFromBotKickedBallTooFast(
+      const tp::BotKickedBallTooFast& bot_kicked_ball_too_fast) const {
+    rc::RobotKickedBallTooFast result;
 
-    result->set_by_team(teamFromTeam(bot_kicked_ball_too_fast.by_team()));
-    result->unsafe_arena_set_allocated_by_robot(
-        robotIdFromTeamAndNumber(bot_kicked_ball_too_fast.by_team(),
-                                 bot_kicked_ball_too_fast.by_bot())
-            .get());
-    result->unsafe_arena_set_allocated_ball_at_highest_speed_position(
-        point2DfFromVector2(bot_kicked_ball_too_fast.location()).get());
-    result->set_initial_ball_speed(bot_kicked_ball_too_fast.initial_ball_speed()
-                                   * kFMillimetersPerMeters);
-    result->set_was_chipped_kick(bot_kicked_ball_too_fast.chipped());
+    result.set_by_team(teamFromTeam(bot_kicked_ball_too_fast.by_team()));
+    *result.mutable_by_robot() = robotIdFromTeamAndNumber(bot_kicked_ball_too_fast.by_team(),
+                                                          bot_kicked_ball_too_fast.by_bot());
+    *result.mutable_ball_at_highest_speed_position()
+        = point2DfFromVector2(bot_kicked_ball_too_fast.location());
+    result.set_initial_ball_speed(bot_kicked_ball_too_fast.initial_ball_speed()
+                                  * kFMillimetersPerMeters);
+    result.set_was_chipped_kick(bot_kicked_ball_too_fast.chipped());
 
     return result;
   }
 
-  object_ptr<rc::RobotCrashUnique>
-  robotCrashUniqueFromBotCrashUnique(const tp::BotCrashUnique& bot_crash_unique) {
-    object_ptr result = Arena::CreateMessage<rc::RobotCrashUnique>(arena_.get());
+  [[nodiscard]] rc::RobotCrashUnique
+  robotCrashUniqueFromBotCrashUnique(const tp::BotCrashUnique& bot_crash_unique) const {
+    rc::RobotCrashUnique result;
 
-    result->set_by_team(teamFromTeam(bot_crash_unique.by_team()));
-    result->unsafe_arena_set_allocated_violator_robot(
-        robotIdFromTeamAndNumber(bot_crash_unique.by_team(), bot_crash_unique.violator()).get());
-    result->unsafe_arena_set_allocated_victim_robot(
-        robotIdFromTeamAndNumber(tp::otherTeam(bot_crash_unique.by_team()),
-                                 bot_crash_unique.victim())
-            .get());
-    result->unsafe_arena_set_allocated_crash_position(
-        point2DfFromVector2(bot_crash_unique.location()).get());
-    result->set_crash_speed(bot_crash_unique.crash_speed() * kFMillimetersPerMeters);
-    result->set_speed_difference(bot_crash_unique.speed_diff() * kFMillimetersPerMeters);
-    result->set_crash_angle(bot_crash_unique.crash_angle());
+    result.set_by_team(teamFromTeam(bot_crash_unique.by_team()));
+    *result.mutable_violator_robot()
+        = robotIdFromTeamAndNumber(bot_crash_unique.by_team(), bot_crash_unique.violator());
+    *result.mutable_victim_robot()
+        = robotIdFromTeamAndNumber(tp::otherTeam(bot_crash_unique.by_team()),
+                                   bot_crash_unique.victim());
+    *result.mutable_crash_position() = point2DfFromVector2(bot_crash_unique.location());
+    result.set_crash_speed(bot_crash_unique.crash_speed() * kFMillimetersPerMeters);
+    result.set_speed_difference(bot_crash_unique.speed_diff() * kFMillimetersPerMeters);
+    result.set_crash_angle(bot_crash_unique.crash_angle());
 
     return result;
   }
 
-  object_ptr<rc::RobotCrashDrawn>
-  robotCrashDrawnFromBotCrashDrawn(const tp::BotCrashDrawn& bot_crash_drawn) {
-    object_ptr result = Arena::CreateMessage<rc::RobotCrashDrawn>(arena_.get());
+  [[nodiscard]] rc::RobotCrashDrawn
+  robotCrashDrawnFromBotCrashDrawn(const tp::BotCrashDrawn& bot_crash_drawn) const {
+    rc::RobotCrashDrawn result;
 
     if (home_is_blue_team_) {
-      result->unsafe_arena_set_allocated_home_robot_id(
-          robotIdFromTeamAndNumber(tp::Team::BLUE, bot_crash_drawn.bot_blue()).get());
-      result->unsafe_arena_set_allocated_away_robot_id(
-          robotIdFromTeamAndNumber(tp::Team::YELLOW, bot_crash_drawn.bot_yellow()).get());
+      *result.mutable_home_robot_id()
+          = robotIdFromTeamAndNumber(tp::Team::BLUE, bot_crash_drawn.bot_blue());
+      *result.mutable_away_robot_id()
+          = robotIdFromTeamAndNumber(tp::Team::YELLOW, bot_crash_drawn.bot_yellow());
     } else {
-      result->unsafe_arena_set_allocated_home_robot_id(
-          robotIdFromTeamAndNumber(tp::Team::YELLOW, bot_crash_drawn.bot_yellow()).get());
-      result->unsafe_arena_set_allocated_away_robot_id(
-          robotIdFromTeamAndNumber(tp::Team::BLUE, bot_crash_drawn.bot_blue()).get());
+      *result.mutable_home_robot_id()
+          = robotIdFromTeamAndNumber(tp::Team::YELLOW, bot_crash_drawn.bot_yellow());
+      *result.mutable_away_robot_id()
+          = robotIdFromTeamAndNumber(tp::Team::BLUE, bot_crash_drawn.bot_blue());
     }
 
-    result->unsafe_arena_set_allocated_crash_position(
-        point2DfFromVector2(bot_crash_drawn.location()).get());
-    result->set_crash_speed(bot_crash_drawn.crash_speed() * kFMillimetersPerMeters);
-    result->set_speed_difference(bot_crash_drawn.speed_diff() * kFMillimetersPerMeters);
-    result->set_crash_angle(bot_crash_drawn.crash_angle());
+    *result.mutable_crash_position() = point2DfFromVector2(bot_crash_drawn.location());
+    result.set_crash_speed(bot_crash_drawn.crash_speed() * kFMillimetersPerMeters);
+    result.set_speed_difference(bot_crash_drawn.speed_diff() * kFMillimetersPerMeters);
+    result.set_crash_angle(bot_crash_drawn.crash_angle());
 
     return result;
   }
 
-  object_ptr<rc::RobotTooFastInStop>
-  robotTooFastInStopFromBotTooFastInStop(const tp::BotTooFastInStop& bot_too_fast_in_stop) {
-    object_ptr result = Arena::CreateMessage<rc::RobotTooFastInStop>(arena_.get());
+  [[nodiscard]] rc::RobotTooFastInStop
+  robotTooFastInStopFromBotTooFastInStop(const tp::BotTooFastInStop& bot_too_fast_in_stop) const {
+    rc::RobotTooFastInStop result;
 
-    result->set_by_team(teamFromTeam(bot_too_fast_in_stop.by_team()));
-    result->unsafe_arena_set_allocated_by_robot(
-        robotIdFromTeamAndNumber(bot_too_fast_in_stop.by_team(), bot_too_fast_in_stop.by_bot())
-            .get());
-    result->unsafe_arena_set_allocated_robot_position(
-        point2DfFromVector2(bot_too_fast_in_stop.location()).get());
-    result->set_robot_speed(bot_too_fast_in_stop.speed() * kFMillimetersPerMeters);
+    result.set_by_team(teamFromTeam(bot_too_fast_in_stop.by_team()));
+    *result.mutable_by_robot()
+        = robotIdFromTeamAndNumber(bot_too_fast_in_stop.by_team(), bot_too_fast_in_stop.by_bot());
+    *result.mutable_robot_position() = point2DfFromVector2(bot_too_fast_in_stop.location());
+    result.set_robot_speed(bot_too_fast_in_stop.speed() * kFMillimetersPerMeters);
 
     return result;
   }
 
-  object_ptr<rc::RobotTooCloseToKickPoint> robotTooCloseToKickPointFromDefenderTooCloseToKickPoint(
-      const tp::DefenderTooCloseToKickPoint& defender_too_close_to_kick_point) {
-    object_ptr result = Arena::CreateMessage<rc::RobotTooCloseToKickPoint>(arena_.get());
+  [[nodiscard]] rc::RobotTooCloseToKickPoint
+  robotTooCloseToKickPointFromDefenderTooCloseToKickPoint(
+      const tp::DefenderTooCloseToKickPoint& defender_too_close_to_kick_point) const {
+    rc::RobotTooCloseToKickPoint result;
 
-    result->set_by_team(teamFromTeam(defender_too_close_to_kick_point.by_team()));
-    result->unsafe_arena_set_allocated_by_robot(
-        robotIdFromTeamAndNumber(defender_too_close_to_kick_point.by_team(),
-                                 defender_too_close_to_kick_point.by_bot())
-            .get());
-    result->unsafe_arena_set_allocated_robot_position(
-        point2DfFromVector2(defender_too_close_to_kick_point.location()).get());
-    result->set_robot_distance(defender_too_close_to_kick_point.distance()
-                               * kFMillimetersPerMeters);
+    result.set_by_team(teamFromTeam(defender_too_close_to_kick_point.by_team()));
+    *result.mutable_by_robot()
+        = robotIdFromTeamAndNumber(defender_too_close_to_kick_point.by_team(),
+                                   defender_too_close_to_kick_point.by_bot());
+    *result.mutable_robot_position()
+        = point2DfFromVector2(defender_too_close_to_kick_point.location());
+    result.set_robot_distance(defender_too_close_to_kick_point.distance() * kFMillimetersPerMeters);
 
     return result;
   }
 
-  object_ptr<rc::RobotInterferedBallPlacement>
+  [[nodiscard]] rc::RobotInterferedBallPlacement
   robotInterferedBallPlacementFromBotInterferedPlacement(
-      const tp::BotInterferedPlacement& bot_interfered_placement) {
-    object_ptr result = Arena::CreateMessage<rc::RobotInterferedBallPlacement>(arena_.get());
+      const tp::BotInterferedPlacement& bot_interfered_placement) const {
+    rc::RobotInterferedBallPlacement result;
 
-    result->set_by_team(teamFromTeam(bot_interfered_placement.by_team()));
-    result->unsafe_arena_set_allocated_by_robot(
-        robotIdFromTeamAndNumber(bot_interfered_placement.by_team(),
-                                 bot_interfered_placement.by_bot())
-            .get());
-    result->unsafe_arena_set_allocated_robot_position(
-        point2DfFromVector2(bot_interfered_placement.location()).get());
+    result.set_by_team(teamFromTeam(bot_interfered_placement.by_team()));
+    *result.mutable_by_robot() = robotIdFromTeamAndNumber(bot_interfered_placement.by_team(),
+                                                          bot_interfered_placement.by_bot());
+    *result.mutable_robot_position() = point2DfFromVector2(bot_interfered_placement.location());
 
     return result;
   }
 
-  object_ptr<rc::RobotDoubleTouchedBall> robotDoubleTouchedBallFromAttackerDoubleTouchedBall(
-      const tp::AttackerDoubleTouchedBall& attacker_double_touched_ball) {
-    object_ptr result = Arena::CreateMessage<rc::RobotDoubleTouchedBall>(arena_.get());
+  [[nodiscard]] rc::RobotDoubleTouchedBall robotDoubleTouchedBallFromAttackerDoubleTouchedBall(
+      const tp::AttackerDoubleTouchedBall& attacker_double_touched_ball) const {
+    rc::RobotDoubleTouchedBall result;
 
-    result->set_by_team(teamFromTeam(attacker_double_touched_ball.by_team()));
-    result->unsafe_arena_set_allocated_by_robot(
-        robotIdFromTeamAndNumber(attacker_double_touched_ball.by_team(),
-                                 attacker_double_touched_ball.by_bot())
-            .get());
-    result->unsafe_arena_set_allocated_ball_position(
-        point2DfFromVector2(attacker_double_touched_ball.location()).get());
+    result.set_by_team(teamFromTeam(attacker_double_touched_ball.by_team()));
+    *result.mutable_by_robot() = robotIdFromTeamAndNumber(attacker_double_touched_ball.by_team(),
+                                                          attacker_double_touched_ball.by_bot());
+    *result.mutable_ball_position() = point2DfFromVector2(attacker_double_touched_ball.location());
 
     return result;
   }
 
-  object_ptr<rc::NoProgressInGame>
-  noProgressInGameFromNoProgressInGame(const tp::NoProgressInGame& no_progress_in_game) {
-    object_ptr result = Arena::CreateMessage<rc::NoProgressInGame>(arena_.get());
+  [[nodiscard]] rc::NoProgressInGame noProgressInGameFromNoProgressInGame( // NOLINT(*static*)
+      const tp::NoProgressInGame& no_progress_in_game) const {
+    rc::NoProgressInGame result;
 
-    result->unsafe_arena_set_allocated_ball_position(
-        point2DfFromVector2(no_progress_in_game.location()).get());
-    result->unsafe_arena_set_allocated_duration(
-        durationFromSeconds(no_progress_in_game.time()).get());
+    *result.mutable_ball_position() = point2DfFromVector2(no_progress_in_game.location());
+    *result.mutable_duration() = durationFromSeconds(no_progress_in_game.time());
 
     return result;
   }
 
-  object_ptr<rc::MultipleCards>
-  multipleCardsFromMultipleCards(const tp::MultipleCards& multiple_cards) {
-    object_ptr result = Arena::CreateMessage<rc::MultipleCards>(arena_.get());
+  [[nodiscard]] rc::MultipleCards
+  multipleCardsFromMultipleCards(const tp::MultipleCards& multiple_cards) const {
+    rc::MultipleCards result;
 
-    result->set_by_team(teamFromTeam(multiple_cards.by_team()));
-
-    return result;
-  }
-
-  object_ptr<rc::MultipleFouls>
-  multipleFoulsFromMultipleFouls(const tp::MultipleFouls& multiple_fouls) {
-    object_ptr result = Arena::CreateMessage<rc::MultipleFouls>(arena_.get());
-
-    result->set_by_team(teamFromTeam(multiple_fouls.by_team()));
+    result.set_by_team(teamFromTeam(multiple_cards.by_team()));
 
     return result;
   }
 
-  object_ptr<rc::TooManyRobots>
-  tooManyRobotsFromTooManyRobots(const tp::TooManyRobots& too_many_robots) {
-    object_ptr result = Arena::CreateMessage<rc::TooManyRobots>(arena_.get());
+  [[nodiscard]] rc::MultipleFouls
+  multipleFoulsFromMultipleFouls(const tp::MultipleFouls& multiple_fouls) const {
+    rc::MultipleFouls result;
 
-    result->set_by_team(teamFromTeam(too_many_robots.by_team()));
-    result->set_num_robots_allowed(too_many_robots.num_robots_allowed());
-    result->set_num_robots_on_field(too_many_robots.num_robots_on_field());
-    result->unsafe_arena_set_allocated_ball_position(
-        point2DfFromVector2(too_many_robots.ball_location()).get());
+    result.set_by_team(teamFromTeam(multiple_fouls.by_team()));
 
     return result;
   }
 
-  object_ptr<rc::BallPlacementSucceeded>
-  ballPlacementSucceededFromPlacementSucceeded(const tp::PlacementSucceeded& placement_succeeded) {
-    object_ptr result = Arena::CreateMessage<rc::BallPlacementSucceeded>(arena_.get());
+  [[nodiscard]] rc::TooManyRobots
+  tooManyRobotsFromTooManyRobots(const tp::TooManyRobots& too_many_robots) const {
+    rc::TooManyRobots result;
 
-    result->set_by_team(teamFromTeam(placement_succeeded.by_team()));
-    result->unsafe_arena_set_allocated_duration(
-        durationFromSeconds(placement_succeeded.time_taken()).get());
-    result->set_distance_to_placement_target(placement_succeeded.precision()
-                                             * kFMillimetersPerMeters);
-    result->set_distance_from_start_position(placement_succeeded.distance()
-                                             * kFMillimetersPerMeters);
+    result.set_by_team(teamFromTeam(too_many_robots.by_team()));
+    result.set_num_robots_allowed(too_many_robots.num_robots_allowed());
+    result.set_num_robots_on_field(too_many_robots.num_robots_on_field());
+    *result.mutable_ball_position() = point2DfFromVector2(too_many_robots.ball_location());
 
     return result;
   }
 
-  object_ptr<rc::BallPlacementFailed>
-  ballPlacementFailedFromPlacementFailed(const tp::PlacementFailed& placement_failed) {
-    object_ptr result = Arena::CreateMessage<rc::BallPlacementFailed>(arena_.get());
+  [[nodiscard]] rc::BallPlacementSucceeded ballPlacementSucceededFromPlacementSucceeded(
+      const tp::PlacementSucceeded& placement_succeeded) const {
+    rc::BallPlacementSucceeded result;
 
-    result->set_by_team(teamFromTeam(placement_failed.by_team()));
-    result->set_remaining_distance(placement_failed.remaining_distance() * kFMillimetersPerMeters);
-
-    return result;
-  }
-
-  object_ptr<rc::PenaltyKickFailed>
-  penaltyKickFailedFromPenaltyKickFailed(const tp::PenaltyKickFailed& penalty_kick_failed) {
-    object_ptr result = Arena::CreateMessage<rc::PenaltyKickFailed>(arena_.get());
-
-    result->set_by_team(teamFromTeam(penalty_kick_failed.by_team()));
-    result->unsafe_arena_set_allocated_ball_position(
-        point2DfFromVector2(penalty_kick_failed.location()).get());
+    result.set_by_team(teamFromTeam(placement_succeeded.by_team()));
+    *result.mutable_duration() = durationFromSeconds(placement_succeeded.time_taken());
+    result.set_distance_to_placement_target(placement_succeeded.precision()
+                                            * kFMillimetersPerMeters);
+    result.set_distance_from_start_position(placement_succeeded.distance()
+                                            * kFMillimetersPerMeters);
 
     return result;
   }
 
-  object_ptr<rc::Goal> goalFromGoal(const tp::Goal& goal) {
-    object_ptr result = Arena::CreateMessage<rc::Goal>(arena_.get());
+  [[nodiscard]] rc::BallPlacementFailed
+  ballPlacementFailedFromPlacementFailed(const tp::PlacementFailed& placement_failed) const {
+    rc::BallPlacementFailed result;
 
-    result->set_by_team(teamFromTeam(goal.by_team()));
-    result->set_kicking_team(teamFromTeam(goal.kicking_team()));
-    result->unsafe_arena_set_allocated_kicking_robot(
-        robotIdFromTeamAndNumber(goal.kicking_team(), goal.kicking_bot()).get());
-    result->unsafe_arena_set_allocated_ball_position_when_scored(
-        point2DfFromVector2(goal.location()).get());
-    result->unsafe_arena_set_allocated_kick_position(
-        point2DfFromVector2(goal.kick_location()).get());
-    result->set_max_ball_height(goal.max_ball_height() * kFMillimetersPerMeters);
-    result->set_num_of_robots_of_scoring_team(goal.num_robots_by_team());
-    result->unsafe_arena_set_allocated_last_touch_by_scoring_team_timestamp(
-        timestampFromUnixNanos(goal.last_touch_by_team()).get());
-    result->set_message(goal.message());
+    result.set_by_team(teamFromTeam(placement_failed.by_team()));
+    result.set_remaining_distance(placement_failed.remaining_distance() * kFMillimetersPerMeters);
 
     return result;
   }
 
-  object_ptr<rc::RobotSubstitution>
-  robotSubstitutionFromBotSubstitution(const tp::BotSubstitution& bot_substitution) {
-    object_ptr result = Arena::CreateMessage<rc::RobotSubstitution>(arena_.get());
+  [[nodiscard]] rc::PenaltyKickFailed
+  penaltyKickFailedFromPenaltyKickFailed(const tp::PenaltyKickFailed& penalty_kick_failed) const {
+    rc::PenaltyKickFailed result;
 
-    result->set_by_team(teamFromTeam(bot_substitution.by_team()));
-
-    return result;
-  }
-
-  object_ptr<rc::ChallengeFlag>
-  challengeFlagFromChallengeFlag(const tp::ChallengeFlag& challenge_flag) {
-    object_ptr result = Arena::CreateMessage<rc::ChallengeFlag>(arena_.get());
-
-    result->set_by_team(teamFromTeam(challenge_flag.by_team()));
+    result.set_by_team(teamFromTeam(penalty_kick_failed.by_team()));
+    *result.mutable_ball_position() = point2DfFromVector2(penalty_kick_failed.location());
 
     return result;
   }
 
-  object_ptr<rc::EmergencyStop>
-  emergencyStopFromEmergencyStop(const tp::EmergencyStop& emergency_stop) {
-    object_ptr result = Arena::CreateMessage<rc::EmergencyStop>(arena_.get());
+  [[nodiscard]] rc::Goal goalFromGoal(const tp::Goal& goal) const {
+    rc::Goal result;
 
-    result->set_by_team(teamFromTeam(emergency_stop.by_team()));
+    result.set_by_team(teamFromTeam(goal.by_team()));
+    result.set_kicking_team(teamFromTeam(goal.kicking_team()));
+    *result.mutable_kicking_robot()
+        = robotIdFromTeamAndNumber(goal.kicking_team(), goal.kicking_bot());
+    *result.mutable_ball_position_when_scored() = point2DfFromVector2(goal.location());
+    *result.mutable_kick_position() = point2DfFromVector2(goal.kick_location());
+    result.set_max_ball_height(goal.max_ball_height() * kFMillimetersPerMeters);
+    result.set_num_of_robots_of_scoring_team(goal.num_robots_by_team());
+    *result.mutable_last_touch_by_scoring_team_timestamp()
+        = timestampFromUnixNanos(goal.last_touch_by_team());
+    result.set_message(goal.message());
 
     return result;
   }
 
-  object_ptr<rc::UnsportingBehaviorMinor> unsportingBehaviorMinorFromUnsportingBehaviorMinor(
-      const tp::UnsportingBehaviorMinor& unsporting_behavior_minor) {
-    object_ptr result = Arena::CreateMessage<rc::UnsportingBehaviorMinor>(arena_.get());
+  [[nodiscard]] rc::RobotSubstitution
+  robotSubstitutionFromBotSubstitution(const tp::BotSubstitution& bot_substitution) const {
+    rc::RobotSubstitution result;
 
-    result->set_by_team(teamFromTeam(unsporting_behavior_minor.by_team()));
-    result->set_reason(unsporting_behavior_minor.reason());
+    result.set_by_team(teamFromTeam(bot_substitution.by_team()));
 
     return result;
   }
 
-  object_ptr<rc::UnsportingBehaviorMajor> unsportingBehaviorMajorFromUnsportingBehaviorMajor(
-      const tp::UnsportingBehaviorMajor& unsporting_behavior_major) {
-    object_ptr result = Arena::CreateMessage<rc::UnsportingBehaviorMajor>(arena_.get());
+  [[nodiscard]] rc::ChallengeFlag
+  challengeFlagFromChallengeFlag(const tp::ChallengeFlag& challenge_flag) const {
+    rc::ChallengeFlag result;
 
-    result->set_by_team(teamFromTeam(unsporting_behavior_major.by_team()));
-    result->set_reason(unsporting_behavior_major.reason());
+    result.set_by_team(teamFromTeam(challenge_flag.by_team()));
+
+    return result;
+  }
+
+  [[nodiscard]] rc::EmergencyStop
+  emergencyStopFromEmergencyStop(const tp::EmergencyStop& emergency_stop) const {
+    rc::EmergencyStop result;
+
+    result.set_by_team(teamFromTeam(emergency_stop.by_team()));
+
+    return result;
+  }
+
+  [[nodiscard]] rc::UnsportingBehaviorMinor unsportingBehaviorMinorFromUnsportingBehaviorMinor(
+      const tp::UnsportingBehaviorMinor& unsporting_behavior_minor) const {
+    rc::UnsportingBehaviorMinor result;
+
+    result.set_by_team(teamFromTeam(unsporting_behavior_minor.by_team()));
+    result.set_reason(unsporting_behavior_minor.reason());
+
+    return result;
+  }
+
+  [[nodiscard]] rc::UnsportingBehaviorMajor unsportingBehaviorMajorFromUnsportingBehaviorMajor(
+      const tp::UnsportingBehaviorMajor& unsporting_behavior_major) const {
+    rc::UnsportingBehaviorMajor result;
+
+    result.set_by_team(teamFromTeam(unsporting_behavior_major.by_team()));
+    result.set_reason(unsporting_behavior_major.reason());
 
     return result;
   }
 
  private:
-  object_ptr<rc::RobotId> robotIdFromTeamAndNumber(tp::Team team, uint32_t number) {
-    object_ptr result = Arena::CreateMessage<rc::RobotId>(arena_.get());
+  static rc::RobotId robotIdFromTeamAndNumber(tp::Team team, uint32_t number) {
+    rc::RobotId result;
 
-    result->set_color(robotIdColorFromTeam(team));
-    result->set_number(number);
-
-    return result;
-  }
-
-  object_ptr<rc::Point2Df> point2DfFromVector2(const tp::Vector2& vector2) {
-    object_ptr result = Arena::CreateMessage<rc::Point2Df>(arena_.get());
-
-    result->set_x(vector2.x() * kFMillimetersPerMeters);
-    result->set_y(vector2.y() * kFMillimetersPerMeters);
+    result.set_color(robotIdColorFromTeam(team));
+    result.set_number(number);
 
     return result;
   }
 
-  object_ptr<google::protobuf::Duration> durationFromSeconds(float seconds) {
-    return Arena::Create<google::protobuf::Duration>(
-        arena_.get(),
-        TimeUtil::SecondsToDuration(static_cast<int64_t>(seconds)));
+  static rc::Point2Df point2DfFromVector2(const tp::Vector2& vector2) {
+    rc::Point2Df result;
+
+    result.set_x(vector2.x() * kFMillimetersPerMeters);
+    result.set_y(vector2.y() * kFMillimetersPerMeters);
+
+    return result;
   }
 
-  object_ptr<google::protobuf::Timestamp> timestampFromUnixNanos(uint64_t nanoseconds) {
-    return Arena::Create<google::protobuf::Timestamp>(
-        arena_.get(),
-        TimeUtil::NanosecondsToTimestamp(static_cast<int64_t>(nanoseconds)));
+  static google::protobuf::Duration durationFromSeconds(float seconds) {
+    return TimeUtil::SecondsToDuration(static_cast<int64_t>(seconds));
+  }
+
+  static google::protobuf::Timestamp timestampFromUnixNanos(uint64_t nanoseconds) {
+    return TimeUtil::NanosecondsToTimestamp(static_cast<int64_t>(nanoseconds));
   }
 
   [[nodiscard]] rc::Team teamFromTeam(tp::Team by_team) const {
@@ -618,231 +568,204 @@ class MapperInternal {
     std::unreachable();
   }
 
-  object_ptr<Arena> arena_;
   bool home_is_blue_team_ = false;
 };
 
-object_ptr<rc::GameEvent> fromGameControllerEvent(const detection_util::Timestamp& now,
-                                                  const tp::GameEvent& game_event,
-                                                  bool home_is_blue_team,
-                                                  object_ptr<Arena> arena) {
+rc::GameEvent fromGameControllerEvent(const detection_util::Timestamp& now,
+                                      const tp::GameEvent& game_event,
+                                      bool home_is_blue_team) {
   using enum tp::GameEvent::EventCase;
 
-  MapperInternal mapper = {
+  MapperInternal mapper{
       home_is_blue_team,
-      arena,
   };
 
-  object_ptr result = Arena::CreateMessage<rc::GameEvent>(arena.get());
-  *result->mutable_sources() = game_event.origin();
+  rc::GameEvent result;
+  *result.mutable_sources() = game_event.origin();
 
   /* set timestamp from detection clock */ {
-    object_ptr timestamp = Arena::Create<google::protobuf::Timestamp>(arena.get());
-    timestamp->set_seconds(now.seconds());
-    timestamp->set_nanos(now.nanos());
+    google::protobuf::Timestamp timestamp;
+    timestamp.set_seconds(now.seconds());
+    timestamp.set_nanos(now.nanos());
 
-    result->unsafe_arena_set_allocated_timestamp(timestamp.get());
+    *result.mutable_timestamp() = timestamp;
   }
 
   switch (game_event.event_case()) {
     case kBallLeftFieldTouchLine: {
-      result->unsafe_arena_set_allocated_ball_left_field_touch_line(
-          mapper.ballLeftFieldFromBallLeftField(game_event.ball_left_field_touch_line()).get());
+      *result.mutable_ball_left_field_touch_line()
+          = mapper.ballLeftFieldFromBallLeftField(game_event.ball_left_field_touch_line());
       break;
     }
     case kBallLeftFieldGoalLine: {
-      result->unsafe_arena_set_allocated_ball_left_field_goal_line(
-          mapper.ballLeftFieldFromBallLeftField(game_event.ball_left_field_goal_line()).get());
+      *result.mutable_ball_left_field_goal_line()
+          = mapper.ballLeftFieldFromBallLeftField(game_event.ball_left_field_goal_line());
       break;
     }
     case kBoundaryCrossing: {
-      result->unsafe_arena_set_allocated_ball_left_field_boundary(
-          mapper.ballLeftFieldBoundaryFromBoundaryCrossing(game_event.boundary_crossing()).get());
+      *result.mutable_ball_left_field_boundary()
+          = mapper.ballLeftFieldBoundaryFromBoundaryCrossing(game_event.boundary_crossing());
       break;
     }
     case kAimlessKick: {
-      result->unsafe_arena_set_allocated_aimless_kick(
-          mapper.aimlessKickFromAimlessKick(game_event.aimless_kick()).get());
+      *result.mutable_aimless_kick() = mapper.aimlessKickFromAimlessKick(game_event.aimless_kick());
       break;
     }
     case kKeeperHeldBall: {
-      result->unsafe_arena_set_allocated_goalkeeper_held_ball(
-          mapper.goalkeeperHeldBallFromKeeperHeldBall(game_event.keeper_held_ball()).get());
+      *result.mutable_goalkeeper_held_ball()
+          = mapper.goalkeeperHeldBallFromKeeperHeldBall(game_event.keeper_held_ball());
       break;
     }
     case kAttackerTooCloseToDefenseArea: {
-      result->unsafe_arena_set_allocated_robot_too_close_to_defense_area(
-          mapper
-              .robotTooCloseToDefenseAreaFromAttackerTooCloseToDefenseArea(
-                  game_event.attacker_too_close_to_defense_area())
-              .get());
+      *result.mutable_robot_too_close_to_defense_area()
+          = mapper.robotTooCloseToDefenseAreaFromAttackerTooCloseToDefenseArea(
+              game_event.attacker_too_close_to_defense_area());
       break;
     }
     case kDefenderInDefenseArea: {
-      result->unsafe_arena_set_allocated_robot_in_defense_area(
-          mapper.robotInDefenseAreaFromDefenderInDefenseArea(game_event.defender_in_defense_area())
-              .get());
+      *result.mutable_robot_in_defense_area() = mapper.robotInDefenseAreaFromDefenderInDefenseArea(
+          game_event.defender_in_defense_area());
       break;
     }
     case kBotPushedBot: {
-      result->unsafe_arena_set_allocated_robot_pushed_robot(
-          mapper.robotPushedRobotFromBotPushedBot(game_event.bot_pushed_bot()).get());
+      *result.mutable_robot_pushed_robot()
+          = mapper.robotPushedRobotFromBotPushedBot(game_event.bot_pushed_bot());
       break;
     }
     case kBotHeldBallDeliberately: {
-      result->unsafe_arena_set_allocated_robot_held_ball_deliberately(
-          mapper
-              .robotHeldBallDeliberatelyFromBotHeldBallDeliberately(
-                  game_event.bot_held_ball_deliberately())
-              .get());
+      *result.mutable_robot_held_ball_deliberately()
+          = mapper.robotHeldBallDeliberatelyFromBotHeldBallDeliberately(
+              game_event.bot_held_ball_deliberately());
       break;
     }
     case kBotDribbledBallTooFar: {
-      result->unsafe_arena_set_allocated_robot_dribbled_ball_too_far(
-          mapper
-              .robotDribbledBallTooFarFromBotDribbledBallTooFar(
-                  game_event.bot_dribbled_ball_too_far())
-              .get());
+      *result.mutable_robot_dribbled_ball_too_far()
+          = mapper.robotDribbledBallTooFarFromBotDribbledBallTooFar(
+              game_event.bot_dribbled_ball_too_far());
       break;
     }
     case kBotTippedOver: {
-      result->unsafe_arena_set_allocated_robot_tipped_over(
-          mapper.robotTippedOverFromBotTippedOver(game_event.bot_tipped_over()).get());
+      *result.mutable_robot_tipped_over()
+          = mapper.robotTippedOverFromBotTippedOver(game_event.bot_tipped_over());
       break;
     }
     case kAttackerTouchedBallInDefenseArea: {
-      result->unsafe_arena_set_allocated_robot_touched_ball_in_defense_area(
-          mapper
-              .robotTouchedBallInDefenseAreaFromAttackerTouchedBallInDefenseArea(
-                  game_event.attacker_touched_ball_in_defense_area())
-              .get());
+      *result.mutable_robot_touched_ball_in_defense_area()
+          = mapper.robotTouchedBallInDefenseAreaFromAttackerTouchedBallInDefenseArea(
+              game_event.attacker_touched_ball_in_defense_area());
       break;
     }
     case kBotKickedBallTooFast: {
-      result->unsafe_arena_set_allocated_robot_kicked_ball_too_fast(
-          mapper
-              .robotKickedBallTooFastFromBotKickedBallTooFast(game_event.bot_kicked_ball_too_fast())
-              .get());
+      *result.mutable_robot_kicked_ball_too_fast()
+          = mapper.robotKickedBallTooFastFromBotKickedBallTooFast(
+              game_event.bot_kicked_ball_too_fast());
       break;
     }
     case kBotCrashUnique: {
-      result->unsafe_arena_set_allocated_robot_crash_unique(
-          mapper.robotCrashUniqueFromBotCrashUnique(game_event.bot_crash_unique()).get());
+      *result.mutable_robot_crash_unique()
+          = mapper.robotCrashUniqueFromBotCrashUnique(game_event.bot_crash_unique());
       break;
     }
     case kBotCrashDrawn: {
-      result->unsafe_arena_set_allocated_robot_crash_drawn(
-          mapper.robotCrashDrawnFromBotCrashDrawn(game_event.bot_crash_drawn()).get());
+      *result.mutable_robot_crash_drawn()
+          = mapper.robotCrashDrawnFromBotCrashDrawn(game_event.bot_crash_drawn());
       break;
     }
     case kBotTooFastInStop: {
-      result->unsafe_arena_set_allocated_robot_too_fast_in_stop(
-          mapper.robotTooFastInStopFromBotTooFastInStop(game_event.bot_too_fast_in_stop()).get());
+      *result.mutable_robot_too_fast_in_stop()
+          = mapper.robotTooFastInStopFromBotTooFastInStop(game_event.bot_too_fast_in_stop());
       break;
     }
     case kDefenderTooCloseToKickPoint: {
-      result->unsafe_arena_set_allocated_robot_too_close_to_kick_point(
-          mapper
-              .robotTooCloseToKickPointFromDefenderTooCloseToKickPoint(
-                  game_event.defender_too_close_to_kick_point())
-              .get());
+      *result.mutable_robot_too_close_to_kick_point()
+          = mapper.robotTooCloseToKickPointFromDefenderTooCloseToKickPoint(
+              game_event.defender_too_close_to_kick_point());
       break;
     }
     case kBotInterferedPlacement: {
-      result->unsafe_arena_set_allocated_robot_interfered_ball_placement(
-          mapper
-              .robotInterferedBallPlacementFromBotInterferedPlacement(
-                  game_event.bot_interfered_placement())
-              .get());
+      *result.mutable_robot_interfered_ball_placement()
+          = mapper.robotInterferedBallPlacementFromBotInterferedPlacement(
+              game_event.bot_interfered_placement());
       break;
     }
     case kAttackerDoubleTouchedBall: {
-      result->unsafe_arena_set_allocated_robot_double_touched_ball(
-          mapper
-              .robotDoubleTouchedBallFromAttackerDoubleTouchedBall(
-                  game_event.attacker_double_touched_ball())
-              .get());
+      *result.mutable_robot_double_touched_ball()
+          = mapper.robotDoubleTouchedBallFromAttackerDoubleTouchedBall(
+              game_event.attacker_double_touched_ball());
       break;
     }
     case kNoProgressInGame: {
-      result->unsafe_arena_set_allocated_no_progress_in_game(
-          mapper.noProgressInGameFromNoProgressInGame(game_event.no_progress_in_game()).get());
+      *result.mutable_no_progress_in_game()
+          = mapper.noProgressInGameFromNoProgressInGame(game_event.no_progress_in_game());
       break;
     }
     case kMultipleCards: {
-      result->unsafe_arena_set_allocated_multiple_cards(
-          mapper.multipleCardsFromMultipleCards(game_event.multiple_cards()).get());
+      *result.mutable_multiple_cards()
+          = mapper.multipleCardsFromMultipleCards(game_event.multiple_cards());
       break;
     }
     case kMultipleFouls: {
-      result->unsafe_arena_set_allocated_multiple_fouls(
-          mapper.multipleFoulsFromMultipleFouls(game_event.multiple_fouls()).get());
+      *result.mutable_multiple_fouls()
+          = mapper.multipleFoulsFromMultipleFouls(game_event.multiple_fouls());
       break;
     }
     case kTooManyRobots: {
-      result->unsafe_arena_set_allocated_too_many_robots(
-          mapper.tooManyRobotsFromTooManyRobots(game_event.too_many_robots()).get());
+      *result.mutable_too_many_robots()
+          = mapper.tooManyRobotsFromTooManyRobots(game_event.too_many_robots());
       break;
     }
     case kPlacementSucceeded: {
-      result->unsafe_arena_set_allocated_ball_placement_succeeded(
-          mapper.ballPlacementSucceededFromPlacementSucceeded(game_event.placement_succeeded())
-              .get());
+      *result.mutable_ball_placement_succeeded()
+          = mapper.ballPlacementSucceededFromPlacementSucceeded(game_event.placement_succeeded());
       break;
     }
     case kPlacementFailed: {
-      result->unsafe_arena_set_allocated_ball_placement_failed(
-          mapper.ballPlacementFailedFromPlacementFailed(game_event.placement_failed()).get());
+      *result.mutable_ball_placement_failed()
+          = mapper.ballPlacementFailedFromPlacementFailed(game_event.placement_failed());
       break;
     }
     case kPenaltyKickFailed: {
-      result->unsafe_arena_set_allocated_penalty_kick_failed(
-          mapper.penaltyKickFailedFromPenaltyKickFailed(game_event.penalty_kick_failed()).get());
+      *result.mutable_penalty_kick_failed()
+          = mapper.penaltyKickFailedFromPenaltyKickFailed(game_event.penalty_kick_failed());
       break;
     }
     case kPossibleGoal: {
-      result->unsafe_arena_set_allocated_possible_goal(
-          mapper.goalFromGoal(game_event.possible_goal()).get());
+      *result.mutable_possible_goal() = mapper.goalFromGoal(game_event.possible_goal());
       break;
     }
     case kGoal: {
-      result->unsafe_arena_set_allocated_goal(mapper.goalFromGoal(game_event.goal()).get());
+      *result.mutable_goal() = mapper.goalFromGoal(game_event.goal());
       break;
     }
     case kInvalidGoal: {
-      result->unsafe_arena_set_allocated_invalid_goal(
-          mapper.goalFromGoal(game_event.invalid_goal()).get());
+      *result.mutable_invalid_goal() = mapper.goalFromGoal(game_event.invalid_goal());
       break;
     }
     case kBotSubstitution: {
-      result->unsafe_arena_set_allocated_robot_substitution(
-          mapper.robotSubstitutionFromBotSubstitution(game_event.bot_substitution()).get());
+      *result.mutable_robot_substitution()
+          = mapper.robotSubstitutionFromBotSubstitution(game_event.bot_substitution());
       break;
     }
     case kChallengeFlag: {
-      result->unsafe_arena_set_allocated_challenge_flag(
-          mapper.challengeFlagFromChallengeFlag(game_event.challenge_flag()).get());
+      *result.mutable_challenge_flag()
+          = mapper.challengeFlagFromChallengeFlag(game_event.challenge_flag());
       break;
     }
     case kEmergencyStop: {
-      result->unsafe_arena_set_allocated_emergency_stop(
-          mapper.emergencyStopFromEmergencyStop(game_event.emergency_stop()).get());
+      *result.mutable_emergency_stop()
+          = mapper.emergencyStopFromEmergencyStop(game_event.emergency_stop());
       break;
     }
     case kUnsportingBehaviorMinor: {
-      result->unsafe_arena_set_allocated_unsporting_behavior_minor(
-          mapper
-              .unsportingBehaviorMinorFromUnsportingBehaviorMinor(
-                  game_event.unsporting_behavior_minor())
-              .get());
+      *result.mutable_unsporting_behavior_minor()
+          = mapper.unsportingBehaviorMinorFromUnsportingBehaviorMinor(
+              game_event.unsporting_behavior_minor());
       break;
     }
     case kUnsportingBehaviorMajor: {
-      result->unsafe_arena_set_allocated_unsporting_behavior_major(
-          mapper
-              .unsportingBehaviorMajorFromUnsportingBehaviorMajor(
-                  game_event.unsporting_behavior_major())
-              .get());
+      *result.mutable_unsporting_behavior_major()
+          = mapper.unsportingBehaviorMajorFromUnsportingBehaviorMajor(
+              game_event.unsporting_behavior_major());
       break;
     }
     case /* deprecated */ kPrepared: [[fallthrough]];
@@ -863,11 +786,8 @@ object_ptr<rc::GameEvent> fromGameControllerEvent(const detection_util::Timestam
 
 } // namespace
 
-GameEventMapper::GameEventMapper(object_ptr<Arena> arena) : arena_(arena) {}
-
-object_ptr<RepeatedPtrField<rc::GameEvent>>
-GameEventMapper::gameEventsFromReferee(const tp::Referee& referee) {
-  object_ptr result = Arena::Create<RepeatedPtrField<rc::GameEvent>>(arena_.get());
+RepeatedPtrField<rc::GameEvent> GameEventMapper::gameEventsFromReferee(const tp::Referee& referee) {
+  RepeatedPtrField<rc::GameEvent> result;
 
   // all events are cleared as soon as the game resumes.
   if (referee.game_events().empty()) {
@@ -880,7 +800,7 @@ GameEventMapper::gameEventsFromReferee(const tp::Referee& referee) {
   bool home_is_blue_team = !referee.blue_team_on_positive_half();
   detection_util::Timestamp now = detection_util::Clock::now();
 
-  result->Reserve(static_cast<int>(referee.game_events_size()));
+  result.Reserve(static_cast<int>(referee.game_events_size()));
   for (const tp::GameEvent& tp_game_event : referee.game_events()) {
     std::string serialized_tp_event = tp_game_event.SerializeAsString();
     auto it = game_events_map_.find(serialized_tp_event);
@@ -888,18 +808,18 @@ GameEventMapper::gameEventsFromReferee(const tp::Referee& referee) {
     if (it == game_events_map_.end()) {
       std::tie(it, std::ignore) = game_events_map_.emplace(
           serialized_tp_event,
-          *fromGameControllerEvent(now, tp_game_event, home_is_blue_team, arena_));
+          fromGameControllerEvent(now, tp_game_event, home_is_blue_team));
     }
 
-    *result->Add() = it->second;
+    *result.Add() = std::move(it->second);
   }
 
   return result;
 }
 
-object_ptr<RepeatedPtrField<rc::GameEventsProposal>>
+RepeatedPtrField<rc::GameEventsProposal>
 GameEventMapper::gameEventsProposalFromReferee(const tp::Referee& referee) {
-  object_ptr result = Arena::Create<RepeatedPtrField<rc::GameEventsProposal>>(arena_.get());
+  RepeatedPtrField<rc::GameEventsProposal> result;
 
   // all events are cleared as soon as the game resumes.
   if (referee.game_events().empty()) {
@@ -912,9 +832,9 @@ GameEventMapper::gameEventsProposalFromReferee(const tp::Referee& referee) {
   bool home_is_blue_team = !referee.blue_team_on_positive_half();
   detection_util::Timestamp now = detection_util::Clock::now();
 
-  result->Reserve(static_cast<int>(referee.game_event_proposals_size()));
+  result.Reserve(static_cast<int>(referee.game_event_proposals_size()));
   for (const tp::GameEventProposalGroup& tp_proposal_group : referee.game_event_proposals()) {
-    object_ptr rc_proposal_group = result->Add();
+    object_ptr rc_proposal_group = result.Add();
     rc_proposal_group->set_proposal_id(tp_proposal_group.id());
     rc_proposal_group->set_was_accepted(tp_proposal_group.accepted());
 
@@ -926,10 +846,10 @@ GameEventMapper::gameEventsProposalFromReferee(const tp::Referee& referee) {
       if (it == game_events_proposal_map_.end()) {
         std::tie(it, std::ignore) = game_events_proposal_map_.emplace(
             serialized_tp_event,
-            *fromGameControllerEvent(now, tp_game_event, home_is_blue_team, arena_));
+            fromGameControllerEvent(now, tp_game_event, home_is_blue_team));
       }
 
-      *rc_proposal_group->mutable_game_events()->Add() = it->second;
+      *rc_proposal_group->mutable_game_events()->Add() = std::move(it->second);
     }
   }
 
