@@ -12,8 +12,8 @@ class IGameStageMapper {
 
   IGameStageMapper(const IGameStageMapper&) = delete;
   IGameStageMapper& operator=(const IGameStageMapper&) = delete;
-  IGameStageMapper(IGameStageMapper&&) = delete;
-  IGameStageMapper& operator=(IGameStageMapper&&) = delete;
+  IGameStageMapper(IGameStageMapper&&) = default;
+  IGameStageMapper& operator=(IGameStageMapper&&) = default;
 
   virtual ~IGameStageMapper() = default;
 

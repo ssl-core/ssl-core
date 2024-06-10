@@ -13,8 +13,8 @@ class ITeamStatusMapper {
 
   ITeamStatusMapper(const ITeamStatusMapper&) = delete;
   ITeamStatusMapper& operator=(const ITeamStatusMapper&) = delete;
-  ITeamStatusMapper(ITeamStatusMapper&&) = delete;
-  ITeamStatusMapper& operator=(ITeamStatusMapper&&) = delete;
+  ITeamStatusMapper(ITeamStatusMapper&&) = default;
+  ITeamStatusMapper& operator=(ITeamStatusMapper&&) = default;
 
   virtual ~ITeamStatusMapper() = default;
 

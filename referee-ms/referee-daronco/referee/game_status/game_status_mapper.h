@@ -20,8 +20,8 @@ class IGameStatusMapper {
 
   IGameStatusMapper(const IGameStatusMapper&) = delete;
   IGameStatusMapper& operator=(const IGameStatusMapper&) = delete;
-  IGameStatusMapper(IGameStatusMapper&&) = delete;
-  IGameStatusMapper& operator=(IGameStatusMapper&&) = delete;
+  IGameStatusMapper(IGameStatusMapper&&) = default;
+  IGameStatusMapper& operator=(IGameStatusMapper&&) = default;
 
   virtual ~IGameStatusMapper() = default;
 

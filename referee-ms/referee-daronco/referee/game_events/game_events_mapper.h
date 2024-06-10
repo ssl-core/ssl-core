@@ -16,8 +16,8 @@ class IGameEventsMapper {
 
   IGameEventsMapper(const IGameEventsMapper&) = delete;
   IGameEventsMapper& operator=(const IGameEventsMapper&) = delete;
-  IGameEventsMapper(IGameEventsMapper&&) = delete;
-  IGameEventsMapper& operator=(IGameEventsMapper&&) = delete;
+  IGameEventsMapper(IGameEventsMapper&&) = default;
+  IGameEventsMapper& operator=(IGameEventsMapper&&) = default;
 
   virtual ~IGameEventsMapper() = default;
 

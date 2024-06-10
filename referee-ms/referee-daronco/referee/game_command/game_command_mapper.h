@@ -15,8 +15,8 @@ class IGameCommandMapper {
 
   IGameCommandMapper(const IGameCommandMapper&) = delete;
   IGameCommandMapper& operator=(const IGameCommandMapper&) = delete;
-  IGameCommandMapper(IGameCommandMapper&&) = delete;
-  IGameCommandMapper& operator=(IGameCommandMapper&&) = delete;
+  IGameCommandMapper(IGameCommandMapper&&) = default;
+  IGameCommandMapper& operator=(IGameCommandMapper&&) = default;
 
   virtual ~IGameCommandMapper() = default;
 
