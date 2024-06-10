@@ -3,55 +3,219 @@
 #include "protocols/third_party/game_controller/tracked.pb.h"
 
 #include <gmock/gmock.h>
+#include <google/protobuf/text_format.h>
+#include <google/protobuf/util/message_differencer.h>
 #include <gtest/gtest.h>
 #include <protocols/third_party/game_controller/common.pb.h>
 
+// TODO(joseviccruz): Add mockable clock to common
+// TODO(joseviccruz): Add protobuf test utilities to common
+// TODO(joseviccruz): Add cpp guidelines for unit testing
+
 namespace perception {
+
+using ::google::protobuf::TextFormat;
+using ::google::protobuf::util::MessageDifferencer;
+namespace input {
+
+constexpr const char* kFlyingBallProto = R"pb(
+pos {
+  x: 4321
+  y: 1234
+  z: 200
+}
+vel {
+  x: 200
+  y: 123
+  z: 100
+}
+visibility: 0.4
+)pb";
+
+constexpr const char* kFlatBallProto = R"pb(
+pos {
+  x: 321
+  y: -123
+  z: 1.5
+}
+vel {
+  x: -350
+  y: 100
+  z: 0.5
+}
+visibility: 0.8
+)pb";
+
+constexpr const char* kBlueRobotProto = R"pb(
+robot_id {
+  id: 1
+  team: BLUE
+}
+pos {
+  x: 1000
+  y: -500
+}
+orientation: -1.07
+vel {
+  x: 500
+  y: -1000
+}
+vel_angular: 0.5
+visibility: 0.9
+)pb";
+
+constexpr const char* kYellowRobotProto = R"pb(
+robot_id {
+  id: 1
+  team: YELLOW
+}
+pos {
+  x: 1000
+  y: -500
+}
+orientation: -1.07
+vel {
+  x: 500
+  y: -1000
+}
+vel_angular: 0.5
+visibility: 0.9
+)pb";
+
+constexpr const char* kUnknownRobotProto = R"pb(
+robot_id {
+  id: 1
+  team: UNKNOWN
+}
+pos {
+  x: 1000
+  y: -500
+}
+orientation: -1.07
+vel {
+  x: 500
+  y: -1000
+}
+vel_angular: 0.5
+visibility: 0.9
+)pb";
+
+} // namespace input
+
+namespace expected {
+
+constexpr const char* kRobotBlueProto = R"pb(
+confidence: 0.9
+robot_id {
+  color: COLOR_BLUE
+  number: 1
+}
+position {
+  x: 1000
+  y: -500
+}
+angle: -1.07
+velocity {
+  x: 500
+  y: -1000
+}
+angular_velocity: 0.5
+)pb";
+
+constexpr const char* kRobotYellowProto = R"pb(
+confidence: 0.9
+robot_id {
+  color: COLOR_YELLOW
+  number: 1
+}
+position {
+  x: 1000
+  y: -500
+}
+angle: -1.07
+velocity {
+  x: 500
+  y: -1000
+}
+angular_velocity: 0.5
+)pb";
+
+constexpr const char* kRobotUnspecifiedProto = R"pb(
+confidence: 0.9
+robot_id {
+  color: COLOR_UNSPECIFIED
+  number: 1
+}
+position {
+  x: 1000
+  y: -500
+}
+angle: -1.07
+velocity {
+  x: 500
+  y: -1000
+}
+angular_velocity: 0.5
+)pb";
+
+constexpr const char* kFlyingBallProto = R"pb(
+confidence: 0.4
+position {
+  x: 4321
+  y: 1234
+  z: 200
+}
+velocity {
+  x: 200
+  y: 123
+  z: 100
+}
+)pb";
+
+constexpr const char* kFlatBallProto = R"pb(
+confidence: 0.8
+position {
+  x: 321
+  y: -123
+  z: 1.5
+}
+velocity {
+  x: -350
+  y: 100
+  z: 0.5
+}
+)pb";
+
+} // namespace expected
 
 class TrackedFrameMock {
  public:
-  static protocols::third_party::game_controller::TrackedBall createTrackedBall() {
+  static protocols::third_party::game_controller::TrackedBall createFlyingTrackedBall() {
     protocols::third_party::game_controller::TrackedBall tracked_ball;
-    // NOLINTBEGIN(readability-magic-numbers)
-    tracked_ball.mutable_pos()->set_x(4321.0F);
-    tracked_ball.mutable_pos()->set_y(1234.0F);
-    tracked_ball.mutable_pos()->set_z(200.0F);
-    tracked_ball.mutable_vel()->set_x(200.0F);
-    tracked_ball.mutable_vel()->set_y(123.0F);
-    tracked_ball.mutable_vel()->set_z(100.0F);
-    tracked_ball.set_visibility(0.4F);
-    // NOLINTEND(readability-magic-numbers)
+    TextFormat::ParseFromString(input::kFlyingBallProto, &tracked_ball);
     return tracked_ball;
   }
 
   static protocols::third_party::game_controller::TrackedBall createTrackedFlatBall() {
     protocols::third_party::game_controller::TrackedBall tracked_ball;
-    // NOLINTBEGIN(readability-magic-numbers)
-    tracked_ball.mutable_pos()->set_x(321.0F);
-    tracked_ball.mutable_pos()->set_y(123.0F);
-    tracked_ball.mutable_pos()->set_z(1.5F);
-    tracked_ball.mutable_vel()->set_x(350.0F);
-    tracked_ball.mutable_vel()->set_y(100.0F);
-    tracked_ball.mutable_vel()->set_z(0.5F);
-    tracked_ball.set_visibility(0.8F);
-    // NOLINTEND(readability-magic-numbers)
+    TextFormat::ParseFromString(input::kFlatBallProto, &tracked_ball);
     return tracked_ball;
   }
 
   static protocols::third_party::game_controller::TrackedRobot
   createTrackedRobot(const protocols::third_party::game_controller::Team& team) {
     protocols::third_party::game_controller::TrackedRobot tracked_robot;
-    // NOLINTBEGIN(readability-magic-numbers)
-    tracked_robot.mutable_robot_id()->set_id(1);
-    tracked_robot.mutable_robot_id()->set_team(team);
-    tracked_robot.mutable_pos()->set_x(1000.0F);
-    tracked_robot.mutable_pos()->set_y(-500.0F);
-    tracked_robot.set_orientation(-1.07F);
-    tracked_robot.mutable_vel()->set_x(500.0F);
-    tracked_robot.mutable_vel()->set_y(-1000.0F);
-    tracked_robot.set_vel_angular(0.5F);
-    tracked_robot.set_visibility(0.9F);
-    // NOLINTEND(readability-magic-numbers)
+    switch (team) {
+      case protocols::third_party::game_controller::Team::BLUE:
+        TextFormat::ParseFromString(input::kBlueRobotProto, &tracked_robot);
+        break;
+      case protocols::third_party::game_controller::Team::YELLOW:
+        TextFormat::ParseFromString(input::kYellowRobotProto, &tracked_robot);
+        break;
+      case protocols::third_party::game_controller::Team::UNKNOWN:
+        TextFormat::ParseFromString(input::kUnknownRobotProto, &tracked_robot);
+    }
+
     return tracked_robot;
   }
 
@@ -62,7 +226,7 @@ class TrackedFrameMock {
     tracked_frame.set_timestamp(1234567890.0);
     // NOLINTEND(readability-magic-numbers)
 
-    *tracked_frame.add_balls() = createTrackedBall();
+    *tracked_frame.add_balls() = createFlyingTrackedBall();
     *tracked_frame.add_balls() = createTrackedFlatBall();
 
     *tracked_frame.add_robots()
@@ -76,36 +240,26 @@ class TrackedFrameMock {
   }
 };
 
-// TEST(TrackedFrameConverterTest, GivenTrackedBallWhenConvertTrackedBallReturnsBall) {
-//   TrackedBall tracked_ball = TrackedFrameMock::createTrackedBall();
+TEST(TrackedFrameConverterTest, GivenTrackedBallWhenConvertTrackedBallReturnsBall) {
+  TrackedBall tracked_ball = TrackedFrameMock::createFlyingTrackedBall();
 
-//   Ball ball = TrackedFrameConverter::convertTrackedBall(tracked_ball);
+  Ball ball = TrackedFrameConverter::convertTrackedBall(tracked_ball);
 
-//   ASSERT_FLOAT_EQ(ball.confidence(), 0.8F);
-//   ASSERT_EQ(ball.position().x(), 4321.0F);
-//   ASSERT_EQ(ball.position().y(), 1234.0F);
-//   ASSERT_EQ(ball.position().z(), 200.0F);
-//   ASSERT_EQ(ball.velocity().x(), 200.0F);
-//   ASSERT_EQ(ball.velocity().y(), 123.0F);
-//   ASSERT_EQ(ball.velocity().z(), 100.0F);
-// }
+  Ball expected;
+  TextFormat::ParseFromString(expected::kFlyingBallProto, &expected);
+  ASSERT_TRUE(MessageDifferencer::Equals(ball, expected));
+}
 
-// TEST(TrackedFrameConverterTest, GivenTrackedRobotWhenConvertTrackedRobotReturnsRobot) {
-//   TrackedRobot tracked_robot
-//       =
-//       TrackedFrameMock::createTrackedRobot(protocols::third_party::game_controller::Team::BLUE);
-//   Robot robot = TrackedFrameConverter::convertTrackedRobot(tracked_robot);
+TEST(TrackedFrameConverterTest, GivenTrackedRobotWhenConvertTrackedRobotReturnsRobot) {
+  TrackedRobot tracked_robot
+      = TrackedFrameMock::createTrackedRobot(protocols::third_party::game_controller::Team::BLUE);
+  Robot robot = TrackedFrameConverter::convertTrackedRobot(tracked_robot);
 
-//   ASSERT_FLOAT_EQ(robot.confidence(), 0.9F);
-//   ASSERT_EQ(robot.robot_id().number(), 1);
-//   ASSERT_EQ(robot.robot_id().color(), eColorBlue);
-//   ASSERT_EQ(robot.position().x(), 1.0F);
-//   ASSERT_EQ(robot.position().y(), 2.0F);
-//   ASSERT_FLOAT_EQ(robot.angle(), 1.57F);
-//   ASSERT_EQ(robot.velocity().x(), 0.1F);
-//   ASSERT_EQ(robot.velocity().y(), 0.2F);
-//   ASSERT_FLOAT_EQ(robot.angular_velocity(), 0.05F);
-// }
+  Robot expected;
+  TextFormat::ParseFromString(expected::kRobotBlueProto, &expected);
+
+  ASSERT_TRUE(MessageDifferencer::Equals(robot, expected));
+}
 
 TEST(TrackedFrameConverterTest, GivenTrackedFrameWhenConvertTrackedFrameReturnsDetection) {
   TrackedFrame tracked_frame = TrackedFrameMock::createTrackedFrame();
@@ -118,55 +272,29 @@ TEST(TrackedFrameConverterTest, GivenTrackedFrameWhenConvertTrackedFrameReturnsD
   ASSERT_EQ(detection.robots_size(), 3);
 
   const Ball& flying_ball = detection.balls(0);
-  ASSERT_EQ(flying_ball.position().x(), 4321.0F);
-  ASSERT_EQ(flying_ball.position().y(), 1234.0F);
-  ASSERT_EQ(flying_ball.position().z(), 200.0F);
-  ASSERT_EQ(flying_ball.velocity().x(), 200.0F);
-  ASSERT_EQ(flying_ball.velocity().y(), 123.0F);
-  ASSERT_EQ(flying_ball.velocity().z(), 100.0F);
-  ASSERT_EQ(flying_ball.confidence(), 0.4F);
+  Ball expected_flying_ball;
+  TextFormat::ParseFromString(expected::kFlyingBallProto, &expected_flying_ball);
+  ASSERT_TRUE(MessageDifferencer::Equals(flying_ball, expected_flying_ball));
 
   const Ball& flat_ball = detection.balls(1);
-  ASSERT_EQ(flat_ball.position().x(), 321.0F);
-  ASSERT_EQ(flat_ball.position().y(), 123.0F);
-  ASSERT_EQ(flat_ball.position().z(), 1.5F);
-  ASSERT_EQ(flat_ball.velocity().x(), 350.0F);
-  ASSERT_EQ(flat_ball.velocity().y(), 100.0F);
-  ASSERT_EQ(flat_ball.velocity().z(), 0.5F);
-  ASSERT_EQ(flat_ball.confidence(), 0.8F);
+  Ball expected_flat_ball;
+  TextFormat::ParseFromString(expected::kFlatBallProto, &expected_flat_ball);
+  ASSERT_TRUE(MessageDifferencer::Equals(flat_ball, expected_flat_ball));
 
   const Robot& robot_blue = detection.robots(0);
-  ASSERT_EQ(robot_blue.robot_id().number(), 1);
-  ASSERT_EQ(robot_blue.robot_id().color(), eColorBlue);
-  ASSERT_EQ(robot_blue.position().x(), 1000.0F);
-  ASSERT_EQ(robot_blue.position().y(), -500.0F);
-  ASSERT_FLOAT_EQ(robot_blue.angle(), -1.07F);
-  ASSERT_EQ(robot_blue.velocity().x(), 500.0F);
-  ASSERT_EQ(robot_blue.velocity().y(), -1000.0F);
-  ASSERT_FLOAT_EQ(robot_blue.angular_velocity(), 0.5F);
-  ASSERT_FLOAT_EQ(robot_blue.confidence(), 0.9F);
+  Robot expected_robot_blue;
+  TextFormat::ParseFromString(expected::kRobotBlueProto, &expected_robot_blue);
+  ASSERT_TRUE(MessageDifferencer::Equals(robot_blue, expected_robot_blue));
 
   const Robot& robot_yellow = detection.robots(1);
-  ASSERT_EQ(robot_yellow.robot_id().number(), 1);
-  ASSERT_EQ(robot_yellow.robot_id().color(), eColorYellow);
-  ASSERT_EQ(robot_yellow.position().x(), 1000.0F);
-  ASSERT_EQ(robot_yellow.position().y(), -500.0F);
-  ASSERT_FLOAT_EQ(robot_yellow.angle(), -1.07F);
-  ASSERT_EQ(robot_yellow.velocity().x(), 500.0F);
-  ASSERT_EQ(robot_yellow.velocity().y(), -1000.0F);
-  ASSERT_FLOAT_EQ(robot_yellow.angular_velocity(), 0.5F);
-  ASSERT_FLOAT_EQ(robot_yellow.confidence(), 0.9F);
+  Robot expected_robot_yellow;
+  TextFormat::ParseFromString(expected::kRobotYellowProto, &expected_robot_yellow);
+  ASSERT_TRUE(MessageDifferencer::Equals(robot_yellow, expected_robot_yellow));
 
   const Robot& robot_unspecified = detection.robots(2);
-  ASSERT_EQ(robot_unspecified.robot_id().number(), 1);
-  ASSERT_EQ(robot_unspecified.robot_id().color(), eColorUnspecified);
-  ASSERT_EQ(robot_unspecified.position().x(), 1000.0F);
-  ASSERT_EQ(robot_unspecified.position().y(), -500.0F);
-  ASSERT_FLOAT_EQ(robot_unspecified.angle(), -1.07F);
-  ASSERT_EQ(robot_unspecified.velocity().x(), 500.0F);
-  ASSERT_EQ(robot_unspecified.velocity().y(), -1000.0F);
-  ASSERT_FLOAT_EQ(robot_unspecified.angular_velocity(), 0.5F);
-  ASSERT_FLOAT_EQ(robot_unspecified.confidence(), 0.9F);
+  Robot expected_robot_unspecified;
+  TextFormat::ParseFromString(expected::kRobotUnspecifiedProto, &expected_robot_unspecified);
+  ASSERT_TRUE(MessageDifferencer::Equals(robot_unspecified, expected_robot_unspecified));
 }
 
 } // namespace perception

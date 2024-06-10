@@ -1,14 +1,9 @@
 #ifndef PERCEPTION_TRACKED_FRAME_CONVERTER_TRACKED_FRAME_CONVERTER_H
 #define PERCEPTION_TRACKED_FRAME_CONVERTER_TRACKED_FRAME_CONVERTER_H
 
+#include <gtest/gtest_prod.h>
 #include <protocols/perception/detection.pb.h>
 #include <protocols/third_party/game_controller/tracked.pb.h>
-
-#if defined(__robocin_lib_googletest)
-#include <gtest/gtest_prod.h>
-#else
-#define FRIEND_TEST(...)
-#endif
 
 namespace perception {
 
