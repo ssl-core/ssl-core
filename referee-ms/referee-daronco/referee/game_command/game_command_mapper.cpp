@@ -1,12 +1,8 @@
 #include "referee/game_command/game_command_mapper.h"
 
-#include "referee/detection_util/duration.h"
-#include "referee/detection_util/elapsed_timer.h"
-
 #include <algorithm>
 #include <array>
 #include <cmath>
-#include <google/protobuf/arena.h>
 #include <google/protobuf/duration.pb.h>
 #include <google/protobuf/stubs/status.h>
 #include <google/protobuf/timestamp.pb.h>
@@ -22,17 +18,12 @@
 namespace referee {
 namespace {
 
-using ::google::protobuf::Arena;
 using ::google::protobuf::util::TimeUtil;
 using ::robocin::object_ptr;
-
-using detection_util::Seconds;
 
 // NOLINTBEGIN(*naming*, *magic-numbers*)
 constexpr auto pNearTheBallDistance = []() { return 300.0F; };
 constexpr auto pSlowerSpeedOfMovingBall = []() { return 300.0F; };
-constexpr auto pKickoffTimeout = []() { return 5ULL; };
-constexpr auto pDirectFreeKickTimeout = []() { return 5ULL; };
 // NOLINTEND(*naming*, *magic-numbers*)
 
 namespace rc {
@@ -171,13 +162,12 @@ class RefereeUtil {
     return referee_->current_action_time_remaining() >= 0LL;
   }
 
-  [[nodiscard]] object_ptr<google::protobuf::Duration>
-  getCurrentActionTimeRemaining(object_ptr<Arena> arena) const {
-    return durationFromMicros(referee_->current_action_time_remaining(), arena);
+  [[nodiscard]] google::protobuf::Duration getCurrentActionTimeRemaining() const {
+    return durationFromMicros(referee_->current_action_time_remaining());
   }
 
-  [[nodiscard]] object_ptr<rc::Point2Df> getDesignatedPosition(object_ptr<Arena> arena) const {
-    return point2DfFromPoint(referee_->designated_position(), arena);
+  [[nodiscard]] rc::Point2Df getDesignatedPosition() const {
+    return point2DfFromPoint(referee_->designated_position());
   }
 
  private:
@@ -185,19 +175,15 @@ class RefereeUtil {
     return is_next_command_ ? referee_->next_command() : referee_->command();
   }
 
-  static object_ptr<google::protobuf::Duration> durationFromMicros(int64_t microseconds,
-                                                                   object_ptr<Arena> arena) {
-    return Arena::Create<google::protobuf::Duration>(
-        arena.get(),
-        TimeUtil::MicrosecondsToDuration(microseconds));
+  static google::protobuf::Duration durationFromMicros(int64_t microseconds) {
+    return TimeUtil::MicrosecondsToDuration(microseconds);
   }
 
-  static object_ptr<rc::Point2Df> point2DfFromPoint(const tp::Point& point,
-                                                    object_ptr<Arena> arena) {
-    object_ptr result = Arena::CreateMessage<rc::Point2Df>(arena.get());
+  static rc::Point2Df point2DfFromPoint(const tp::Point& point) {
+    rc::Point2Df result;
 
-    result->set_x(point.x());
-    result->set_y(point.y());
+    result.set_x(point.x());
+    result.set_y(point.y());
 
     return result;
   }
@@ -211,43 +197,39 @@ class FactoryInternal {
       = "team is not home nor away, setting halt.";
 
  public:
-  FactoryInternal(const RefereeUtil referee_util, object_ptr<Arena> arena) :
-      referee_util_(&referee_util),
-      arena_(arena) {}
+  explicit FactoryInternal(const RefereeUtil referee_util) : referee_util_(&referee_util) {}
 
-  object_ptr<rc::GameCommand> makeInterval() {
-    object_ptr result = Arena::CreateMessage<rc::GameCommand>(arena_.get());
+  [[nodiscard]] rc::GameCommand makeInterval() const { // NOLINT(*static*)
+    rc::GameCommand result;
 
-    result->unsafe_arena_set_allocated_interval(Arena::CreateMessage<rc::Interval>(arena_.get()));
+    *result.mutable_interval() = rc::Interval{};
 
     return result;
   }
 
-  object_ptr<rc::GameCommand> makeHalt() {
-    object_ptr result = Arena::CreateMessage<rc::GameCommand>(arena_.get());
+  [[nodiscard]] rc::GameCommand makeHalt() const { // NOLINT(*static*)
+    rc::GameCommand result;
 
-    result->unsafe_arena_set_allocated_halt(Arena::CreateMessage<rc::Halt>(arena_.get()));
+    *result.mutable_halt() = rc::Halt{};
 
     return result;
   }
 
-  object_ptr<rc::GameCommand> makeTimeout() {
-    object_ptr result = Arena::CreateMessage<rc::GameCommand>(arena_.get());
+  rc::GameCommand makeTimeout() {
+    rc::GameCommand result;
 
     switch (referee_util_->getTeamFromCommand()) {
       case rc::Team::TEAM_HOME: {
-        result->unsafe_arena_set_allocated_home_timeout(
-            Arena::CreateMessage<rc::Timeout>(arena_.get()));
+        *result.mutable_home_timeout() = rc::Timeout{};
         break;
       }
       case rc::Team::TEAM_AWAY: {
-        result->unsafe_arena_set_allocated_away_timeout(
-            Arena::CreateMessage<rc::Timeout>(arena_.get()));
+        *result.mutable_away_timeout() = rc::Timeout{};
         break;
       }
       default: {
         robocin::elog(kTeamUnavailableMessage);
-        result->unsafe_arena_set_allocated_halt(Arena::CreateMessage<rc::Halt>(arena_.get()));
+        *result.mutable_halt() = rc::Halt{};
         break;
       }
     }
@@ -255,23 +237,21 @@ class FactoryInternal {
     return result;
   }
 
-  object_ptr<rc::GameCommand> makePrepareKickoff() {
-    object_ptr result = Arena::CreateMessage<rc::GameCommand>(arena_.get());
+  rc::GameCommand makePrepareKickoff() {
+    rc::GameCommand result;
 
     switch (referee_util_->getTeamFromCommand()) {
       case rc::Team::TEAM_HOME: {
-        result->unsafe_arena_set_allocated_home_prepare_kickoff(
-            Arena::CreateMessage<rc::PrepareKickoff>(arena_.get()));
+        *result.mutable_home_prepare_kickoff() = rc::PrepareKickoff{};
         break;
       }
       case rc::Team::TEAM_AWAY: {
-        result->unsafe_arena_set_allocated_away_prepare_kickoff(
-            Arena::CreateMessage<rc::PrepareKickoff>(arena_.get()));
+        *result.mutable_away_prepare_kickoff() = rc::PrepareKickoff{};
         break;
       }
       default: {
         robocin::elog(kTeamUnavailableMessage);
-        result->unsafe_arena_set_allocated_halt(Arena::CreateMessage<rc::Halt>(arena_.get()));
+        *result.mutable_halt() = rc::Halt{};
         break;
       }
     }
@@ -279,23 +259,21 @@ class FactoryInternal {
     return result;
   }
 
-  object_ptr<rc::GameCommand> makePrepareDirectFreeKick() {
-    object_ptr result = Arena::CreateMessage<rc::GameCommand>(arena_.get());
+  rc::GameCommand makePrepareDirectFreeKick() {
+    rc::GameCommand result;
 
     switch (referee_util_->getTeamFromCommand()) {
       case rc::Team::TEAM_HOME: {
-        result->unsafe_arena_set_allocated_home_prepare_direct_free_kick(
-            Arena::CreateMessage<rc::PrepareDirectFreeKick>(arena_.get()));
+        *result.mutable_home_prepare_direct_free_kick() = rc::PrepareDirectFreeKick{};
         break;
       }
       case rc::Team::TEAM_AWAY: {
-        result->unsafe_arena_set_allocated_away_prepare_direct_free_kick(
-            Arena::CreateMessage<rc::PrepareDirectFreeKick>(arena_.get()));
+        *result.mutable_away_prepare_direct_free_kick() = rc::PrepareDirectFreeKick{};
         break;
       }
       default: {
         robocin::elog(kTeamUnavailableMessage);
-        result->unsafe_arena_set_allocated_halt(Arena::CreateMessage<rc::Halt>(arena_.get()));
+        *result.mutable_halt() = rc::Halt{};
         break;
       }
     }
@@ -303,23 +281,21 @@ class FactoryInternal {
     return result;
   }
 
-  object_ptr<rc::GameCommand> makePreparePenalty() {
-    object_ptr result = Arena::CreateMessage<rc::GameCommand>(arena_.get());
+  rc::GameCommand makePreparePenalty() {
+    rc::GameCommand result;
 
     switch (referee_util_->getTeamFromCommand()) {
       case rc::Team::TEAM_HOME: {
-        result->unsafe_arena_set_allocated_home_prepare_penalty(
-            Arena::CreateMessage<rc::PreparePenalty>(arena_.get()));
+        *result.mutable_home_prepare_penalty() = rc::PreparePenalty{};
         break;
       }
       case rc::Team::TEAM_AWAY: {
-        result->unsafe_arena_set_allocated_away_prepare_penalty(
-            Arena::CreateMessage<rc::PreparePenalty>(arena_.get()));
+        *result.mutable_away_prepare_penalty() = rc::PreparePenalty{};
         break;
       }
       default: {
         robocin::elog(kTeamUnavailableMessage);
-        result->unsafe_arena_set_allocated_halt(Arena::CreateMessage<rc::Halt>(arena_.get()));
+        *result.mutable_halt() = rc::Halt{};
         break;
       }
     }
@@ -327,31 +303,29 @@ class FactoryInternal {
     return result;
   }
 
-  object_ptr<rc::GameCommand> makeBallPlacement() {
-    object_ptr result = Arena::CreateMessage<rc::GameCommand>(arena_.get());
+  rc::GameCommand makeBallPlacement() {
+    rc::GameCommand result;
 
     auto make_ball_placement_fn = [this]() {
-      object_ptr ball_placement = Arena::CreateMessage<rc::BallPlacement>(arena_.get());
-      ball_placement->unsafe_arena_set_allocated_position(
-          referee_util_->getDesignatedPosition(arena_).get());
-      ball_placement->unsafe_arena_set_allocated_remaining_time(
-          referee_util_->getCurrentActionTimeRemaining(arena_).get());
+      rc::BallPlacement ball_placement;
+      *ball_placement.mutable_position() = referee_util_->getDesignatedPosition();
+      *ball_placement.mutable_remaining_time() = referee_util_->getCurrentActionTimeRemaining();
 
       return ball_placement;
     };
 
     switch (referee_util_->getTeamFromCommand()) {
       case rc::Team::TEAM_HOME: {
-        result->unsafe_arena_set_allocated_home_ball_placement(make_ball_placement_fn().get());
+        *result.mutable_home_ball_placement() = make_ball_placement_fn();
         break;
       }
       case rc::Team::TEAM_AWAY: {
-        result->unsafe_arena_set_allocated_away_ball_placement(make_ball_placement_fn().get());
+        *result.mutable_away_ball_placement() = make_ball_placement_fn();
         break;
       }
       default: {
         robocin::wlog(kTeamUnavailableMessage);
-        result->unsafe_arena_set_allocated_halt(Arena::CreateMessage<rc::Halt>(arena_.get()));
+        *result.mutable_halt() = rc::Halt{};
         break;
       }
     }
@@ -359,29 +333,28 @@ class FactoryInternal {
     return result;
   }
 
-  object_ptr<rc::GameCommand> makeKickoff(rc::Team team_kicking_kickoff) {
-    object_ptr result = Arena::CreateMessage<rc::GameCommand>(arena_.get());
+  rc::GameCommand makeKickoff(rc::Team team_kicking_kickoff) {
+    rc::GameCommand result;
 
     auto make_kickoff_fn = [this]() {
-      object_ptr kickoff = Arena::CreateMessage<rc::Kickoff>(arena_.get());
-      kickoff->unsafe_arena_set_allocated_remaining_time(
-          referee_util_->getCurrentActionTimeRemaining(arena_).get());
+      rc::Kickoff kickoff;
+      *kickoff.mutable_remaining_time() = referee_util_->getCurrentActionTimeRemaining();
 
       return kickoff;
     };
 
     switch (team_kicking_kickoff) {
       case rc::Team::TEAM_HOME: {
-        result->unsafe_arena_set_allocated_home_kickoff(make_kickoff_fn().get());
+        *result.mutable_home_kickoff() = make_kickoff_fn();
         break;
       }
       case rc::Team::TEAM_AWAY: {
-        result->unsafe_arena_set_allocated_away_kickoff(make_kickoff_fn().get());
+        *result.mutable_away_kickoff() = make_kickoff_fn();
         break;
       }
       default: {
         robocin::elog(kTeamUnavailableMessage);
-        result->unsafe_arena_set_allocated_halt(Arena::CreateMessage<rc::Halt>(arena_.get()));
+        *result.mutable_halt() = rc::Halt{};
         break;
       }
     }
@@ -389,29 +362,28 @@ class FactoryInternal {
     return result;
   }
 
-  object_ptr<rc::GameCommand> makeDirectFreeKick(rc::Team team_kicking_free_kick) {
-    object_ptr result = Arena::CreateMessage<rc::GameCommand>(arena_.get());
+  rc::GameCommand makeDirectFreeKick(rc::Team team_kicking_free_kick) {
+    rc::GameCommand result;
 
     auto make_direct_free_kick_fn = [this]() {
-      object_ptr direct_free_kick = Arena::CreateMessage<rc::DirectFreeKick>(arena_.get());
-      direct_free_kick->unsafe_arena_set_allocated_remaining_time(
-          referee_util_->getCurrentActionTimeRemaining(arena_).get());
+      rc::DirectFreeKick direct_free_kick;
+      *direct_free_kick.mutable_remaining_time() = referee_util_->getCurrentActionTimeRemaining();
 
       return direct_free_kick;
     };
 
     switch (team_kicking_free_kick) {
       case rc::Team::TEAM_HOME: {
-        result->unsafe_arena_set_allocated_home_direct_free_kick(make_direct_free_kick_fn().get());
+        *result.mutable_home_direct_free_kick() = make_direct_free_kick_fn();
         break;
       }
       case rc::Team::TEAM_AWAY: {
-        result->unsafe_arena_set_allocated_away_direct_free_kick(make_direct_free_kick_fn().get());
+        *result.mutable_away_direct_free_kick() = make_direct_free_kick_fn();
         break;
       }
       default: {
         robocin::elog(kTeamUnavailableMessage);
-        result->unsafe_arena_set_allocated_halt(Arena::CreateMessage<rc::Halt>(arena_.get()));
+        *result.mutable_halt() = rc::Halt{};
         break;
       }
     }
@@ -419,29 +391,28 @@ class FactoryInternal {
     return result;
   }
 
-  object_ptr<rc::GameCommand> makePenalty(rc::Team team_kicking_penalty) {
-    object_ptr result = Arena::CreateMessage<rc::GameCommand>(arena_.get());
+  rc::GameCommand makePenalty(rc::Team team_kicking_penalty) {
+    rc::GameCommand result;
 
     auto make_penalty_fn = [this]() {
-      object_ptr penalty = Arena::CreateMessage<rc::Penalty>(arena_.get());
-      penalty->unsafe_arena_set_allocated_remaining_time(
-          referee_util_->getCurrentActionTimeRemaining(arena_).get());
+      rc::Penalty penalty;
+      *penalty.mutable_remaining_time() = referee_util_->getCurrentActionTimeRemaining();
 
       return penalty;
     };
 
     switch (team_kicking_penalty) {
       case rc::Team::TEAM_HOME: {
-        result->unsafe_arena_set_allocated_home_penalty(make_penalty_fn().get());
+        *result.mutable_home_penalty() = make_penalty_fn();
         break;
       }
       case rc::Team::TEAM_AWAY: {
-        result->unsafe_arena_set_allocated_away_penalty(make_penalty_fn().get());
+        *result.mutable_away_penalty() = make_penalty_fn();
         break;
       }
       default: {
         robocin::elog(kTeamUnavailableMessage);
-        result->unsafe_arena_set_allocated_halt(Arena::CreateMessage<rc::Halt>(arena_.get()));
+        *result.mutable_halt() = rc::Halt{};
         break;
       }
     }
@@ -449,25 +420,24 @@ class FactoryInternal {
     return result;
   }
 
-  object_ptr<rc::GameCommand> makeStop() {
-    object_ptr result = Arena::CreateMessage<rc::GameCommand>(arena_.get());
+  [[nodiscard]] rc::GameCommand makeStop() const { // NOLINT(*static*)
+    rc::GameCommand result;
 
-    result->unsafe_arena_set_allocated_stop(Arena::CreateMessage<rc::Stop>(arena_.get()));
+    *result.mutable_stop() = rc::Stop{};
 
     return result;
   }
 
-  object_ptr<rc::GameCommand> makeInGame() {
-    object_ptr result = Arena::CreateMessage<rc::GameCommand>(arena_.get());
+  [[nodiscard]] rc::GameCommand makeInGame() const { // NOLINT(*static*)
+    rc::GameCommand result;
 
-    result->unsafe_arena_set_allocated_in_game(Arena::CreateMessage<rc::InGame>(arena_.get()));
+    *result.mutable_in_game() = rc::InGame{};
 
     return result;
   }
 
  private:
   object_ptr<const RefereeUtil> referee_util_;
-  object_ptr<Arena> arena_;
 };
 
 class KickingTeamUtil {
@@ -601,12 +571,9 @@ class KickingTeamUtil {
 
 } // namespace
 
-GameCommandMapper::GameCommandMapper(object_ptr<Arena> arena) : arena_(arena) {}
-
-object_ptr<rc::GameCommand>
-GameCommandMapper::fromDetectionAndReferee(const rc::Detection& detection,
-                                           const tp::Referee& referee,
-                                           bool is_next_command) {
+rc::GameCommand GameCommandMapper::fromDetectionAndReferee(const rc::Detection& detection,
+                                                           const tp::Referee& referee,
+                                                           bool is_next_command) {
   RefereeUtil referee_util{
       is_next_command,
       referee,
@@ -619,7 +586,6 @@ GameCommandMapper::fromDetectionAndReferee(const rc::Detection& detection,
 
   FactoryInternal factory{
       referee_util,
-      arena_,
   };
 
   kicking_team_util.update(team_kicking_kickoff_,

@@ -1,15 +1,11 @@
 #ifndef REFEREE_GAME_COMMAND_GAME_COMMAND_MAPPER_H
 #define REFEREE_GAME_COMMAND_GAME_COMMAND_MAPPER_H
 
-#include "referee/detection_util/elapsed_timer.h"
-
-#include <google/protobuf/arena.h>
 #include <protocols/common/game_command.pb.h>
 #include <protocols/common/game_event.pb.h>
 #include <protocols/common/game_stage.pb.h>
 #include <protocols/perception/detection.pb.h>
 #include <protocols/third_party/game_controller/referee.pb.h>
-#include <robocin/memory/object_ptr.h>
 
 namespace referee {
 
@@ -24,24 +20,23 @@ class IGameCommandMapper {
 
   virtual ~IGameCommandMapper() = default;
 
-  virtual ::robocin::object_ptr<::protocols::common::GameCommand>
+  virtual ::protocols::common::GameCommand
   fromDetectionAndReferee(const ::protocols::perception::Detection& detection,
                           const ::protocols::third_party::game_controller::Referee& referee,
-                          bool is_next_command);
+                          bool is_next_command)
+      = 0;
 };
 
 class GameCommandMapper : public IGameCommandMapper {
  public:
-  explicit GameCommandMapper(::robocin::object_ptr<::google::protobuf::Arena> arena);
+  GameCommandMapper() = default;
 
-  ::robocin::object_ptr<::protocols::common::GameCommand>
+  ::protocols::common::GameCommand
   fromDetectionAndReferee(const ::protocols::perception::Detection& detection,
                           const ::protocols::third_party::game_controller::Referee& referee,
                           bool is_next_command) override;
 
  private:
-  ::robocin::object_ptr<::google::protobuf::Arena> arena_;
-
   ::protocols::common::Team team_kicking_kickoff_{::protocols::common::Team::TEAM_UNSPECIFIED};
   ::protocols::common::Team team_kicking_direct_free_kick_{
       ::protocols::common::Team::TEAM_UNSPECIFIED};
