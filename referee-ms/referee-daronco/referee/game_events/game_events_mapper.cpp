@@ -1,4 +1,4 @@
-#include "referee/game_event/game_event_mapper.h"
+#include "referee/game_events/game_events_mapper.h"
 
 #include "referee/detection_util/clock.h"
 #include "referee/detection_util/timestamp.h"
@@ -786,7 +786,7 @@ rc::GameEvent fromGameControllerEvent(const detection_util::Timestamp& now,
 
 } // namespace
 
-RepeatedPtrField<rc::GameEvent> GameEventMapper::gameEventsFromReferee(const tp::Referee& referee) {
+RepeatedPtrField<rc::GameEvent> GameEventsMapper::fromReferee(const tp::Referee& referee) {
   RepeatedPtrField<rc::GameEvent> result;
 
   // all events are cleared as soon as the game resumes.
@@ -818,7 +818,7 @@ RepeatedPtrField<rc::GameEvent> GameEventMapper::gameEventsFromReferee(const tp:
 }
 
 RepeatedPtrField<rc::GameEventsProposal>
-GameEventMapper::gameEventsProposalFromReferee(const tp::Referee& referee) {
+GameEventsMapper::proposalsFromReferee(const tp::Referee& referee) {
   RepeatedPtrField<rc::GameEventsProposal> result;
 
   // all events are cleared as soon as the game resumes.
