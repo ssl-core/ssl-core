@@ -4,6 +4,12 @@
 #include <protocols/perception/detection.pb.h>
 #include <protocols/third_party/game_controller/tracked.pb.h>
 
+#if defined(__robocin_lib_googletest)
+#include <gtest/gtest_prod.h>
+#else
+#define FRIEND_TEST(...)
+#endif
+
 namespace perception {
 
 using protocols::perception::Ball;
@@ -48,6 +54,9 @@ class TrackedFrameConverter {
    * @return A Ball object containing the converted data.
    */
   static Ball convertTrackedBall(const TrackedBall& ball);
+
+  FRIEND_TEST(TrackedFrameConverterTest, GivenTrackedBallWhenConvertTrackedBallReturnsBall);
+  FRIEND_TEST(TrackedFrameConverterTest, GivenTrackedRobotWhenConvertTrackedRobotReturnsRobot);
 };
 
 } // namespace perception
