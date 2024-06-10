@@ -20,18 +20,21 @@ constexpr UdpArgs kVisionThirdParty = {
     .port = 10020,
 };
 // constexpr UdpArgs kRefereeThirdParty = {.address = ..., .port = ...,};
-// constexpr UdpArgs kTrackedThirdParty = {.address = ..., .port = ...,};
+constexpr UdpArgs kTrackedThirdParty = {
+    .address = "224.5.23.2",
+    .port = 10010,
+};
 
 } // namespace
 
 ThirdPartySocketsController::ThirdPartySocketsController() {
   vision_.connect(kVisionThirdParty.address, kVisionThirdParty.port);
-  // vision_.connect(kRefereeThirdParty.address, kRefereeThirdParty.port);
-  // vision_.connect(kTrackedThirdParty.address, kTrackedThirdParty.port);
+  tracked_.connect(kTrackedThirdParty.address, kTrackedThirdParty.port);
+  // referee_.connect(kRefereeThirdParty.address, kRefereeThirdParty.port);
 
   poller_.push(vision_.fd());
+  poller_.push(tracked_.fd());
   // poller.push(referee_.fd());
-  // poller.push(tracked_.fd());
 
   publisher_.bind(SServiceDiscovery.lookup(kGatewayThirdParties).address);
 }
@@ -44,6 +47,11 @@ void ThirdPartySocketsController::run() {
     if (auto vision_message = poller_.recvFrom(vision_); !vision_message.empty()) {
       std::cout << "Sending vision message to publisher" << std::endl;
       publisher_.send({"vision-third-party", vision_message});
+    }
+
+    if (auto tracked_message = poller_.recvFrom(tracked_); !tracked_message.empty()) {
+      std::cout << "Sending tracked message to publisher" << std::endl;
+      publisher_.send({"tracked-third-party", tracked_message});
     }
   }
 }

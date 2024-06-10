@@ -1,7 +1,7 @@
 #include <memory>
 #include <perception/controller/consumer_controller.h>
 #include <perception/controller/producer_controller.h>
-#include <perception/controller/vision_packets.h>
+#include <perception/vision_packets/vision_packets.h>
 #include <robocin/concurrency/blocking_deque.h>
 #include <thread>
 

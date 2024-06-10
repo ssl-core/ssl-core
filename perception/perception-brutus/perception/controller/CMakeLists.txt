@@ -5,20 +5,6 @@ robocin_cpp_library(
 )
 
 robocin_cpp_library(
-  NAME vision_packets
-  HDRS vision_packets.h
-  SRCS vision_packets.cpp
-  DEPS protocols::protobufs common::network
-)
-
-robocin_cpp_library(
-  NAME vision_packets_processor
-  HDRS vision_packets_processor.h
-  SRCS vision_packets_processor.cpp
-  DEPS vision_packets vision_filter protocols::protobufs raw_detection_converter
-)
-
-robocin_cpp_library(
   NAME producer_controller
   HDRS producer_controller.h
   SRCS producer_controller.cpp

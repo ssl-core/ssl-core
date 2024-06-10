@@ -2,8 +2,8 @@
 #define PERCEPTION_CONTROLLER_PRODUCER_CONTROLLER_H
 
 #include "perception/controller/icontroller.h"
-#include "perception/controller/vision_packets.h"
 #include "perception/network/message_consumer.h"
+#include "perception/vision_packets/vision_packets.h"
 #include "robocin/concurrency/blocking_deque.h"
 
 namespace perception {

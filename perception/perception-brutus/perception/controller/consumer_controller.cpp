@@ -9,8 +9,9 @@ void ConsumerController::run() {
   while (true) {
     auto packets = deque_.takeAll();
     if (!packets.empty()) {
-      Detection detection = processor_.process(packets);
-      message_producer_.send(detection);
+      DetectionWrapper wrapper = processor_.process(packets);
+      message_producer_.send(wrapper.detection());
+      message_producer_.send(wrapper);
     }
   }
 }

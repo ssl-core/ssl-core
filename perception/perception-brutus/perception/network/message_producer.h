@@ -27,6 +27,7 @@ constexpr std::string_view kDetectionWrapperPublisherTopic = "detection-wrapper"
 class MessageProducer {
   using Publisher = robocin::ZmqPublisherSocket;
   using Datagram = robocin::ZmqDatagram;
+  using DetectionWrapper = protocols::perception::DetectionWrapper;
 
  public:
   explicit MessageProducer();
@@ -43,8 +44,12 @@ class MessageProducer {
    */
   void send(const Detection& detection);
 
-  // TODO(#ISSUE_N): Send DetectionWrapper.
-  // void send(const DetectionWrapper& wrapper);
+  /**
+   * @brief Sends a `DetectionWrapper` through the related publishing address and topic.
+   * @param wrapper The detection wrapper to be sent with associated `Detection` and the raw and
+   * tracked detections used as basis to build it.
+   */
+  void send(const DetectionWrapper& wrapper);
 
  private:
   Publisher detection_pub_; /**< The ZeroMQ publisher socket for detection topics. */
