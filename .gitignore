@@ -104,3 +104,6 @@ __pycache__
 
 # Jetbrains IDE
 .idea/
+
+# Node.js
+node_modules/
