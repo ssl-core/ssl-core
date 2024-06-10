@@ -8,5 +8,5 @@ robocin_cpp_library(
        duration.cpp
        timestamp.cpp
        elapsed_timer.cpp
-  DEPS protocols::protobufs
+  DEPS protocols::protobufs singleton
 )

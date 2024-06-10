@@ -12,6 +12,8 @@ constexpr int64_t kSecondsPerMinute = 60;
 
 } // namespace
 
+Duration::Duration(int64_t frames) : frames_{frames} {}
+
 int64_t Duration::ms() const { return kMillisecondsPerSecond * frames_ / Clock::framerate(); }
 int64_t Duration::frames() const { return frames_; }
 
