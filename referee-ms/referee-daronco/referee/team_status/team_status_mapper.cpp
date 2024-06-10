@@ -1,22 +1,18 @@
 #include "referee/team_status/team_status_mapper.h"
 
 #include <cstdint>
-#include <google/protobuf/arena.h>
 #include <google/protobuf/repeated_ptr_field.h>
 #include <google/protobuf/util/time_util.h>
 #include <protocols/common/robot_id.pb.h>
 #include <protocols/referee/game_status.pb.h>
 #include <protocols/third_party/game_controller/referee.pb.h>
-#include <robocin/memory/object_ptr.h>
 #include <utility>
 
 namespace referee {
 namespace {
 
-using ::google::protobuf::Arena;
 using ::google::protobuf::RepeatedPtrField;
 using ::google::protobuf::util::TimeUtil;
-using ::robocin::object_ptr;
 
 namespace rc {
 
@@ -76,62 +72,55 @@ RepeatedPtrField<rc::RobotId> getRobotIds(rc::RobotId::Color color) {
   return result;
 }
 
-object_ptr<google::protobuf::Duration> durationFromMicros(int64_t microseconds,
-                                                          object_ptr<Arena> arena) {
-  return Arena::Create<google::protobuf::Duration>(arena.get(),
-                                                   TimeUtil::MicrosecondsToDuration(microseconds));
+google::protobuf::Duration durationFromMicros(int64_t microseconds) {
+  return TimeUtil::MicrosecondsToDuration(microseconds);
 }
 
 } // namespace
 
-TeamStatusMapper::TeamStatusMapper(object_ptr<Arena> arena) : arena_(arena) {}
-
-object_ptr<rc::Team> TeamStatusMapper::fromTeamAndRefereeTeamInfo(rc::ETeam team,
-                                                                  const tp::Referee& referee) {
+rc::Team TeamStatusMapper::fromTeamAndRefereeTeamInfo(rc::ETeam team, const tp::Referee& referee) {
   const tp::TeamInfo& team_info = getTeamInfo(team, referee);
 
-  object_ptr result = Arena::Create<rc::Team>(arena_.get());
+  rc::Team result;
 
-  result->set_name(team_info.name());
-  result->set_score(team_info.score());
+  result.set_name(team_info.name());
+  result.set_score(team_info.score());
 
   /* set robot ids and goalkeeper id */ {
     bool home_is_blue_team = !referee.blue_team_on_positive_half();
     rc::RobotId::Color color = getColor(home_is_blue_team, team);
 
-    *result->mutable_robot_ids() = getRobotIds(color);
-    result->unsafe_arena_set_allocated_goalkeeper_id(
-        Arena::Create<rc::RobotId>(arena_.get(), makeRobotId(team_info.goalkeeper(), color)));
+    *result.mutable_robot_ids() = getRobotIds(color);
+    *result.mutable_goalkeeper_id() = makeRobotId(team_info.goalkeeper(), color);
   }
 
-  result->set_yellow_cards(team_info.yellow_cards());
-  result->mutable_time_to_expire_active_yellow_cards()->Reserve(team_info.yellow_card_times_size());
+  result.set_yellow_cards(team_info.yellow_cards());
+  result.mutable_time_to_expire_active_yellow_cards()->Reserve(team_info.yellow_card_times_size());
   for (uint32_t time_to_expire_yellow_card_in_us : team_info.yellow_card_times()) {
-    *result->mutable_time_to_expire_active_yellow_cards()->Add()
-        = *durationFromMicros(time_to_expire_yellow_card_in_us, arena_.get());
+    *result.mutable_time_to_expire_active_yellow_cards()->Add()
+        = durationFromMicros(time_to_expire_yellow_card_in_us);
   }
 
-  result->set_red_cards(team_info.red_cards());
+  result.set_red_cards(team_info.red_cards());
 
-  result->set_timeouts_left(team_info.timeouts());
-  *result->mutable_total_timeout_time_left()
-      = *durationFromMicros(team_info.timeout_time(), arena_.get());
+  result.set_timeouts_left(team_info.timeouts());
+  *result.mutable_total_timeout_time_left() = durationFromMicros(team_info.timeout_time());
 
-  result->set_total_fouls_committed(team_info.foul_counter());
+  result.set_total_fouls_committed(team_info.foul_counter());
 
-  result->set_consecutive_ball_placement_failures(team_info.ball_placement_failures());
-  result->set_is_ball_placement_enabled(team_info.can_place_ball());
-  result->set_has_ball_placement_failures_reached_maximum(
+  result.set_consecutive_ball_placement_failures(team_info.ball_placement_failures());
+  result.set_is_ball_placement_enabled(team_info.can_place_ball());
+  result.set_has_ball_placement_failures_reached_maximum(
       team_info.ball_placement_failures_reached());
 
-  result->set_maximum_allowed_robots(team_info.max_allowed_bots());
+  result.set_maximum_allowed_robots(team_info.max_allowed_bots());
 
-  result->set_is_robot_substitution_requested(team_info.bot_substitution_intent());
-  result->set_is_robot_substitution_allowed(team_info.bot_substitution_allowed());
+  result.set_is_robot_substitution_requested(team_info.bot_substitution_intent());
+  result.set_is_robot_substitution_allowed(team_info.bot_substitution_allowed());
 
-  result->set_robot_substitutions_left(team_info.bot_substitutions_left());
-  *result->mutable_robot_substitution_time_left()
-      = *durationFromMicros(team_info.bot_substitution_time_left(), arena_);
+  result.set_robot_substitutions_left(team_info.bot_substitutions_left());
+  *result.mutable_robot_substitution_time_left()
+      = durationFromMicros(team_info.bot_substitution_time_left());
 
   return result;
 }

@@ -1,11 +1,9 @@
 #ifndef REFEREE_TEAM_STATUS_TEAM_STATUS_H
 #define REFEREE_TEAM_STATUS_TEAM_STATUS_H
 
-#include <google/protobuf/arena.h>
 #include <protocols/common/team.pb.h>
 #include <protocols/referee/game_status.pb.h>
 #include <protocols/third_party/game_controller/referee.pb.h>
-#include <robocin/memory/object_ptr.h>
 
 namespace referee {
 
@@ -20,21 +18,19 @@ class ITeamStatusMapper {
 
   virtual ~ITeamStatusMapper() = default;
 
-  virtual ::robocin::object_ptr<::protocols::referee::GameStatus::Team>
+  virtual ::protocols::referee::GameStatus::Team
   fromTeamAndRefereeTeamInfo(::protocols::common::Team team,
-                             const ::protocols::third_party::game_controller::Referee& referee);
+                             const ::protocols::third_party::game_controller::Referee& referee)
+      = 0;
 };
 
 class TeamStatusMapper : public ITeamStatusMapper {
  public:
-  explicit TeamStatusMapper(::robocin::object_ptr<::google::protobuf::Arena> arena);
+  TeamStatusMapper() = default;
 
-  ::robocin::object_ptr<::protocols::referee::GameStatus::Team> fromTeamAndRefereeTeamInfo(
+  ::protocols::referee::GameStatus::Team fromTeamAndRefereeTeamInfo(
       ::protocols::common::Team team,
       const ::protocols::third_party::game_controller::Referee& referee) override;
-
- private:
-  ::robocin::object_ptr<::google::protobuf::Arena> arena_;
 };
 
 } // namespace referee
