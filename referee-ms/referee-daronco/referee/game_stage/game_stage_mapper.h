@@ -18,13 +18,14 @@ class IGameStageMapper {
   virtual ~IGameStageMapper() = default;
 
   virtual ::protocols::common::GameStage
-  gameStageFromRefereeStage(::protocols::third_party::game_controller::Referee::Stage stage);
+  fromRefereeStage(::protocols::third_party::game_controller::Referee::Stage stage)
+      = 0;
 };
 
 class GameStageMapper : public IGameStageMapper {
  public:
-  ::protocols::common::GameStage gameStageFromRefereeStage(
-      ::protocols::third_party::game_controller::Referee::Stage stage) override;
+  ::protocols::common::GameStage
+  fromRefereeStage(::protocols::third_party::game_controller::Referee::Stage stage) override;
 };
 
 } // namespace referee

@@ -4,6 +4,6 @@
 
 namespace referee {
 
-// TODO($ISSUE_N): add unit tests for game_event_mapper.
+// TODO($ISSUE_N): add unit tests for game_stage_mapper.
 
 } // namespace referee

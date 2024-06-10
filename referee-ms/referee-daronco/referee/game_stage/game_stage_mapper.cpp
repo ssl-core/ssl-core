@@ -20,7 +20,7 @@ using RefereeStage = ::protocols::third_party::game_controller::Referee::Stage;
 
 } // namespace
 
-rc::GameStage GameStageMapper::gameStageFromRefereeStage(tp::RefereeStage stage) {
+rc::GameStage GameStageMapper::fromRefereeStage(tp::RefereeStage stage) {
   using enum tp::RefereeStage;
   using enum rc::GameStage;
 
