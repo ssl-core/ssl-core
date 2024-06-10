@@ -11,9 +11,9 @@ services:
 
   autoref-tigers:
     image: tigersmannheim/auto-referee:1.2.0
-    # Run without UI in active mode    
     restart: unless-stopped
     container_name: autoref-tigers
+    # Run without UI in active mode
     command: [ "-a" ] 
     depends_on:
     - simulator
@@ -33,16 +33,16 @@ services:
     depends_on:
     - autoref-tigers
 
-  # perception:
-  #   build:
-  #     context: .
-  #     dockerfile: perception/perception-brutus/Dockerfile
-  #     args:
-  #       - SOURCE_DIRECTORY=perception/perception-brutus
-  #   working_dir: /workspaces/perception/perception-brutus
-  #   container_name: perception
-  #   command: ["bin/perception_main"]
-  #   volumes:
-  #     - /tmp:/tmp
-  #   depends_on:
-  #     - gateway
+  perception:
+    build:
+      context: .
+      dockerfile: perception/perception-brutus/Dockerfile
+      args:
+        - SOURCE_DIRECTORY=perception/perception-brutus
+    working_dir: /workspaces/perception/perception-brutus
+    container_name: perception
+    command: ["bin/perception_main"]
+    volumes:
+      - /tmp:/tmp
+    depends_on:
+      - gateway

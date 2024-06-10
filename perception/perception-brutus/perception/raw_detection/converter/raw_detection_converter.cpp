@@ -1,7 +1,5 @@
 #include "perception/raw_detection/converter/raw_detection_converter.h"
 
-#include <cstdint>
-
 namespace perception {
 
 RawDetection

@@ -30,7 +30,7 @@ DetectionWrapper VisionPacketsProcessor::process(const std::vector<VisionPackets
   if (not flat_raw_packets.empty()) {
     wrapper.mutable_raw_detection();
     for (const auto& raw_packet : flat_raw_packets) {
-      wrapper.add_raw_detection()->CopyFrom(raw_packet.detection());
+      wrapper.add_raw_detection()->CopyFrom(raw_packet);
     }
   }
   if (not flat_tracked_packets.empty()) {

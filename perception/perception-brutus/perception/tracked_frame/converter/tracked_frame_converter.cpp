@@ -1,11 +1,32 @@
 #include "perception/tracked_frame/converter/tracked_frame_converter.h"
 
+#include <chrono>
+#include <google/protobuf/timestamp.pb.h>
+#include <protocols/common/robot_id.pb.h>
+#include <protocols/perception/detection.pb.h>
+#include <protocols/third_party/game_controller/common.pb.h>
+
 namespace perception {
+
+using google::protobuf::Timestamp;
 
 Detection TrackedFrameConverter::convertTrackedFrame(const TrackedFrame& tracked_frame) {
   Detection detection;
+
+  const int64_t kNanosPerSecond = 1000000000;
+  Timestamp* timestamp = detection.mutable_created_at();
+  auto now = std::chrono::system_clock::now();
+  std::time_t seconds = std::chrono::system_clock::to_time_t(now);
+  auto duration = now.time_since_epoch();
+  auto nanos
+      = std::chrono::duration_cast<std::chrono::nanoseconds>(duration).count() % kNanosPerSecond;
+  timestamp->set_seconds(static_cast<int64_t>(seconds));
+  timestamp->set_nanos(static_cast<int32_t>(nanos));
+
+  detection.set_serial_id(tracked_frame.frame_number());
+
   const uint32_t k60_fps = 60;
-  detection.set_frame_rate(k60_fps);
+  detection.set_framerate(k60_fps);
 
   for (const auto& tracked_robot : tracked_frame.robots()) {
     Robot& robot = *detection.add_robots();
@@ -24,7 +45,19 @@ Robot TrackedFrameConverter::convertTrackedRobot(const TrackedRobot& tracked_rob
   Robot robot;
 
   robot.set_confidence(tracked_robot.visibility()); // Assuming visibility means confidence...
-  robot.mutable_robot_id()->CopyFrom(tracked_robot.robot_id());
+  protocols::common::RobotId& robot_id = *robot.mutable_robot_id();
+  robot_id.set_number(tracked_robot.robot_id().id());
+
+  auto mapped_color = [&] {
+    using protocols::third_party::game_controller::Team;
+    using protocols::common::RobotId;
+    switch (tracked_robot.robot_id().team()) {
+      case Team::BLUE: return RobotId::COLOR_BLUE;
+      case Team::YELLOW: return RobotId::COLOR_YELLOW;
+      default: return RobotId::COLOR_UNSPECIFIED;
+    }
+  }();
+  robot_id.set_color(mapped_color);
 
   protocols::common::Point2Df* position = robot.mutable_position();
   position->set_x(tracked_robot.pos().x());
