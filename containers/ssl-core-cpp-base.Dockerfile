@@ -1,8 +1,8 @@
-FROM mcr.microsoft.com/devcontainers/base:ubuntu
+FROM mcr.microsoft.com/devcontainers/base:noble
 
 SHELL ["/bin/bash", "-c"]
 
-ARG      GCC_VERSION='13'
+ARG      GCC_VERSION='14'
 ARG     LLVM_VERSION='18'
 ARG    CMAKE_VERSION='3.29.3'
 ARG    NINJA_VERSION='1.11.1'
