@@ -7,9 +7,9 @@ ProducerController::ProducerController(Deque& deque) : deque_(deque) {}
 void ProducerController::run() {
   std::cout << "Running producer controller..." << std::endl;
   while (true) {
-    auto datagrams = message_consumer_.receiveAll();
-    if (!datagrams.empty()) {
-      deque_.put(VisionPackets(datagrams));
+    auto payload = message_receiver_.receive();
+    if (!payload.isEmpty()) {
+      deque_.put(payload);
     }
   }
 }

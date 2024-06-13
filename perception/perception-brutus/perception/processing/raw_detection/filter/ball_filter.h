@@ -1,0 +1,45 @@
+#ifndef PERCEPTION_PROCESSING_RAW_DETECTION_FILTER_BALL_FILTER_H
+#define PERCEPTION_PROCESSING_RAW_DETECTION_FILTER_BALL_FILTER_H
+
+#include "perception/processing/raw_detection/entities/raw_ball.h"
+
+namespace perception {
+
+/**
+ * @class BallFilter
+ * @brief Filters raw ball data to produce filtered ball information.
+ *
+ * The BallFilter class is responsible for filtering raw ball data to provide
+ * more accurate and reliable ball information.
+ */
+class BallFilter {
+ public:
+  explicit BallFilter(const RawBall& ball);
+
+  ~BallFilter() = default;
+  BallFilter(const BallFilter& other) = default;
+  BallFilter(BallFilter&& other) = default;
+  BallFilter& operator=(const BallFilter& other) = default;
+  BallFilter& operator=(BallFilter&& other) = default;
+
+  /**
+   * @brief Updates the ball filter with new raw ball data.
+   * @param raw_ball The raw ball data to update the filter.
+   * @return True if the filter was successfully updated, false otherwise.
+   */
+  bool update(const RawBall& raw_ball);
+
+  /**
+   * @brief Retrieves the filtered ball information.
+   * @return The filtered ball information.
+   */
+  [[nodiscard]] RawBall getBall() const;
+
+ private:
+  // TODO(matheusvtna): Aggregate a FilteredBall instead.
+  RawBall last_ball_; /**< The last filtered ball information. */
+};
+
+} // namespace perception
+
+#endif // PERCEPTION_PROCESSING_RAW_DETECTION_FILTER_BALL_FILTER_H
