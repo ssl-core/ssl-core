@@ -2,8 +2,7 @@
 #define PERCEPTION_CONTROLLER_PRODUCER_CONTROLLER_H
 
 #include "perception/controller/icontroller.h"
-#include "perception/network/message_consumer.h"
-#include "perception/vision_packets/vision_packets.h"
+#include "perception/messaging/receiver/message_receiver.h"
 #include "robocin/concurrency/blocking_deque.h"
 
 namespace perception {
@@ -16,7 +15,7 @@ namespace perception {
  * them into vision packets, and adding these packets to a blocking deque.
  */
 class ProducerController : IController {
-  using Deque = robocin::BlockingDeque<VisionPackets>;
+  using Deque = robocin::BlockingDeque<Payload>;
 
  public:
   /**
@@ -35,7 +34,7 @@ class ProducerController : IController {
 
  private:
   Deque& deque_; /**< Reference to the blocking deque where vision packets will be added. */
-  MessageConsumer message_consumer_; /**< Consumer for handling incoming messages. */
+  MessageReceiver message_receiver_; /**< Consumer for handling incoming messages. */
 };
 
 } // namespace perception

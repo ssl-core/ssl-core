@@ -2,8 +2,9 @@
 #define PERCEPTION_CONTROLLER_CONSUMER_CONTROLLER_H
 
 #include "perception/controller/icontroller.h"
-#include "perception/network/message_producer.h"
-#include "perception/vision_packets/processor/vision_packets_processor.h"
+#include "perception/messaging/receiver/payload.h"
+#include "perception/messaging/sender/message_sender.h"
+#include "perception/processing/detection_processor.h"
 #include "robocin/concurrency/blocking_deque.h"
 
 namespace perception {
@@ -17,7 +18,7 @@ namespace perception {
  */
 class ConsumerController : IController {
   using Datagram = robocin::ZmqDatagram;
-  using Deque = robocin::BlockingDeque<VisionPackets>;
+  using Deque = robocin::BlockingDeque<Payload>;
 
  public:
   /**
@@ -30,15 +31,22 @@ class ConsumerController : IController {
    * @brief Starts the controller's run loop to consume and process vision packets.
    *
    * This method overrides the run method of the IController interface. It continuously
-   * fetches vision packets from the deque, processes them using VisionPacketsProcessor,
+   * fetches vision packets from the deque, processes them using PayloadProcessor,
    * and publishes the processed packets.
    */
   void run() override;
 
  private:
   Deque& deque_; /**< Reference to the blocking deque containing vision packets to be consumed. */
-  VisionPacketsProcessor processor_; /**< Processor for handling vision packets. */
-  MessageProducer message_producer_; /**< Producer for handling outgoing messages. */
+  DetectionProcessor detection_processor_; /**< Processor for handling detection packets. */
+  MessageSender message_sender_;           /**< Producer for handling outgoing messages. */
+
+  /**
+   * @brief Handles detections from payloads by calling the detection processor and publish the
+   * results through the associated MessageSender.
+   * @param payloads A vector of Payload objects containing detection data.
+   */
+  void handleDetectionsFromPayloads(const std::vector<Payload>& payloads);
 };
 
 } // namespace perception
