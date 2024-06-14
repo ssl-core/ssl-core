@@ -1,0 +1,16 @@
+{
+  "name": "match",
+  "version": "1.0.0",
+  "main": "index.js",
+  "license": "MIT",
+  "scripts": {
+    "build": "esbuild component.js --bundle --minify --outfile=dist/match-mfe.js",
+    "dev": "esbuild component.js --bundle --outfile=dist/match-mfe.js --watch"
+  },
+  "devDependencies": {
+    "esbuild": "^0.19.5"
+  },
+  "dependencies": {
+    "three": "^0.158.0"
+  }
+}
