@@ -4,7 +4,8 @@
   border-radius: 0.5rem;
   color: white;
   border: 0;
-  width: 40vw;
+  width: 20rem;
+  max-width: 100%;
   flex-direction: column;
   gap: 1rem;
 }
@@ -85,4 +86,12 @@
   transition: 0.1s;
   font-weight: 700;
   margin-top: 1rem;
+}
+
+.dialog__button:hover {
+  background-color: #ECECEC;
+}
+
+.dialog__button:active {
+  background-color: #CCCCCC;
 }
