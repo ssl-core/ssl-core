@@ -16,7 +16,7 @@ class object_ptr { // NOLINT(*naming*)
   using element_type = T;
   using pointer = std::add_pointer_t<element_type>;
 
-  constexpr object_ptr() noexcept = default;
+  constexpr object_ptr() noexcept=default;
   constexpr object_ptr(std::nullptr_t) noexcept : object_ptr{} {} // NOLINT(*explicit*)
   constexpr object_ptr(pointer ptr) noexcept : ptr_{ptr} {}       // NOLINT(*explicit*)
 
@@ -33,7 +33,7 @@ class object_ptr { // NOLINT(*naming*)
     return *ptr_;
   }
 
-  constexpr pointer operator->() const noexcept { return ptr_; }
+  constexpr pointer operator-> () const noexcept { return ptr_; }
   constexpr explicit operator bool() const noexcept { return ptr_ != nullptr; }
 
   constexpr explicit operator pointer() const noexcept { return ptr_; }
@@ -57,7 +57,7 @@ object_ptr(std::unique_ptr<T>) -> object_ptr<typename std::unique_ptr<T>::elemen
 template <class T>
 object_ptr(std::shared_ptr<T>) -> object_ptr<typename std::shared_ptr<T>::element_type>;
 
-} // namespace robocin
+}
 
 namespace std {
 
