@@ -15,6 +15,9 @@ on:
 jobs:
   build-and-push-image:
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        architecture: [amd64, arm64]
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -61,4 +64,4 @@ jobs:
           file: ${{ github.event.inputs.full-name }}
           push: true
           tags: "${{ secrets.DOCKER_HUB_ID }}/${{ env.file-name }}:${{ env.tag-name }}"
-          platforms: linux/amd64,linux/arm64
+          platforms: linux/${{ matrix.architecture }}
