@@ -49,6 +49,6 @@ jobs:
       - uses: cpp-linter/cpp-linter-action@v2
         with:
           extensions: "h,c,hh,cc,h++,c++,hxx,cxx,H,C,hpp,cpp,ixx,cppm"
-          version: '' # platform's default installed version
+          version: '/usr/bin' # platform's default installed version
           style: 'file'
           tidy-checks: '-*' # disabled
