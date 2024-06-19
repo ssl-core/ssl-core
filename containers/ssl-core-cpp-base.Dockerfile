@@ -1,5 +1,8 @@
 FROM mcr.microsoft.com/devcontainers/base:noble
 
+# TODO(joseviccruz): remove this line below after https://github.com/devcontainers/images/issues/1056
+RUN userdel -r ubuntu; usermod -u 1000 vscode; groupmod -g 1000 vscode
+
 SHELL ["/bin/bash", "-c"]
 
 ARG      GCC_VERSION='14'
