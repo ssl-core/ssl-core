@@ -1,15 +1,15 @@
 package entity
 
-import "encoding/json"
+import (
+	"encoding/json"
+	"time"
+)
 
 type Chunk struct {
-	Payloads interface{}
+	EndTime time.Time `json:"end_time"`
+	Frames  []Frame   `json:"frames"`
 }
 
 func (c *Chunk) ToJson() ([]byte, error) {
-	data := map[string]interface{}{
-		"payloads": c.Payloads,
-	}
-
-	return json.Marshal(data)
+	return json.Marshal(c)
 }

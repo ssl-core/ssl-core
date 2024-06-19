@@ -3,7 +3,7 @@ package entity
 import (
 	"github.com/robocin/ssl-core/player-bff/internal/util"
 	"github.com/robocin/ssl-core/player-bff/pkg/pb/common"
-	"github.com/robocin/ssl-core/player-bff/pkg/pb/vision"
+	"github.com/robocin/ssl-core/player-bff/pkg/pb/playback"
 )
 
 type Robot struct {
@@ -19,7 +19,7 @@ type Robot struct {
 	DribblerWidth   float32   `json:"dribbler_width"`
 }
 
-func NewRobotFromProto(robot *vision.Robot) Robot {
+func NewRobot(robot *playback.Detection_Robot) Robot {
 	confidence := util.SetDefaultIfNil(robot.Confidence, 0)
 	pbRobotId := util.SetDefaultIfNil(robot.RobotId, &common.RobotId{})
 	robotId := uint8(util.SetDefaultIfNil(pbRobotId.Number, 0))
@@ -30,10 +30,9 @@ func NewRobotFromProto(robot *vision.Robot) Robot {
 	pbVelocity := util.SetDefaultIfNil(robot.Velocity, &common.Point2Df{})
 	velocity := []float32{util.SetDefaultIfNil(pbVelocity.X, 0) / 1000, util.SetDefaultIfNil(pbVelocity.Y, 0) / 1000}
 	angularVelocity := util.SetDefaultIfNil(robot.AngularVelocity, 0)
-	pbPhysicalAttributes := util.SetDefaultIfNil(robot.PhysicalAttributes, &vision.Robot_PhysicalAttributes{})
-	radius := util.SetDefaultIfNil(pbPhysicalAttributes.Radius, 0) / 1000
-	height := util.SetDefaultIfNil(pbPhysicalAttributes.Height, 0) / 1000
-	dribblerWidth := util.SetDefaultIfNil(pbPhysicalAttributes.DribblerWidth, 0) / 1000
+	radius := util.SetDefaultIfNil(robot.Radius, 0) / 1000
+	height := util.SetDefaultIfNil(robot.Height, 0) / 1000
+	dribblerWidth := util.SetDefaultIfNil(robot.DribblerWidth, 0) / 1000
 
 	return Robot{
 		Confidence:      confidence,

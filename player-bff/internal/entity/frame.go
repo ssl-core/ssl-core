@@ -5,47 +5,46 @@ import (
 	"time"
 
 	"github.com/robocin/ssl-core/player-bff/internal/util"
-	"github.com/robocin/ssl-core/player-bff/pkg/pb/vision"
+	"github.com/robocin/ssl-core/player-bff/pkg/pb/playback"
 	"google.golang.org/protobuf/types/known/timestamppb"
 )
 
 type Frame struct {
-	SerialId          uint64    `json:"serial_id"`
-	EffectiveSerialId uint64    `json:"effective_serial_id"`
-	Fps               float32   `json:"fps"`
-	Balls             []Ball    `json:"balls"`
-	Robots            []Robot   `json:"robots"`
-	Field             Field     `json:"field"`
-	CreatedAt         time.Time `json:"created_at"`
+	StartTime   time.Time `json:"start_time"`
+	CurrentTime time.Time `json:"current_time"`
+	SerialId    uint64    `json:"serial_id"`
+	Fps         uint32    `json:"fps"`
+	Balls       []Ball    `json:"balls"`
+	Robots      []Robot   `json:"robots"`
+	Field       Field     `json:"field"`
 }
 
-func NewFrameFromProto(frame *vision.Frame) Frame {
-	field := NewFieldFromProto(util.SetDefaultIfNil(frame.Field, &vision.Field{}))
+func NewFrame(sample *playback.Sample) Frame {
+	field := NewField(util.SetDefaultIfNil(sample.Field, &playback.Field{}))
 
-	balls := make([]Ball, len(frame.Balls))
-	for i, ball := range frame.Balls {
-		balls[i] = NewBallFromProto(util.SetDefaultIfNil(ball, &vision.Ball{}))
+	balls := make([]Ball, len(sample.Detection.Balls))
+	for i, ball := range sample.Detection.Balls {
+		balls[i] = NewBall(util.SetDefaultIfNil(ball, &playback.Detection_Ball{}))
 	}
 
-	robots := make([]Robot, len(frame.Robots))
-	for i, robot := range frame.Robots {
-		robots[i] = NewRobotFromProto(util.SetDefaultIfNil(robot, &vision.Robot{}))
+	robots := make([]Robot, len(sample.Detection.Robots))
+	for i, robot := range sample.Detection.Robots {
+		robots[i] = NewRobot(util.SetDefaultIfNil(robot, &playback.Detection_Robot{}))
 	}
 
-	pbProperties := util.SetDefaultIfNil(frame.Properties, &vision.Frame_Properties{})
-	serialId := util.SetDefaultIfNil(pbProperties.SerialId, 0)
-	effectiveSerialId := util.SetDefaultIfNil(pbProperties.EffectiveSerialId, 0)
-	fps := util.SetDefaultIfNil(pbProperties.Fps, 0)
-	createdAt := util.SetDefaultIfNil(pbProperties.CreatedAt, &timestamppb.Timestamp{}).AsTime()
+	serialId := util.SetDefaultIfNil(sample.Detection.SerialId, 0)
+	fps := util.SetDefaultIfNil(sample.Detection.ExpectedFramerate, 0)
+	currentTime := util.SetDefaultIfNil(sample.Timestamp, &timestamppb.Timestamp{}).AsTime()
+	startTime := util.SetDefaultIfNil(sample.FirstTimestamp, &timestamppb.Timestamp{}).AsTime()
 
 	return Frame{
-		SerialId:          serialId,
-		EffectiveSerialId: effectiveSerialId,
-		Fps:               fps,
-		Balls:             balls,
-		Robots:            robots,
-		Field:             field,
-		CreatedAt:         createdAt,
+		StartTime:   startTime,
+		CurrentTime: currentTime,
+		SerialId:    serialId,
+		Fps:         fps,
+		Balls:       balls,
+		Robots:      robots,
+		Field:       field,
 	}
 }
 

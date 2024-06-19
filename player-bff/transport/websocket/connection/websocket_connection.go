@@ -11,20 +11,21 @@ type WebsocketConnectionState uint8
 const (
 	Available WebsocketConnectionState = iota
 	Live
-	Replay
 )
 
 type WebsocketConnection struct {
-	state  WebsocketConnectionState
-	conn   *websocket.Conn
-	client *client.GrpcClienter
+	state       WebsocketConnectionState
+	conn        *websocket.Conn
+	client      *client.GrpcClient
+	sharedProxy *application.ConnectionProxy
 }
 
-func NewWebsocketConnection(conn *websocket.Conn, client *client.GrpcClient) *WebsocketConnection {
+func NewWebsocketConnection(conn *websocket.Conn, client *client.GrpcClient, sharedProxy *application.ConnectionProxy) *WebsocketConnection {
 	return &WebsocketConnection{
-		state:  Available,
-		conn:   conn,
-		client: client,
+		state:       Available,
+		conn:        conn,
+		client:      client,
+		sharedProxy: sharedProxy,
 	}
 }
 
@@ -48,7 +49,7 @@ func (wc *WebsocketConnection) Listen() {
 
 func (wc *WebsocketConnection) OnNotify(event application.ConnectionProxyEvent) {
 	switch event.Type {
-	case "frame":
+	case "sample":
 		wc.conn.WriteJSON(event.Payload)
 	}
 }
@@ -56,21 +57,12 @@ func (wc *WebsocketConnection) OnNotify(event application.ConnectionProxyEvent) 
 func (wc *WebsocketConnection) handleEvent(event string, data map[string]interface{}) {
 	switch event {
 	case "receive-live-stream":
-		if wc.state == Replay {
-			wc.conn.WriteMessage(websocket.TextMessage, []byte("Error: Cannot receive live stream while replaying"))
-			return
-		}
-
-		if wc.state == Live {
-			wc.conn.WriteMessage(websocket.TextMessage, []byte("Error: Already receiving live stream"))
-			return
-		}
-
-		wc.state = Live
-
-		proxy := application.NewConnectionProxy()
-		proxy.AddListener(wc)
-		wc.client.ReceiveLiveStream(proxy)
+		wc.changeState(Live)
+		wc.sharedProxy.AddListener(wc)
+	case "get-chunk":
+		wc.changeState(Available)
+		timestamp := data["timestamp"].(string)
+		wc.client.GetReplayChunk(timestamp)
 	case "ping":
 		wc.conn.WriteMessage(websocket.TextMessage, []byte("pong"))
 	case "close":
@@ -78,4 +70,16 @@ func (wc *WebsocketConnection) handleEvent(event string, data map[string]interfa
 	default:
 		wc.conn.WriteMessage(websocket.TextMessage, []byte("echo: "+string(event)))
 	}
+}
+
+func (wc *WebsocketConnection) changeState(newState WebsocketConnectionState) {
+	if wc.state == newState {
+		return
+	}
+
+	if wc.state == Live {
+		wc.sharedProxy.RemoveListener(wc)
+	}
+
+	wc.state = newState
 }

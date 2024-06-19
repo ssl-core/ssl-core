@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 
+	"github.com/robocin/ssl-core/player-bff/internal/application"
 	grpcClient "github.com/robocin/ssl-core/player-bff/transport/grpc/client"
 	httpServer "github.com/robocin/ssl-core/player-bff/transport/http/server"
 	websocketServer "github.com/robocin/ssl-core/player-bff/transport/websocket/server"
@@ -15,12 +16,17 @@ const (
 )
 
 func main() {
+	sharedProxy := application.NewConnectionProxy()
 	client := grpcClient.NewGrpcClient(grpcAddress)
+
+	go client.ReceiveLiveStream(sharedProxy)
 	fmt.Println("Connected to " + grpcAddress)
 
 	server := httpServer.NewHttpServer(serverAddress)
-	wsServer := websocketServer.NewWebsocketServer(server.GetRouter(), client)
+	router := server.GetRouter()
+	wsServer := websocketServer.NewWebsocketServer(router, client, sharedProxy)
 
+	wsServer.Register()
 	fmt.Println("Listening on " + serverAddress)
 
 	if err := server.Serve(); err != nil {

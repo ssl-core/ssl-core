@@ -2,11 +2,10 @@ package entity
 
 import (
 	"github.com/robocin/ssl-core/player-bff/internal/util"
-	"github.com/robocin/ssl-core/player-bff/pkg/pb/vision"
+	"github.com/robocin/ssl-core/player-bff/pkg/pb/playback"
 )
 
 type Field struct {
-	SerialId                uint64  `json:"serial_id"`
 	Length                  float32 `json:"length"`
 	Width                   float32 `json:"width"`
 	GoalDepth               float32 `json:"goal_depth"`
@@ -17,8 +16,7 @@ type Field struct {
 	GoalCenterToPenaltyMark float32 `json:"goal_center_to_penalty_mark"`
 }
 
-func NewFieldFromProto(field *vision.Field) Field {
-	serialId := util.SetDefaultIfNil(field.SerialId, 0)
+func NewField(field *playback.Field) Field {
 	length := util.SetDefaultIfNil(field.Length, 0) / 1000
 	width := util.SetDefaultIfNil(field.Width, 0) / 1000
 	goalDepth := util.SetDefaultIfNil(field.GoalDepth, 0) / 1000
@@ -29,7 +27,6 @@ func NewFieldFromProto(field *vision.Field) Field {
 	goalCenterToPenaltyMark := util.SetDefaultIfNil(field.GoalCenterToPenaltyMark, 0) / 1000
 
 	return Field{
-		SerialId:                serialId,
 		Length:                  length,
 		Width:                   width,
 		GoalDepth:               goalDepth,

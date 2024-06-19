@@ -8,10 +8,9 @@ import (
 
 	"github.com/robocin/ssl-core/player-bff/internal/application"
 	"github.com/robocin/ssl-core/player-bff/internal/entity"
-	pb "github.com/robocin/ssl-core/player-bff/pkg/pb/ui"
+	pb "github.com/robocin/ssl-core/player-bff/pkg/pb/gateway"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials/insecure"
-	"google.golang.org/protobuf/types/known/durationpb"
 )
 
 type GrpcClient struct {
@@ -22,7 +21,7 @@ type GrpcClient struct {
 
 func NewGrpcClient(address string) *GrpcClient {
 	opt := grpc.WithTransportCredentials(insecure.NewCredentials())
-	conn, err := grpc.Dial(address, opt)
+	conn, err := grpc.NewClient(address, opt)
 
 	if err != nil {
 		log.Fatalf("Failed to listen: %v", err)
@@ -49,18 +48,15 @@ func (gc *GrpcClient) ReceiveLiveStream(proxy *application.ConnectionProxy) erro
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
 
-	req := &pb.ReceiveLiveStreamRequest{
-		MessageTypes: []pb.MessageType{
-			pb.MessageType_MESSAGE_TYPE_VISION,
-		},
-	}
-
-	stream, err := gc.client.ReceiveLiveStream(ctx, req)
+	stream, err := gc.client.ReceiveLivestream(ctx)
 
 	if err != nil {
 		fmt.Println(err)
 		return err
 	}
+
+	req := &pb.ReceiveLivestreamRequest{}
+	stream.Send(req)
 
 	for {
 		response, err := stream.Recv()
@@ -74,84 +70,57 @@ func (gc *GrpcClient) ReceiveLiveStream(proxy *application.ConnectionProxy) erro
 			continue
 		}
 
-		payload := response.Payload.GetVisionFrame()
+		payload := response.Sample
 
-		if payload.Properties == nil {
+		if payload.String() != "" {
 			continue
 		}
 
-		frame := entity.NewFrameFromProto(payload)
-		event := application.NewConnectionProxyEvent("frame", frame)
+		sample := entity.NewFrame(payload)
+		event := application.NewConnectionProxyEvent("sample", sample)
 		proxy.Notify(event)
 	}
 
 	return nil
 }
 
-func (gc *GrpcClient) ReceiveReplay(proxy *application.ConnectionProxy) error {
+func (gc *GrpcClient) GetReplayChunk(timestamp string) (entity.Chunk, error) {
 	client := pb.NewGatewayServiceClient(gc.conn)
 
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
 
-	stream, err := client.ReceiveLiveStream(ctx, &pb.ReceiveLiveStreamRequest{
-		MessageTypes: []pb.MessageType{
-			pb.MessageType_MESSAGE_TYPE_VISION,
-		},
-	})
-
-	if err != nil {
-		fmt.Println(err)
-		return err
-	}
-
-	for {
-		response, err := stream.Recv()
-
-		if err != nil {
-			if err == io.EOF {
-				break
-			}
-
-			fmt.Println(err)
-			continue
-		}
-
-		payload := response.Payload.GetVisionFrame()
-
-		if payload.Properties == nil {
-			continue
-		}
-
-		chunk := entity.NewFrameFromProto(payload)
-		event := application.NewConnectionProxyEvent("chunk", chunk)
-		proxy.Notify(event)
-	}
-
-	return nil
-}
-
-func (gc *GrpcClient) GetVisionChunk() (entity.Chunk, error) {
-	client := pb.NewGatewayServiceClient(gc.conn)
-
-	ctx, cancel := context.WithCancel(context.Background())
-	defer cancel()
-
-	response, err := client.GetVisionChunk(ctx, &pb.GetVisionChunkRequest{
-		Header: &pb.ChunkRequestHeader{
-			Start: &durationpb.Duration{
-				Seconds: 0,
-			},
-		},
-	})
+	response, err := client.GetGameEvents(ctx, &pb.GetGameEventsRequest{})
+	fmt.Println(response)
 
 	if err != nil {
 		return entity.Chunk{}, err
 	}
 
 	chunk := entity.Chunk{
-		Payloads: response.Payloads,
+		Frames: []entity.Frame{},
 	}
 
 	return chunk, nil
+}
+
+func (gc *GrpcClient) GetGameEvents() ([]entity.Event, error) {
+	client := pb.NewGatewayServiceClient(gc.conn)
+
+	ctx, cancel := context.WithCancel(context.Background())
+	defer cancel()
+
+	response, err := client.GetGameEvents(ctx, &pb.GetGameEventsRequest{})
+
+	if err != nil {
+		return []entity.Event{}, err
+	}
+
+	events := make([]entity.Event, 0)
+
+	for _, event := range response.GetGameEvents() {
+		events = append(events, entity.NewEvent(event))
+	}
+
+	return events, nil
 }

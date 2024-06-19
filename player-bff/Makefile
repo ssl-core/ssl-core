@@ -13,4 +13,4 @@ setup:
 	@go mod download
 
 compile-proto:
-	@bash scripts/compile-proto.sh
+	@bash scripts/compile_proto.sh

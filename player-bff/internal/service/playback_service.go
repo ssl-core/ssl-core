@@ -8,5 +8,6 @@ type PlaybackService interface {
 	GetConn() interface{}
 	Close() error
 	ReceiveLiveStream() error
-	GetVisionChunk() (entity.Chunk, error)
+	GetReplayChunk() (entity.Chunk, error)
+	GetGameEvents() ([]entity.Event, error)
 }

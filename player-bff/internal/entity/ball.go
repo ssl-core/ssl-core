@@ -3,7 +3,7 @@ package entity
 import (
 	"github.com/robocin/ssl-core/player-bff/internal/util"
 	"github.com/robocin/ssl-core/player-bff/pkg/pb/common"
-	"github.com/robocin/ssl-core/player-bff/pkg/pb/vision"
+	"github.com/robocin/ssl-core/player-bff/pkg/pb/playback"
 )
 
 type Ball struct {
@@ -12,7 +12,7 @@ type Ball struct {
 	Velocity   []float32 `json:"velocity"`
 }
 
-func NewBallFromProto(ball *vision.Ball) Ball {
+func NewBall(ball *playback.Detection_Ball) Ball {
 	confidence := util.SetDefaultIfNil(ball.Confidence, 0)
 	pbPosition := util.SetDefaultIfNil(ball.Position, &common.Point3Df{})
 	position := []float32{util.SetDefaultIfNil(pbPosition.X, 0) / 1000, util.SetDefaultIfNil(pbPosition.Y, 0) / 1000, util.SetDefaultIfNil(pbPosition.Z, 0) / 1000}
