@@ -49,9 +49,5 @@ int main() {
   rc::GameStatus game_status = game_status_mapper->fromDetectionAndReferee(detection, referee);
   std::println("{}", game_status.DebugString());
 
-  std::expected<int, std::string> expected;
-  expected = std::unexpected<std::string>("error");
-  // std::unexpected("hello");
-
   return 0;
 }
