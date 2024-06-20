@@ -1,0 +1,26 @@
+syntax = "proto3";
+
+package protocols.gateway;
+
+import "protocols/common/game_event.proto";
+import "protocols/playback/sample.proto";
+
+service GatewayService {
+  rpc ReceiveLivestream(stream ReceiveLivestreamRequest) returns (stream ReceiveLivestreamResponse);
+  rpc GetGameEvents(GetGameEventsRequest) returns (GetGameEventsResponse);
+
+  // TODO(#111): add parameters rpc.
+  // TODO(#112): add mouse and keyboard events rpc.
+}
+
+message ReceiveLivestreamRequest {}
+
+message ReceiveLivestreamResponse {
+  playback.Sample sample = 1;
+}
+
+message GetGameEventsRequest {}
+
+message GetGameEventsResponse {
+  repeated common.GameEvent game_events = 1;
+}
