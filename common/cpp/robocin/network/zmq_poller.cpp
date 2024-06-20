@@ -1,17 +1,12 @@
-#include "referee/network/zmq_poller.h"
+#include "robocin/network/zmq_poller.h"
 
-#include <robocin/network/zmq_datagram.h>
-#include <robocin/network/zmq_subscriber_socket.h>
+#include "robocin/network/zmq_datagram.h"
+#include "robocin/network/zmq_subscriber_socket.h"
+
 #include <zmq.h>
 #include <zmq.hpp>
 
-namespace referee {
-namespace {
-
-using ::robocin::ZmqDatagram;
-using ::robocin::ZmqSubscriberSocket;
-
-} // namespace
+namespace robocin {
 
 void ZmqPoller::push(ZmqSubscriberSocket& socket) {
   pollitems_.emplace_back(&socket, 0, ZMQ_POLLIN, 0);
@@ -31,4 +26,4 @@ ZmqDatagram ZmqPoller::receive(ZmqSubscriberSocket& socket) const {
   return ZmqDatagram{};
 }
 
-} // namespace referee
+} // namespace robocin

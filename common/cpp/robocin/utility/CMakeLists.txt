@@ -59,3 +59,9 @@ robocin_cpp_test(
   SRCS fuzzy_compare_test.cpp
   DEPS fuzzy_compare
 )
+
+robocin_cpp_library(
+  NAME singleton
+  HDRS singleton.h
+  SRCS singleton.cpp
+)

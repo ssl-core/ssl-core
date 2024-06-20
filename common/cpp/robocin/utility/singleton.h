@@ -1,9 +1,9 @@
-#ifndef REFEREE_COMMON_SINGLETON_H
-#define REFEREE_COMMON_SINGLETON_H
+#ifndef ROBOCIN_UTILITY_SINGLETON_H
+#define ROBOCIN_UTILITY_SINGLETON_H
 
 #include <concepts>
 
-namespace referee {
+namespace robocin {
 
 template <std::default_initializable T>
 class Singleton {
@@ -26,6 +26,6 @@ class Singleton {
   }
 };
 
-} // namespace referee
+} // namespace robocin
 
-#endif // REFEREE_COMMON_SINGLETON_H
+#endif // ROBOCIN_UTILITY_SINGLETON_H

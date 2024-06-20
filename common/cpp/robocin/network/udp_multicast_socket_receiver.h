@@ -1,5 +1,5 @@
-#ifndef ROBOCIN_NETWORK_UPD_MULTICAST_SOCKET_RECEIVER_H
-#define ROBOCIN_NETWORK_UPD_MULTICAST_SOCKET_RECEIVER_H
+#ifndef ROBOCIN_NETWORK_UDP_MULTICAST_SOCKET_RECEIVER_H
+#define ROBOCIN_NETWORK_UDP_MULTICAST_SOCKET_RECEIVER_H
 
 #include "robocin/version/version.h"
 
@@ -11,6 +11,8 @@ namespace robocin {
 
 class IUdpMulticastSocketReceiver { // NOLINT(*member-functions*)
  public:
+  using receive_type = std::string;
+
   virtual ~IUdpMulticastSocketReceiver() = default;
 
   virtual void connect(std::string_view ip_address, int port) const = 0;
@@ -22,8 +24,6 @@ class IUdpMulticastSocketReceiver { // NOLINT(*member-functions*)
 
 class UdpMulticastSocketReceiver : public IUdpMulticastSocketReceiver {
  public:
-  using receive_type = std::string;
-
   explicit UdpMulticastSocketReceiver(size_t size = 1024);
 
   void connect(std::string_view ip_address, int port) const override;
@@ -41,4 +41,4 @@ class UdpMulticastSocketReceiver : public IUdpMulticastSocketReceiver {
 
 #endif
 
-#endif // ROBOCIN_NETWORK_UPD_MULTICAST_SOCKET_RECEIVER_H
+#endif // ROBOCIN_NETWORK_UDP_MULTICAST_SOCKET_RECEIVER_H
