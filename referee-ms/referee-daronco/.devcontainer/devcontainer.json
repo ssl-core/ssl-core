@@ -50,21 +50,31 @@
         "C_Cpp.intelliSenseEngine": "disabled", // disabling IntelliSense Engine to use clangd
         // clangd Settings
         "clangd.path": "clangd",
+        "clangd.checkUpdates": false,
         // CMake Settings
         "cmake.buildDirectory": "${workspaceFolder}/build",
         "cmake.cmakePath": "cmake",
         "cmake.generator": "Ninja",
         "cmake.options.advanced": {
-          "variant": {
+          "kit": {
             "statusBarVisibility": "visible"
           },
-          "build": {
+          "launchTarget": {
             "statusBarVisibility": "visible"
           },
           "launch": {
             "statusBarVisibility": "visible"
           },
           "debug": {
+            "statusBarVisibility": "visible"
+          },
+          "variant": {
+            "statusBarVisibility": "visible"
+          },
+          "build": {
+            "statusBarVisibility": "visible"
+          },
+          "buildTarget": {
             "statusBarVisibility": "visible"
           }
         },
