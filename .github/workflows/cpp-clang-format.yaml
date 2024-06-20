@@ -46,9 +46,10 @@ jobs:
     container: robocin/ssl-core-cpp-base:latest
     steps:
       - uses: actions/checkout@v4
-      - uses: cpp-linter/cpp-linter-action@v2
-        with:
-          extensions: "h,c,hh,cc,h++,c++,hxx,cxx,H,C,hpp,cpp,ixx,cppm"
-          version: '/usr/bin' # platform's default installed version
-          style: 'file'
-          tidy-checks: '-*' # disabled
+      - shell: bash
+        run: |
+          set -e
+
+          for file in $(find . -type f -regex '.*\.\(h\|c\|hh\|cc\|h++\|c++\|hxx\|cxx\|H\|C\|hpp\|cpp\|ixx\|cppm\)'); do
+            clang-format --dry-run --Werror -i "${file}"
+          done
