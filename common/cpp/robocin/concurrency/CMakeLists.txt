@@ -9,3 +9,9 @@ robocin_cpp_test(
   SRCS thread_pool_test.cpp
   DEPS concurrency GTest::gtest
 )
+
+robocin_cpp_library(
+  NAME concurrent_queue
+  HDRS concurrent_queue.h
+  SRCS concurrent_queue.cpp
+)
