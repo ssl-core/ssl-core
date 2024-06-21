@@ -1,0 +1,36 @@
+name: "Perception Brutus: Build and Run Tests"
+on:
+  pull_request:
+    paths: ["perception/perception-brutus/**"]
+  push:
+    branches:
+      - main
+    paths: ["perception/perception-brutus/**"]
+  workflow_dispatch:
+
+env:
+  cpp_compiler: clang++
+
+jobs:
+  build_and_run_tests:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: devcontainers/ci@v0.3
+        with:
+          env: cpp_compiler
+          subFolder: perception/perception-brutus
+          configFile: perception/perception-brutus/.devcontainer/devcontainer.json
+          runCmd: |
+            set -e
+
+            ${cpp_compiler} --version
+
+            cmake -B build \
+                -S . \
+                -G Ninja \
+                -DCMAKE_CXX_COMPILER=${cpp_compiler}
+
+            cmake --build build
+
+            ctest --test-dir build

@@ -39,9 +39,9 @@ All the code developed was done in [Visual Studio Code](https://code.visualstudi
 
   Contains experiments and prototypes for conceptual validation.
 
-* [`vision-be`](vision-be/README.md)
+* [`perception`](perception/README.md)
 
-  Contains the vision microservice.
+  Contains the perception microservice.
 
 * [`referee-ms`](referee-ms/README.md)
 

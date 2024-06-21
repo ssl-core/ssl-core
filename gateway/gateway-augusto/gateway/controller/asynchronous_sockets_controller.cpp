@@ -6,7 +6,7 @@ namespace gateway {
 namespace {
 
 constexpr std::string_view kGatewayLive = "Gateway.Live";
-constexpr std::string_view kVisionService = "Vision";
+constexpr std::string_view kVisionService = "Perception";
 
 } // namespace
 
