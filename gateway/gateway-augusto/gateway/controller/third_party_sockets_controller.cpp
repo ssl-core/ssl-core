@@ -2,6 +2,8 @@
 
 #include "gateway/service_discovery.h"
 
+#include <iostream>
+
 namespace gateway {
 namespace {
 
@@ -35,10 +37,12 @@ ThirdPartySocketsController::ThirdPartySocketsController() {
 }
 
 void ThirdPartySocketsController::run() {
+  std::cout << "Third party sockets controller is running" << std::endl;
   while (true) {
     poller_.poll(/*timeout=*/-1);
 
     if (auto vision_message = poller_.recvFrom(vision_); !vision_message.empty()) {
+      std::cout << "Sending vision message to publisher" << std::endl;
       publisher_.send({"vision-third-party", vision_message});
     }
   }

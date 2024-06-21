@@ -1,13 +1,13 @@
 robocin_cpp_library(
-  NAME thread_pool
-  HDRS thread_pool.h
-  SRCS thread_pool.cpp
+  NAME concurrency
+  HDRS thread_pool.h blocking_deque.h
+  SRCS thread_pool.cpp blocking_deque.cpp
 )
 
 robocin_cpp_test(
   NAME thread_pool_test
   SRCS thread_pool_test.cpp
-  DEPS thread_pool GTest::gtest
+  DEPS concurrency GTest::gtest
 )
 
 robocin_cpp_library(

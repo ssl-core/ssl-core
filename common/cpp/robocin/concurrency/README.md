@@ -7,6 +7,7 @@ A collection of concurrency functions and classes.
 - [concurrency](#concurrency)
   - [Table of Contents](#table-of-contents)
   - [`thread_pool`](#thread_pool)
+  - [`blocking_deque`](#blocking_deque)
 
 ## [`thread_pool`](thread_pool.h)
 
