@@ -58,15 +58,10 @@ class IConcurrentQueue {
   // TODO(matheusvtna): add capacity methods
   // [[nodiscard]] virtual bool empty() const = 0;
   // [[nodiscard]] virtual size_type size() const = 0;
-
- protected:
-  container_type container_; // NOLINT(*private*)
 };
 
 template <class T, class Container = std::deque<T>>
 class AtomicConcurrentQueue : public IConcurrentQueue<T, Container> {
-  using IConcurrentQueue<T, Container>::container_;
-
  public:
   using container_type = IConcurrentQueue<T, Container>::container_type;
   using value_type = IConcurrentQueue<T, Container>::value_type;
@@ -122,13 +117,12 @@ class AtomicConcurrentQueue : public IConcurrentQueue<T, Container> {
   }
 
  private:
+  container_type container_;
   std::atomic<bool> atomic_locker_;
 };
 
 template <class T, class Container = std::deque<T>>
 class ConditionVariableConcurrentQueue : public IConcurrentQueue<T, Container> {
-  using IConcurrentQueue<T, Container>::container_;
-
  public:
   using container_type = IConcurrentQueue<T, Container>::container_type;
   using value_type = IConcurrentQueue<T, Container>::value_type;
@@ -181,6 +175,7 @@ class ConditionVariableConcurrentQueue : public IConcurrentQueue<T, Container> {
   }
 
  private:
+  container_type container_;
   std::mutex mutex_;
   std::condition_variable cv_;
 };
@@ -192,8 +187,6 @@ class ConditionVariableConcurrentQueue : public IConcurrentQueue<T, Container> {
  */
 template <class T, class Container = std::deque<T>>
 class MutexConcurrentQueue : public IConcurrentQueue<T, Container> {
-  using IConcurrentQueue<T, Container>::container_;
-
  public:
   using container_type = IConcurrentQueue<T, Container>::container_type;
   using value_type = IConcurrentQueue<T, Container>::value_type;
@@ -241,6 +234,7 @@ class MutexConcurrentQueue : public IConcurrentQueue<T, Container> {
   }
 
  private:
+  container_type container_;
   std::mutex mutex_;
 };
 
