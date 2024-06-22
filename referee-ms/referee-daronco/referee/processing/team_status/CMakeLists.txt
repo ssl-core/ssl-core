@@ -2,7 +2,7 @@ robocin_cpp_library(
   NAME team_status_mapper
   HDRS team_status_mapper.h
   SRCS team_status_mapper.cpp
-  DEPS common::object_ptr protocols::protobufs
+  DEPS common::memory protocols::protobufs
 )
 
 robocin_cpp_test(

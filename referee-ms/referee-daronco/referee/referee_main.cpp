@@ -6,7 +6,6 @@
 #include "referee/processing/team_status/team_status_mapper.h"
 
 #include <expected>
-#include <memory>
 #include <print>
 #include <protocols/perception/detection.pb.h>
 #include <protocols/referee/game_status.pb.h>
@@ -14,6 +13,14 @@
 #include <protocols/third_party/game_controller/referee.pb.h>
 #include <robocin/memory/object_ptr.h>
 #include <robocin/network/zmq_subscriber_socket.h>
+
+using referee::GameCommandMapper;
+using referee::GameEventsMapper;
+using referee::GameStageMapper;
+using referee::GameStatusMapper;
+using referee::IGameStatusMapper;
+using referee::TeamStatusMapper;
+using referee::detection_util::Clock;
 
 namespace rc {
 
@@ -29,22 +36,17 @@ using ::protocols::third_party::game_controller::Referee;
 } // namespace tp
 
 int main() {
-  referee::TeamStatusMapper team_status_mapper;
-  referee::GameStageMapper game_stage_mapper;
-  referee::GameCommandMapper game_command_mapper;
-  referee::GameEventsMapper game_events_mapper;
-
-  auto game_status_mapper
-      = std::make_unique<referee::GameStatusMapper>(std::make_unique<referee::TeamStatusMapper>(),
-                                                    std::make_unique<referee::GameStageMapper>(),
-                                                    std::make_unique<referee::GameCommandMapper>(),
-                                                    std::make_unique<referee::GameEventsMapper>());
+  std::unique_ptr<IGameStatusMapper> game_status_mapper
+      = std::make_unique<GameStatusMapper>(std::make_unique<TeamStatusMapper>(),
+                                           std::make_unique<GameStageMapper>(),
+                                           std::make_unique<GameCommandMapper>(),
+                                           std::make_unique<GameEventsMapper>());
 
   rc::Detection detection;
   tp::Referee referee;
 
   // once per cycle.
-  referee::detection_util::Clock::update(detection);
+  Clock::update(detection);
 
   rc::GameStatus game_status = game_status_mapper->fromDetectionAndReferee(detection, referee);
   std::println("{}", game_status.DebugString());

@@ -19,7 +19,9 @@ namespace referee {
 namespace {
 
 using ::google::protobuf::util::TimeUtil;
+using ::robocin::elog;
 using ::robocin::object_ptr;
+using ::robocin::wlog;
 
 // NOLINTBEGIN(*naming*, *magic-numbers*)
 constexpr auto pNearTheBallDistance = []() { return 300.0F; };
@@ -228,7 +230,7 @@ class FactoryInternal {
         break;
       }
       default: {
-        robocin::elog(kTeamUnavailableMessage);
+        elog(kTeamUnavailableMessage);
         *result.mutable_halt() = rc::Halt{};
         break;
       }
@@ -250,7 +252,7 @@ class FactoryInternal {
         break;
       }
       default: {
-        robocin::elog(kTeamUnavailableMessage);
+        elog(kTeamUnavailableMessage);
         *result.mutable_halt() = rc::Halt{};
         break;
       }
@@ -272,7 +274,7 @@ class FactoryInternal {
         break;
       }
       default: {
-        robocin::elog(kTeamUnavailableMessage);
+        elog(kTeamUnavailableMessage);
         *result.mutable_halt() = rc::Halt{};
         break;
       }
@@ -294,7 +296,7 @@ class FactoryInternal {
         break;
       }
       default: {
-        robocin::elog(kTeamUnavailableMessage);
+        elog(kTeamUnavailableMessage);
         *result.mutable_halt() = rc::Halt{};
         break;
       }
@@ -324,7 +326,7 @@ class FactoryInternal {
         break;
       }
       default: {
-        robocin::wlog(kTeamUnavailableMessage);
+        wlog(kTeamUnavailableMessage);
         *result.mutable_halt() = rc::Halt{};
         break;
       }
@@ -353,7 +355,7 @@ class FactoryInternal {
         break;
       }
       default: {
-        robocin::elog(kTeamUnavailableMessage);
+        elog(kTeamUnavailableMessage);
         *result.mutable_halt() = rc::Halt{};
         break;
       }
@@ -382,7 +384,7 @@ class FactoryInternal {
         break;
       }
       default: {
-        robocin::elog(kTeamUnavailableMessage);
+        elog(kTeamUnavailableMessage);
         *result.mutable_halt() = rc::Halt{};
         break;
       }
@@ -411,7 +413,7 @@ class FactoryInternal {
         break;
       }
       default: {
-        robocin::elog(kTeamUnavailableMessage);
+        elog(kTeamUnavailableMessage);
         *result.mutable_halt() = rc::Halt{};
         break;
       }
@@ -631,8 +633,7 @@ rc::GameCommand GameCommandMapper::fromDetectionAndReferee(const rc::Detection& 
   }
 
   if (!referee_util.isHalt()) {
-    robocin::elog("the expected command was halt, but '{}' was found.",
-                  static_cast<int>(referee.command()));
+    elog("the expected command was halt, but '{}' was found.", static_cast<int>(referee.command()));
   }
   return factory.makeHalt();
 }
