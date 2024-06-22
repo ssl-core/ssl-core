@@ -25,15 +25,15 @@ class ICameraFilter::Factory {
 class CameraFilter::Factory : public ICameraFilter::Factory {
  public:
   Factory(
-      std::move_only_function<std::unique_ptr<IBallFilter::Factory>()> ball_filter_factory_fn,
-      std::move_only_function<std::unique_ptr<IRobotFilter::Factory>()> robot_filter_factory_fn);
+      std::move_only_function<std::unique_ptr<IBallFilter::Factory>() const> ball_filter_factory_fn,
+      std::move_only_function<std::unique_ptr<IRobotFilter::Factory>() const>
+          robot_filter_factory_fn);
 
   [[nodiscard]] std::unique_ptr<ICameraFilter> make() const override;
 
  private:
-  mutable std::move_only_function<std::unique_ptr<IBallFilter::Factory>()> ball_filter_factory_fn_;
-  mutable std::move_only_function<std::unique_ptr<IRobotFilter::Factory>()>
-      robot_filter_factory_fn_;
+  std::move_only_function<std::unique_ptr<IBallFilter::Factory>() const> ball_filter_factory_fn_;
+  std::move_only_function<std::unique_ptr<IRobotFilter::Factory>() const> robot_filter_factory_fn_;
 };
 
 } // namespace perception
