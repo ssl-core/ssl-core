@@ -44,26 +44,40 @@ void println(std::format_string<Args...> fmt, Args&&... args) {
 
 #endif
 
+template <class Char>
+class runtime_format_string { // NOLINT(*naming*, *member-functions*)
+ public:
+  inline runtime_format_string(std::basic_string_view<Char> str) noexcept : // NOLINT(*explicit*)
+      str_{str} {}
+
+  runtime_format_string(const runtime_format_string&) = delete;
+  void operator=(const runtime_format_string&) = delete;
+
+ private:
+  std::basic_string_view<Char> str_;
+
+  template <class, class...>
+  friend class basic_format_string_with_location;
+};
+
 template <class Char, class... Args>
 class basic_format_string_with_location { // NOLINT(*naming*)
  public:
   template <class Str>
-    requires std::convertible_to<const Str&, std::basic_format_string<Char, Args...>>
+    requires std::convertible_to<const Str&, std::basic_string_view<Char>>
   consteval basic_format_string_with_location(const Str& str, // NOLINT(*explicit*)
                                               std::source_location location
                                               = std::source_location::current()) :
       str_(str),
       location_(location) {}
 
-  basic_format_string_with_location(std::basic_string_view<Char> str, // NOLINT(*explicit*)
+  basic_format_string_with_location(runtime_format_string<Char> str, // NOLINT(*explicit*)
                                     std::source_location location
                                     = std::source_location::current()) :
-      str_(str),
+      str_(str.str_),
       location_(location) {}
 
-  [[nodiscard]] constexpr std::basic_format_string<Char, Args...> get() const { // NOLINT(*naming*)
-    return str_;
-  }
+  [[nodiscard]] constexpr std::basic_format_string<Char, Args...> get() const { return str_; }
   [[nodiscard]] constexpr std::source_location location() const { return location_; }
 
  private:
