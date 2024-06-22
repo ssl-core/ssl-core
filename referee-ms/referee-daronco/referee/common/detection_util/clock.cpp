@@ -37,7 +37,7 @@ class ClockInternal {
   Timestamp timestamp_{/*serial_id=*/0ULL, /*seconds=*/0LL, /*nanos=*/0};
 };
 
-using SClockInternal = Singleton<ClockInternal>;
+using SClockInternal = robocin::Singleton<ClockInternal>;
 
 } // namespace
 
