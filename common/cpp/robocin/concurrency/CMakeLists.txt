@@ -1,7 +1,9 @@
 robocin_cpp_library(
   NAME concurrency
-  HDRS thread_pool.h concurrent_queue.h
-  SRCS thread_pool.cpp concurrent_queue.cpp
+  HDRS thread_pool.h
+       concurrent_queue.h
+  SRCS thread_pool.cpp
+       concurrent_queue.cpp
 )
 
 robocin_cpp_test(

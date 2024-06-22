@@ -9,9 +9,16 @@
 
 namespace robocin {
 
-class IUdpMulticastSocketReceiver { // NOLINT(*member-functions*)
+class IUdpMulticastSocketReceiver {
  public:
   using receive_type = std::string;
+
+  IUdpMulticastSocketReceiver() = default;
+
+  IUdpMulticastSocketReceiver(const IUdpMulticastSocketReceiver&) = delete;
+  IUdpMulticastSocketReceiver& operator=(const IUdpMulticastSocketReceiver&) = delete;
+  IUdpMulticastSocketReceiver(IUdpMulticastSocketReceiver&&) = default;
+  IUdpMulticastSocketReceiver& operator=(IUdpMulticastSocketReceiver&&) = default;
 
   virtual ~IUdpMulticastSocketReceiver() = default;
 
