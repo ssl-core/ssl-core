@@ -1,11 +1,11 @@
 name: "Perception Brutus: Build and Run Tests"
 on:
   pull_request:
-    paths: ["perception/perception-brutus/**"]
+    paths: ["perception-ms/perception-brutus/**"]
   push:
     branches:
       - main
-    paths: ["perception/perception-brutus/**"]
+    paths: ["perception-ms/perception-brutus/**"]
   workflow_dispatch:
 
 env:
@@ -19,8 +19,8 @@ jobs:
       - uses: devcontainers/ci@v0.3
         with:
           env: cpp_compiler
-          subFolder: perception/perception-brutus
-          configFile: perception/perception-brutus/.devcontainer/devcontainer.json
+          subFolder: perception-ms/perception-brutus
+          configFile: perception-ms/perception-brutus/.devcontainer/devcontainer.json
           runCmd: |
             set -e
 
