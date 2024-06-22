@@ -39,7 +39,7 @@ All the code developed was done in [Visual Studio Code](https://code.visualstudi
 
   Contains experiments and prototypes for conceptual validation.
 
-* [`perception`](perception/README.md)
+* [`perception-ms`](perception-ms/README.md)
 
   Contains the perception microservice.
 

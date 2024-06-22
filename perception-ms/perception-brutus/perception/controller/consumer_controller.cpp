@@ -1,0 +1,55 @@
+#include "perception/controller/consumer_controller.h"
+
+#include "perception/messaging/receiver/payload.h"
+
+#include <protocols/perception/detection.pb.h>
+#include <robocin/concurrency/concurrent_queue.h>
+#include <robocin/memory/object_ptr.h>
+#include <robocin/output/log.h>
+
+namespace perception {
+
+namespace {
+
+using ::robocin::IConcurrentQueue;
+using ::robocin::ilog;
+using ::robocin::object_ptr;
+
+namespace rc {
+
+using ::protocols::perception::DetectionWrapper;
+
+} // namespace rc
+
+} // namespace
+
+ConsumerController::ConsumerController(object_ptr<IConcurrentQueue<Payload>> messages,
+                                       std::unique_ptr<IDetectionProcessor> detection_processor,
+                                       std::unique_ptr<IMessageSender> message_sender) :
+    messages_{messages},
+    detection_processor_{std::move(detection_processor)},
+    message_sender_{std::move(message_sender)} {}
+
+void ConsumerController::run() {
+  ilog("running.");
+
+  while (true) {
+    std::vector<Payload> payloads = messages_->dequeue_all();
+    exec(payloads);
+  }
+}
+
+void ConsumerController::exec(std::span<const Payload> payloads) {
+  ilog("payloads {} empty.", payloads.empty() ? "is" : "isn't");
+
+  if (payloads.empty()) {
+    return;
+  }
+
+  rc::DetectionWrapper detection_wrapper = detection_processor_->process(payloads);
+
+  message_sender_->send(detection_wrapper.detection());
+  message_sender_->send(detection_wrapper);
+}
+
+} // namespace perception
