@@ -8,7 +8,7 @@ robocin_cpp_library(
 )
 
 # robocin_cpp_test(
-#   NAME mappers/tracked_detection_mapper_test
+#   NAME tracked_detection_mapper_test
 #   SRCS mappers/tracked_detection_mapper_test.cpp
 #   DEPS mappers/tracked_detection_mapper
 # )

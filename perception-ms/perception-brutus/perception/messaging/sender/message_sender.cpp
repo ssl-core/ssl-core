@@ -1,13 +1,14 @@
 #include "perception/messaging/sender/message_sender.h"
 
-#include "perception/messaging/internal/messaging_internal.h"
-
 #include <protocols/perception/detection.pb.h>
 #include <robocin/output/log.h>
+#include <robocin/wip/service_discovery/addresses.h>
 
 namespace perception {
 
 namespace {
+
+namespace service_discovery = ::robocin::service_discovery;
 
 using ::robocin::ilog;
 
@@ -27,7 +28,7 @@ void MessageSender::send(const rc::Detection& detection) {
   ilog("sending...");
 
   detection_socket_->send({
-      messaging_internal::kDetectionTopic,
+      service_discovery::kPerceptionDetectionTopic,
       detection.SerializeAsString(),
   });
 }
@@ -36,7 +37,7 @@ void MessageSender::send(const rc::DetectionWrapper& detection_wrapper) {
   ilog("sending...");
 
   detection_socket_->send({
-      messaging_internal::kDetectionWrapperTopic,
+      service_discovery::kPerceptionDetectionWrapperTopic,
       detection_wrapper.SerializeAsString(),
   });
 }

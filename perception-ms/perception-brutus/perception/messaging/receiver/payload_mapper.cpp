@@ -1,13 +1,15 @@
 #include "perception/messaging/receiver/payload_mapper.h"
 
-#include "perception/messaging/internal/messaging_internal.h"
 #include "perception/messaging/receiver/payload.h"
 
 #include <robocin/network/zmq_datagram.h>
 #include <robocin/output/log.h>
+#include <robocin/wip/service_discovery/addresses.h>
 
 namespace perception {
 namespace {
+
+namespace service_discovery = ::robocin::service_discovery;
 
 using ::robocin::wlog;
 using ::robocin::ZmqDatagram;
@@ -26,12 +28,12 @@ Payload PayloadMapper::fromZmqDatagrams(std::span<const ZmqDatagram> messages) c
   std::vector<tp::TrackerWrapperPacket> tracked_packets;
 
   for (const ZmqDatagram& zmq_datagram : messages) {
-    if (zmq_datagram.topic() == messaging_internal::kRawDetectionTopic) {
+    if (zmq_datagram.topic() == service_discovery::kRawDetectionTopic) {
       tp::SSL_WrapperPacket raw_packet;
       raw_packet.ParseFromString(std::string{zmq_datagram.message()});
       raw_packets.emplace_back(std::move(raw_packet));
 
-    } else if (zmq_datagram.topic() == messaging_internal::kTrackedDetectionTopic) {
+    } else if (zmq_datagram.topic() == service_discovery::kTrackedDetectionTopic) {
       tp::TrackerWrapperPacket tracked_packet;
       tracked_packet.ParseFromString(std::string{zmq_datagram.message()});
       tracked_packets.emplace_back(std::move(tracked_packet));

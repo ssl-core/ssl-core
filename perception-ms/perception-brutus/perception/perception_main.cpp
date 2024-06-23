@@ -1,6 +1,5 @@
 #include "perception/controller/consumer_controller.h"
 #include "perception/controller/producer_controller.h"
-#include "perception/messaging/internal/messaging_internal.h"
 #include "perception/messaging/receiver/payload.h"
 #include "perception/processing/detection_processor.h"
 #include "perception/processing/raw_detection/filters/ball_filter.h"
@@ -18,9 +17,10 @@
 #include <robocin/memory/object_ptr.h>
 #include <robocin/network/zmq_publisher_socket.h>
 #include <robocin/network/zmq_subscriber_socket.h>
+#include <robocin/wip/service_discovery/addresses.h>
 #include <thread>
 
-namespace messaging_internal = perception::messaging_internal;
+namespace service_discovery = robocin::service_discovery;
 
 using perception::BallFilter;
 using perception::CameraFilter;
@@ -57,8 +57,13 @@ using ::robocin::ZmqSubscriberSocket;
 //////////////////////////////////////////////////////////////////////////////////////////////////
 
 std::unique_ptr<IMessageReceiver> makeMessageReceiver() {
+  static constexpr std::array kGatewayTopics = {
+      service_discovery::kRawDetectionTopic,
+      service_discovery::kTrackedDetectionTopic,
+  };
+
   std::unique_ptr<IZmqSubscriberSocket> gateway_socket = std::make_unique<ZmqSubscriberSocket>();
-  gateway_socket->connect(messaging_internal::kGatewayAddress, messaging_internal::kGatewayTopics);
+  gateway_socket->connect(service_discovery::kGatewayAddress, kGatewayTopics);
 
   std::unique_ptr<IPayloadMapper> payload_mapper = std::make_unique<PayloadMapper>();
 
@@ -99,7 +104,7 @@ std::unique_ptr<IDetectionProcessor> makeDetectionProcessor() {
 
 std::unique_ptr<IMessageSender> makeMessageSender() {
   std::unique_ptr<IZmqPublisherSocket> detection_socket = std::make_unique<ZmqPublisherSocket>();
-  detection_socket->bind(messaging_internal::kDetectionAddress);
+  detection_socket->bind(service_discovery::kPerceptionAddress);
 
   return std::make_unique<MessageSender>(std::move(detection_socket));
 }

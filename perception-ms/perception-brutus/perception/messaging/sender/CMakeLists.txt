@@ -4,5 +4,6 @@ robocin_cpp_library(
   SRCS message_sender.cpp
   DEPS common::network
        common::output
+       common::wip
        protocols::protobufs
 )

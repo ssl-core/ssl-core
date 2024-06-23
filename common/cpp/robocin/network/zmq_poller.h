@@ -14,9 +14,14 @@
 
 namespace robocin {
 
-class IZmqPoller { // NOLINT(*member-functions*)
+class IZmqPoller {
  public:
   IZmqPoller() = default;
+
+  IZmqPoller(const IZmqPoller&) = delete;
+  IZmqPoller& operator=(const IZmqPoller&) = delete;
+  IZmqPoller(IZmqPoller&&) = default;
+  IZmqPoller& operator=(IZmqPoller&&) = default;
 
   virtual ~IZmqPoller() = default;
 

@@ -4,6 +4,7 @@
 #include "robocin/version/version.h" // IWYU pragma: keep
 
 #include <format>
+#include <mutex>
 #include <source_location>
 #include <string_view>
 
