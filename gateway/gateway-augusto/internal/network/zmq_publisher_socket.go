@@ -7,7 +7,7 @@ import (
 )
 
 type ZmqPublisherSocket struct {
-	Socket *goczmq.Sock
+	socket *goczmq.Sock
 }
 
 func NewZmqPublisherSocket(address string) *ZmqPublisherSocket {
@@ -18,17 +18,17 @@ func NewZmqPublisherSocket(address string) *ZmqPublisherSocket {
 	}
 
 	return &ZmqPublisherSocket{
-		Socket: socket,
+		socket: socket,
 	}
 }
 
 func (sock *ZmqPublisherSocket) Send(datagram ZmqDatagram) error {
-	err := sock.Socket.SendFrame([]byte(datagram.topic), goczmq.FlagMore)
+	err := sock.socket.SendFrame([]byte(datagram.Topic), goczmq.FlagMore)
 	if err != nil {
 		return fmt.Errorf("failed to send topic: %w", err)
 	}
 
-	err = sock.Socket.SendFrame(datagram.message, goczmq.FlagNone)
+	err = sock.socket.SendFrame(datagram.Message, goczmq.FlagNone)
 	if err != nil {
 		return fmt.Errorf("failed to send message: %w", err)
 	}
@@ -37,5 +37,5 @@ func (sock *ZmqPublisherSocket) Send(datagram ZmqDatagram) error {
 }
 
 func (sock *ZmqPublisherSocket) Close() {
-	sock.Socket.Destroy()
+	sock.socket.Destroy()
 }

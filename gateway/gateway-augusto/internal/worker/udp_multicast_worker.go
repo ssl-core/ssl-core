@@ -9,10 +9,10 @@ import (
 const protocol = "udp"
 
 type UdpMulticastWorker struct {
-	Conn  *net.UDPConn
-	Size  int
-	Proxy chan<- network.ZmqDatagram
-	Id    string
+	conn  *net.UDPConn
+	size  int
+	proxy chan<- network.ZmqDatagram
+	id    string
 }
 
 func NewUdpMulticastWorker(address string, size int, proxy chan<- network.ZmqDatagram, id string) *UdpMulticastWorker {
@@ -27,26 +27,26 @@ func NewUdpMulticastWorker(address string, size int, proxy chan<- network.ZmqDat
 	}
 
 	return &UdpMulticastWorker{
-		Conn:  conn,
-		Size:  size,
-		Proxy: proxy,
-		Id:    id,
+		conn:  conn,
+		size:  size,
+		proxy: proxy,
+		id:    id,
 	}
 }
 
 func (c *UdpMulticastWorker) Listen() {
-	buffer := make([]byte, c.Size)
+	buffer := make([]byte, c.size)
 	for {
-		bytes, _, err := c.Conn.ReadFromUDP(buffer)
+		bytes, _, err := c.conn.ReadFromUDP(buffer)
 
 		if err != nil {
 			continue
 		}
 
-		c.Proxy <- *network.NewZmqDatagram(c.Id, buffer[:bytes])
+		c.proxy <- *network.NewZmqDatagram(c.id, buffer[:bytes])
 	}
 }
 
 func (c *UdpMulticastWorker) Close() {
-	c.Conn.Close()
+	c.conn.Close()
 }

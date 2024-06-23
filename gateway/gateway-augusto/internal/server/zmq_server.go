@@ -7,22 +7,22 @@ import (
 )
 
 type ZmqServer struct {
-	Publisher network.ZmqPublisherSocket
-	Proxy     <-chan network.ZmqDatagram
+	publisher network.ZmqPublisherSocket
+	proxy     <-chan network.ZmqDatagram
 }
 
 func NewZqmServer(address string, proxy <-chan network.ZmqDatagram) *ZmqServer {
 	return &ZmqServer{
-		Publisher: *network.NewZmqPublisherSocket(address),
-		Proxy:     proxy,
+		publisher: *network.NewZmqPublisherSocket(address),
+		proxy:     proxy,
 	}
 }
 
 func (s *ZmqServer) Start() {
 	for {
-		for datagram := range s.Proxy {
+		for datagram := range s.proxy {
 			fmt.Println("Receiving...", datagram)
-			s.Publisher.Send(datagram)
+			s.publisher.Send(datagram)
 		}
 	}
 }
