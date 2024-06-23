@@ -24,7 +24,6 @@ func NewZmqSubscriberSocket(address string, topics string) *ZmqSubscriberSocket 
 
 func (sock *ZmqSubscriberSocket) Receive() ZmqDatagram {
 	bytes, err := sock.socket.RecvMessage()
-	fmt.Println("Topic", string(bytes[0]), "Message", string(bytes[1]))
 
 	if err != nil {
 		fmt.Println("failed to receive message", err)
