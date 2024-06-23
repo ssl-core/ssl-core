@@ -29,7 +29,7 @@ fi
 echo -e "\x1B[01;93mInstalling or updating required packages...\n\u001b[0m"
 
 apt install software-properties-common -y
-add-apt-repository ppa:ubuntu-toolchain-r/test -y
+add-apt-repository universe -y
 apt install build-essential -y
 
 echo -e "\u001b[35m\n--\n\u001b[0m"

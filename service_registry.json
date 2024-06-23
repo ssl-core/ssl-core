@@ -10,7 +10,7 @@
   "Gateway.Live": {
     "address": "ipc:///tmp/gateway-async-frontend.ipc",
     "topics": [
-      "frame"
+      "detection"
     ]
   },
   "Gateway.Sync.Requests": {
@@ -19,10 +19,10 @@
   "Gateway.Router": {
     "address": "ipc:///tmp/gateway-sync-frontend.ipc"
   },
-  "Vision": {
-    "address": "ipc:///tmp/vision.ipc",
+  "Perception": {
+    "address": "ipc:///tmp/perception.ipc",
     "topics": [
-      "frame"
+      "detection"
     ]
   }
 }

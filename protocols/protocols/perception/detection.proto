@@ -14,10 +14,10 @@ message DetectionWrapper {
   Detection detection = 1;
 
   // Repeated raw detection data from a third-party simulator or ssl-vision.
-  repeated third_party.detection.SSL_WrapperPacket raw_detection = 2;
+  repeated third_party.detection.SSL_WrapperPacket raw_detections = 2;
 
-  // Optional tracked detection data from a third-party ssl-game-controller.
-  optional third_party.game_controller.TrackerWrapperPacket tracked_detection = 3;
+  // Repeated tracked detection data from a third-party ssl-game-controller.
+  repeated third_party.game_controller.TrackerWrapperPacket tracked_detections = 3;
 }
 
 // Detection is the message sent by the perception service to the rest of the system.

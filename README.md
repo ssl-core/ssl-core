@@ -39,14 +39,18 @@ All the code developed was done in [Visual Studio Code](https://code.visualstudi
 
   Contains experiments and prototypes for conceptual validation.
 
-* [`vision-be`](vision-be/README.md)
+* [`perception-ms`](perception-ms/README.md)
 
-  Contains the vision microservice.
+  Contains the perception microservice.
+
+* [`referee-ms`](referee-ms/README.md)
+
+  Contains the referee microservice.
 
 * [`app-shell`](app-shell/README.md)
 
   Contains the application shell for mounting microfrontends.
-  
+
 * [`common`](common/README.md)
 
   Contains common code and utilities used across the project.
