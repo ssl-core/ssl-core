@@ -47,9 +47,12 @@ void ConsumerController::exec(std::span<const Payload> payloads) {
   }
 
   rc::DetectionWrapper detection_wrapper = detection_processor_->process(payloads);
+  ilog("detection_wrapper {} initialized.", detection_wrapper.IsInitialized() ? "is" : "isn't");
 
-  message_sender_->send(detection_wrapper.detection());
-  message_sender_->send(detection_wrapper);
+  if (detection_wrapper.IsInitialized()) {
+    message_sender_->send(detection_wrapper.detection());
+    message_sender_->send(detection_wrapper);
+  }
 }
 
 } // namespace perception
