@@ -7,8 +7,7 @@ import (
 )
 
 type ZmqPublisherSocket struct {
-	address string
-	socket  *goczmq.Sock
+	Socket *goczmq.Sock
 }
 
 func NewZmqPublisherSocket(address string) *ZmqPublisherSocket {
@@ -19,22 +18,17 @@ func NewZmqPublisherSocket(address string) *ZmqPublisherSocket {
 	}
 
 	return &ZmqPublisherSocket{
-		address: address,
-		socket:  socket,
+		Socket: socket,
 	}
 }
 
-func (pub *ZmqPublisherSocket) Bind(address string) {
-	pub.socket.Bind(pub.address)
-}
-
-func (pub *ZmqPublisherSocket) Send(datagram ZmqDatagram) error {
-	err := pub.socket.SendFrame([]byte(datagram.topic), goczmq.FlagMore)
+func (sock *ZmqPublisherSocket) Send(datagram ZmqDatagram) error {
+	err := sock.Socket.SendFrame([]byte(datagram.topic), goczmq.FlagMore)
 	if err != nil {
 		return fmt.Errorf("failed to send topic: %w", err)
 	}
 
-	err = pub.socket.SendFrame(datagram.message, goczmq.FlagNone)
+	err = sock.Socket.SendFrame(datagram.message, goczmq.FlagNone)
 	if err != nil {
 		return fmt.Errorf("failed to send message: %w", err)
 	}
@@ -42,6 +36,6 @@ func (pub *ZmqPublisherSocket) Send(datagram ZmqDatagram) error {
 	return nil
 }
 
-func (pub *ZmqPublisherSocket) Close() {
-	pub.socket.Destroy()
+func (sock *ZmqPublisherSocket) Close() {
+	sock.Socket.Destroy()
 }

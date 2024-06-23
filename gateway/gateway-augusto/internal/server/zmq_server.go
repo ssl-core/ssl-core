@@ -1,23 +1,28 @@
 package server
 
-import "github.com/robocin/ssl-core/gateway/gateway-augusto/internal/network"
+import (
+	"fmt"
+
+	"github.com/robocin/ssl-core/gateway/gateway-augusto/internal/network"
+)
 
 type ZmqServer struct {
-	publisher network.ZmqPublisherSocket
-	proxy     <-chan []byte
+	Publisher network.ZmqPublisherSocket
+	Proxy     <-chan network.ZmqDatagram
 }
 
-func NewZqmServer(address string, proxy <-chan []byte) *ZmqServer {
+func NewZqmServer(address string, proxy <-chan network.ZmqDatagram) *ZmqServer {
 	return &ZmqServer{
-		publisher: *network.NewZmqPublisherSocket(address),
-		proxy:     proxy,
+		Publisher: *network.NewZmqPublisherSocket(address),
+		Proxy:     proxy,
 	}
 }
 
-func (server *ZmqServer) Start() {
+func (s *ZmqServer) Start() {
 	for {
-		for message := range server.proxy {
-			server.publisher.Send(*network.NewZmqDatagram("vision", message))
+		for datagram := range s.Proxy {
+			fmt.Println("Receiving...", datagram)
+			s.Publisher.Send(datagram)
 		}
 	}
 }
