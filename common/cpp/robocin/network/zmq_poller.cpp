@@ -11,7 +11,7 @@
 
 namespace robocin {
 
-void ZmqPoller::push(ZmqSubscriberSocket& socket) {
+void ZmqPoller::push(IZmqSubscriberSocket& socket) {
   pollitems_.emplace_back(nullptr, socket.fd(), ZMQ_POLLIN, 0);
 }
 
@@ -19,7 +19,7 @@ void ZmqPoller::poll(int64_t timeout_ms) {
   ::zmq::poll(pollitems_, std::chrono::milliseconds{timeout_ms});
 }
 
-ZmqDatagram ZmqPoller::receive(ZmqSubscriberSocket& socket) const {
+ZmqDatagram ZmqPoller::receive(IZmqSubscriberSocket& socket) const {
   for (const auto& pollitem : pollitems_) {
     // NOLINTNEXTLINE(*bitwise*)
     if (pollitem.fd == socket.fd() && static_cast<bool>(pollitem.revents & ZMQ_POLLIN)) {

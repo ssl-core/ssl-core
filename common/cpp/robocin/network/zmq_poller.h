@@ -25,20 +25,20 @@ class IZmqPoller {
 
   virtual ~IZmqPoller() = default;
 
-  virtual void push(ZmqSubscriberSocket& socket) = 0;
+  virtual void push(IZmqSubscriberSocket& socket) = 0;
   virtual void poll(int64_t timeout_ms) = 0;
 
-  virtual ZmqDatagram receive(ZmqSubscriberSocket& socket) const = 0;
+  virtual ZmqDatagram receive(IZmqSubscriberSocket& socket) const = 0;
 };
 
 class ZmqPoller : public IZmqPoller {
  public:
   ZmqPoller() = default;
 
-  void push(ZmqSubscriberSocket& socket) override;
+  void push(IZmqSubscriberSocket& socket) override;
   void poll(int64_t timeout_ms) override;
 
-  ZmqDatagram receive(ZmqSubscriberSocket& socket) const override;
+  ZmqDatagram receive(IZmqSubscriberSocket& socket) const override;
 
  private:
   std::vector<::zmq::pollitem_t> pollitems_;

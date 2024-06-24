@@ -10,7 +10,7 @@ namespace robocin::service_discovery {
 inline constexpr std::string_view kGatewayAddress = "ipc:///tmp/gateway-async-backend.ipc";
 inline constexpr std::string_view kRawDetectionTopic = "vision-third-party";
 inline constexpr std::string_view kTrackedDetectionTopic = "tracked-third-party";
-inline constexpr std::string_view kGameControllerReferee = "referee-third-party";
+inline constexpr std::string_view kGameControllerRefereeTopic = "referee-third-party";
 
 inline constexpr std::string_view kPerceptionAddress = "ipc:///tmp/perception-async.ipc";
 inline constexpr std::string_view kPerceptionDetectionTopic = "detection";
