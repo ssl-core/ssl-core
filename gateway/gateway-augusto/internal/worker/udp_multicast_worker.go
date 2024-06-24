@@ -11,11 +11,11 @@ const protocol = "udp"
 type UdpMulticastWorker struct {
 	conn  *net.UDPConn
 	size  int
-	proxy chan<- network.ZmqDatagram
-	id    string
+	proxy chan<- network.ZmqMultipartDatagram
+	id    []byte
 }
 
-func NewUdpMulticastWorker(address string, size int, proxy chan<- network.ZmqDatagram, id string) *UdpMulticastWorker {
+func NewUdpMulticastWorker(address string, size int, proxy chan<- network.ZmqMultipartDatagram, id string) *UdpMulticastWorker {
 	addr, err := net.ResolveUDPAddr(protocol, address)
 	if err != nil {
 		panic(err)
@@ -30,7 +30,7 @@ func NewUdpMulticastWorker(address string, size int, proxy chan<- network.ZmqDat
 		conn:  conn,
 		size:  size,
 		proxy: proxy,
-		id:    id,
+		id:    []byte(id),
 	}
 }
 
@@ -43,7 +43,7 @@ func (c *UdpMulticastWorker) Listen() {
 			continue
 		}
 
-		c.proxy <- *network.NewZmqDatagram(c.id, buffer[:bytes])
+		c.proxy <- *network.NewZmqMultipartDatagram(c.id, buffer[:bytes])
 	}
 }
 

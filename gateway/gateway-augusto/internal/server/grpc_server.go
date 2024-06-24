@@ -1,6 +1,7 @@
 package server
 
 import (
+	"fmt"
 	"io"
 	"net"
 
@@ -17,6 +18,7 @@ type GrpcServer struct {
 	server     *grpc.Server
 	address    string
 	subscriber network.ZmqSubscriberSocket
+	router     network.ZmqRouterSocket
 
 	gateway.UnimplementedGatewayServiceServer
 }
@@ -28,7 +30,8 @@ func NewGrpcServer(address string) *GrpcServer {
 		server:  server,
 		address: address,
 		//TODO: service discovery usage
-		subscriber: *network.NewZmqSubscriberSocket("ipc:///tmp/playback.ipc", ""),
+		subscriber: *network.NewZmqSubscriberSocket("ipc:///tmp/playback.ipc", "topic-playback"),
+		router:     *network.NewZmqRouterSocket("ipc:///tmp/replay.ipc"),
 	}
 }
 
@@ -52,8 +55,14 @@ func (s *GrpcServer) ReceiveLivestream(stream gateway.GatewayService_ReceiveLive
 		}
 
 		datagram := s.subscriber.Receive()
+		fmt.Println(datagram.Message)
 		var sample playback.Sample
 		err = proto.Unmarshal(datagram.Message, &sample)
+
+		if err != nil {
+			return err
+		}
+
 		response := &gateway.ReceiveLivestreamResponse{
 			Sample: &sample,
 		}
@@ -63,3 +72,19 @@ func (s *GrpcServer) ReceiveLivestream(stream gateway.GatewayService_ReceiveLive
 		}
 	}
 }
+
+// func (s *GrpcServer) GetReplayChunk(ctx context.Context, request gateway.GetReplayChunkRequest) (*gateway.GetReplayChunkResponse, error) {
+// 	data, _ := proto.Marshal(&request)
+// 	s.router.Send(data)
+
+// 	datagram := s.router.Receive()
+
+// 	var response gateway.GetReplayChunkResponse
+// 	err := proto.Unmarshal(datagram[0], &response)
+
+// 	if err != nil {
+// 		return &response, err
+// 	}
+
+// 	return &response, nil
+// }

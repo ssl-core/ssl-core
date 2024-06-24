@@ -22,15 +22,15 @@ func NewZmqSubscriberSocket(address string, topics string) *ZmqSubscriberSocket 
 	}
 }
 
-func (sock *ZmqSubscriberSocket) Receive() ZmqDatagram {
+func (sock *ZmqSubscriberSocket) Receive() ZmqMultipartDatagram {
 	bytes, err := sock.socket.RecvMessage()
 
 	if err != nil {
 		fmt.Println("failed to receive message", err)
-		return *NewZmqDatagram("", nil)
+		return *NewZmqMultipartDatagram(nil, nil)
 	}
 
-	return *NewZmqDatagram(string(bytes[0]), bytes[1])
+	return *NewZmqMultipartDatagram(bytes[0], bytes[1])
 }
 
 func (sock *ZmqSubscriberSocket) Close() {

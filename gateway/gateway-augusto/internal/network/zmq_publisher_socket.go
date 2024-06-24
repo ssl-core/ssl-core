@@ -22,8 +22,8 @@ func NewZmqPublisherSocket(address string) *ZmqPublisherSocket {
 	}
 }
 
-func (sock *ZmqPublisherSocket) Send(datagram ZmqDatagram) error {
-	err := sock.socket.SendFrame([]byte(datagram.Topic), goczmq.FlagMore)
+func (sock *ZmqPublisherSocket) Send(datagram ZmqMultipartDatagram) error {
+	err := sock.socket.SendFrame([]byte(datagram.Identifier), goczmq.FlagMore)
 	if err != nil {
 		return fmt.Errorf("failed to send topic: %w", err)
 	}
