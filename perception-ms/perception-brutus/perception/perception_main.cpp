@@ -46,11 +46,13 @@ using perception::RawDetectionMapper;
 using perception::RobotFilter;
 using perception::TrackedDetectionFilter;
 using perception::TrackedDetectionMapper;
+using ::robocin::ConditionVariableConcurrentQueue;
 using ::robocin::IConcurrentQueue;
+using ::robocin::IZmqPoller;
 using ::robocin::IZmqPublisherSocket;
 using ::robocin::IZmqSubscriberSocket;
-using ::robocin::MutexConcurrentQueue;
 using ::robocin::object_ptr;
+using ::robocin::ZmqPoller;
 using ::robocin::ZmqPublisherSocket;
 using ::robocin::ZmqSubscriberSocket;
 
@@ -65,9 +67,14 @@ std::unique_ptr<IMessageReceiver> makeMessageReceiver() {
   std::unique_ptr<IZmqSubscriberSocket> gateway_socket = std::make_unique<ZmqSubscriberSocket>();
   gateway_socket->connect(service_discovery::kGatewayAddress, kGatewayTopics);
 
+  std::unique_ptr<IZmqPoller> zmq_poller = std::make_unique<ZmqPoller>();
+  zmq_poller->push(*gateway_socket);
+
   std::unique_ptr<IPayloadMapper> payload_mapper = std::make_unique<PayloadMapper>();
 
-  return std::make_unique<MessageReceiver>(std::move(gateway_socket), std::move(payload_mapper));
+  return std::make_unique<MessageReceiver>(std::move(gateway_socket),
+                                           std::move(zmq_poller),
+                                           std::move(payload_mapper));
 }
 
 std::unique_ptr<IController> makeProducer(object_ptr<IConcurrentQueue<Payload>> messages) {
@@ -121,7 +128,7 @@ int main() {
   std::println("perception-brutus is runnning!");
 
   std::unique_ptr<IConcurrentQueue<Payload>> messages
-      = std::make_unique<MutexConcurrentQueue<Payload>>();
+      = std::make_unique<ConditionVariableConcurrentQueue<Payload>>();
 
   std::unique_ptr<IController> producer_controller = makeProducer(messages);
   std::unique_ptr<IController> consumer_controller = makeConsumer(messages);

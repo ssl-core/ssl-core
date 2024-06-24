@@ -5,6 +5,7 @@
 #include "perception/messaging/receiver/payload_mapper.h"
 
 #include <robocin/network/zmq_datagram.h>
+#include <robocin/network/zmq_poller.h>
 #include <robocin/network/zmq_subscriber_socket.h>
 
 namespace perception {
@@ -26,12 +27,14 @@ class IMessageReceiver {
 class MessageReceiver : public IMessageReceiver {
  public:
   MessageReceiver(std::unique_ptr<::robocin::IZmqSubscriberSocket> gateway_socket,
+                  std::unique_ptr<::robocin::IZmqPoller> zmq_poller,
                   std::unique_ptr<IPayloadMapper> payload_mapper);
 
   [[nodiscard]] Payload receive() override;
 
  private:
   std::unique_ptr<::robocin::IZmqSubscriberSocket> gateway_socket_;
+  std::unique_ptr<::robocin::IZmqPoller> zmq_poller_;
   std::unique_ptr<IPayloadMapper> payload_mapper_;
 };
 
