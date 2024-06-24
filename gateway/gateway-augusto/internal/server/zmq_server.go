@@ -1,8 +1,6 @@
 package server
 
 import (
-	"fmt"
-
 	"github.com/robocin/ssl-core/gateway/gateway-augusto/internal/network"
 )
 
@@ -21,7 +19,6 @@ func NewZqmServer(address string, proxy <-chan network.ZmqMultipartDatagram) *Zm
 func (s *ZmqServer) Start() {
 	for {
 		for datagram := range s.proxy {
-			fmt.Println("Receiving...", datagram)
 			s.publisher.Send(datagram)
 		}
 	}

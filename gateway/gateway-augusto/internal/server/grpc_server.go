@@ -1,7 +1,7 @@
 package server
 
 import (
-	"fmt"
+	"context"
 	"io"
 	"net"
 
@@ -10,6 +10,7 @@ import (
 	"github.com/robocin/ssl-core/gateway/gateway-augusto/pkg/pb/playback"
 	"google.golang.org/grpc"
 	"google.golang.org/protobuf/proto"
+	"google.golang.org/protobuf/reflect/protoreflect"
 )
 
 const protocol = "tcp"
@@ -18,7 +19,7 @@ type GrpcServer struct {
 	server     *grpc.Server
 	address    string
 	subscriber network.ZmqSubscriberSocket
-	router     network.ZmqRouterSocket
+	dealer     network.ZmqDealerSocket
 
 	gateway.UnimplementedGatewayServiceServer
 }
@@ -31,18 +32,18 @@ func NewGrpcServer(address string) *GrpcServer {
 		address: address,
 		//TODO: service discovery usage
 		subscriber: *network.NewZmqSubscriberSocket("ipc:///tmp/playback.ipc", "topic-playback"),
-		router:     *network.NewZmqRouterSocket("ipc:///tmp/replay.ipc"),
+		dealer:     *network.NewZmqDealerSocket("ipc:///tmp/replay.ipc"),
 	}
 }
 
 func (s *GrpcServer) Start() {
-	gateway.RegisterGatewayServiceServer(s.server, s)
 	lis, err := net.Listen(protocol, s.address)
 
 	if err != nil {
 		panic(err)
 	}
 
+	gateway.RegisterGatewayServiceServer(s.server, s)
 	s.server.Serve(lis)
 }
 
@@ -55,7 +56,6 @@ func (s *GrpcServer) ReceiveLivestream(stream gateway.GatewayService_ReceiveLive
 		}
 
 		datagram := s.subscriber.Receive()
-		fmt.Println(datagram.Message)
 		var sample playback.Sample
 		err = proto.Unmarshal(datagram.Message, &sample)
 
@@ -73,18 +73,32 @@ func (s *GrpcServer) ReceiveLivestream(stream gateway.GatewayService_ReceiveLive
 	}
 }
 
-// func (s *GrpcServer) GetReplayChunk(ctx context.Context, request gateway.GetReplayChunkRequest) (*gateway.GetReplayChunkResponse, error) {
-// 	data, _ := proto.Marshal(&request)
-// 	s.router.Send(data)
+func (s *GrpcServer) GetReplayChunk(ctx context.Context, request *gateway.GetReplayChunkRequest) (*gateway.GetReplayChunkResponse, error) {
+	data, err := proto.Marshal(request)
 
-// 	datagram := s.router.Receive()
+	if err != nil {
+		return &gateway.GetReplayChunkResponse{}, err
+	}
+	var response gateway.GetReplayChunkResponse
+	err = s.handleUnaryRequest(&response, data)
+	return &response, err
+}
 
-// 	var response gateway.GetReplayChunkResponse
-// 	err := proto.Unmarshal(datagram[0], &response)
+func (s *GrpcServer) GetGameStatusEvent(ctx context.Context, request *gateway.GetGameEventsRequest) (*gateway.GetGameEventsResponse, error) {
+	data, err := proto.Marshal(request)
 
-// 	if err != nil {
-// 		return &response, err
-// 	}
+	if err != nil {
+		return &gateway.GetGameEventsResponse{}, err
+	}
 
-// 	return &response, nil
-// }
+	var response gateway.GetGameEventsResponse
+	err = s.handleUnaryRequest(&response, data)
+	return &response, err
+}
+
+func (s *GrpcServer) handleUnaryRequest(response protoreflect.ProtoMessage, request []byte) error {
+	s.dealer.Send(*network.NewZmqDatagram(request))
+	datagram := s.dealer.Receive()
+
+	return proto.Unmarshal(datagram.Message, response)
+}
