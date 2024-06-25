@@ -34,19 +34,19 @@ func NewUdpMulticastWorker(address string, size int, proxy chan<- network.ZmqMul
 	}
 }
 
-func (c *UdpMulticastWorker) Listen() {
-	buffer := make([]byte, c.size)
+func (w *UdpMulticastWorker) Listen() {
+	buffer := make([]byte, w.size)
 	for {
-		bytes, _, err := c.conn.ReadFromUDP(buffer)
+		bytes, _, err := w.conn.ReadFromUDP(buffer)
 
 		if err != nil {
 			continue
 		}
 
-		c.proxy <- *network.NewZmqMultipartDatagram(c.id, buffer[:bytes])
+		w.proxy <- *network.NewZmqMultipartDatagram(w.id, buffer[:bytes])
 	}
 }
 
-func (c *UdpMulticastWorker) Close() {
-	c.conn.Close()
+func (w *UdpMulticastWorker) Close() {
+	w.conn.Close()
 }
