@@ -9,7 +9,7 @@ import "protocols/playback/sample.proto";
 service GatewayService {
   rpc ReceiveLivestream(stream ReceiveLivestreamRequest) returns (stream ReceiveLivestreamResponse);
   rpc GetGameEvents(GetGameEventsRequest) returns (GetGameEventsResponse);
-  rpc GetReplayChunk(stream GetReplayChunkRequest) returns (stream GetReplayChunkResponse);
+  rpc GetReplayChunk(GetReplayChunkRequest) returns (GetReplayChunkResponse);
 
   // TODO(#111): add parameters rpc.
   // TODO(#112): add mouse and keyboard events rpc.
