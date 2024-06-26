@@ -24,7 +24,8 @@ class IDetectionProcessor {
 
   virtual ~IDetectionProcessor() = default;
 
-  virtual ::protocols::perception::DetectionWrapper process(std::span<const Payload> payloads) = 0;
+  virtual std::optional<::protocols::perception::DetectionWrapper>
+  process(std::span<const Payload> payloads) = 0;
 };
 
 class DetectionProcessor : public IDetectionProcessor {
@@ -33,13 +34,14 @@ class DetectionProcessor : public IDetectionProcessor {
                      std::unique_ptr<IRawDetectionFilter> raw_detection_filter,
                      std::unique_ptr<ITrackedDetectionFilter> tracked_detection_filter);
 
-  ::protocols::perception::DetectionWrapper process(std::span<const Payload> payloads) override;
+  std::optional<::protocols::perception::DetectionWrapper>
+  process(std::span<const Payload> payloads) override;
 
  private:
   // TODO(matheusvtna, joseviccruz): discuss since serial_id must be the same when using raw and
   // tracked.
   uint64_t serial_id_{0};
-  ::protocols::perception::Field last_field_;
+  std::optional<::protocols::perception::Field> last_field_;
   std::unique_ptr<IRawDetectionMapper> raw_detection_mapper_;
   std::unique_ptr<IRawDetectionFilter> raw_detection_filter_;
   std::unique_ptr<ITrackedDetectionFilter> tracked_detection_filter_;

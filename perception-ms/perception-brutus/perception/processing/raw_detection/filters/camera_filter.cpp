@@ -1,5 +1,7 @@
 #include "perception/processing/raw_detection/filters/camera_filter.h"
 
+#include "perception/processing/raw_detection/entities/raw_ball.h"
+#include "perception/processing/raw_detection/entities/raw_robot.h"
 #include "perception/processing/raw_detection/filters/ball_filter.h"
 #include "perception/processing/raw_detection/filters/ball_filter_factory.h"
 #include "perception/processing/raw_detection/filters/robot_filter.h"
@@ -63,7 +65,7 @@ void CameraFilter::update(const RawDetection& raw_detection) {
   last_detection_ = std::move(detection);
 }
 
-rc::Detection CameraFilter::getDetection() const { return last_detection_; }
+std::optional<rc::Detection> CameraFilter::getDetection() const { return last_detection_; }
 
 std::vector<RawBall> CameraFilter::filterBalls(std::span<const RawBall> raw_balls) {
   for (const RawBall& raw_ball : raw_balls) {
@@ -78,7 +80,10 @@ std::vector<RawBall> CameraFilter::filterBalls(std::span<const RawBall> raw_ball
 
     if (not ball_filter_updated) {
       // TODO(matheusvtna, joseviccruz): should we remove ball filter when expire?
-      ball_filters_.emplace_back(ball_filter_factory_->make());
+      std::unique_ptr<IBallFilter> ball_filter = ball_filter_factory_->make();
+      ball_filter->update(raw_ball);
+
+      ball_filters_.emplace_back(std::move(ball_filter));
     }
   }
 
@@ -86,7 +91,9 @@ std::vector<RawBall> CameraFilter::filterBalls(std::span<const RawBall> raw_ball
   filtered_balls.reserve(ball_filters_.size());
 
   for (const auto& ball_filter : ball_filters_) {
-    filtered_balls.emplace_back(ball_filter->getBall());
+    if (std::optional<RawBall> raw_ball = ball_filter->getBall()) {
+      filtered_balls.emplace_back(std::move(*raw_ball)); // NOLINT(*move*)
+    }
   }
 
   return filtered_balls;
@@ -108,7 +115,9 @@ std::vector<RawRobot> CameraFilter::filterRobots(std::span<const RawRobot> raw_r
   filtered_robots.reserve(robot_filters_.size());
 
   for (const auto& [_, filter] : robot_filters_) {
-    filtered_robots.emplace_back(filter->getRobot());
+    if (std::optional<RawRobot> raw_robot = filter->getRobot()) {
+      filtered_robots.emplace_back(std::move(*raw_robot)); // NOLINT(*move*)
+    }
   }
 
   return filtered_robots;

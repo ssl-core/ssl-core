@@ -2,6 +2,7 @@
 
 #include "perception/messaging/receiver/payload.h"
 
+#include <optional>
 #include <protocols/perception/detection.pb.h>
 #include <robocin/concurrency/concurrent_queue.h>
 #include <robocin/memory/object_ptr.h>
@@ -46,12 +47,12 @@ void ConsumerController::exec(std::span<const Payload> payloads) {
     return;
   }
 
-  rc::DetectionWrapper detection_wrapper = detection_processor_->process(payloads);
-  ilog("detection_wrapper {} initialized.", detection_wrapper.IsInitialized() ? "is" : "isn't");
+  std::optional<rc::DetectionWrapper> detection_wrapper = detection_processor_->process(payloads);
+  ilog("detection_wrapper {} initialized.", detection_wrapper != std::nullopt ? "is" : "isn't");
 
-  if (detection_wrapper.IsInitialized()) {
-    message_sender_->send(detection_wrapper.detection());
-    message_sender_->send(detection_wrapper);
+  if (detection_wrapper != std::nullopt) {
+    message_sender_->send(detection_wrapper->detection());
+    message_sender_->send(*detection_wrapper);
   }
 }
 

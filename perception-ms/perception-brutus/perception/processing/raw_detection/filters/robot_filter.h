@@ -3,6 +3,8 @@
 
 #include "perception/processing/raw_detection/entities/raw_robot.h"
 
+#include <optional>
+
 namespace perception {
 
 class IRobotFilter {
@@ -19,7 +21,7 @@ class IRobotFilter {
   virtual ~IRobotFilter() = default;
 
   virtual void update(const RawRobot& robot) = 0;
-  [[nodiscard]] virtual RawRobot getRobot() const = 0;
+  [[nodiscard]] virtual std::optional<RawRobot> getRobot() const = 0;
 };
 
 class RobotFilter : public IRobotFilter {
@@ -29,11 +31,11 @@ class RobotFilter : public IRobotFilter {
   RobotFilter() = default;
 
   void update(const RawRobot& robot) override;
-  [[nodiscard]] RawRobot getRobot() const override;
+  [[nodiscard]] std::optional<RawRobot> getRobot() const override;
 
  private:
   // TODO(matheusvtna): Aggregate a FilteredRobot instead.
-  RawRobot last_robot_; /**< The last raw robot detection processed by the filter. */
+  std::optional<RawRobot> last_robot_; /**< The last raw robot detection processed by the filter. */
 };
 
 } // namespace perception

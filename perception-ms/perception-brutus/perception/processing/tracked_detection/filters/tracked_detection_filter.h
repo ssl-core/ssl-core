@@ -4,6 +4,7 @@
 #include "perception/processing/tracked_detection/mappers/tracked_detection_mapper.h"
 
 #include <memory>
+#include <optional>
 #include <protocols/perception/detection.pb.h>
 
 namespace perception {
@@ -19,7 +20,7 @@ class ITrackedDetectionFilter {
 
   virtual ~ITrackedDetectionFilter() = default;
 
-  virtual ::protocols::perception::Detection
+  virtual std::optional<::protocols::perception::Detection>
   process(std::span<const ::protocols::third_party::game_controller::TrackerWrapperPacket>
               tracked_detections)
       = 0;
@@ -30,12 +31,12 @@ class TrackedDetectionFilter : public ITrackedDetectionFilter {
   explicit TrackedDetectionFilter(
       std::unique_ptr<ITrackedDetectionMapper> tracked_detection_mapper);
 
-  ::protocols::perception::Detection
+  std::optional<::protocols::perception::Detection>
   process(std::span<const ::protocols::third_party::game_controller::TrackerWrapperPacket>
               tracked_detections) override;
 
  private:
-  ::protocols::perception::Detection last_detection_;
+  std::optional<::protocols::perception::Detection> last_detection_;
   std::unique_ptr<ITrackedDetectionMapper> tracked_detection_mapper_;
 };
 

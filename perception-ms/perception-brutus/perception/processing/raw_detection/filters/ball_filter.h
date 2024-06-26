@@ -3,6 +3,8 @@
 
 #include "perception/processing/raw_detection/entities/raw_ball.h"
 
+#include <optional>
+
 namespace perception {
 
 class IBallFilter {
@@ -19,7 +21,7 @@ class IBallFilter {
   virtual ~IBallFilter() = default;
 
   virtual bool update(const RawBall& raw_ball) = 0;
-  [[nodiscard]] virtual RawBall getBall() const = 0;
+  [[nodiscard]] virtual std::optional<RawBall> getBall() const = 0;
 };
 
 /**
@@ -36,11 +38,11 @@ class BallFilter : public IBallFilter {
   BallFilter() = default;
 
   bool update(const RawBall& raw_ball) override;
-  [[nodiscard]] RawBall getBall() const override;
+  [[nodiscard]] std::optional<RawBall> getBall() const override;
 
  private:
   // TODO(matheusvtna): Aggregate a FilteredBall instead.
-  RawBall last_ball_;
+  std::optional<RawBall> last_ball_;
 };
 
 } // namespace perception

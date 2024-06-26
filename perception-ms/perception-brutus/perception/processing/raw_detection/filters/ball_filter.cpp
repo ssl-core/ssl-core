@@ -9,6 +9,6 @@ bool BallFilter::update(const RawBall& raw_ball) {
   return true;
 }
 
-RawBall BallFilter::getBall() const { return last_ball_; }
+std::optional<RawBall> BallFilter::getBall() const { return last_ball_; }
 
 } // namespace perception

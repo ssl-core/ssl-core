@@ -22,7 +22,7 @@ TrackedDetectionFilter::TrackedDetectionFilter(
     std::unique_ptr<ITrackedDetectionMapper> tracked_detection_mapper) :
     tracked_detection_mapper_{std::move(tracked_detection_mapper)} {}
 
-rc::Detection
+std::optional<rc::Detection>
 TrackedDetectionFilter::process(std::span<const tp::TrackerWrapperPacket> tracked_detections) {
   // TODO(matheusvtna): Implement the merge method instead of return the last detection.
   if (!tracked_detections.empty()) {

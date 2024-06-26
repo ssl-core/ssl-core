@@ -7,6 +7,6 @@ void RobotFilter::update(const RawRobot& robot) {
   last_robot_ = robot;
 }
 
-RawRobot RobotFilter::getRobot() const { return last_robot_; }
+std::optional<RawRobot> RobotFilter::getRobot() const { return last_robot_; }
 
 } // namespace perception

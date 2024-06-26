@@ -25,7 +25,7 @@ class ICameraFilter {
   virtual ~ICameraFilter() = default;
 
   virtual void update(const RawDetection& raw_detection) = 0;
-  [[nodiscard]] virtual ::protocols::perception::Detection getDetection() const = 0;
+  [[nodiscard]] virtual std::optional<::protocols::perception::Detection> getDetection() const = 0;
 };
 
 class CameraFilter : public ICameraFilter {
@@ -36,7 +36,7 @@ class CameraFilter : public ICameraFilter {
                std::unique_ptr<IRobotFilter::Factory> robot_filter_factory);
 
   void update(const RawDetection& raw_detection) override;
-  [[nodiscard]] ::protocols::perception::Detection getDetection() const override;
+  [[nodiscard]] std::optional<::protocols::perception::Detection> getDetection() const override;
 
  private:
   std::vector<RawBall> filterBalls(std::span<const RawBall> raw_balls);

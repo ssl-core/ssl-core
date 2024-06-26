@@ -19,18 +19,19 @@ class IRawDetectionFilter {
 
   virtual ~IRawDetectionFilter() = default;
 
-  virtual ::protocols::perception::Detection process(std::span<const RawDetection> raw_detections)
-      = 0;
+  virtual std::optional<::protocols::perception::Detection>
+  process(std::span<const RawDetection> raw_detections) = 0;
 };
 
 class RawDetectionFilter : public IRawDetectionFilter {
  public:
   explicit RawDetectionFilter(std::unique_ptr<ICameraFilter::Factory> camera_filter_factory);
 
-  ::protocols::perception::Detection process(std::span<const RawDetection> raw_detections) override;
+  std::optional<::protocols::perception::Detection>
+  process(std::span<const RawDetection> raw_detections) override;
 
  private:
-  ::protocols::perception::Detection last_detection_;
+  std::optional<::protocols::perception::Detection> last_detection_;
   std::unique_ptr<ICameraFilter::Factory> camera_filter_factory_;
   // TODO(joseviccruz): replace by absl::flat_hash_map
   std::unordered_map<int, std::unique_ptr<ICameraFilter>> camera_filters_;

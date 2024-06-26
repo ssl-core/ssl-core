@@ -1,14 +1,19 @@
 #include "perception/processing/detection_processor.h"
 
 #include "perception/messaging/receiver/payload.h"
+#include "perception/parameters/parameters.h"
 #include "perception/processing/raw_detection/mappers/raw_detection_mapper.h"
 
+#include <iterator>
+#include <print>
 #include <protocols/perception/detection.pb.h>
 #include <ranges>
+#include <robocin/memory/object_ptr.h>
 
 namespace perception {
-
 namespace {
+
+using ::robocin::object_ptr;
 
 namespace rc {
 
@@ -26,11 +31,6 @@ using ::protocols::third_party::game_controller::TrackerWrapperPacket;
 
 } // namespace tp
 
-// NOLINTBEGIN(*naming*, *magic-numbers*)
-// TODO(matheusvtna): retrieve the vision source from perception parameters.
-constexpr auto pUseTrackedDetectionAsSource = []() { return true; };
-// NOLINTEND(*naming*, *magic-numbers*)
-
 std::vector<tp::SSL_WrapperPacket>
 rawWrapperPacketsFromPayloads(std::span<const Payload> payloads) {
   return payloads | std::views::transform(&Payload::getRawPackets) | std::views::join
@@ -43,7 +43,17 @@ trackedPacketsFromPayloads(std::span<const Payload> payloads) {
          | std::ranges::to<std::vector>();
 }
 
-rc::Field processFieldFromRawPackets(std::span<const tp::SSL_WrapperPacket> raw_wrapper_packets) {
+std::vector<RawDetection>
+rawDetectionsFromRawPackets(object_ptr<IRawDetectionMapper> raw_detection_mapper,
+                            std::span<const tp::SSL_WrapperPacket> raw_wrapper_packets) {
+  return raw_wrapper_packets
+         | std::views::transform(std::bind_front(&IRawDetectionMapper::fromSslWrapperPacket,
+                                                 raw_detection_mapper.get()))
+         | std::ranges::to<std::vector>();
+}
+
+std::optional<rc::Field>
+processFieldFromRawPackets(std::span<const tp::SSL_WrapperPacket> raw_wrapper_packets) {
   for (const auto& raw_packet : std::ranges::reverse_view(raw_wrapper_packets)) {
     if (raw_packet.has_geometry()) {
       const tp::SSL_GeometryFieldSize& geometry = raw_packet.geometry().field();
@@ -63,7 +73,7 @@ rc::Field processFieldFromRawPackets(std::span<const tp::SSL_WrapperPacket> raw_
     }
   }
 
-  return rc::Field::default_instance();
+  return std::nullopt;
 }
 
 } // namespace
@@ -76,45 +86,43 @@ DetectionProcessor::DetectionProcessor(
     raw_detection_filter_{std::move(raw_detection_filter)},
     tracked_detection_filter_{std::move(tracked_detection_filter)} {}
 
-rc::DetectionWrapper DetectionProcessor::process(std::span<const Payload> payloads) {
+std::optional<rc::DetectionWrapper> DetectionProcessor::process(std::span<const Payload> payloads) {
+  std::vector<tp::TrackerWrapperPacket> tracked_packets = trackedPacketsFromPayloads(payloads);
+  std::vector<tp::SSL_WrapperPacket> raw_wrapper_packets = rawWrapperPacketsFromPayloads(payloads);
+
   rc::DetectionWrapper detection_wrapper;
   rc::Detection& detection = *detection_wrapper.mutable_detection();
 
-  if (pUseTrackedDetectionAsSource()) {
-    std::vector<tp::TrackerWrapperPacket> tracked_packets = trackedPacketsFromPayloads(payloads);
+  if (std::optional<rc::Field> processed_field = processFieldFromRawPackets(raw_wrapper_packets)) {
+    last_field_ = std::move(processed_field);
+  }
 
-    if (rc::Detection processed_detection = tracked_detection_filter_->process(tracked_packets);
-        processed_detection.IsInitialized()) {
-      detection = std::move(processed_detection);
+  if (pUseTrackedDetectionAsSource()) {
+    if (std::optional<rc::Detection> processed_detection
+        = tracked_detection_filter_->process(tracked_packets)) {
+      detection = std::move(*processed_detection);
     }
   } else {
-    std::vector<tp::SSL_WrapperPacket> raw_wrapper_packets
-        = rawWrapperPacketsFromPayloads(payloads);
-    std::vector<RawDetection> raw_detections
-        = raw_wrapper_packets
-          | std::views::transform(std::bind_front(&IRawDetectionMapper::fromSslWrapperPacket,
-                                                  raw_detection_mapper_.get()))
-          | std::ranges::to<std::vector>();
-
-    if (rc::Detection processed_detection = raw_detection_filter_->process(raw_detections);
-        processed_detection.IsInitialized()) {
-      detection = std::move(processed_detection);
-    }
-
-    if (rc::Field processed_field = processFieldFromRawPackets(raw_wrapper_packets);
-        processed_field.IsInitialized()) {
-      last_field_ = std::move(processed_field);
+    if (std::optional<rc::Detection> processed_detection = raw_detection_filter_->process(
+            rawDetectionsFromRawPackets(raw_detection_mapper_, raw_wrapper_packets))) {
+      detection = std::move(*processed_detection);
     }
   }
 
-  if (rc::Field& field = *detection.mutable_field(); last_field_.IsInitialized()) {
-    field = last_field_;
+  if (last_field_ != std::nullopt) {
+    *detection.mutable_field() = *last_field_;
   }
 
-  // TODO(matheusvtna, joseviccruz): add raw_wrapper_packets and tracked_packets to
-  // dectection_wrapper.
+  detection.set_serial_id(++serial_id_);
 
-  detection.set_serial_id(serial_id_++);
+  detection_wrapper.mutable_tracked_detections()->Add(
+      std::make_move_iterator(tracked_packets.begin()),
+      std::make_move_iterator(tracked_packets.end()));
+
+  detection_wrapper.mutable_raw_detections()->Add(
+      std::make_move_iterator(raw_wrapper_packets.begin()),
+      std::make_move_iterator(raw_wrapper_packets.end()));
+
   return detection_wrapper;
 }
 
