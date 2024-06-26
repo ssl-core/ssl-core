@@ -10,4 +10,5 @@ robocin_cpp_library(
        common::output
        common::wip
        protocols::protobufs
+       parameters
 )

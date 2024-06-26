@@ -115,7 +115,7 @@ CheckOptions:
   - key: readability-identifier-naming.GlobalConstantPrefix
     value: k
   - key: readability-identifier-naming.GlobalConstantIgnoredRegexp
-    value: "^[a-z][a-zA-Z0-9]*_v$"
+    value: "^([a-z][a-zA-Z0-9]+_v)|(p[A-Z][a-zA-Z0-9]+)$"
 
   # * local constant:
   - key: readability-identifier-naming.LocalConstantCase

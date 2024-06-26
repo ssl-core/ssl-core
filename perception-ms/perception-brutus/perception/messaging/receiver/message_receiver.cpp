@@ -1,5 +1,7 @@
 #include "perception/messaging/receiver/message_receiver.h"
 
+#include "perception/parameters/parameters.h"
+
 #include <robocin/network/zmq_datagram.h>
 #include <robocin/output/log.h>
 
@@ -11,10 +13,6 @@ using ::robocin::IZmqPoller;
 using ::robocin::IZmqSubscriberSocket;
 using ::robocin::wlog;
 using ::robocin::ZmqDatagram;
-
-// NOLINTBEGIN(*naming*, *magic-numbers*)
-constexpr auto pPerceptionPollerTimeoutMs = []() { return /* 240hz ~= */ 4 /*ms*/; };
-// NOLINTEND(*naming*, *magic-numbers*)
 
 } // namespace
 
