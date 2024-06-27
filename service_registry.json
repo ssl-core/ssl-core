@@ -22,7 +22,8 @@
   "Perception": {
     "address": "ipc:///tmp/perception.ipc",
     "topics": [
-      "detection"
+      "detection",
+      "wrapper"
     ]
   }
 }
