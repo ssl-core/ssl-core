@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"log"
 	"sync"
 	"time"
@@ -25,10 +26,14 @@ const (
 
 // MessageReceiver
 
-type MessageReceiver struct{}
+type MessageReceiver struct {
+	datagramChannel chan transport.ZmqMultipartDatagram
+}
 
-func NewMessageReceiver() *MessageReceiver {
-	return &MessageReceiver{}
+func NewMessageReceiver(datagramChannel chan transport.ZmqMultipartDatagram) *MessageReceiver {
+	return &MessageReceiver{
+		datagramChannel: datagramChannel,
+	}
 }
 
 func (mr *MessageReceiver) makeSubscriber(address, topic string) *transport.ZmqSubscriberSocket {
@@ -43,9 +48,9 @@ func (mr *MessageReceiver) receiveDatagrams(subscriber *transport.ZmqSubscriberS
 	}
 }
 
-func (mr *MessageReceiver) Run(datagramChannel chan transport.ZmqMultipartDatagram) {
-	go mr.receiveDatagrams(mr.makeSubscriber(perceptionAddress, detectionWrapperTopic), datagramChannel)
-	go mr.receiveDatagrams(mr.makeSubscriber(refereeAddress, refereeTopic), datagramChannel)
+func (mr *MessageReceiver) Run() {
+	go mr.receiveDatagrams(mr.makeSubscriber(perceptionAddress, detectionWrapperTopic), mr.datagramChannel)
+	go mr.receiveDatagrams(mr.makeSubscriber(refereeAddress, refereeTopic), mr.datagramChannel)
 }
 
 // MessageSender
@@ -71,11 +76,11 @@ func NewMessageSender() *MessageSender {
 	return &MessageSender{}
 }
 
-func (ms *MessageSender) setupPublishers() {
+func (ms *MessageSender) setup() {
 	ms.makePublisher(livePublishAddress, livePublishID)
 }
 
-func (ms *MessageSender) sendLatestSample(sample entity.Sample) {
+func (ms *MessageSender) sendSample(sample entity.Sample) {
 	message := sample.ToProto()
 	messageBytes, err := proto.Marshal(message)
 	if err != nil {
@@ -97,65 +102,77 @@ func saveToDatabase(datagrams []transport.ZmqMultipartDatagram) {
 // WorldState
 
 type WorldState struct {
-	latest_sample entity.Sample
-	datagrams     []transport.ZmqMultipartDatagram
-	mu            sync.Mutex
-	sender        MessageSender
-	ticker        *time.Ticker
+	latest_sample   entity.Sample
+	datagrams       []transport.ZmqMultipartDatagram
+	datagramChannel chan transport.ZmqMultipartDatagram
+	mu              sync.Mutex
+	wg              *sync.WaitGroup
+	sender          MessageSender
+	ticker          *time.Ticker
 }
 
-func NewWorldState() *WorldState {
+func NewWorldState(sender MessageSender, datagramChannel chan transport.ZmqMultipartDatagram) *WorldState {
+	wg := sync.WaitGroup{}
+	wg.Add(2)
+
 	return &WorldState{
-		latest_sample: entity.Sample{},
-		datagrams:     make([]transport.ZmqMultipartDatagram, 0),
-		sender:        MessageSender{},
-		ticker:        time.NewTicker(time.Second / liveFrequencyHZ),
+		latest_sample:   entity.Sample{},
+		datagrams:       make([]transport.ZmqMultipartDatagram, 0),
+		datagramChannel: datagramChannel,
+		mu:              sync.Mutex{},
+		wg:              &wg,
+		sender:          sender,
+		ticker:          time.NewTicker(time.Second / liveFrequencyHZ),
 	}
 }
 
-func NewWorldStateWithSender(sender MessageSender) *WorldState {
-	return &WorldState{
-		latest_sample: entity.Sample{},
-		datagrams:     make([]transport.ZmqMultipartDatagram, 0),
-		sender:        sender,
-		ticker:        time.NewTicker(time.Second / liveFrequencyHZ),
+func (ws *WorldState) updateLatestSample() {
+	defer ws.wg.Done()
+
+	for datagram := range ws.datagramChannel {
+		ws.mu.Lock()
+		defer ws.mu.Unlock()
+		ws.datagrams = append(ws.datagrams, datagram)
+		ws.latest_sample.UpdateFromDatagram(datagram)
 	}
 }
 
-func (ws *WorldState) updateSample(datagram transport.ZmqMultipartDatagram) {
-	ws.mu.Lock()
-	defer ws.mu.Unlock()
-	ws.datagrams = append(ws.datagrams, datagram)
-	ws.latest_sample.UpdateFromDatagram(datagram)
-}
+// TODO(matheusvtna): Change the name of this function...
+func (ws *WorldState) sendLatestSample() {
+	defer ws.wg.Done()
 
-func (ws *WorldState) handleDatagramsFrom(datagramChannel chan transport.ZmqMultipartDatagram) {
-	go func() {
-		for datagram := range datagramChannel {
-			ws.updateSample(datagram)
-		}
-	}()
-
+	// currentTime := time.Now()
 	for range ws.ticker.C {
+		// fmt.Printf("Sending latest sample... (deltaT(ms) == %v)\n", time.Since(currentTime).Milliseconds())
+		// currentTime = time.Now()
 		ws.mu.Lock()
 		if len(ws.datagrams) > 0 {
 			go saveToDatabase(ws.datagrams)
-			go ws.sender.sendLatestSample(ws.latest_sample)
+			go ws.sender.sendSample(ws.latest_sample)
 			ws.datagrams = nil
 		}
 		ws.mu.Unlock()
 	}
 }
 
+func (ws *WorldState) Run() {
+	fmt.Printf("Running WorldState...\n")
+	go ws.updateLatestSample()
+	go ws.sendLatestSample()
+	ws.wg.Wait()
+
+	fmt.Printf("Finishing WorldState\n")
+}
+
 func main() {
 	datagramChannel := make(chan transport.ZmqMultipartDatagram)
 
-	receiver := MessageReceiver{}
-	receiver.Run(datagramChannel)
+	receiver := NewMessageReceiver(datagramChannel)
+	receiver.Run()
 
 	sender := MessageSender{}
-	sender.setupPublishers()
+	sender.setup()
 
-	worldState := NewWorldStateWithSender(sender)
-	worldState.handleDatagramsFrom(datagramChannel)
+	worldState := NewWorldState(sender, datagramChannel)
+	worldState.Run()
 }

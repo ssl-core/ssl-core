@@ -1,4 +1,4 @@
-FROM golang:1.22
+FROM golang:latest
 
 COPY /protocols /tmp/protocols
 
