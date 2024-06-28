@@ -1,6 +1,12 @@
-#include "referee/common/detection_util/elapsed_timer.h"
+#include "robocin/detection_util/elapsed_timer.h"
 
-namespace referee::detection_util {
+#include "robocin/version/version.h"
+
+#if defined(__robocin_lib_std_concurrency) and __robocin_lib_std_concurrency >= 202405L
+
+#include "robocin/detection_util/clock.h"
+
+namespace robocin::detection_util {
 
 ElapsedTimer::ElapsedTimer(bool started) : started_{started}, start_{Clock::now()} {}
 
@@ -20,4 +26,6 @@ Duration ElapsedTimer::elapsed() const {
   return started_ ? Frames(/*frames=*/0) : Clock::now() - start_;
 }
 
-} // namespace referee::detection_util
+} // namespace robocin::detection_util
+
+#endif

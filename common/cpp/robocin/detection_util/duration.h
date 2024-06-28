@@ -1,10 +1,14 @@
-#ifndef REFEREE_COMMON_DETECTION_UTIL_DURATION_H
-#define REFEREE_COMMON_DETECTION_UTIL_DURATION_H
+#ifndef ROBOCIN_DETECTION_UTIL_DURATION_H
+#define ROBOCIN_DETECTION_UTIL_DURATION_H
+
+#include "robocin/version/version.h"
+
+#if defined(__robocin_lib_std_concurrency) and __robocin_lib_std_concurrency >= 202405L
 
 #include <compare> // IWYU pragma: keep
 #include <cstdint>
 
-namespace referee::detection_util {
+namespace robocin::detection_util {
 
 class Duration {
  public:
@@ -63,6 +67,8 @@ Duration operator"" _frames(unsigned long long frames) noexcept;
 
 } // namespace duration_literals
 
-} // namespace referee::detection_util
+} // namespace robocin::detection_util
 
-#endif // REFEREE_COMMON_DETECTION_UTIL_DURATION_H
+#endif
+
+#endif // ROBOCIN_DETECTION_UTIL_DURATION_H
