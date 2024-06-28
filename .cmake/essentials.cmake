@@ -48,6 +48,10 @@ include(GNUInstallDirs) # provided by CMake
 
 ########################################################################################################################
 
+set(ZLIB_USE_STATIC_LIBS ON) # required to link ZLIB statically
+
+########################################################################################################################
+
 # find Threads package
 find_package(Threads QUIET)
 if (Threads_FOUND)
