@@ -1,5 +1,9 @@
 #include "robocin/parameters/parameters.h"
 
+#include "robocin/version/version.h"
+
+#if defined(__robocin_lib_std_concurrency) and __robocin_lib_std_concurrency >= 202405L
+
 #include <mutex>
 #include <robocin/utility/singleton.h>
 #include <shared_mutex>
@@ -103,3 +107,5 @@ std::string Handler::name_of(id_type id) { return SHandlerInternal::get().get().
 parameter_type Handler::value_of(id_type id) { return SHandlerInternal::get().get().value_of(id); }
 
 } // namespace robocin::parameters
+
+#endif

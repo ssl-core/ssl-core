@@ -1,6 +1,10 @@
 #ifndef ROBOCIN_PARAMETERS_PARAMETERS_H
 #define ROBOCIN_PARAMETERS_PARAMETERS_H
 
+#include "robocin/version/version.h"
+
+#if defined(__robocin_lib_std_concurrency) and __robocin_lib_std_concurrency >= 202405L
+
 #include "robocin/geometry/point2d.h"
 #include "robocin/geometry/point3d.h"
 
@@ -157,5 +161,7 @@ class View {
 };
 
 } // namespace robocin::parameters
+
+#endif
 
 #endif // ROBOCIN_PARAMETERS_PARAMETERS_H
