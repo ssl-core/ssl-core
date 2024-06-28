@@ -59,10 +59,14 @@ class HandlerInternal {
   HandlerInternal() : handler_engine_{std::make_unique<HandlerEngine>()} {}
 
   void set(std::unique_ptr<IHandlerEngine> handler_engine) {
+    std::shared_lock locker{mutex_};
     handler_engine_ = std::move(handler_engine);
   }
 
-  IHandlerEngine& get() const { return *handler_engine_; }
+  IHandlerEngine& get() const {
+    std::shared_lock locker{mutex_};
+    return *handler_engine_;
+  }
 
  private:
   mutable std::shared_mutex mutex_;
