@@ -8,7 +8,7 @@
 
 #include <robocin/concurrency/concurrent_queue.h>
 #include <robocin/memory/object_ptr.h>
-
+#include <robocin/parameters/parameters.h>
 namespace perception {
 
 /**
@@ -20,9 +20,11 @@ namespace perception {
  */
 class ConsumerController : public IController {
  public:
-  ConsumerController(::robocin::object_ptr<::robocin::IConcurrentQueue<Payload>> messages,
-                     std::unique_ptr<IDetectionProcessor> detection_processor,
-                     std::unique_ptr<IMessageSender> message_sender);
+  ConsumerController(
+      ::robocin::object_ptr<::robocin::IConcurrentQueue<Payload>> messages,
+      std::unique_ptr<::robocin::parameters::IHandlerEngine> parameters_handler_engine,
+      std::unique_ptr<IDetectionProcessor> detection_processor,
+      std::unique_ptr<IMessageSender> message_sender);
 
   /**
    * @brief Starts the controller's run loop to consume and process vision packets.
@@ -37,6 +39,7 @@ class ConsumerController : public IController {
   void exec(std::span<const Payload> payloads);
 
   ::robocin::object_ptr<::robocin::IConcurrentQueue<Payload>> messages_;
+  std::unique_ptr<::robocin::parameters::IHandlerEngine> parameters_handler_engine_;
   std::unique_ptr<IDetectionProcessor> detection_processor_;
   std::unique_ptr<IMessageSender> message_sender_;
 };

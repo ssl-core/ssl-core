@@ -6,7 +6,8 @@ robocin_cpp_library(
   SRCS icontroller.cpp
        producer_controller.cpp
        consumer_controller.cpp
-  DEPS common::concurrency
+  DEPS common::parameters
+       common::concurrency
        common::memory
        common::output
        messaging_receiver
