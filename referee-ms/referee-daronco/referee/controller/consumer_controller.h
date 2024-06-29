@@ -6,17 +6,23 @@
 #include "referee/messaging/sender/message_sender.h"
 #include "referee/processing/referee_processor.h"
 
+#include <memory>
 #include <protocols/referee/game_status.pb.h>
 #include <robocin/concurrency/concurrent_queue.h>
+#include <robocin/detection_util/clock.h>
 #include <robocin/memory/object_ptr.h>
+#include <robocin/parameters/parameters.h>
 
 namespace referee {
 
 class ConsumerController : public IController {
  public:
-  ConsumerController(::robocin::object_ptr<::robocin::IConcurrentQueue<Payload>> messages,
-                     std::unique_ptr<IRefereeProcessor> referee_processor,
-                     std::unique_ptr<IMessageSender> message_sender);
+  ConsumerController(
+      ::robocin::object_ptr<::robocin::IConcurrentQueue<Payload>> messages,
+      std::unique_ptr<::robocin::parameters::IHandlerEngine> parameters_handler_engine,
+      std::unique_ptr<::robocin::detection_util::IClockEngine> clock_engine,
+      std::unique_ptr<IRefereeProcessor> referee_processor,
+      std::unique_ptr<IMessageSender> message_sender);
 
   void run() override;
 
@@ -24,6 +30,8 @@ class ConsumerController : public IController {
   void exec(std::span<const Payload> payloads);
 
   ::robocin::object_ptr<::robocin::IConcurrentQueue<Payload>> messages_;
+  std::unique_ptr<::robocin::parameters::IHandlerEngine> parameters_handler_engine_;
+  std::unique_ptr<::robocin::detection_util::IClockEngine> clock_engine_;
   std::unique_ptr<IRefereeProcessor> referee_processor_;
   std::unique_ptr<IMessageSender> message_sender_;
 };

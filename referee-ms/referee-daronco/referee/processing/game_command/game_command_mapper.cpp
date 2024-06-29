@@ -1,5 +1,7 @@
 #include "referee/processing/game_command/game_command_mapper.h"
 
+#include "referee/parameters/parameters.h"
+
 #include <algorithm>
 #include <array>
 #include <cmath>
@@ -22,11 +24,6 @@ using ::google::protobuf::util::TimeUtil;
 using ::robocin::elog;
 using ::robocin::object_ptr;
 using ::robocin::wlog;
-
-// NOLINTBEGIN(*naming*, *magic-numbers*)
-constexpr auto pNearTheBallDistance = []() { return 300.0F; };
-constexpr auto pSlowerSpeedOfMovingBall = []() { return 300.0F; };
-// NOLINTEND(*naming*, *magic-numbers*)
 
 namespace rc {
 

@@ -6,7 +6,8 @@ robocin_cpp_library(
   SRCS payload.cpp
        payload_mapper.cpp
        message_receiver.cpp
-  DEPS common::network
+  DEPS parameters
+       common::network
        common::output
        common::wip
        protocols::protobufs

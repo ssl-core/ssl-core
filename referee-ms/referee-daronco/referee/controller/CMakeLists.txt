@@ -9,6 +9,8 @@ robocin_cpp_library(
   DEPS common::concurrency
        common::memory
        common::output
+       common::detection_util
+       common::parameters
        messaging_receiver
        messaging_sender
        processing

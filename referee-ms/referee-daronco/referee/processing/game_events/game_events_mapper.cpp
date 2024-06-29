@@ -1,8 +1,5 @@
 #include "referee/processing/game_events/game_events_mapper.h"
 
-#include "referee/common/detection_util/clock.h"
-#include "referee/common/detection_util/timestamp.h"
-
 #include <google/protobuf/duration.pb.h>
 #include <google/protobuf/repeated_ptr_field.h>
 #include <google/protobuf/timestamp.pb.h>
@@ -10,10 +7,14 @@
 #include <protocols/referee/game_status.pb.h>
 #include <protocols/third_party/game_controller/event.pb.h>
 #include <protocols/third_party/game_controller/referee.pb.h>
+#include <robocin/detection_util/clock.h>
+#include <robocin/detection_util/timestamp.h>
 #include <robocin/memory/object_ptr.h>
 
 namespace referee {
 namespace {
+
+namespace detection_util = ::robocin::detection_util;
 
 using ::google::protobuf::RepeatedPtrField;
 using ::google::protobuf::util::TimeUtil;
@@ -542,11 +543,11 @@ class MapperInternal {
     return result;
   }
 
-  static google::protobuf::Duration durationFromSeconds(float seconds) {
+  static ::google::protobuf::Duration durationFromSeconds(float seconds) {
     return TimeUtil::SecondsToDuration(static_cast<int64_t>(seconds));
   }
 
-  static google::protobuf::Timestamp timestampFromUnixNanos(uint64_t nanoseconds) {
+  static ::google::protobuf::Timestamp timestampFromUnixNanos(uint64_t nanoseconds) {
     return TimeUtil::NanosecondsToTimestamp(static_cast<int64_t>(nanoseconds));
   }
 
@@ -584,7 +585,7 @@ rc::GameEvent fromGameControllerEvent(const detection_util::Timestamp& now,
   *result.mutable_sources() = game_event.origin();
 
   /* set timestamp from detection clock */ {
-    google::protobuf::Timestamp timestamp;
+    ::google::protobuf::Timestamp timestamp;
     timestamp.set_seconds(now.seconds());
     timestamp.set_nanos(now.nanos());
 
