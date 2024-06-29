@@ -18,7 +18,7 @@ int main(int argc, char* argv[]) {
 
   zmq::context_t context(1);
   zmq::socket_t socket(context, ZMQ_REQ);
-  socket.connect("ipc:///tmp/gateway-frontend.ipc");
+  socket.connect("ipc:///tmp/.ssl-core/gateway-frontend.ipc");
 
   std::string client_identifier = args[1];
   for (int i = 0; i < kRequest; ++i) {

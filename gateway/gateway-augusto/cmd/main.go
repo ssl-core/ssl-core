@@ -18,7 +18,7 @@ func startGatewayWorker(address string, proxy chan network.ZmqMultipartDatagram,
 func startGatewayZmqServer(proxy chan network.ZmqMultipartDatagram, wg *sync.WaitGroup) {
 	defer wg.Done()
 
-	server := server.NewZqmServer("ipc:///tmp/gateway.ipc", proxy)
+	server := server.NewZqmServer("ipc:///tmp/.ssl-core/gateway.ipc", proxy)
 	server.Start()
 }
 

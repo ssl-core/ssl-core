@@ -5,13 +5,14 @@
     "dockerfile": "./../Dockerfile",
     "target": "devcontainer"
   },
+  "initializeCommand": "mkdir -p /tmp/.ssl-core",
+  "mounts": [
+    "source=/tmp/.ssl-core/,target=/tmp/.ssl-core/,type=bind,consistency=cached"
+  ],
   "runArgs": [
     "-e",
     "DISPLAY=${env:DISPLAY}",
     "--network=host"
-  ],
-  "mounts": [
-    "source=/tmp,target=/tmp,type=bind,consistency=cached"
   ],
   "customizations": {
     "vscode": {
