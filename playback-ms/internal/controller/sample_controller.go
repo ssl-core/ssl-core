@@ -8,6 +8,7 @@ import (
 
 	"github.com/robocin/ssl-core/playback-ms/db/redis"
 	"github.com/robocin/ssl-core/playback-ms/internal/entity"
+	"github.com/robocin/ssl-core/playback-ms/internal/latest_sample"
 	messaging "github.com/robocin/ssl-core/playback-ms/internal/messaging/sender"
 	"github.com/robocin/ssl-core/playback-ms/internal/service_discovery"
 	"github.com/robocin/ssl-core/playback-ms/network"
@@ -19,14 +20,13 @@ const (
 )
 
 type SampleController struct {
-	latest_sample entity.Sample
-	datagrams     []network.ZmqMultipartDatagram
-	channel       *chan network.ZmqMultipartDatagram
-	mu            *sync.Mutex
-	wg            *sync.WaitGroup
-	sender        *messaging.MessageSender
-	liveTicker    *time.Ticker
-	saveTicker    *time.Ticker
+	datagrams  []network.ZmqMultipartDatagram
+	channel    *chan network.ZmqMultipartDatagram
+	mu         *sync.Mutex
+	wg         *sync.WaitGroup
+	sender     *messaging.MessageSender
+	liveTicker *time.Ticker
+	saveTicker *time.Ticker
 }
 
 func NewSampleController(sender *messaging.MessageSender, channel *chan network.ZmqMultipartDatagram) *SampleController {
@@ -34,14 +34,13 @@ func NewSampleController(sender *messaging.MessageSender, channel *chan network.
 	wg.Add(3)
 
 	return &SampleController{
-		latest_sample: entity.Sample{},
-		datagrams:     make([]network.ZmqMultipartDatagram, 0),
-		channel:       channel,
-		mu:            &sync.Mutex{},
-		wg:            &wg,
-		sender:        sender,
-		liveTicker:    time.NewTicker(time.Second / liveFrequencyHZ),
-		saveTicker:    time.NewTicker(time.Second / saveFrequencyHZ),
+		datagrams:  make([]network.ZmqMultipartDatagram, 0),
+		channel:    channel,
+		mu:         &sync.Mutex{},
+		wg:         &wg,
+		sender:     sender,
+		liveTicker: time.NewTicker(time.Second / liveFrequencyHZ),
+		saveTicker: time.NewTicker(time.Second / saveFrequencyHZ),
 	}
 }
 
@@ -52,7 +51,7 @@ func (sc *SampleController) updateLatestSample() {
 		sc.mu.Lock()
 		defer sc.mu.Unlock()
 		sc.datagrams = append(sc.datagrams, datagram)
-		sc.latest_sample.UpdateFromDatagram(datagram)
+		latest_sample.GetInstance().UpdateFromDatagram(datagram)
 	}
 }
 
@@ -63,7 +62,13 @@ func (sc *SampleController) sendLatestSample() {
 	// TODO(matheusvtna): Use poller instead of ticker.
 	for range sc.liveTicker.C {
 		sc.mu.Lock()
-		go sc.sender.SendSample(sc.latest_sample)
+		sample, err := latest_sample.GetInstance().GetSample()
+		if err != nil {
+			log.Printf("Error getting sample on sendLatestSample: %v\n", err)
+			sc.mu.Unlock()
+			continue
+		}
+		go sc.sender.SendSample(*sample)
 		sc.mu.Unlock()
 	}
 }

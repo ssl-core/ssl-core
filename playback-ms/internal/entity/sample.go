@@ -2,12 +2,9 @@ package entity
 
 import (
 	"encoding/json"
-	"fmt"
 	"time"
 
-	"github.com/robocin/ssl-core/playback-ms/network"
 	"github.com/robocin/ssl-core/playback-ms/pkg/pb/playback"
-	"google.golang.org/protobuf/proto"
 	"google.golang.org/protobuf/types/known/timestamppb"
 )
 
@@ -20,24 +17,6 @@ type Sample struct {
 func NewSample(sample *playback.Sample) Sample {
 	return Sample{
 		Detection: NewDetection(sample.Detection),
-	}
-}
-
-func (s *Sample) UpdateFromDatagram(datagram network.ZmqMultipartDatagram) {
-	s.updateProperty(datagram.Identifier, datagram.Message)
-}
-
-func (s *Sample) updateProperty(identifier []byte, message []byte) {
-	var topic string = string(identifier)
-	switch topic {
-	case "detection":
-		var detectionProto playback.Detection
-		if err := proto.Unmarshal(message, &detectionProto); err != nil {
-			fmt.Errorf("failed to unmarshal detection: %v", err)
-		}
-		s.Detection = NewDetection(&detectionProto)
-	default:
-		fmt.Errorf("unexpected topic for ZmqMultipartDatagram: %s", topic)
 	}
 }
 
