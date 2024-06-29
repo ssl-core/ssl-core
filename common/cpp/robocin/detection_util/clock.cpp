@@ -7,7 +7,6 @@
 #include "robocin/detection_util/timestamp.h"
 
 #include <mutex>
-#include <protocols/perception/detection.pb.h>
 #include <robocin/utility/singleton.h>
 #include <shared_mutex>
 
