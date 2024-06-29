@@ -51,7 +51,7 @@ func main() {
 	sampleController := controller.NewSampleController(message_sender, &sampleControllerChannel)
 	go sampleController.Run(&wg)
 
-	chunkController := controller.NewChunkController(router, &chunkControllerChannel)
+	chunkController := controller.NewChunkController(message_sender, &chunkControllerChannel)
 	go chunkController.Run(&wg)
 
 	wg.Wait()

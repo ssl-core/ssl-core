@@ -3,24 +3,26 @@ package controller
 import (
 	"fmt"
 	"sync"
+	"time"
 
 	"github.com/robocin/ssl-core/playback-ms/db/redis"
+	"github.com/robocin/ssl-core/playback-ms/internal/entity"
+	messaging "github.com/robocin/ssl-core/playback-ms/internal/messaging/sender"
 	"github.com/robocin/ssl-core/playback-ms/network"
 )
 
 type ChunkController struct {
 	db_client *redis.RedisClient
 	channel   *chan network.ZmqMultipartDatagram
-	router    *network.ZmqRouterSocket
+	sender    *messaging.MessageSender
 }
 
-func NewChunkController(router *network.ZmqRouterSocket, channel *chan network.ZmqMultipartDatagram) *ChunkController {
-	cc := &ChunkController{
+func NewChunkController(sender *messaging.MessageSender, channel *chan network.ZmqMultipartDatagram) *ChunkController {
+	return &ChunkController{
 		db_client: redis.NewRedisClient(),
 		channel:   channel,
-		router:    router,
+		sender:    sender,
 	}
-	return cc
 }
 
 func (cc *ChunkController) Run(wg *sync.WaitGroup) {
@@ -37,6 +39,8 @@ func (cc *ChunkController) Run(wg *sync.WaitGroup) {
 func (cc *ChunkController) chunk_worker(datagram network.ZmqMultipartDatagram) {
 	for {
 		fmt.Println(string(datagram.Message))
-		cc.router.Send(datagram)
+		// TODO(matheusvtna): Implement database management to fetch chunks.
+		chunk := entity.NewChunk(time.Now(), make([]entity.Sample, 0))
+		cc.sender.SendChunk(*chunk, string(datagram.Identifier))
 	}
 }

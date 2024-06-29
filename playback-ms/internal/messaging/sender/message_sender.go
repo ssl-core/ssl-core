@@ -50,19 +50,41 @@ func NewMessageSender() *MessageSender {
 }
 
 func (ms *MessageSender) SendSample(sample entity.Sample) {
-	message := sample.ToProto()
-	messageBytes, err := proto.Marshal(message)
-	if err != nil {
-		log.Fatalf("Failed to marshal message: %v", err)
-	}
-	datagram := network.ZmqMultipartDatagram{
-		Identifier: []byte(service_discovery.GetInstance().GetLivePublishTopic()),
-		Message:    messageBytes,
-	}
 	publisher := ms.publishers[LivePublisherID]
 	if publisher == nil {
 		log.Fatalf("Publisher %s not found", LivePublisherID)
 		return
 	}
-	ms.publishers[LivePublisherID].Send(datagram)
+
+	message := sample.ToProto()
+	messageBytes, err := proto.Marshal(message)
+	if err != nil {
+		log.Fatalf("Failed to marshal Sample message: %v", err)
+	}
+	datagram := network.ZmqMultipartDatagram{
+		Identifier: []byte(service_discovery.GetInstance().GetLivePublishTopic()),
+		Message:    messageBytes,
+	}
+	publisher.Send(datagram)
+}
+
+func (ms *MessageSender) SendChunk(chunk entity.Chunk, request_id string) {
+	router := ms.routers[ChunkRouterID]
+	if router == nil {
+		log.Fatalf("Router %s not found", ChunkRouterID)
+		return
+	}
+
+	// TODO(matheusvtna): Implement Chunk.ToProto() method.
+	// message := chunk.ToProto()
+	// messageBytes, err := proto.Marshal(message)
+	messageBytes, err := chunk.ToJson()
+	if err != nil {
+		log.Fatalf("Failed to marshal Chunk message: %v", err)
+	}
+	datagram := network.ZmqMultipartDatagram{
+		Identifier: []byte(request_id),
+		Message:    messageBytes,
+	}
+	router.Send(datagram)
 }
