@@ -10,7 +10,7 @@ robocin_cpp_library(
         zmq_subscriber_socket.cpp
         zmq_publisher_socket.cpp
         zmq_poller.cpp
-  DEPS cppzmq
+  DEPS cppzmq-static
 )
 
 robocin_cpp_test(

@@ -1,5 +1,7 @@
 #include "referee/messaging/receiver/message_receiver.h"
 
+#include "referee/parameters/parameters.h"
+
 #include <robocin/network/zmq_datagram.h>
 #include <robocin/network/zmq_poller.h>
 #include <robocin/output/log.h>
@@ -12,10 +14,6 @@ using ::robocin::IZmqPoller;
 using ::robocin::IZmqSubscriberSocket;
 using ::robocin::wlog;
 using ::robocin::ZmqDatagram;
-
-// NOLINTBEGIN(*naming*, *magic-numbers*)
-constexpr auto pRefereePollerTimeoutMs = []() { return /* 240hz ~= */ 4 /*ms*/; };
-// NOLINTEND(*naming*, *magic-numbers*)
 
 } // namespace
 

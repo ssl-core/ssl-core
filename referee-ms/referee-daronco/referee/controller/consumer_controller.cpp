@@ -11,6 +11,9 @@ namespace referee {
 
 namespace {
 
+namespace parameters = ::robocin::parameters;
+namespace detection_util = ::robocin::detection_util;
+
 using ::robocin::IConcurrentQueue;
 using ::robocin::ilog;
 using ::robocin::object_ptr;
@@ -23,10 +26,15 @@ using ::protocols::referee::GameStatus;
 
 } // namespace
 
-ConsumerController::ConsumerController(object_ptr<IConcurrentQueue<Payload>> messages,
-                                       std::unique_ptr<IRefereeProcessor> referee_processor,
-                                       std::unique_ptr<IMessageSender> message_sender) :
+ConsumerController::ConsumerController(
+    object_ptr<IConcurrentQueue<Payload>> messages,
+    std::unique_ptr<parameters::IHandlerEngine> parameters_handler_engine,
+    std::unique_ptr<detection_util::IClockEngine> clock_engine,
+    std::unique_ptr<IRefereeProcessor> referee_processor,
+    std::unique_ptr<IMessageSender> message_sender) :
     messages_{messages},
+    parameters_handler_engine_{std::move(parameters_handler_engine)},
+    clock_engine_{std::move(clock_engine)},
     referee_processor_{std::move(referee_processor)},
     message_sender_{std::move(message_sender)} {}
 
@@ -35,6 +43,13 @@ void ConsumerController::run() {
 
   while (true) {
     std::vector<Payload> payloads = messages_->dequeue_all();
+
+    // TODO(joseviccruz): update parameters here from Payload.
+    // parameters_handler_engine_->update(parameters_values);
+
+    // TODO(joseviccruz): update detection clock here from Payload.
+    // clock_engine_->update(framerate, timestamp);
+
     exec(payloads);
   }
 }

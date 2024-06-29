@@ -3,12 +3,16 @@
 
 #include <memory>
 #include <print>
+#include <robocin/detection_util/clock.h>
 #include <robocin/memory/object_ptr.h>
 #include <robocin/network/zmq_poller.h>
 #include <robocin/network/zmq_subscriber_socket.h>
+#include <robocin/parameters/parameters.h>
 #include <robocin/wip/service_discovery/addresses.h>
 #include <thread>
 
+namespace parameters = ::robocin::parameters;
+namespace detection_util = ::robocin::detection_util;
 namespace service_discovery = robocin::service_discovery;
 
 using referee::ConsumerController;
@@ -89,6 +93,8 @@ std::unique_ptr<IMessageSender> makeMessageSender() {
 
 std::unique_ptr<IController> makeConsumer(object_ptr<IConcurrentQueue<Payload>> messages) {
   return std::make_unique<ConsumerController>(messages,
+                                              std::make_unique<parameters::HandlerEngine>(),
+                                              std::make_unique<detection_util::ClockEngine>(),
                                               makeRefereeProcessor(),
                                               makeMessageSender());
 }

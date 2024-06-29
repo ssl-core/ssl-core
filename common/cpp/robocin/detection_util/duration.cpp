@@ -1,10 +1,14 @@
-#include "referee/common/detection_util/duration.h"
+#include "robocin/detection_util/duration.h"
 
-#include "referee/common/detection_util/clock.h"
+#include "robocin/version/version.h"
+
+#if defined(__robocin_lib_std_concurrency) and __robocin_lib_std_concurrency >= 202405L
+
+#include "robocin/detection_util/clock.h"
 
 #include <cstdint>
 
-namespace referee::detection_util {
+namespace robocin::detection_util {
 namespace {
 
 constexpr int64_t kMillisecondsPerSecond = 1000LL;
@@ -64,4 +68,6 @@ Duration operator"" _frames(unsigned long long frames) noexcept {
 
 } // namespace duration_literals
 
-} // namespace referee::detection_util
+} // namespace robocin::detection_util
+
+#endif

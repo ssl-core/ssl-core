@@ -1,11 +1,15 @@
-#ifndef REFEREE_COMMON_DETECTION_UTIL_TIMESTAMP_H
-#define REFEREE_COMMON_DETECTION_UTIL_TIMESTAMP_H
+#ifndef ROBOCIN_DETECTION_UTIL_TIMESTAMP_H
+#define ROBOCIN_DETECTION_UTIL_TIMESTAMP_H
 
-#include "referee/common/detection_util/duration.h"
+#include "robocin/version/version.h"
+
+#if defined(__robocin_lib_std_concurrency) and __robocin_lib_std_concurrency >= 202405L
+
+#include "robocin/detection_util/duration.h"
 
 #include <cstdint>
 
-namespace referee::detection_util {
+namespace robocin::detection_util {
 
 class Timestamp {
  public:
@@ -23,6 +27,8 @@ class Timestamp {
   int32_t nanos_;
 };
 
-} // namespace referee::detection_util
+} // namespace robocin::detection_util
 
-#endif // REFEREE_COMMON_DETECTION_UTIL_TIMESTAMP_H
+#endif
+
+#endif // ROBOCIN_DETECTION_UTIL_TIMESTAMP_H

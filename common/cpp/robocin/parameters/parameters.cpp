@@ -1,5 +1,9 @@
 #include "robocin/parameters/parameters.h"
 
+#include "robocin/version/version.h"
+
+#if defined(__robocin_lib_std_concurrency) and __robocin_lib_std_concurrency >= 202405L
+
 #include <mutex>
 #include <robocin/utility/singleton.h>
 #include <shared_mutex>
@@ -55,10 +59,14 @@ class HandlerInternal {
   HandlerInternal() : handler_engine_{std::make_unique<HandlerEngine>()} {}
 
   void set(std::unique_ptr<IHandlerEngine> handler_engine) {
+    std::shared_lock locker{mutex_};
     handler_engine_ = std::move(handler_engine);
   }
 
-  IHandlerEngine& get() const { return *handler_engine_; }
+  IHandlerEngine& get() const {
+    std::shared_lock locker{mutex_};
+    return *handler_engine_;
+  }
 
  private:
   mutable std::shared_mutex mutex_;
@@ -103,3 +111,5 @@ std::string Handler::name_of(id_type id) { return SHandlerInternal::get().get().
 parameter_type Handler::value_of(id_type id) { return SHandlerInternal::get().get().value_of(id); }
 
 } // namespace robocin::parameters
+
+#endif

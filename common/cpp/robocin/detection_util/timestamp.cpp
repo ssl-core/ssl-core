@@ -1,6 +1,10 @@
-#include "referee/common/detection_util/timestamp.h"
+#include "robocin/detection_util/timestamp.h"
 
-namespace referee::detection_util {
+#include "robocin/version/version.h"
+
+#if defined(__robocin_lib_std_concurrency) and __robocin_lib_std_concurrency >= 202405L
+
+namespace robocin::detection_util {
 
 Timestamp::Timestamp(uint64_t serial_id, // NOLINT(*swappable*)
                      int64_t seconds,
@@ -19,4 +23,6 @@ Duration Timestamp::operator-(const Timestamp& other) const {
   return Frames(static_cast<int64_t>(serial_id_) - static_cast<int64_t>(other.serial_id_));
 }
 
-} // namespace referee::detection_util
+} // namespace robocin::detection_util
+
+#endif

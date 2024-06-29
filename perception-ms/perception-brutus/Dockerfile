@@ -1,32 +1,37 @@
-FROM robocin/ssl-core-cpp-base:latest as devcontainer
-
-ARG SOURCE_DIRECTORY
+FROM robocin/ssl-core-cpp-base:latest AS devcontainer
 
 COPY .cmake/ /tmp/.cmake/
 COPY common/ /tmp/common/
 COPY protocols/ /tmp/protocols/
 
-RUN \
+RUN set -x && \
   pushd /tmp/common/cpp && rm -rf build && \
   cmake -B build -S . -G "Ninja" -DCMAKE_CXX_COMPILER=clang++ && \
-  cmake --build build && cmake --install build && popd && \
+  cmake --build build && cmake --install build && \
+  popd && \
   \
   pushd /tmp/protocols && rm -rf build && \
   cmake -B build -S . -G "Ninja" -DCMAKE_CXX_COMPILER=clang++ && \
-  cmake --build build && cmake --install build && popd && \
+  cmake --build build && cmake --install build && \
+  popd && \
   \
-  rm -rf /tmp/.cmake/ /tmp/common/ /tmp/protocols/
+  rm -rf /tmp/.cmake/ /tmp/common/ /tmp/protocols/ && \
+  : # last line
 
-# TODO($ISSUE_N): Keep only the necessary files for the final image.
-COPY . /workspaces/
+FROM devcontainer AS build
 
-RUN \
-  if [ -z "${SOURCE_DIRECTORY}" ]; then \
-  rm -rf /workspaces/; \
-  else \
-  pushd "/workspaces/${SOURCE_DIRECTORY}"; \
-  rm -rf build bin; \
-  cmake -B build -S . -G "Ninja" -DCMAKE_CXX_COMPILER=clang++; \
-  cmake --build build; \
-  popd; \
-  fi
+COPY . /
+
+WORKDIR /perception-ms/perception-brutus
+
+RUN set -x && \
+  rm -rf build bin && \
+  cmake -B build -S . -G "Ninja" -DCMAKE_CXX_COMPILER=clang++ && \
+  cmake --build build && \
+  : # last line
+
+FROM scratch AS prod
+
+COPY --from=build /perception-ms/perception-brutus/bin/perception_main /perception_main
+
+ENTRYPOINT [ "./perception_main" ]

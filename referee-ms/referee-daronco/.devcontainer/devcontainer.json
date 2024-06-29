@@ -5,6 +5,9 @@
     "dockerfile": "./../Dockerfile",
     "target": "devcontainer"
   },
+  "mounts": [
+    "source=/tmp,target=/tmp,type=bind,consistency=cached"
+  ],
   "runArgs": [
     "-e",
     "DISPLAY=${env:DISPLAY}",
