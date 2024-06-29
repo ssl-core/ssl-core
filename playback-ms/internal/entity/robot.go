@@ -19,20 +19,20 @@ type Robot struct {
 	DribblerWidth   float32   `json:"dribbler_width"`
 }
 
-func NewRobot(robot *playback.Detection_Robot) Robot {
-	confidence := util.SetDefaultIfNil(robot.Confidence, 0)
-	pbRobotId := util.SetDefaultIfNil(robot.RobotId, &common.RobotId{})
+func NewRobot(robot_pb *playback.Detection_Robot) Robot {
+	confidence := util.SetDefaultIfNil(robot_pb.Confidence, 0)
+	pbRobotId := util.SetDefaultIfNil(robot_pb.RobotId, &common.RobotId{})
 	robotId := uint8(util.SetDefaultIfNil(pbRobotId.Number, 0))
-	robotColor := translateColor(util.SetDefaultIfNil(pbRobotId.Color, common.RobotId_COLOR_UNSPECIFIED))
-	pbPosition := util.SetDefaultIfNil(robot.Position, &common.Point2Df{})
+	robotColor := translateRobotColorFromProto(util.SetDefaultIfNil(pbRobotId.Color, common.RobotId_COLOR_UNSPECIFIED))
+	pbPosition := util.SetDefaultIfNil(robot_pb.Position, &common.Point2Df{})
 	position := []float32{util.SetDefaultIfNil(pbPosition.X, 0), util.SetDefaultIfNil(pbPosition.Y, 0)}
-	angle := util.SetDefaultIfNil(robot.Angle, 0)
-	pbVelocity := util.SetDefaultIfNil(robot.Velocity, &common.Point2Df{})
+	angle := util.SetDefaultIfNil(robot_pb.Angle, 0)
+	pbVelocity := util.SetDefaultIfNil(robot_pb.Velocity, &common.Point2Df{})
 	velocity := []float32{util.SetDefaultIfNil(pbVelocity.X, 0), util.SetDefaultIfNil(pbVelocity.Y, 0)}
-	angularVelocity := util.SetDefaultIfNil(robot.AngularVelocity, 0)
-	radius := util.SetDefaultIfNil(robot.Radius, 0)
-	height := util.SetDefaultIfNil(robot.Height, 0)
-	dribblerWidth := util.SetDefaultIfNil(robot.DribblerWidth, 0)
+	angularVelocity := util.SetDefaultIfNil(robot_pb.AngularVelocity, 0)
+	radius := util.SetDefaultIfNil(robot_pb.Radius, 0)
+	height := util.SetDefaultIfNil(robot_pb.Height, 0)
+	dribblerWidth := util.SetDefaultIfNil(robot_pb.DribblerWidth, 0)
 
 	return Robot{
 		Confidence:      confidence,
@@ -48,7 +48,7 @@ func NewRobot(robot *playback.Detection_Robot) Robot {
 	}
 }
 
-func translateColor(color common.RobotId_Color) string {
+func translateRobotColorFromProto(color common.RobotId_Color) string {
 	switch color {
 	case common.RobotId_COLOR_YELLOW:
 		return "yellow"
@@ -59,7 +59,7 @@ func translateColor(color common.RobotId_Color) string {
 	return "unspecified"
 }
 
-func translateColorToProto(color string) common.RobotId_Color {
+func translateRobotColorToProto(color string) common.RobotId_Color {
 	switch color {
 	case "yellow":
 		return common.RobotId_COLOR_YELLOW
@@ -73,7 +73,7 @@ func translateColorToProto(color string) common.RobotId_Color {
 func (r *Robot) ToProto() *playback.Detection_Robot {
 	return &playback.Detection_Robot{
 		Confidence:      r.Confidence,
-		RobotId:         &common.RobotId{Number: uint32(r.RobotId), Color: translateColorToProto(r.RobotColor)},
+		RobotId:         &common.RobotId{Number: uint32(r.RobotId), Color: translateRobotColorToProto(r.RobotColor)},
 		Position:        &common.Point2Df{X: r.Position[0], Y: r.Position[1]},
 		Angle:           r.Angle,
 		Velocity:        &common.Point2Df{X: r.Velocity[0], Y: r.Velocity[1]},

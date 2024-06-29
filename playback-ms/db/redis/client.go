@@ -22,6 +22,10 @@ func NewRedisClient() *RedisClient {
 	}
 }
 
+func (rc *RedisClient) Close() {
+	rc.client.Close()
+}
+
 func (rc *RedisClient) Get(key string) (interface{}, error) {
 	ctx := context.Background()
 	return rc.client.Get(ctx, key).Result()

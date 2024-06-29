@@ -6,8 +6,8 @@ import (
 )
 
 type Chunk struct {
-	EndTime    time.Time   `json:"end_time"`
-	Detections []Detection `json:"detections"`
+	EndTime time.Time `json:"end_time"`
+	Samples []Sample  `json:"samples"`
 }
 
 func (c *Chunk) ToJson() ([]byte, error) {

@@ -6,6 +6,7 @@ import (
 
 	"github.com/robocin/ssl-core/playback-ms/internal/util"
 	"github.com/robocin/ssl-core/playback-ms/pkg/pb/playback"
+	"google.golang.org/protobuf/proto"
 	"google.golang.org/protobuf/reflect/protoreflect"
 	"google.golang.org/protobuf/types/known/timestamppb"
 )
@@ -18,25 +19,24 @@ type Detection struct {
 	Robots    []Robot   `json:"robots"`
 }
 
-// ProtoReflect implements protoreflect.ProtoMessage.
 func (d *Detection) ProtoReflect() protoreflect.Message {
-	panic("unimplemented")
+	return d.ToProto().ProtoReflect()
 }
 
-func NewDetection(detection *playback.Detection) Detection {
-	balls := make([]Ball, len(detection.Balls))
-	for i, ball := range detection.Balls {
+func NewDetection(detection_pb *playback.Detection) Detection {
+	balls := make([]Ball, len(detection_pb.Balls))
+	for i, ball := range detection_pb.Balls {
 		balls[i] = NewBall(util.SetDefaultIfNil(ball, &playback.Detection_Ball{}))
 	}
 
-	robots := make([]Robot, len(detection.Robots))
-	for i, robot := range detection.Robots {
+	robots := make([]Robot, len(detection_pb.Robots))
+	for i, robot := range detection_pb.Robots {
 		robots[i] = NewRobot(util.SetDefaultIfNil(robot, &playback.Detection_Robot{}))
 	}
 
-	serialId := util.SetDefaultIfNil(detection.SerialId, 0)
-	fps := util.SetDefaultIfNil(detection.ExpectedFramerate, 0)
-	created_at := util.SetDefaultIfNil(detection.CreatedAt, &timestamppb.Timestamp{}).AsTime()
+	serialId := util.SetDefaultIfNil(detection_pb.SerialId, 0)
+	fps := util.SetDefaultIfNil(detection_pb.ExpectedFramerate, 0)
+	created_at := util.SetDefaultIfNil(detection_pb.CreatedAt, &timestamppb.Timestamp{}).AsTime()
 
 	return Detection{
 		SerialId:  serialId,
@@ -53,7 +53,7 @@ func (d *Detection) ToJson() ([]byte, error) {
 
 func NewDetectionFromString(protobuf string) (Detection, error) {
 	var detection Detection
-	err := json.Unmarshal([]byte(protobuf), &detection)
+	err := proto.Unmarshal([]byte(protobuf), &detection)
 	if err != nil {
 		return Detection{}, err
 	}

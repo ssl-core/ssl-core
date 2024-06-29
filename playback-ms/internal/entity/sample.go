@@ -5,8 +5,8 @@ import (
 	"fmt"
 	"time"
 
+	"github.com/robocin/ssl-core/playback-ms/network"
 	"github.com/robocin/ssl-core/playback-ms/pkg/pb/playback"
-	"github.com/robocin/ssl-core/playback-ms/transport"
 	"google.golang.org/protobuf/proto"
 	"google.golang.org/protobuf/types/known/timestamppb"
 )
@@ -23,7 +23,7 @@ func NewSample(sample *playback.Sample) Sample {
 	}
 }
 
-func (s *Sample) UpdateFromDatagram(datagram transport.ZmqMultipartDatagram) {
+func (s *Sample) UpdateFromDatagram(datagram network.ZmqMultipartDatagram) {
 	s.updateProperty(datagram.Identifier, datagram.Message)
 }
 

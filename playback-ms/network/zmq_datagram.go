@@ -1,4 +1,4 @@
-package transport
+package network
 
 type ZmqDatagram struct {
 	Message []byte

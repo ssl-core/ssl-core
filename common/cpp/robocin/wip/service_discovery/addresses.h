@@ -14,7 +14,7 @@ inline constexpr std::string_view kGameControllerRefereeTopic = "referee-third-p
 
 inline constexpr std::string_view kPerceptionAddress = "ipc:///tmp/perception-async.ipc";
 inline constexpr std::string_view kPerceptionDetectionTopic = "detection";
-inline constexpr std::string_view kPerceptionDetectionWrapperTopic = "detection-wrapper";
+inline constexpr std::string_view kPerceptionDetectionWrapperTopic = "wrapper";
 
 inline constexpr std::string_view kRefereeAddress = "ipc:///tmp/referee-async.ipc";
 inline constexpr std::string_view kRefereeGameStatusTopic = "game-status";
