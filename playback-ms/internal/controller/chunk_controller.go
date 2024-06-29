@@ -45,7 +45,7 @@ func (cc *ChunkController) chunkWorker(datagram network.ZmqMultipartDatagram) {
 			fmt.Printf("Error getting sample on chunkWorker: %v\n", err)
 			continue
 		}
-		chunk := entity.NewChunk(sample.Timestamp, make([]entity.Sample, 0))
+		chunk := entity.NewChunk((*sample).Timestamp, make([]entity.Sample, 0))
 		cc.sender.SendChunk(*chunk, string(datagram.Identifier))
 	}
 }

@@ -3,6 +3,10 @@ package entity
 import (
 	"encoding/json"
 	"time"
+
+	"github.com/robocin/ssl-core/playback-ms/pkg/pb/gateway"
+	"github.com/robocin/ssl-core/playback-ms/pkg/pb/playback"
+	"google.golang.org/protobuf/types/known/timestamppb"
 )
 
 type Chunk struct {
@@ -21,15 +25,14 @@ func (c *Chunk) ToJson() ([]byte, error) {
 	return json.Marshal(c)
 }
 
-// TODO(matheusvtna): Implement Chunk.ToProto() method. Needs the playback.Chunk protobuf.
-// func (c *Chunk) ToProto() *playback.Chunk {
-// 	samples_pb := make([]*playback.Sample, len(c.Samples))
-// 	for i, sample := range c.Samples {
-// 		samples_pb[i] = sample.ToProto()
-// 	}
+func (c *Chunk) ToProto(last_timestamp time.Time) (*gateway.GetReplayChunkResponse, error) {
+	samples_pb := make([]*playback.Sample, len(c.Samples))
+	for i, sample := range c.Samples {
+		samples_pb[i] = sample.ToProto()
+	}
 
-// 	return &playback.Chunk{
-// 		...
-// 		samples: samsamples_pb
-// 	}
-// }
+	return &gateway.GetReplayChunkResponse{
+		LastTimestamp: timestamppb.New(last_timestamp),
+		Samples:       samples_pb,
+	}, nil
+}

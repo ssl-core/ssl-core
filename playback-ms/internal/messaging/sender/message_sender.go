@@ -4,6 +4,7 @@ import (
 	"log"
 
 	"github.com/robocin/ssl-core/playback-ms/internal/entity"
+	"github.com/robocin/ssl-core/playback-ms/internal/latest_sample"
 	"github.com/robocin/ssl-core/playback-ms/internal/service_discovery"
 	"github.com/robocin/ssl-core/playback-ms/network"
 	"google.golang.org/protobuf/proto"
@@ -75,10 +76,16 @@ func (ms *MessageSender) SendChunk(chunk entity.Chunk, request_id string) {
 		return
 	}
 
-	// TODO(matheusvtna): Implement Chunk.ToProto() method.
-	// message := chunk.ToProto()
-	// messageBytes, err := proto.Marshal(message)
-	messageBytes, err := chunk.ToJson()
+	sample, err := latest_sample.GetInstance().GetSample()
+	if err != nil {
+		log.Fatalf("Failed to get latest sample: %v", err)
+	}
+
+	message, err := chunk.ToProto(sample.Timestamp)
+	if err != nil {
+		log.Fatalf("Failed to convert Chunk to Proto: %v", err)
+	}
+	messageBytes, err := proto.Marshal(message)
 	if err != nil {
 		log.Fatalf("Failed to marshal Chunk message: %v", err)
 	}
