@@ -1,4 +1,4 @@
-package application
+package controller
 
 import (
 	"fmt"
@@ -8,44 +8,47 @@ import (
 
 	"github.com/robocin/ssl-core/playback-ms/db/redis"
 	"github.com/robocin/ssl-core/playback-ms/internal/entity"
-	"github.com/robocin/ssl-core/playback-ms/internal/messaging"
+	messaging "github.com/robocin/ssl-core/playback-ms/internal/messaging/sender"
 	"github.com/robocin/ssl-core/playback-ms/internal/service_discovery"
 	"github.com/robocin/ssl-core/playback-ms/network"
 )
 
 const (
-	liveFrequencyHZ = 60
+	liveFrequencyHZ = 120
+	saveFrequencyHZ = 60
 )
 
 type SampleController struct {
-	latest_sample   entity.Sample
-	datagrams       []network.ZmqMultipartDatagram
-	datagramChannel chan network.ZmqMultipartDatagram
-	mu              sync.Mutex
-	wg              *sync.WaitGroup
-	sender          messaging.MessageSender
-	ticker          *time.Ticker
+	latest_sample entity.Sample
+	datagrams     []network.ZmqMultipartDatagram
+	channel       *chan network.ZmqMultipartDatagram
+	mu            *sync.Mutex
+	wg            *sync.WaitGroup
+	sender        *messaging.MessageSender
+	liveTicker    *time.Ticker
+	saveTicker    *time.Ticker
 }
 
-func NewSampleController(sender messaging.MessageSender, datagramChannel chan network.ZmqMultipartDatagram) *SampleController {
+func NewSampleController(sender *messaging.MessageSender, channel *chan network.ZmqMultipartDatagram) *SampleController {
 	wg := sync.WaitGroup{}
-	wg.Add(2)
+	wg.Add(3)
 
 	return &SampleController{
-		latest_sample:   entity.Sample{},
-		datagrams:       make([]network.ZmqMultipartDatagram, 0),
-		datagramChannel: datagramChannel,
-		mu:              sync.Mutex{},
-		wg:              &wg,
-		sender:          sender,
-		ticker:          time.NewTicker(time.Second / liveFrequencyHZ),
+		latest_sample: entity.Sample{},
+		datagrams:     make([]network.ZmqMultipartDatagram, 0),
+		channel:       channel,
+		mu:            &sync.Mutex{},
+		wg:            &wg,
+		sender:        sender,
+		liveTicker:    time.NewTicker(time.Second / liveFrequencyHZ),
+		saveTicker:    time.NewTicker(time.Second / saveFrequencyHZ),
 	}
 }
 
 func (sc *SampleController) updateLatestSample() {
 	defer sc.wg.Done()
 
-	for datagram := range sc.datagramChannel {
+	for datagram := range *sc.channel {
 		sc.mu.Lock()
 		defer sc.mu.Unlock()
 		sc.datagrams = append(sc.datagrams, datagram)
@@ -53,19 +56,29 @@ func (sc *SampleController) updateLatestSample() {
 	}
 }
 
-// TODO(matheusvtna): Change the name of this function...
 func (sc *SampleController) sendLatestSample() {
-	defer sc.ticker.Stop()
+	defer sc.liveTicker.Stop()
+	defer sc.wg.Done()
+
+	// TODO(matheusvtna): Use poller instead of ticker.
+	for range sc.liveTicker.C {
+		sc.mu.Lock()
+		go sc.sender.SendSample(sc.latest_sample)
+		sc.mu.Unlock()
+	}
+}
+
+func (sc *SampleController) saveDatagrams() {
+	defer sc.saveTicker.Stop()
 	defer sc.wg.Done()
 
 	// currentTime := time.Now()
-	for range sc.ticker.C {
+	for range sc.saveTicker.C {
 		// fmt.Printf("Sending latest sample... (deltaT(ms) == %v)\n", time.Since(currentTime).Milliseconds())
 		// currentTime = time.Now()
 		sc.mu.Lock()
 		if len(sc.datagrams) > 0 {
 			go saveToDatabase(sc.datagrams)
-			go sc.sender.SendSample(sc.latest_sample)
 			sc.datagrams = nil
 		}
 		sc.mu.Unlock()
@@ -80,7 +93,6 @@ func makeEntityFromDatagram(datagram network.ZmqMultipartDatagram) (interface{},
 		log.Fatalf("Unknown datagram identifier: %v", datagram.Identifier)
 		return nil, fmt.Errorf("Unknown datagram identifier: %v", datagram.Identifier)
 	}
-
 }
 
 func saveToDatabase(datagrams []network.ZmqMultipartDatagram) {
@@ -96,11 +108,13 @@ func saveToDatabase(datagrams []network.ZmqMultipartDatagram) {
 	}
 }
 
-func (sc *SampleController) Run() {
+func (sc *SampleController) Run(wg *sync.WaitGroup) {
 	defer fmt.Printf("Finishing SampleController\n")
+	defer wg.Done()
 
 	fmt.Printf("Running SampleController...\n")
 	go sc.updateLatestSample()
+	go sc.saveDatagrams()
 	go sc.sendLatestSample()
 	sc.wg.Wait()
 }

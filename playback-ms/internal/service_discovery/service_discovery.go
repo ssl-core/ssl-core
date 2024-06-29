@@ -12,6 +12,9 @@ const (
 	refereeTopic          = "referee"
 
 	chunkAddress = "ipc:///tmp/dr.ipc"
+
+	livePublishAddress = "ipc:///tmp/gateway-async-frontend.ipc"
+	livePublishTopic   = "sample"
 )
 
 var lock = &sync.Mutex{}
@@ -28,11 +31,7 @@ func GetInstance() *ServiceDiscovery {
 		if instance == nil {
 			fmt.Println("Creating ServiceDiscovery instance now.")
 			instance = &ServiceDiscovery{}
-		} else {
-			fmt.Println("ServiceDiscovery instance already created.")
 		}
-	} else {
-		fmt.Println("ServiceDiscovery instance already created.")
 	}
 
 	return instance
@@ -56,4 +55,12 @@ func (sd *ServiceDiscovery) GetRefereeTopic() string {
 
 func (sd *ServiceDiscovery) GetChunkAddress() string {
 	return chunkAddress
+}
+
+func (sd *ServiceDiscovery) GetLivePublishAddress() string {
+	return livePublishAddress
+}
+
+func (sd *ServiceDiscovery) GetLivePublishTopic() string {
+	return livePublishTopic
 }
