@@ -472,9 +472,9 @@ function(robocin_cpp_executable)
 
   if (NOT ARG_DYNAMIC_LINKING)
     list(APPEND ARG_DEPS "-static")
-    message(STATUS "robocin_cpp_executable (${ARG_NAME}): generating the executable with dynamic linking.")
-  else ()
     message(STATUS "robocin_cpp_executable (${ARG_NAME}): generating the executable with static linking.")
+  else ()
+    message(STATUS "robocin_cpp_executable (${ARG_NAME}): generating the executable with dynamic linking.")
   endif ()
 
   add_executable(${ARG_NAME} ${ARG_HDRS} ${ARG_SRCS} ${ARG_MODS}) # add executable with given name, headers, sources and modules
