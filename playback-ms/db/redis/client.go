@@ -35,3 +35,16 @@ func (rc *RedisClient) Set(key string, value interface{}) error {
 	ctx := context.Background()
 	return rc.client.Set(ctx, key, value, 0).Err()
 }
+
+func (rc *RedisClient) SetMany(values map[string]interface{}) error {
+	ctx := context.Background()
+	return rc.client.MSet(ctx, values).Err()
+}
+
+// func (rc *RedisClient) GetRange(start, end string) ([]string, error) {
+// 	ctx := context.Background()
+// 	return rc.client.ZRangeByScore(ctx, start, end, &redis.ZRangeBy{
+// 		Min: start,
+// 		Max: end,
+// 	}).Result()
+// }

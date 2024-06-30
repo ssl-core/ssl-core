@@ -6,8 +6,8 @@ import (
 
 	"github.com/robocin/ssl-core/playback-ms/db/redis"
 	"github.com/robocin/ssl-core/playback-ms/internal/entity"
-	"github.com/robocin/ssl-core/playback-ms/internal/latest_sample"
 	"github.com/robocin/ssl-core/playback-ms/internal/messaging/sender"
+	"github.com/robocin/ssl-core/playback-ms/internal/world"
 	"github.com/robocin/ssl-core/playback-ms/network"
 )
 
@@ -40,7 +40,7 @@ func (cc *ChunkController) chunkWorker(datagram network.ZmqMultipartDatagram) {
 	for {
 		fmt.Println(string(datagram.Message))
 		// TODO(matheusvtna): Implement database management to fetch chunks.
-		sample, err := latest_sample.GetInstance().GetSample()
+		sample, err := world.GetInstance().GetLatestSample()
 		if err != nil {
 			fmt.Printf("Error getting sample on chunkWorker: %v\n", err)
 			continue

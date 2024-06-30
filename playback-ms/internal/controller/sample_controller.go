@@ -7,10 +7,8 @@ import (
 	"time"
 
 	"github.com/robocin/ssl-core/playback-ms/db/redis"
-	"github.com/robocin/ssl-core/playback-ms/internal/entity"
-	"github.com/robocin/ssl-core/playback-ms/internal/latest_sample"
-	messaging "github.com/robocin/ssl-core/playback-ms/internal/messaging/sender"
-	"github.com/robocin/ssl-core/playback-ms/internal/service_discovery"
+	"github.com/robocin/ssl-core/playback-ms/internal/messaging/sender"
+	"github.com/robocin/ssl-core/playback-ms/internal/world"
 	"github.com/robocin/ssl-core/playback-ms/network"
 )
 
@@ -20,38 +18,31 @@ const (
 )
 
 type SampleController struct {
-	datagrams  []network.ZmqMultipartDatagram
 	channel    *chan network.ZmqMultipartDatagram
-	mu         *sync.Mutex
 	wg         *sync.WaitGroup
-	sender     *messaging.MessageSender
-	liveTicker *time.Ticker
+	sender     *sender.MessageSender
 	saveTicker *time.Ticker
+	liveTicker *time.Ticker
+	db_client  *redis.RedisClient
 }
 
-func NewSampleController(sender *messaging.MessageSender, channel *chan network.ZmqMultipartDatagram) *SampleController {
+func NewSampleController(sender *sender.MessageSender, channel *chan network.ZmqMultipartDatagram) *SampleController {
 	wg := sync.WaitGroup{}
 	wg.Add(3)
 
 	return &SampleController{
-		datagrams:  make([]network.ZmqMultipartDatagram, 0),
 		channel:    channel,
-		mu:         &sync.Mutex{},
 		wg:         &wg,
 		sender:     sender,
-		liveTicker: time.NewTicker(time.Second / liveFrequencyHZ),
 		saveTicker: time.NewTicker(time.Second / saveFrequencyHZ),
+		liveTicker: time.NewTicker(time.Second / liveFrequencyHZ),
+		db_client:  redis.NewRedisClient(),
 	}
 }
 
 func (sc *SampleController) updateLatestSample() {
-	defer sc.wg.Done()
-
 	for datagram := range *sc.channel {
-		sc.mu.Lock()
-		defer sc.mu.Unlock()
-		sc.datagrams = append(sc.datagrams, datagram)
-		latest_sample.GetInstance().UpdateFromDatagram(datagram)
+		world.GetInstance().UpdateFromDatagram(&datagram)
 	}
 }
 
@@ -59,57 +50,30 @@ func (sc *SampleController) sendLatestSample() {
 	defer sc.liveTicker.Stop()
 	defer sc.wg.Done()
 
-	// TODO(matheusvtna): Use poller instead of ticker.
 	for range sc.liveTicker.C {
-		sc.mu.Lock()
-		sample, err := latest_sample.GetInstance().GetSample()
+		sample, err := world.GetInstance().GetLatestSample()
 		if err != nil {
 			log.Printf("Error getting sample on sendLatestSample: %v\n", err)
-			sc.mu.Unlock()
 			continue
 		}
 		go sc.sender.SendSample(*sample)
-		sc.mu.Unlock()
 	}
 }
 
-func (sc *SampleController) saveDatagrams() {
+func (sc *SampleController) saveSamples() {
 	defer sc.saveTicker.Stop()
 	defer sc.wg.Done()
 
-	// currentTime := time.Now()
 	for range sc.saveTicker.C {
-		// fmt.Printf("Sending latest sample... (deltaT(ms) == %v)\n", time.Since(currentTime).Milliseconds())
-		// currentTime = time.Now()
-		sc.mu.Lock()
-		if len(sc.datagrams) > 0 {
-			go saveToDatabase(sc.datagrams)
-			sc.datagrams = nil
+		data := make(map[string]interface{})
+		samples := world.GetInstance().GetUnsavedSamples()
+		if len(samples) == 0 {
+			continue
 		}
-		sc.mu.Unlock()
-	}
-}
-
-func makeEntityFromDatagram(datagram network.ZmqMultipartDatagram) (interface{}, error) {
-	switch string(datagram.Identifier) {
-	case service_discovery.GetInstance().GetDetectionWrapperTopic():
-		return entity.NewDetectionFromString(string(datagram.Message))
-	default:
-		log.Fatalf("Unknown datagram identifier: %v", datagram.Identifier)
-		return nil, fmt.Errorf("Unknown datagram identifier: %v", datagram.Identifier)
-	}
-}
-
-func saveToDatabase(datagrams []network.ZmqMultipartDatagram) {
-	client := redis.NewRedisClient()
-	defer client.Close()
-
-	for _, datagram := range datagrams {
-		entity, err := makeEntityFromDatagram(datagram)
-		if err != nil {
-			log.Fatalf("Failed to create detection from datagram: %v", err)
+		for _, sample := range samples {
+			data[sample.Timestamp.Format(time.RFC3339)] = sample
 		}
-		client.Set(string(datagram.Identifier), entity)
+		sc.db_client.SetMany(data)
 	}
 }
 
@@ -119,7 +83,7 @@ func (sc *SampleController) Run(wg *sync.WaitGroup) {
 
 	fmt.Printf("Running SampleController...\n")
 	go sc.updateLatestSample()
-	go sc.saveDatagrams()
+	go sc.saveSamples()
 	go sc.sendLatestSample()
 	sc.wg.Wait()
 }

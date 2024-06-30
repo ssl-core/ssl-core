@@ -3,6 +3,7 @@ package entity
 import (
 	"github.com/robocin/ssl-core/playback-ms/internal/util"
 	"github.com/robocin/ssl-core/playback-ms/pkg/pb/common"
+	"github.com/robocin/ssl-core/playback-ms/pkg/pb/perception"
 	"github.com/robocin/ssl-core/playback-ms/pkg/pb/playback"
 )
 
@@ -19,7 +20,7 @@ type Robot struct {
 	DribblerWidth   float32   `json:"dribbler_width"`
 }
 
-func NewRobot(robot_pb *playback.Detection_Robot) Robot {
+func NewRobot(robot_pb *perception.Robot) Robot {
 	confidence := util.SetDefaultIfNil(robot_pb.Confidence, 0)
 	pbRobotId := util.SetDefaultIfNil(robot_pb.RobotId, &common.RobotId{})
 	robotId := uint8(util.SetDefaultIfNil(pbRobotId.Number, 0))

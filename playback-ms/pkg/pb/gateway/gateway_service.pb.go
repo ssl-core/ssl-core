@@ -101,7 +101,7 @@ func (*ReceiveLivestreamResponse) Descriptor() ([]byte, []int) {
 	return file_protocols_gateway_gateway_service_proto_rawDescGZIP(), []int{1}
 }
 
-func (x *ReceiveLivestreamResponse) GetSample() *playback.Sample {
+func (x *ReceiveLivestreamResponse) GetLatestSample() *playback.Sample {
 	if x != nil {
 		return x.Sample
 	}

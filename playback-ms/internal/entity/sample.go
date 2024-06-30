@@ -14,11 +14,11 @@ type Sample struct {
 	Detection      Detection `json:"detection"`
 }
 
-func NewSample(sample *playback.Sample) Sample {
-	return Sample{
-		Detection: NewDetection(sample.Detection),
-	}
-}
+// func NewSample(sample *playback.Sample) Sample {
+// 	return Sample{
+// 		Detection: NewDetection(sample.Detection),
+// 	}
+// }
 
 func (s *Sample) ToJson() ([]byte, error) {
 	return json.Marshal(s)

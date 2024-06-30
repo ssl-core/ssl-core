@@ -4,8 +4,8 @@ import (
 	"log"
 
 	"github.com/robocin/ssl-core/playback-ms/internal/entity"
-	"github.com/robocin/ssl-core/playback-ms/internal/latest_sample"
 	"github.com/robocin/ssl-core/playback-ms/internal/service_discovery"
+	"github.com/robocin/ssl-core/playback-ms/internal/world"
 	"github.com/robocin/ssl-core/playback-ms/network"
 	"google.golang.org/protobuf/proto"
 )
@@ -76,7 +76,7 @@ func (ms *MessageSender) SendChunk(chunk entity.Chunk, request_id string) {
 		return
 	}
 
-	sample, err := latest_sample.GetInstance().GetSample()
+	sample, err := world.GetInstance().GetLatestSample()
 	if err != nil {
 		log.Fatalf("Failed to get latest sample: %v", err)
 	}

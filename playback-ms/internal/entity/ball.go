@@ -3,6 +3,7 @@ package entity
 import (
 	"github.com/robocin/ssl-core/playback-ms/internal/util"
 	"github.com/robocin/ssl-core/playback-ms/pkg/pb/common"
+	"github.com/robocin/ssl-core/playback-ms/pkg/pb/perception"
 	"github.com/robocin/ssl-core/playback-ms/pkg/pb/playback"
 )
 
@@ -12,7 +13,7 @@ type Ball struct {
 	Velocity   []float32 `json:"velocity"`
 }
 
-func NewBall(ball_pb *playback.Detection_Ball) Ball {
+func NewBall(ball_pb *perception.Ball) Ball {
 	confidence := util.SetDefaultIfNil(ball_pb.Confidence, 0)
 	pbPosition := util.SetDefaultIfNil(ball_pb.Position, &common.Point3Df{})
 	position := []float32{util.SetDefaultIfNil(pbPosition.X, 0), util.SetDefaultIfNil(pbPosition.Y, 0), util.SetDefaultIfNil(pbPosition.Z, 0)}
