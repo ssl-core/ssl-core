@@ -14,7 +14,7 @@ services:
     restart: unless-stopped
     container_name: autoref-tigers
     # Run without UI in active mode
-    command: [ "-a" ] 
+    command: [ "-a" ]
     depends_on:
     - simulator
 
@@ -28,7 +28,7 @@ services:
     container_name: gateway
     command: ["bin/gateway_main"]
     volumes:
-      - /tmp:/tmp
+      - /tmp/.ssl-core:/tmp/.ssl-core
       - ./:/app
     depends_on:
     - autoref-tigers
@@ -43,6 +43,6 @@ services:
     container_name: perception
     command: ["bin/perception_main"]
     volumes:
-      - /tmp:/tmp
+      - /tmp/.ssl-core:/tmp/.ssl-core
     depends_on:
       - gateway

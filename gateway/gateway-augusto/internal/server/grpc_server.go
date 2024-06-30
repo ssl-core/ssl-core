@@ -31,8 +31,8 @@ func NewGrpcServer(address string) *GrpcServer {
 		server:  server,
 		address: address,
 		//TODO: service discovery usage
-		subscriber: *network.NewZmqSubscriberSocket("ipc:///tmp/playback.ipc", "topic-playback"),
-		dealer:     *network.NewZmqDealerSocket("ipc:///tmp/replay.ipc"),
+		subscriber: *network.NewZmqSubscriberSocket("ipc:///tmp/.ssl-core/playback.ipc", "topic-playback"),
+		dealer:     *network.NewZmqDealerSocket("ipc:///tmp/.ssl-core/replay.ipc"),
 	}
 }
 

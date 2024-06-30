@@ -15,11 +15,14 @@
 #include <print>
 #include <robocin/concurrency/concurrent_queue.h>
 #include <robocin/memory/object_ptr.h>
+#include <robocin/network/zmq_poller.h>
 #include <robocin/network/zmq_publisher_socket.h>
 #include <robocin/network/zmq_subscriber_socket.h>
+#include <robocin/parameters/parameters.h>
 #include <robocin/wip/service_discovery/addresses.h>
 #include <thread>
 
+namespace parameters = ::robocin::parameters;
 namespace service_discovery = robocin::service_discovery;
 
 using perception::BallFilter;
@@ -118,6 +121,7 @@ std::unique_ptr<IMessageSender> makeMessageSender() {
 
 std::unique_ptr<IController> makeConsumer(object_ptr<IConcurrentQueue<Payload>> messages) {
   return std::make_unique<ConsumerController>(messages,
+                                              std::make_unique<parameters::HandlerEngine>(),
                                               makeDetectionProcessor(),
                                               makeMessageSender());
 }

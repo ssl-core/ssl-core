@@ -12,6 +12,8 @@ namespace perception {
 
 namespace {
 
+namespace parameters = ::robocin::parameters;
+
 using ::robocin::IConcurrentQueue;
 using ::robocin::ilog;
 using ::robocin::object_ptr;
@@ -24,10 +26,13 @@ using ::protocols::perception::DetectionWrapper;
 
 } // namespace
 
-ConsumerController::ConsumerController(object_ptr<IConcurrentQueue<Payload>> messages,
-                                       std::unique_ptr<IDetectionProcessor> detection_processor,
-                                       std::unique_ptr<IMessageSender> message_sender) :
+ConsumerController::ConsumerController(
+    object_ptr<IConcurrentQueue<Payload>> messages,
+    std::unique_ptr<parameters::IHandlerEngine> parameters_handler_engine,
+    std::unique_ptr<IDetectionProcessor> detection_processor,
+    std::unique_ptr<IMessageSender> message_sender) :
     messages_{messages},
+    parameters_handler_engine_{std::move(parameters_handler_engine)},
     detection_processor_{std::move(detection_processor)},
     message_sender_{std::move(message_sender)} {}
 
@@ -46,6 +51,9 @@ void ConsumerController::exec(std::span<const Payload> payloads) {
   if (payloads.empty()) {
     return;
   }
+
+  // TODO(joseviccruz): update parameters here from Payload.
+  // parameters_handler_engine_->update(parameters_values);
 
   std::optional<rc::DetectionWrapper> detection_wrapper = detection_processor_->process(payloads);
   ilog("detection_wrapper {} initialized.", detection_wrapper != std::nullopt ? "is" : "isn't");

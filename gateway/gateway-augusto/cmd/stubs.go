@@ -55,7 +55,7 @@ func stubThirdParty(proxy chan<- network.ZmqMultipartDatagram, id string, wg *sy
 }
 
 func stubMicroserviceAsSubscriber() {
-	sub := network.NewZmqSubscriberSocket("ipc:///tmp/gateway.ipc", "stub-topic")
+	sub := network.NewZmqSubscriberSocket("ipc:///tmp/.ssl-core/gateway.ipc", "stub-topic")
 	for {
 		sub.Receive()
 	}
@@ -69,7 +69,7 @@ func stubPlayback() {
 		},
 	}
 
-	pub := network.NewZmqPublisherSocket("ipc:///tmp/playback.ipc")
+	pub := network.NewZmqPublisherSocket("ipc:///tmp/.ssl-core/playback.ipc")
 	data, _ := proto.Marshal(sample)
 	for {
 		pub.Send(*network.NewZmqMultipartDatagram([]byte("topic-playback"), data))
@@ -77,7 +77,7 @@ func stubPlayback() {
 }
 
 func stubSubscriber() {
-	sub := network.NewZmqSubscriberSocket("ipc:///tmp/playback.ipc", "")
+	sub := network.NewZmqSubscriberSocket("ipc:///tmp/.ssl-core/gateway.ipc", "")
 	for {
 		datagram := sub.Receive()
 		var sample playback.Sample
@@ -100,7 +100,7 @@ func handler(data network.ZmqMultipartDatagram) network.ZmqMultipartDatagram {
 }
 
 func router() {
-	router := network.NewZmqRouterSocket("ipc:///tmp/dr.ipc")
+	router := network.NewZmqRouterSocket("ipc:///tmp/.ssl-core/dr.ipc")
 	for {
 		msg := router.Receive()
 
@@ -111,7 +111,7 @@ func router() {
 }
 
 func dealer(id string) {
-	dealer := network.NewZmqDealerSocket("ipc:///tmp/dr.ipc")
+	dealer := network.NewZmqDealerSocket("ipc:///tmp/.ssl-core/dr.ipc")
 
 	for {
 		data := *network.NewZmqDatagram([]byte(id))
