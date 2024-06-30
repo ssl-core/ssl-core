@@ -1,0 +1,102 @@
+{
+	"name": "Golang: Playback Caze",
+	"build": {
+	  "context": "../../..",
+	  "dockerfile": "./../Dockerfile",
+	  "target": "devcontainer"
+	},
+	"initializeCommand": "mkdir -p /tmp/.ssl-core",
+	"mounts": [
+	  "source=/tmp/.ssl-core/,target=/tmp/.ssl-core/,type=bind,consistency=cached"
+	],
+	"runArgs": [
+	  "-e",
+	  "DISPLAY=${env:DISPLAY}",
+	  "--network=host"
+	],
+	"customizations": {
+	  "vscode": {
+		"settings": {
+		  // Go Settings
+		  "[go]": {
+			"buildTags": "",
+			"toolsEnvVars": {
+			  "CGO_ENABLED": "0"
+			},
+			"useLanguageServer": true,
+			"testEnvVars": {
+			  "CGO_ENABLED": "1"
+			},
+			"testFlags": [
+			  "-v",
+			  "-race"
+			],
+			"testTimeout": "10s",
+			"coverOnSingleTest": true,
+			"coverOnSingleTestFile": true,
+			"coverOnTestPackage": true,
+			"lintTool": "golangci-lint",
+			"lintOnSave": "package",
+			"editor.codeActionsOnSave": {
+			  "source.organizeImports": "always"
+			},
+			"editor.tabSize": 2,
+			"editor.insertSpaces": false,
+			"editor.formatOnSave": true
+		  },
+		  "gopls": {
+			"usePlaceholders": false,
+			"staticcheck": true
+		  },
+		  // Editor Settings
+		  "editor.insertSpaces": true,
+		  "editor.detectIndentation": true,
+		  // Files Settings
+		  "files.insertFinalNewline": true,
+		  "files.eol": "\n",
+		  // JSON Settings
+		  "[json]": {
+			"editor.tabSize": 2,
+			"editor.formatOnSave": true,
+			"editor.defaultFormatter": "vscode.json-language-features"
+		  },
+		  // YAML Settings
+		  "[yaml]": {
+			"editor.tabSize": 2,
+			"editor.formatOnSave": true,
+			"editor.defaultFormatter": "redhat.vscode-yaml"
+		  },
+		  "[markdown]": {
+			"editor.formatOnSave": true
+		  },
+		  "[makefile]": {
+			"editor.insertSpaces": false
+		  }
+		},
+		"extensions": [
+		  // Go
+		  "golang.Go",
+		  // GitLens - Git supercharged
+		  "eamodio.gitlens",
+		  // Docker
+		  "ms-azuretools.vscode-docker",
+		  // Live Share
+		  "ms-vsliveshare.vsliveshare",
+		  // Buf - Protobuf Language Support
+		  "bufbuild.vscode-buf",
+		  // Github Copilot
+		  "github.copilot",
+		  // Markdown
+		  "yzhang.markdown-all-in-one",
+		  // YAML
+		  "redhat.vscode-yaml"
+		]
+	  }
+	},
+	"features": {
+	  "ghcr.io/devcontainers/features/go:1": {
+		"version": "latest"
+	  }
+	}
+  }
+  
