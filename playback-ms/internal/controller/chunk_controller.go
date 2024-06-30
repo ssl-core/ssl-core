@@ -7,17 +7,17 @@ import (
 	"github.com/robocin/ssl-core/playback-ms/db/redis"
 	"github.com/robocin/ssl-core/playback-ms/internal/entity"
 	"github.com/robocin/ssl-core/playback-ms/internal/latest_sample"
-	messaging "github.com/robocin/ssl-core/playback-ms/internal/messaging/sender"
+	"github.com/robocin/ssl-core/playback-ms/internal/messaging/sender"
 	"github.com/robocin/ssl-core/playback-ms/network"
 )
 
 type ChunkController struct {
 	db_client *redis.RedisClient
 	channel   *chan network.ZmqMultipartDatagram
-	sender    *messaging.MessageSender
+	sender    *sender.MessageSender
 }
 
-func NewChunkController(sender *messaging.MessageSender, channel *chan network.ZmqMultipartDatagram) *ChunkController {
+func NewChunkController(sender *sender.MessageSender, channel *chan network.ZmqMultipartDatagram) *ChunkController {
 	return &ChunkController{
 		db_client: redis.NewRedisClient(),
 		channel:   channel,
