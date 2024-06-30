@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"sync"
 
 	"github.com/robocin/ssl-core/gateway/gateway-augusto/internal/network"
@@ -8,10 +9,10 @@ import (
 	"github.com/robocin/ssl-core/gateway/gateway-augusto/internal/worker"
 )
 
-func startGatewayWorker(address string, proxy chan network.ZmqMultipartDatagram, wg *sync.WaitGroup) {
+func startGatewayUdpMulticastWorker(address string, proxy chan network.ZmqMultipartDatagram, topic string, wg *sync.WaitGroup) {
 	defer wg.Done()
 
-	w := worker.NewUdpMulticastWorker(address, 1024, proxy, "1")
+	w := worker.NewUdpMulticastWorker(address, 2048, proxy, topic)
 	w.Listen()
 }
 
@@ -30,6 +31,8 @@ func startGatewayGrpcServer(wg *sync.WaitGroup) {
 }
 
 func main() {
+	fmt.Println("gateway-augusto is running!")
+
 	// TODO(aalmds): refactor addresses with service discovery
 	// TODO(aalmds): review error handlers
 
@@ -37,7 +40,9 @@ func main() {
 	wg.Add(3)
 
 	proxy := make(chan network.ZmqMultipartDatagram)
-	go startGatewayWorker("224.5.23.2:10020", proxy, &wg)
+	go startGatewayUdpMulticastWorker("224.5.23.2:10020", proxy, "vision-third-party", &wg)
+	// go startGatewayUdpMulticastWorker("224.5.23.2:10010", proxy, "tracked-third-party", &wg)
+	// go startGatewayUdpMulticastWorker("224.5.23.1:10008", proxy, "referee-third-party", &wg)
 	go startGatewayZmqServer(proxy, &wg)
 	go startGatewayGrpcServer(&wg)
 
