@@ -11,6 +11,10 @@ import (
 	"github.com/robocin/ssl-core/playback-ms/network"
 )
 
+const (
+	ChunkStream = "chunk"
+)
+
 type ChunkController struct {
 	db_client *redis.RedisClient
 	channel   *chan network.ZmqMultipartDatagram
@@ -19,7 +23,7 @@ type ChunkController struct {
 
 func NewChunkController(sender *sender.MessageSender, channel *chan network.ZmqMultipartDatagram) *ChunkController {
 	return &ChunkController{
-		db_client: redis.NewRedisClient(),
+		db_client: redis.NewRedisClient(ChunkStream),
 		channel:   channel,
 		sender:    sender,
 	}
@@ -39,12 +43,17 @@ func (cc *ChunkController) Run(wg *sync.WaitGroup) {
 func (cc *ChunkController) chunkWorker(datagram network.ZmqMultipartDatagram) {
 	for {
 		fmt.Println(string(datagram.Message))
-		// TODO(matheusvtna): Implement database management to fetch chunks.
 		sample, err := world.GetInstance().GetLatestSample()
 		if err != nil {
 			fmt.Printf("Error getting sample on chunkWorker: %v\n", err)
 			continue
 		}
+		/*
+			message GetReplayChunkRequest {
+			  google.protobuf.Timestamp start_timestamp = 1;
+			}
+		*/
+		// samples := cc.db_client.GetRange()
 		chunk := entity.NewChunk((*sample).Timestamp, make([]entity.Sample, 0))
 		cc.sender.SendChunk(*chunk, string(datagram.Identifier))
 	}

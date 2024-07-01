@@ -1,8 +1,10 @@
 package db
 
+import "time"
+
 type DBClient interface {
-	Get(string) (interface{}, error)
-	GetRange(string, string) (map[string]interface{}, error)
-	Set(string, interface{}) error
-	SetMany(map[string]interface{}) error
+	Get(time.Time) (interface{}, error)
+	GetChunk(time.Time, time.Time) (interface{}, error)
+	Set(time.Time, interface{}) error
+	Clear() error
 }

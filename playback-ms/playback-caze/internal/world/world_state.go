@@ -12,10 +12,9 @@ import (
 )
 
 type WorldState struct {
-	latest_sample      *entity.Sample
-	latest_sample_mu   sync.RWMutex
-	unsaved_samples    []*entity.Sample
-	unsaved_samples_mu sync.RWMutex
+	latestSample          *entity.Sample
+	latestSampleMutex     sync.RWMutex
+	UnsavedSamplesChannel chan *entity.Sample
 }
 
 var instance *WorldState
@@ -39,34 +38,26 @@ func (ws *WorldState) updateLatestSample(identifier []byte, message []byte) {
 		if err := proto.Unmarshal(message, &detectionWrapperProto); err != nil {
 			fmt.Errorf("failed to unmarshal DetectionWrapper: %v", err)
 		}
-		ws.latest_sample.Detection = entity.NewDetection(detectionWrapperProto.Detection)
+		ws.latestSample.Detection = entity.NewDetection(detectionWrapperProto.Detection)
 	default:
 		fmt.Errorf("unexpected topic for ZmqMultipartDatagram: %s", topic)
 	}
 }
 
 func (ws *WorldState) UpdateFromDatagram(datagram *network.ZmqMultipartDatagram) {
-	ws.latest_sample_mu.Lock()
-	ws.unsaved_samples_mu.Lock()
+	ws.latestSampleMutex.Lock()
 
-	defer ws.latest_sample_mu.Unlock()
-	defer ws.unsaved_samples_mu.Unlock()
+	defer ws.latestSampleMutex.Unlock()
 
 	ws.updateLatestSample(datagram.Identifier, datagram.Message)
-	ws.unsaved_samples = append(ws.unsaved_samples, ws.latest_sample)
+	ws.UnsavedSamplesChannel <- ws.latestSample
 }
 
 func (ws *WorldState) GetLatestSample() (*entity.Sample, error) {
-	ws.latest_sample_mu.RLock()
-	defer ws.latest_sample_mu.RUnlock()
-	if ws.latest_sample == nil {
-		return nil, fmt.Errorf("latest_sample is nil")
+	ws.latestSampleMutex.RLock()
+	defer ws.latestSampleMutex.RUnlock()
+	if ws.latestSample == nil {
+		return nil, fmt.Errorf("latestSample is nil")
 	}
-	return ws.latest_sample, nil
-}
-
-func (ws *WorldState) GetUnsavedSamples() []*entity.Sample {
-	ws.unsaved_samples_mu.RLock()
-	defer ws.unsaved_samples_mu.RUnlock()
-	return ws.unsaved_samples
+	return ws.latestSample, nil
 }
