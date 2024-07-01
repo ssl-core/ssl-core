@@ -12,36 +12,38 @@ namespace robocin::detection_util {
 
 class Duration {
  public:
-  Duration() = default;
+  constexpr Duration() = default;
 
   [[nodiscard]] int64_t ms() const;
-  [[nodiscard]] int64_t frames() const;
+  [[nodiscard]] constexpr int64_t frames() const { return frames_; }
 
-  Duration& operator+=(const Duration& other);
-  Duration& operator-=(const Duration& other);
-  Duration operator+(const Duration& other) const;
-  Duration operator-(const Duration& other) const;
+  constexpr Duration& operator+=(const Duration& other) { return frames_ += other.frames_, *this; }
+  constexpr Duration& operator-=(const Duration& other) { return frames_ -= other.frames_, *this; }
 
-  Duration& operator*=(int64_t factor);
-  Duration& operator/=(int64_t factor);
-  Duration operator*(int64_t factor) const;
-  Duration operator/(int64_t factor) const;
+  constexpr Duration operator+(const Duration& other) const { return Duration{*this} += other; }
+  constexpr Duration operator-(const Duration& other) const { return Duration{*this} -= other; }
 
-  Duration operator+() const;
-  Duration operator-() const;
+  constexpr Duration& operator*=(int64_t factor) { return frames_ *= factor, *this; }
+  constexpr Duration& operator/=(int64_t factor) { return frames_ /= factor, *this; }
 
-  friend bool operator==(const Duration& lhs, const Duration& rhs) = default;
-  friend auto operator<=>(const Duration& lhs, const Duration& rhs) = default;
+  constexpr Duration operator*(int64_t factor) const { return Duration{*this} *= factor; }
+  constexpr Duration operator/(int64_t factor) const { return Duration{*this} /= factor; }
+
+  constexpr Duration operator+() const { return Duration{*this}; }
+  constexpr Duration operator-() const { return Duration{-frames_}; }
+
+  constexpr friend bool operator==(const Duration& lhs, const Duration& rhs) = default;
+  constexpr friend auto operator<=>(const Duration& lhs, const Duration& rhs) = default;
 
   // NOLINTBEGIN(*naming*)
   friend Duration Milliseconds(int64_t milliseconds) noexcept;
   friend Duration Seconds(int64_t seconds) noexcept;
   friend Duration Minutes(int64_t minutes) noexcept;
-  friend Duration Frames(int64_t frames) noexcept;
+  friend constexpr Duration Frames(int64_t frames) noexcept;
   // NOLINTEND(*naming*)
 
  private:
-  explicit Duration(int64_t frames);
+  constexpr explicit Duration(int64_t frames) : frames_{frames} {}
 
   int64_t frames_{0};
 };
@@ -56,14 +58,16 @@ class Duration {
 Duration Milliseconds(int64_t milliseconds) noexcept;
 Duration Seconds(int64_t seconds) noexcept;
 Duration Minutes(int64_t minutes) noexcept;
-Duration Frames(int64_t frames) noexcept;
+constexpr Duration Frames(int64_t frames) noexcept { return Duration{frames}; }
 
 inline namespace duration_literals {
 
 Duration operator"" _ms(unsigned long long milliseconds) noexcept;
 Duration operator"" _s(unsigned long long seconds) noexcept;
 Duration operator"" _min(unsigned long long minutes) noexcept;
-Duration operator"" _frames(unsigned long long frames) noexcept;
+constexpr Duration operator"" _frames(unsigned long long frames) noexcept {
+  return Frames(static_cast<int64_t>(frames));
+}
 
 } // namespace duration_literals
 
