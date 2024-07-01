@@ -31,6 +31,9 @@ using ::protocols::third_party::game_controller::TrackerWrapperPacket;
 
 } // namespace tp
 
+// TODO(matheusvtna, joseviccruz): use our own framerate generation.
+constexpr uint32_t k60Fps = 60;
+
 std::vector<tp::SSL_WrapperPacket>
 rawWrapperPacketsFromPayloads(std::span<const Payload> payloads) {
   return payloads | std::views::transform(&Payload::getRawPackets) | std::views::join
@@ -114,6 +117,7 @@ std::optional<rc::DetectionWrapper> DetectionProcessor::process(std::span<const 
   }
 
   detection.set_serial_id(++serial_id_);
+  detection.set_framerate(k60Fps);
 
   detection_wrapper.mutable_tracked_detections()->Add(
       std::make_move_iterator(tracked_packets.begin()),

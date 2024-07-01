@@ -37,6 +37,7 @@ Payload PayloadMapper::fromZmqDatagrams(std::span<const ZmqDatagram> messages) c
       tp::TrackerWrapperPacket tracked_packet;
       tracked_packet.ParseFromString(std::string{zmq_datagram.message()});
       tracked_packets.emplace_back(std::move(tracked_packet));
+
     } else {
       wlog("zmq_datagram with topic '{}' not processed.", zmq_datagram.topic());
     }

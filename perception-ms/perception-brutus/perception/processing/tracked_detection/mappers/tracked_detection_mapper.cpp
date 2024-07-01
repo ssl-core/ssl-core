@@ -1,18 +1,18 @@
 #include "perception/processing/tracked_detection/mappers/tracked_detection_mapper.h"
 
 #include <google/protobuf/timestamp.pb.h>
-#include <google/protobuf/util/time_util.h>
 #include <protocols/common/robot_id.pb.h>
 #include <protocols/perception/detection.pb.h>
 #include <protocols/third_party/game_controller/common.pb.h>
 #include <utility>
 
+#include "perception/parameters/parameters.h"
+
 namespace perception {
+namespace {
 
 using ::google::protobuf::Timestamp;
-using ::google::protobuf::util::TimeUtil;
-
-namespace {
+using ::robocin::IPbTimeUtil;
 
 namespace rc {
 
@@ -35,10 +35,7 @@ using ::protocols::third_party::game_controller::TrackerWrapperPacket;
 
 } // namespace tp
 
-// TODO(matheusvtna, joseviccruz): tracked is in meters, convert to millimeters.
-
-// TODO(matheusvtna, joseviccruz): use our own framerate generation.
-constexpr uint32_t k60Fps = 60;
+constexpr float kMetersToMillimeters = 1000.0F;
 
 rc::Robot robotFromTrackedRobot(const tp::TrackedRobot& tracked_robot) {
   rc::Robot robot;
@@ -61,24 +58,23 @@ rc::Robot robotFromTrackedRobot(const tp::TrackedRobot& tracked_robot) {
   robot_id.set_color(color_mapper(tracked_robot.robot_id().team()));
 
   rc::Point2Df& position = *robot.mutable_position();
-  position.set_x(tracked_robot.pos().x());
-  position.set_y(tracked_robot.pos().y());
+  position.set_x(tracked_robot.pos().x() * kMetersToMillimeters);
+  position.set_y(tracked_robot.pos().y() * kMetersToMillimeters);
 
   robot.set_angle(tracked_robot.orientation());
 
   if (rc::Point2Df& velocity = *robot.mutable_velocity(); tracked_robot.has_vel()) {
-    velocity.set_x(tracked_robot.vel().x());
-    velocity.set_y(tracked_robot.vel().y());
+    velocity.set_x(tracked_robot.vel().x() * kMetersToMillimeters);
+    velocity.set_y(tracked_robot.vel().y() * kMetersToMillimeters);
   }
 
   if (tracked_robot.has_vel_angular()) {
     robot.set_angular_velocity(tracked_robot.vel_angular());
   }
 
-  // TODO(matheusvtna, joseviccruz): replace with right values.
-  robot.set_radius(0);
-  robot.set_height(0);
-  robot.set_dribbler_width(0);
+  robot.set_radius(pRobotRadius());
+  robot.set_height(pRobotHeight());
+  robot.set_dribbler_width(pDribblerWidth());
 
   return robot;
 }
@@ -89,20 +85,23 @@ rc::Ball ballFromTrackedBall(const tp::TrackedBall& tracked_ball) {
   ball.set_confidence(tracked_ball.visibility());
 
   rc::Point3Df& position = *ball.mutable_position();
-  position.set_x(tracked_ball.pos().x());
-  position.set_y(tracked_ball.pos().y());
-  position.set_z(tracked_ball.pos().z());
+  position.set_x(tracked_ball.pos().x() * kMetersToMillimeters);
+  position.set_y(tracked_ball.pos().y() * kMetersToMillimeters);
+  position.set_z(tracked_ball.pos().z() * kMetersToMillimeters);
 
   if (rc::Point3Df& velocity = *ball.mutable_velocity(); tracked_ball.has_vel()) {
-    velocity.set_x(tracked_ball.vel().x());
-    velocity.set_y(tracked_ball.vel().y());
-    velocity.set_z(tracked_ball.vel().z());
+    velocity.set_x(tracked_ball.vel().x() * kMetersToMillimeters);
+    velocity.set_y(tracked_ball.vel().y() * kMetersToMillimeters);
+    velocity.set_z(tracked_ball.vel().z() * kMetersToMillimeters);
   }
 
   return ball;
 }
 
 } // namespace
+
+TrackedDetectionMapper::TrackedDetectionMapper(std::unique_ptr<IPbTimeUtil> pb_time_util) :
+    pb_time_util_{std::move(pb_time_util)} {}
 
 rc::Detection TrackedDetectionMapper::fromTrackedWrapperPacket(
     const tp::TrackerWrapperPacket& tracked_wrapper_packet) {
@@ -111,11 +110,7 @@ rc::Detection TrackedDetectionMapper::fromTrackedWrapperPacket(
   rc::Detection detection;
 
   Timestamp& timestamp = *detection.mutable_created_at();
-  timestamp = TimeUtil::GetCurrentTime();
-
-  // TODO(matheusvtna, joseviccruz): we should use our own serial id.
-  detection.set_serial_id(tracked_frame.frame_number());
-  detection.set_framerate(k60Fps);
+  timestamp = pb_time_util_->getCurrentTime();
 
   for (const auto& tracked_robot : tracked_frame.robots()) {
     rc::Robot& robot = *detection.add_robots();

@@ -19,6 +19,7 @@
 #include <robocin/network/zmq_publisher_socket.h>
 #include <robocin/network/zmq_subscriber_socket.h>
 #include <robocin/parameters/parameters.h>
+#include <robocin/third_party/adaptors/pb_time_util.h>
 #include <robocin/wip/service_discovery/addresses.h>
 #include <thread>
 
@@ -55,6 +56,7 @@ using ::robocin::IZmqPoller;
 using ::robocin::IZmqPublisherSocket;
 using ::robocin::IZmqSubscriberSocket;
 using ::robocin::object_ptr;
+using ::robocin::PbTimeUtil;
 using ::robocin::ZmqPoller;
 using ::robocin::ZmqPublisherSocket;
 using ::robocin::ZmqSubscriberSocket;
@@ -101,7 +103,7 @@ std::unique_ptr<IRawDetectionFilter> makeRawDetectionFilter() {
 
 std::unique_ptr<ITrackedDetectionFilter> makeTrackedDetectionFilter() {
   std::unique_ptr<ITrackedDetectionMapper> tracked_detection_mapper
-      = std::make_unique<TrackedDetectionMapper>();
+      = std::make_unique<TrackedDetectionMapper>(std::make_unique<PbTimeUtil>());
 
   return std::make_unique<TrackedDetectionFilter>(std::move(tracked_detection_mapper));
 }
