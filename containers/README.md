@@ -30,6 +30,10 @@ _The base image for C++ gRPC development with `ssl-core`_.
 
 _The base image for Mbed OS Embedded development with `ssl-core`_, based on [ARMmbed/mbed-os-docker-images](https://github.com/ARMmbed/mbed-os-docker-images).
 
+### [ssl-core-go-base.Dockerfile](ssl-core-go-base.Dockerfile)
+
+_The base image for Golang development with `ssl-core`_.
+
 ## Scripts
 
 ### [benchmark](scripts/benchmark.sh)
