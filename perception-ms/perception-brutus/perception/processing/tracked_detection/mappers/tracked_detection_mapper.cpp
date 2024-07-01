@@ -1,12 +1,12 @@
 #include "perception/processing/tracked_detection/mappers/tracked_detection_mapper.h"
 
+#include "perception/parameters/parameters.h"
+
 #include <google/protobuf/timestamp.pb.h>
 #include <protocols/common/robot_id.pb.h>
 #include <protocols/perception/detection.pb.h>
 #include <protocols/third_party/game_controller/common.pb.h>
 #include <utility>
-
-#include "perception/parameters/parameters.h"
 
 namespace perception {
 namespace {
