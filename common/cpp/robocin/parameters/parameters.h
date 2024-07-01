@@ -8,6 +8,7 @@
 #include "robocin/geometry/point2d.h"
 #include "robocin/geometry/point3d.h"
 
+#include <array>
 #include <cstdint>
 #include <memory>
 #include <robocin/output/log.h>
@@ -49,30 +50,7 @@ class Value {
   parameter_type value_;
 };
 
-class IHandlerEngine {
- public:
-  IHandlerEngine() = default;
-
-  IHandlerEngine(const IHandlerEngine&) = delete;
-  IHandlerEngine& operator=(const IHandlerEngine&) = delete;
-  IHandlerEngine(IHandlerEngine&&) noexcept = default;
-  IHandlerEngine& operator=(IHandlerEngine&&) noexcept = default;
-
-  virtual ~IHandlerEngine() = default;
-
-  virtual std::string name_of(id_type id) = 0;     // NOLINT(*naming*)
-  virtual parameter_type value_of(id_type id) = 0; // NOLINT(*naming*)
-  virtual void update(std::span<const Value> values) = 0;
-};
-
-class HandlerEngine : public IHandlerEngine {
- public:
-  HandlerEngine() = default;
-
-  std::string name_of(id_type id) override;
-  parameter_type value_of(id_type id) override;
-  void update(std::span<const Value> values) override;
-};
+class IHandlerEngine;
 
 class Handler {
   static parameter_type value_of(id_type id); // NOLINT(*naming*)
@@ -101,6 +79,9 @@ class View {
     explicit constexpr Proxy(T default_value) : default_value_{std::move(default_value)} {}
 
    public:
+    using value_type = T;
+    static constexpr id_type id_value = Id; // NOLINT(*naming*)
+
     Proxy(const Proxy&) = delete;
     Proxy& operator=(const Proxy&) = delete;
     Proxy(Proxy&&) noexcept = delete;
@@ -158,6 +139,40 @@ class View {
   static constexpr std::invocable auto asPoint3Df(Point3Df default_value) noexcept {
     return Proxy{default_value};
   }
+};
+
+class IHandlerEngine {
+ public:
+  IHandlerEngine() = default;
+
+  IHandlerEngine(const IHandlerEngine&) = delete;
+  IHandlerEngine& operator=(const IHandlerEngine&) = delete;
+  IHandlerEngine(IHandlerEngine&&) noexcept = default;
+  IHandlerEngine& operator=(IHandlerEngine&&) noexcept = default;
+
+  virtual ~IHandlerEngine() = default;
+
+  virtual std::string name_of(id_type id) = 0;     // NOLINT(*naming*)
+  virtual parameter_type value_of(id_type id) = 0; // NOLINT(*naming*)
+
+  // Caution: To maintain parameters consistency, update should not be called by multiple threads.
+  virtual void update(std::span<const Value> values) = 0;
+
+  // A facilitator to use in unit tests
+  void set(const auto& proxy, std::remove_cvref_t<decltype(proxy)>::value_type value) {
+    update(std::to_array<Value>({
+        {std::remove_cvref_t<decltype(proxy)>::id_value, proxy.name(), std::move(value)},
+    }));
+  }
+};
+
+class HandlerEngine : public IHandlerEngine {
+ public:
+  HandlerEngine() = default;
+
+  std::string name_of(id_type id) override;
+  parameter_type value_of(id_type id) override;
+  void update(std::span<const Value> values) override;
 };
 
 } // namespace robocin::parameters

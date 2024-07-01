@@ -1,6 +1,6 @@
+#include "perception/parameters/parameters.h"
 #include "perception/processing/tracked_detection/mappers/tracked_detection_mapper.h"
 
-#include <array>
 #include <gmock/gmock.h>
 #include <google/protobuf/text_format.h>
 #include <google/protobuf/timestamp.pb.h>
@@ -43,11 +43,11 @@ constexpr uint64_t k10Seconds = 10;
 class TrackedDetectionMapperTest : public Test {
  protected:
   void SetUp() override {
-    parameters::HandlerEngine{}.update(std::to_array({
-        parameters::Value{3, "robot_radius", 90.0F},   // NOLINT(*numbers*)
-        parameters::Value{4, "robot_height", 140.0F},  // NOLINT(*numbers*)
-        parameters::Value{5, "dribbler_width", 60.0F}, // NOLINT(*numbers*)
-    }));
+    // NOLINTBEGIN(*magic-numbers*)
+    parameters::HandlerEngine{}.set(pRobotRadius, 90.0F);
+    parameters::HandlerEngine{}.set(pRobotHeight, 140.0F);
+    parameters::HandlerEngine{}.set(pDribblerWidth, 60.0F);
+    // NOLINTEND(*magic-numbers*)
   }
 
   static std::unique_ptr<TrackedDetectionMapper> makeMapper(Timestamp now) {
