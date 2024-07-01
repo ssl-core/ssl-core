@@ -1,0 +1,24 @@
+services:
+  simulator:
+    image: roboticserlangen/simulatorcli:commit-6a4e1c06533b
+    restart: unless-stopped
+    container_name: simulator
+    environment:
+      GEOMETRY: "2020"
+      REALISM: "RC2021"
+    network_mode: "host"
+
+  autoref-tigers:
+    image: tigersmannheim/auto-referee:1.2.0
+    restart: unless-stopped
+    container_name: autoref-tigers
+    # Run without UI in active mode
+    command: [ "-a", "-va", "224.5.23.2:10020" ]
+    network_mode: "host"
+    depends_on:
+    - simulator
+
+networks:
+  default:
+    name: "host"
+    external: true
