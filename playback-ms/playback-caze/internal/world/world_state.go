@@ -14,7 +14,7 @@ import (
 type WorldState struct {
 	latestSample          *entity.Sample
 	latestSampleMutex     sync.RWMutex
-	UnsavedSamplesChannel chan *entity.Sample
+	unsavedSamplesChannel chan entity.Sample
 }
 
 var instance *WorldState
@@ -30,17 +30,22 @@ func GetInstance() *WorldState {
 	return instance
 }
 
+func (ws *WorldState) Init(unsavedSamplesChannel chan entity.Sample) {
+	ws.unsavedSamplesChannel = unsavedSamplesChannel
+}
+
 func (ws *WorldState) updateLatestSample(identifier []byte, message []byte) {
 	var topic string = string(identifier)
 	switch topic {
 	case service_discovery.GetInstance().GetDetectionWrapperTopic():
 		var detectionWrapperProto perception.DetectionWrapper
 		if err := proto.Unmarshal(message, &detectionWrapperProto); err != nil {
-			fmt.Errorf("failed to unmarshal DetectionWrapper: %v", err)
+			fmt.Printf("failed to unmarshal DetectionWrapper: %v", err)
+			return
 		}
 		ws.latestSample.Detection = entity.NewDetection(detectionWrapperProto.Detection)
 	default:
-		fmt.Errorf("unexpected topic for ZmqMultipartDatagram: %s", topic)
+		fmt.Printf("unexpected topic for ZmqMultipartDatagram: %s", topic)
 	}
 }
 
@@ -50,7 +55,7 @@ func (ws *WorldState) UpdateFromDatagram(datagram *network.ZmqMultipartDatagram)
 	defer ws.latestSampleMutex.Unlock()
 
 	ws.updateLatestSample(datagram.Identifier, datagram.Message)
-	ws.UnsavedSamplesChannel <- ws.latestSample
+	ws.unsavedSamplesChannel <- (*ws.latestSample)
 }
 
 func (ws *WorldState) GetLatestSample() (*entity.Sample, error) {
