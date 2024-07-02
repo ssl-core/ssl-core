@@ -4,6 +4,8 @@
 
 #if defined(__robocin_lib_std_concurrency) and __robocin_lib_std_concurrency >= 202405L
 
+#include "robocin/output/log.h"
+
 #include <mutex>
 #include <robocin/utility/singleton.h>
 #include <shared_mutex>
@@ -11,6 +13,9 @@
 
 namespace robocin::parameters {
 namespace {
+
+// arbitrary large size, we should never reach this value.
+constexpr size_t kParametersMaxSize = 100'000ULL;
 
 class HandlerEngineInternal {
  public:
@@ -22,6 +27,9 @@ class HandlerEngineInternal {
     for (const Value& value : values) {
       if (value.id() >= parameters_.size()) {
         parameters_.resize(value.id() << 1ULL);
+        if (parameters_.size() > kParametersMaxSize) {
+          flog("max parameters size reached.");
+        }
       }
 
       parameters_[value.id()] = value;
