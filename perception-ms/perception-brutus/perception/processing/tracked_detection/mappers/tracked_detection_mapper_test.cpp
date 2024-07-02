@@ -9,6 +9,7 @@
 #include <gtest/gtest.h>
 #include <print>
 #include <protocols/third_party/game_controller/common.pb.h>
+#include <robocin/memory/object_ptr.h>
 #include <robocin/parameters/parameters.h>
 #include <robocin/third_party/adaptors/pb_time_util.h>
 #include <robocin/third_party/google/protobuf/test_textproto.h>
@@ -24,6 +25,7 @@ using ::google::protobuf::ParseTextOrDie;
 using ::google::protobuf::Timestamp;
 using ::google::protobuf::util::TimeUtil;
 using ::robocin::IPbTimeUtil;
+using ::robocin::object_ptr;
 using ::testing::Test;
 
 namespace rc {
@@ -50,25 +52,26 @@ class TrackedDetectionMapperTest : public Test {
     // NOLINTEND(*magic-numbers*)
   }
 
-  static std::unique_ptr<TrackedDetectionMapper> makeMapper(Timestamp now) {
-    return std::make_unique<TrackedDetectionMapper>(
-        std::make_unique<MockPbTimeUtil>(std::move(now)));
-  }
+  void setCurrentTime(Timestamp timestamp) { timestamp_ = std::move(timestamp); }
+  object_ptr<TrackedDetectionMapper> getMapper() { return object_ptr{&tracked_detection_mapper_}; }
 
  private:
   class MockPbTimeUtil : public IPbTimeUtil {
    public:
-    explicit MockPbTimeUtil(Timestamp timestamp) : timestamp_{std::move(timestamp)} {}
+    explicit MockPbTimeUtil(object_ptr<Timestamp> timestamp) : timestamp_{timestamp} {}
 
-    Timestamp getCurrentTime() override { return timestamp_; }
+    Timestamp getCurrentTime() override { return *timestamp_; }
 
    private:
-    Timestamp timestamp_;
+    object_ptr<Timestamp> timestamp_;
   };
+
+  Timestamp timestamp_;
+  TrackedDetectionMapper tracked_detection_mapper_{std::make_unique<MockPbTimeUtil>(&timestamp_)};
 };
 
 TEST_F(TrackedDetectionMapperTest, WhenMapperReceivesSingleBallAndReturnsBallSuccessfully) {
-  Timestamp now = TimeUtil::SecondsToTimestamp(k10Seconds);
+  setCurrentTime(TimeUtil::SecondsToTimestamp(k10Seconds));
 
   tp::TrackerWrapperPacket tracked_wrapper_packet = ParseTextOrDie(R"pb(
     uuid: "1df3fba7-adb9-40c4-a7ee-b0a559c40e4e"
@@ -91,8 +94,7 @@ TEST_F(TrackedDetectionMapperTest, WhenMapperReceivesSingleBallAndReturnsBallSuc
     }
   )pb");
 
-  std::unique_ptr<TrackedDetectionMapper> mapper = makeMapper(now);
-
+  object_ptr mapper = getMapper();
   rc::Detection detection = mapper->fromTrackedWrapperPacket(tracked_wrapper_packet);
 
   EXPECT_THAT(detection, EqualsProto(R"pb(
@@ -116,7 +118,7 @@ TEST_F(TrackedDetectionMapperTest, WhenMapperReceivesSingleBallAndReturnsBallSuc
 }
 
 TEST_F(TrackedDetectionMapperTest, WhenMapperReceivesMultipleBallsAndReturnsBallsSuccessfully) {
-  Timestamp now = TimeUtil::SecondsToTimestamp(k10Seconds);
+  setCurrentTime(TimeUtil::SecondsToTimestamp(k10Seconds));
 
   tp::TrackerWrapperPacket tracked_wrapper_packet = ParseTextOrDie(R"pb(
     uuid: "1df3fba7-adb9-40c4-a7ee-b0a559c40e4e"
@@ -152,8 +154,7 @@ TEST_F(TrackedDetectionMapperTest, WhenMapperReceivesMultipleBallsAndReturnsBall
     }
   )pb");
 
-  std::unique_ptr<TrackedDetectionMapper> mapper = makeMapper(now);
-
+  object_ptr mapper = getMapper();
   rc::Detection detection = mapper->fromTrackedWrapperPacket(tracked_wrapper_packet);
 
   EXPECT_THAT(detection, EqualsProto(R"pb(
@@ -190,7 +191,7 @@ TEST_F(TrackedDetectionMapperTest, WhenMapperReceivesMultipleBallsAndReturnsBall
 }
 
 TEST_F(TrackedDetectionMapperTest, WhenMapperReceivesMultipleRobotsAndReturnsRobotsSuccessfully) {
-  Timestamp now = TimeUtil::SecondsToTimestamp(k10Seconds);
+  setCurrentTime(TimeUtil::SecondsToTimestamp(k10Seconds));
 
   tp::TrackerWrapperPacket tracked_wrapper_packet = ParseTextOrDie(R"pb(
     uuid: "1df3fba7-adb9-40c4-a7ee-b0a559c40e4e"
@@ -234,8 +235,7 @@ TEST_F(TrackedDetectionMapperTest, WhenMapperReceivesMultipleRobotsAndReturnsRob
     }
   )pb");
 
-  std::unique_ptr<TrackedDetectionMapper> mapper = makeMapper(now);
-
+  object_ptr mapper = getMapper();
   rc::Detection detection = mapper->fromTrackedWrapperPacket(tracked_wrapper_packet);
 
   EXPECT_THAT(detection, EqualsProto(R"pb(
