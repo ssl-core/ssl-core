@@ -22,7 +22,7 @@ class Clock {
 
   Clock() = delete;
 
-  static void set_clock(std::unique_ptr<IClockEngine> engine); // NOLINT(*naming*)
+  static void set_engine(std::unique_ptr<IClockEngine> engine); // NOLINT(*naming*)
 
   static uint32_t framerate();
   static timestamp_type now();

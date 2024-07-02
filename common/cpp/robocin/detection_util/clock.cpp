@@ -66,7 +66,7 @@ using SClockInternal = Singleton<ClockInternal>;
 
 } // namespace
 
-void Clock::set_clock(std::unique_ptr<IClockEngine> engine) {
+void Clock::set_engine(std::unique_ptr<IClockEngine> engine) {
   SClockInternal::get().set(std::move(engine));
 }
 
