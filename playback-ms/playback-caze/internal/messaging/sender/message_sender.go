@@ -1,6 +1,7 @@
 package sender
 
 import (
+	"fmt"
 	"log"
 
 	"github.com/robocin/ssl-core/playback-ms/internal/entity"
@@ -66,6 +67,7 @@ func (ms *MessageSender) SendSample(sample entity.Sample) {
 		Identifier: []byte(service_discovery.GetInstance().GetLivePublishTopic()),
 		Message:    messageBytes,
 	}
+	fmt.Printf("Sending sample: %v\n", sample)
 	publisher.Send(datagram)
 }
 

@@ -1,6 +1,8 @@
 package receiver
 
-import "github.com/robocin/ssl-core/playback-ms/internal/messaging/receiver/handler"
+import (
+	"github.com/robocin/ssl-core/playback-ms/internal/messaging/receiver/handler"
+)
 
 type MessageReceiver struct {
 	subscribers []*handler.SubscriberHandler
