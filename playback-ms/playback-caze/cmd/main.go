@@ -1,6 +1,8 @@
 package main
 
 import (
+	"fmt"
+	"os"
 	"sync"
 
 	"github.com/robocin/ssl-core/playback-ms/internal/controller"
@@ -14,7 +16,7 @@ import (
 	"github.com/robocin/ssl-core/playback-ms/network"
 )
 
-func makePerceptionSubscriber(channel *chan network.ZmqMultipartDatagram) *handler.SubscriberHandler {
+func makePerceptionSubscriber(channel chan network.ZmqMultipartDatagram) *handler.SubscriberHandler {
 	return handler.NewSubscriberHandler(
 		"PerceptionSubscriber",
 		network.NewZmqSubscriberSocket(
@@ -25,7 +27,7 @@ func makePerceptionSubscriber(channel *chan network.ZmqMultipartDatagram) *handl
 	)
 }
 
-func makeRefereeSubscriber(channel *chan network.ZmqMultipartDatagram) *handler.SubscriberHandler {
+func makeRefereeSubscriber(channel chan network.ZmqMultipartDatagram) *handler.SubscriberHandler {
 	return handler.NewSubscriberHandler(
 		"RefereeSubscriber",
 		network.NewZmqSubscriberSocket(
@@ -36,38 +38,92 @@ func makeRefereeSubscriber(channel *chan network.ZmqMultipartDatagram) *handler.
 	)
 }
 
-func main() {
-	wg := sync.WaitGroup{}
-	wg.Add(3)
+func runPlayback(wg *sync.WaitGroup) {
+	defer wg.Done()
+	wg.Add(1)
 
-	sampleControllerDatagramsChannel := make(chan network.ZmqMultipartDatagram)
+	subscribersDatagramsChannel := make(chan network.ZmqMultipartDatagram, 10)
+	chunkRequestsChannel := make(chan network.ZmqMultipartDatagram, 10)
+
 	sampleControllerUnsavedSamplesChannel := make(chan entity.Sample)
-	chunkControllerChannel := make(chan network.ZmqMultipartDatagram)
-
-	world.GetInstance().Init(sampleControllerUnsavedSamplesChannel)
+	world.GetInstance().Setup(sampleControllerUnsavedSamplesChannel)
 
 	message_sender := sender.NewMessageSender()
-	message_sender.AddPublisher(service_discovery.GetInstance().GetPerceptionAddress(), sender.LivePublisherID)
+	message_sender.AddPublisher(service_discovery.GetInstance().GetPlaybackAddress(), sender.LivePublisherID)
 	router := message_sender.AddRouter(service_discovery.GetInstance().GetChunkAddress(), sender.ChunkRouterID)
 
 	message_receiver := receiver.NewMessageReceiver()
-	message_receiver.AddSubscriberHandler(makePerceptionSubscriber(&sampleControllerDatagramsChannel))
-	message_receiver.AddSubscriberHandler(makeRefereeSubscriber(&sampleControllerDatagramsChannel))
-	message_receiver.AddRouterHandler(handler.NewRouterHandler("ChunkRouter", router, &chunkControllerChannel))
-	message_receiver.Start()
+	message_receiver.AddSubscriberHandler(makePerceptionSubscriber(subscribersDatagramsChannel))
+	message_receiver.AddSubscriberHandler(makeRefereeSubscriber(subscribersDatagramsChannel))
+	message_receiver.AddRouterHandler(handler.NewRouterHandler("ChunkRouter", router, chunkRequestsChannel))
+	go message_receiver.Start(wg)
 
 	sampleController := controller.NewSampleController(
 		message_sender,
-		sampleControllerDatagramsChannel,
+		subscribersDatagramsChannel,
 		sampleControllerUnsavedSamplesChannel,
 	)
-	go sampleController.Run(&wg)
+	go sampleController.Run(wg)
 
-	chunkController := controller.NewChunkController(message_sender, chunkControllerChannel)
-	go chunkController.Run(&wg)
-
-	perceptionStub := stub.NewPerceptionStub()
-	go perceptionStub.Run(&wg)
+	chunkController := controller.NewChunkController(message_sender, chunkRequestsChannel)
+	go chunkController.Run(wg)
 
 	wg.Wait()
+}
+
+func runPerceptionStub(wg *sync.WaitGroup) {
+	perceptionStub := stub.NewPerceptionStub()
+	perceptionStub.Run(wg)
+}
+
+func runSubscriberStub(wg *sync.WaitGroup) {
+	subscriberStub := stub.NewSubscriberStub()
+	subscriberStub.Run(wg)
+}
+
+func playbackRun() {
+	wg := sync.WaitGroup{}
+	wg.Add(1)
+
+	go runPlayback(&wg)
+
+	wg.Wait()
+}
+
+func stubRun() {
+	wg := sync.WaitGroup{}
+	wg.Add(2)
+
+	go runPerceptionStub(&wg)
+	go runSubscriberStub(&wg)
+
+	wg.Wait()
+}
+
+func debugRun() {
+	wg := sync.WaitGroup{}
+	wg.Add(2)
+
+	go runPerceptionStub(&wg)
+	go runPlayback(&wg)
+
+	wg.Wait()
+}
+
+func main() {
+	if args := os.Args; len(args) > 1 {
+		switch args[1] {
+		case "playback":
+			playbackRun()
+		case "stub":
+			stubRun()
+		case "debug":
+			debugRun()
+		default:
+			fmt.Println("Unknown argument:", args[1])
+		}
+	} else {
+		fmt.Println("No arguments provided. Running `playbackRun` by default.")
+		playbackRun()
+	}
 }

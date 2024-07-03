@@ -1,6 +1,8 @@
 package receiver
 
 import (
+	"sync"
+
 	"github.com/robocin/ssl-core/playback-ms/internal/messaging/receiver/handler"
 )
 
@@ -21,12 +23,13 @@ func (mr *MessageReceiver) AddRouterHandler(router *handler.RouterHandler) {
 	mr.routers = append(mr.routers, router)
 }
 
-func (mr *MessageReceiver) Start() {
+func (mr *MessageReceiver) Start(wg *sync.WaitGroup) {
+	wg.Add(len(mr.subscribers) + len(mr.routers))
 	for _, subscriber := range mr.subscribers {
-		go subscriber.Handle()
+		go subscriber.Handle(wg)
 	}
 
 	for _, router := range mr.routers {
-		go router.Handle()
+		go router.Handle(wg)
 	}
 }

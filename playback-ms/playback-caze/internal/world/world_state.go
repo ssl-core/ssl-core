@@ -25,12 +25,15 @@ func GetInstance() *WorldState {
 	lock.Lock()
 	defer lock.Unlock()
 	if instance == nil {
-		instance = &WorldState{}
+		instance = &WorldState{
+			latestSample:      &entity.Sample{},
+			latestSampleMutex: sync.RWMutex{},
+		}
 	}
 	return instance
 }
 
-func (ws *WorldState) Init(unsavedSamplesChannel chan entity.Sample) {
+func (ws *WorldState) Setup(unsavedSamplesChannel chan entity.Sample) {
 	ws.unsavedSamplesChannel = unsavedSamplesChannel
 }
 
