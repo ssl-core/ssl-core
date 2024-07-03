@@ -51,6 +51,28 @@ services:
     depends_on:
       - ssl-game-controller
 
+  # TODO(joseviccruz, matheusvtna, aalmds): Add gateway.
+
+  perception-ms:
+    build:
+      context: .
+      dockerfile: perception-ms/perception-brutus/Dockerfile
+    volumes:
+      - /tmp/.ssl-core:/tmp/.ssl-core
+    network_mode: "host"
+    depends_on:
+      - simulator
+
+  referee-ms:
+    build:
+      context: .
+      dockerfile: referee-ms/referee-daronco/Dockerfile
+    volumes:
+      - /tmp/.ssl-core:/tmp/.ssl-core
+    network_mode: "host"
+    depends_on:
+      - simulator
+
 networks:
   default:
     name: "host"
