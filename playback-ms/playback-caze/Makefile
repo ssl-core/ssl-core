@@ -1,5 +1,5 @@
 run:
-	@go run cmd/main.go
+	@go run cmd/main.go $(ARGS)
 
 build:
 	@go build -o bin/playback-ms cmd/main.go
