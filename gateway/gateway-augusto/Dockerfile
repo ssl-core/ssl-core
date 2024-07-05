@@ -33,4 +33,4 @@ FROM build as prod
 
 COPY --from=build /app/bin/gateway .
 
-CMD ["./gateway"]
+ENTRYPOINT ["./gateway"]

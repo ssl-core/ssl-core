@@ -69,7 +69,7 @@ services:
       - /tmp/.ssl-core:/tmp/.ssl-core
     network_mode: "host"
     depends_on:
-      - simulator
+      - simulator # gateway
 
   referee-ms:
     build:
@@ -79,7 +79,7 @@ services:
       - /tmp/.ssl-core:/tmp/.ssl-core
     network_mode: "host"
     depends_on:
-      - simulator
+      - simulator # perception-ms
 
 networks:
   default:
