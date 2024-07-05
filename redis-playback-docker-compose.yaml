@@ -12,11 +12,10 @@ services:
       dockerfile: playback-ms/playback-caze/Dockerfile
       args:
         - SOURCE_DIRECTORY=playback-ms/playback-caze
-    working_dir: /workspaces/playback-ms/playback-caze
     container_name: playback
-    command: ["bin/playback_main"]
+    command: ./playback-ms
     volumes:
       - /tmp/.ssl-core:/tmp/.ssl-core
       - ./:/app
     depends_on:
-    - redis
+      - redis
