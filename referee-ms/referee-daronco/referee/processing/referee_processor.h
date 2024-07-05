@@ -20,17 +20,19 @@ class IRefereeProcessor {
 
   virtual ~IRefereeProcessor() = default;
 
-  virtual ::protocols::referee::GameStatus process(std::span<const Payload> payloads) = 0;
+  virtual std::optional<::protocols::referee::GameStatus> process(std::span<const Payload> payloads)
+      = 0;
 };
 
 class RefereeProcessor : public IRefereeProcessor {
  public:
   explicit RefereeProcessor(std::unique_ptr<IGameStatusMapper> game_status_mapper);
 
-  ::protocols::referee::GameStatus process(std::span<const Payload> payloads) override;
+  std::optional<::protocols::referee::GameStatus>
+  process(std::span<const Payload> payloads) override;
 
  private:
-  ::protocols::third_party::game_controller::Referee last_game_controller_referee_;
+  std::optional<::protocols::third_party::game_controller::Referee> last_game_controller_referee_;
   std::unique_ptr<IGameStatusMapper> game_status_mapper_;
 };
 

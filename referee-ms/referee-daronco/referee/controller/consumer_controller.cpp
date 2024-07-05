@@ -61,11 +61,9 @@ void ConsumerController::exec(std::span<const Payload> payloads) {
     return;
   }
 
-  rc::GameStatus game_status = referee_processor_->process(payloads);
-  ilog("game_status {} initialized.", game_status.IsInitialized() ? "is" : "isn't");
-
-  if (game_status.IsInitialized()) {
-    message_sender_->send(game_status);
+  if (std::optional<rc::GameStatus> game_status = referee_processor_->process(payloads);
+      game_status != std::nullopt) {
+    message_sender_->send(*game_status);
   }
 }
 

@@ -38,7 +38,7 @@ Payload PayloadMapper::fromZmqDatagrams(std::span<const ZmqDatagram> messages) c
       detection.ParseFromString(std::string{zmq_datagram.message()});
       detections.emplace_back(std::move(detection));
 
-    } else if (zmq_datagram.topic() == service_discovery::kTrackedDetectionTopic) {
+    } else if (zmq_datagram.topic() == service_discovery::kGameControllerRefereeTopic) {
       tp::Referee game_controller_referee;
       game_controller_referee.ParseFromString(std::string{zmq_datagram.message()});
       game_controller_referees.emplace_back(std::move(game_controller_referee));

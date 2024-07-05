@@ -39,20 +39,24 @@ std::vector<tp::Referee> refereeFromPayloads(std::span<const Payload> payloads) 
 RefereeProcessor::RefereeProcessor(std::unique_ptr<IGameStatusMapper> game_status_mapper) :
     game_status_mapper_{std::move(game_status_mapper)} {}
 
-rc::GameStatus RefereeProcessor::process(std::span<const Payload> payloads) {
-  std::vector<rc::Detection> detections = detectionFromPayloads(payloads);
-  if (detections.empty()) {
-    // a new package must be generated only when a new detection is received.
-    return rc::GameStatus::default_instance();
-  }
-
+std::optional<rc::GameStatus> RefereeProcessor::process(std::span<const Payload> payloads) {
   if (std::vector<tp::Referee> game_controller_referees = refereeFromPayloads(payloads);
       !game_controller_referees.empty()) {
     last_game_controller_referee_ = std::move(game_controller_referees.back());
   }
 
+  if (!last_game_controller_referee_) {
+    return std::nullopt;
+  }
+
+  std::vector<rc::Detection> detections = detectionFromPayloads(payloads);
+  if (detections.empty()) {
+    // a new package must be generated only when a new detection is received.
+    return std::nullopt;
+  }
+
   return game_status_mapper_->fromDetectionAndReferee(detections.back(),
-                                                      last_game_controller_referee_);
+                                                      *last_game_controller_referee_);
 }
 
 } // namespace referee
