@@ -36,10 +36,10 @@ services:
   perception:
     build:
       context: .
-      dockerfile: perception/perception-brutus/Dockerfile
+      dockerfile: perception-ms/perception-brutus/Dockerfile
       args:
-        - SOURCE_DIRECTORY=perception/perception-brutus
-    working_dir: /workspaces/perception/perception-brutus
+        - SOURCE_DIRECTORY=perception-ms/perception-brutus
+    working_dir: /workspaces/perception-ms/perception-brutus
     container_name: perception
     command: ["bin/perception_main"]
     volumes:
