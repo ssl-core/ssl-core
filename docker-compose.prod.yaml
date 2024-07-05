@@ -51,7 +51,15 @@ services:
     depends_on:
       - ssl-game-controller
 
-  # TODO(joseviccruz, matheusvtna, aalmds): Add gateway.
+  gateway:
+    build:
+      context: .
+      dockerfile: gateway/gateway-augusto/Dockerfile
+    volumes:
+      - /tmp/.ssl-core:/tmp/.ssl-core
+    network_mode: "host"
+    depends_on:
+      - simulator
 
   perception-ms:
     build:
