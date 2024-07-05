@@ -6,7 +6,8 @@
 namespace referee {
 // NOLINTBEGIN(*comment*)
 
-constinit const auto pRefereePollerTimeoutMs = ::robocin::parameters::View<1>::asInt32(4 /*ms*/);
+constinit const auto pRefereePollerTimeoutMs
+    = ::robocin::parameters::View<1>::asInt32(10 /*ms ~= 100Hz*/);
 // TODO(joseviccruz): check pNearTheBallDistance value.
 constinit const auto pNearTheBallDistance = ::robocin::parameters::View<2>::asFloat(300.0F);
 // TODO(joseviccruz): check pSlowerSpeedOfMovingBall value.
