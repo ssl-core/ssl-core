@@ -1,6 +1,8 @@
 package entity
 
-import "github.com/robocin/ssl-core/playback-ms/pkg/pb/playback"
+import (
+	"github.com/robocin/ssl-core/playback-ms/pkg/pb/playback"
+)
 
 type RawDetection struct {
 	Cameras []RawCamera `json:"cameras"`

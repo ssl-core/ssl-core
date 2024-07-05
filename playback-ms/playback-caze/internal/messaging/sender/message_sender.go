@@ -1,12 +1,10 @@
 package sender
 
 import (
-	"fmt"
 	"log"
 
 	"github.com/robocin/ssl-core/playback-ms/internal/entity"
 	"github.com/robocin/ssl-core/playback-ms/internal/service_discovery"
-	"github.com/robocin/ssl-core/playback-ms/internal/world"
 	"github.com/robocin/ssl-core/playback-ms/network"
 	"google.golang.org/protobuf/proto"
 )
@@ -67,7 +65,6 @@ func (ms *MessageSender) SendSample(sample entity.Sample) {
 		Identifier: []byte(service_discovery.GetInstance().GetLivePublishTopic()),
 		Message:    messageBytes,
 	}
-	fmt.Printf("Sending sample: %v\n", sample)
 	publisher.Send(datagram)
 }
 
@@ -78,22 +75,13 @@ func (ms *MessageSender) SendChunk(chunk entity.Chunk, request_id string) {
 		return
 	}
 
-	sample, err := world.GetInstance().GetLatestSample()
-	if err != nil {
-		log.Fatalf("Failed to get latest sample: %v", err)
-	}
-
-	message, err := chunk.ToProto(sample.Timestamp)
-	if err != nil {
-		log.Fatalf("Failed to convert Chunk to Proto: %v", err)
-	}
-	messageBytes, err := proto.Marshal(message)
+	chunkBytes, err := proto.Marshal(chunk.ToProto())
 	if err != nil {
 		log.Fatalf("Failed to marshal Chunk message: %v", err)
 	}
 	datagram := network.ZmqMultipartDatagram{
 		Identifier: []byte(request_id),
-		Message:    messageBytes,
+		Message:    chunkBytes,
 	}
 	router.Send(datagram)
 }

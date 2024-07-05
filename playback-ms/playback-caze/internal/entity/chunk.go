@@ -10,14 +10,14 @@ import (
 )
 
 type Chunk struct {
-	EndTime time.Time `json:"end_time"`
-	Samples []Sample  `json:"samples"`
+	LatestTimestamp time.Time `json:"latest_timestamp"`
+	Samples         []Sample  `json:"samples"`
 }
 
-func NewChunk(endTime time.Time, samples []Sample) *Chunk {
+func NewChunk(latestTime time.Time, samples []Sample) *Chunk {
 	return &Chunk{
-		EndTime: endTime,
-		Samples: samples,
+		LatestTimestamp: latestTime,
+		Samples:         samples,
 	}
 }
 
@@ -25,14 +25,14 @@ func (c *Chunk) ToJson() ([]byte, error) {
 	return json.Marshal(c)
 }
 
-func (c *Chunk) ToProto(last_timestamp time.Time) (*gateway.GetReplayChunkResponse, error) {
+func (c *Chunk) ToProto() *gateway.GetReplayChunkResponse {
 	samples_pb := make([]*playback.Sample, len(c.Samples))
 	for i, sample := range c.Samples {
 		samples_pb[i] = sample.ToProto()
 	}
 
 	return &gateway.GetReplayChunkResponse{
-		LastTimestamp: timestamppb.New(last_timestamp),
+		LastTimestamp: timestamppb.New(c.LatestTimestamp),
 		Samples:       samples_pb,
-	}, nil
+	}
 }

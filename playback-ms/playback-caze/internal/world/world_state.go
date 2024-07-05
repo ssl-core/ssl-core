@@ -37,19 +37,24 @@ func (ws *WorldState) Setup(unsavedSamplesChannel chan entity.Sample) {
 	ws.unsavedSamplesChannel = unsavedSamplesChannel
 }
 
-func (ws *WorldState) updateLatestSample(identifier []byte, message []byte) {
-	var topic string = string(identifier)
+func (ws *WorldState) updateLatestSample(identifier []byte, message []byte) error {
+	var topic = string(identifier)
 	switch topic {
 	case service_discovery.GetInstance().GetDetectionWrapperTopic():
 		var detectionWrapperProto perception.DetectionWrapper
 		if err := proto.Unmarshal(message, &detectionWrapperProto); err != nil {
-			fmt.Printf("failed to unmarshal DetectionWrapper: %v", err)
-			return
+			return err
 		}
+		if ws.latestSample.FirstTimestamp.IsZero() {
+			ws.latestSample.FirstTimestamp = detectionWrapperProto.Detection.CreatedAt.AsTime()
+		}
+		ws.latestSample.Timestamp = detectionWrapperProto.Detection.CreatedAt.AsTime()
 		ws.latestSample.Detection = entity.NewDetection(detectionWrapperProto.Detection)
+		return nil
 	default:
-		fmt.Printf("unexpected topic for ZmqMultipartDatagram: %s", topic)
 	}
+
+	return fmt.Errorf("unexpected topic for ZmqMultipartDatagram: '%s'", topic)
 }
 
 func (ws *WorldState) UpdateFromDatagram(datagram *network.ZmqMultipartDatagram) {
@@ -57,7 +62,11 @@ func (ws *WorldState) UpdateFromDatagram(datagram *network.ZmqMultipartDatagram)
 
 	defer ws.latestSampleMutex.Unlock()
 
-	ws.updateLatestSample(datagram.Identifier, datagram.Message)
+	err := ws.updateLatestSample(datagram.Identifier, datagram.Message)
+	if err != nil {
+		fmt.Printf("Error updating latest sample: %v\n", err)
+		return
+	}
 	ws.unsavedSamplesChannel <- (*ws.latestSample)
 }
 

@@ -233,7 +233,7 @@ func (ps *PerceptionStub) makeDetectionWrapperProtobufExample() *perception.Dete
 	return &perception.DetectionWrapper{
 		Detection: &perception.Detection{
 			SerialId:  ps.SerialId,
-			CreatedAt: timestamppb.New(time.Now()),
+			CreatedAt: timestamppb.Now(),
 			Framerate: 120,
 			Balls:     balls,
 			Robots:    robots,

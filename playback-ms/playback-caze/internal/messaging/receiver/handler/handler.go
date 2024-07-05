@@ -35,6 +35,9 @@ func (b *BaseHandler) Handle(wg *sync.WaitGroup) {
 	fmt.Printf("Starting handler for %s...\n", b.id)
 	for {
 		datagram := b.receive()
+		if datagram.IsEmpty() {
+			continue
+		}
 		b.channel <- datagram
 	}
 }

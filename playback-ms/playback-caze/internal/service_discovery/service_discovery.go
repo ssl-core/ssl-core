@@ -6,13 +6,13 @@ import (
 )
 
 const (
-	perceptionAddress     = "ipc:///tmp/perception.ipc"
+	perceptionAddress     = "ipc:///tmp/.ssl-core/perception.ipc"
 	detectionWrapperTopic = "wrapper"
-	refereeAddress        = "ipc:///tmp/referee.ipc"
+	refereeAddress        = "ipc:///tmp/.ssl-core/referee.ipc"
 	refereeTopic          = "referee"
 
-	playbackAddress = "ipc:///tmp/playback.ipc"
-	chunkAddress    = "ipc:///tmp/dr.ipc"
+	playbackAddress = "ipc:///tmp/.ssl-core/playback.ipc"
+	chunkAddress    = "ipc:///tmp/.ssl-core/chunk.ipc"
 
 	livePublishAddress = "ipc:///tmp/gateway-async-frontend.ipc"
 	livePublishTopic   = "sample"

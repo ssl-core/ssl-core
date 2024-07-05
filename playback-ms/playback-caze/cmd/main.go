@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"os"
 	"sync"
+	"time"
 
 	"github.com/robocin/ssl-core/playback-ms/internal/controller"
 	"github.com/robocin/ssl-core/playback-ms/internal/entity"
@@ -45,7 +46,7 @@ func runPlayback(wg *sync.WaitGroup) {
 	subscribersDatagramsChannel := make(chan network.ZmqMultipartDatagram, 10)
 	chunkRequestsChannel := make(chan network.ZmqMultipartDatagram, 10)
 
-	sampleControllerUnsavedSamplesChannel := make(chan entity.Sample)
+	sampleControllerUnsavedSamplesChannel := make(chan entity.Sample, 10)
 	world.GetInstance().Setup(sampleControllerUnsavedSamplesChannel)
 
 	message_sender := sender.NewMessageSender()
@@ -81,6 +82,11 @@ func runSubscriberStub(wg *sync.WaitGroup) {
 	subscriberStub.Run(wg)
 }
 
+func runGatewayChunkStub(wg *sync.WaitGroup) {
+	GatewayChunkStub := stub.NewGatewayChunkStub()
+	GatewayChunkStub.Run(wg)
+}
+
 func playbackRun() {
 	wg := sync.WaitGroup{}
 	wg.Add(1)
@@ -106,6 +112,12 @@ func debugRun() {
 
 	go runPerceptionStub(&wg)
 	go runPlayback(&wg)
+
+	// Wait 2 seconds before starting the GatewayChunkStub to ensure that the
+	// perceptionStub has already started and is ready to receive messages
+	time.Sleep(2 * time.Second)
+
+	go runGatewayChunkStub(&wg)
 
 	wg.Wait()
 }

@@ -11,3 +11,7 @@ func NewZmqMultipartDatagram(identity []byte, message []byte) *ZmqMultipartDatag
 		Message:    message,
 	}
 }
+
+func (zmd *ZmqMultipartDatagram) IsEmpty() bool {
+	return zmd.Identifier == nil || zmd.Message == nil
+}

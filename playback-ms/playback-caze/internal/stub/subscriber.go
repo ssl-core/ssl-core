@@ -8,17 +8,17 @@ import (
 	"github.com/robocin/ssl-core/playback-ms/network"
 )
 
-type SubscriberStup struct {
+type SubscriberStub struct {
 	subscriber *network.ZmqSubscriberSocket
 }
 
-func NewSubscriberStub() *SubscriberStup {
-	return &SubscriberStup{
+func NewSubscriberStub() *SubscriberStub {
+	return &SubscriberStub{
 		subscriber: network.NewZmqSubscriberSocket(service_discovery.GetInstance().GetPerceptionAddress(), service_discovery.GetInstance().GetDetectionWrapperTopic()),
 	}
 }
 
-func (ss *SubscriberStup) Run(wg *sync.WaitGroup) {
+func (ss *SubscriberStub) Run(wg *sync.WaitGroup) {
 	defer wg.Done()
 
 	fmt.Printf("PerceptionStub running...\n")

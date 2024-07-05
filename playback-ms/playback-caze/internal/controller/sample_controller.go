@@ -5,7 +5,7 @@ import (
 	"sync"
 	"time"
 
-	"github.com/robocin/ssl-core/playback-ms/db/redis"
+	redis_db "github.com/robocin/ssl-core/playback-ms/db/redis"
 	"github.com/robocin/ssl-core/playback-ms/internal/entity"
 	"github.com/robocin/ssl-core/playback-ms/internal/messaging/sender"
 	"github.com/robocin/ssl-core/playback-ms/internal/world"
@@ -22,7 +22,7 @@ type SampleController struct {
 	wg         *sync.WaitGroup
 	sender     *sender.MessageSender
 	liveTicker *time.Ticker
-	db_client  *redis.RedisClient
+	db_client  *redis_db.RedisClient
 }
 
 func NewSampleController(
@@ -39,7 +39,7 @@ func NewSampleController(
 		wg:         &wg,
 		sender:     sender,
 		liveTicker: time.NewTicker(time.Second / liveFrequencyHZ),
-		db_client:  redis.NewRedisClient(ChunkStream),
+		db_client:  redis_db.NewRedisClient(ChunkStream),
 	}
 }
 
@@ -67,7 +67,15 @@ func (sc *SampleController) saveSamples() {
 	defer sc.wg.Done()
 
 	for sample := range sc.samples {
-		sc.db_client.Set(sample.Timestamp, sample)
+		data, err := sample.ToJson()
+		if err != nil {
+			fmt.Printf("Error converting sample to json: %v\n", err)
+			continue
+		}
+		err = sc.db_client.Set(sample.Timestamp, string(data))
+		if err != nil {
+			fmt.Printf("Error saving sample: %v\n", err)
+		}
 	}
 }
 
