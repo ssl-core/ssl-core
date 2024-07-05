@@ -49,8 +49,16 @@ func (ws *WorldState) updateLatestSample(identifier []byte, message []byte) erro
 			ws.latestSample.FirstTimestamp = detectionWrapperProto.Detection.CreatedAt.AsTime()
 		}
 		ws.latestSample.Timestamp = detectionWrapperProto.Detection.CreatedAt.AsTime()
-		ws.latestSample.Detection = entity.NewDetection(detectionWrapperProto.Detection)
+		ws.latestSample.Detection = *entity.NewDetection(detectionWrapperProto.Detection)
+		ws.latestSample.RawDetection = *entity.NewRawDetectionFromRawPackets(detectionWrapperProto.RawDetections)
+		ws.latestSample.TrackedDetection = *entity.NewTrackedDetectionFromTrackedPackets(detectionWrapperProto.TrackedDetections)
 		return nil
+	// case service_discovery.GetInstance().GetRefereeTopic():
+	// 	var refereeProto perception.Referee
+	// 	if err := proto.Unmarshal(message, &refereeProto); err != nil {
+	// 		return err
+	// 	}
+	// 	ws.latestSample.Referee = entity.NewReferee(refereeProto)
 	default:
 	}
 

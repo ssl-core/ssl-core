@@ -1,6 +1,8 @@
 package entity
 
 import (
+	"encoding/json"
+
 	"github.com/robocin/ssl-core/playback-ms/internal/util"
 	"github.com/robocin/ssl-core/playback-ms/pkg/pb/playback"
 )
@@ -14,6 +16,10 @@ type Field struct {
 	PenaltyAreaWidth        float32 `json:"penalty_area_width"`
 	BoundaryWidth           float32 `json:"boundary_width"`
 	GoalCenterToPenaltyMark float32 `json:"goal_center_to_penalty_mark"`
+}
+
+func (f *Field) ToJson() ([]byte, error) {
+	return json.Marshal(f)
 }
 
 func NewField(field *playback.Field) Field {

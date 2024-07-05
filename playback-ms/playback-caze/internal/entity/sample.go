@@ -9,9 +9,11 @@ import (
 )
 
 type Sample struct {
-	FirstTimestamp time.Time `json:"first_timestamp"`
-	Timestamp      time.Time `json:"timestamp"`
-	Detection      Detection `json:"detection"`
+	FirstTimestamp   time.Time        `json:"first_timestamp"`
+	Timestamp        time.Time        `json:"timestamp"`
+	Detection        Detection        `json:"detection"`
+	RawDetection     RawDetection     `json:"raw_detection"`
+	TrackedDetection TrackedDetection `json:"tracked_detection"`
 }
 
 // func NewSample(sample *playback.Sample) Sample {
@@ -28,10 +30,12 @@ func (s *Sample) ToProto() *playback.Sample {
 	first_timestamp := timestamppb.New(s.FirstTimestamp)
 	timestamp := timestamppb.New(s.Timestamp)
 	detection := s.Detection.ToProto()
+	rawDetection := s.RawDetection.ToProto()
 
 	return &playback.Sample{
 		FirstTimestamp: first_timestamp,
 		Timestamp:      timestamp,
 		Detection:      detection,
+		RawDetection:   rawDetection,
 	}
 }
