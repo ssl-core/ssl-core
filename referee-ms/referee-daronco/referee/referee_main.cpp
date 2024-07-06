@@ -78,6 +78,8 @@ std::unique_ptr<IController> makeProducer(object_ptr<IConcurrentQueue<Payload>> 
 
 std::unique_ptr<IRefereeProcessor> makeRefereeProcessor() {
   return std::make_unique<RefereeProcessor>(
+      std::make_unique<parameters::HandlerEngine>(),
+      std::make_unique<detection_util::ClockEngine>(),
       std::make_unique<GameStatusMapper>(std::make_unique<TeamStatusMapper>(),
                                          std::make_unique<GameStageMapper>(),
                                          std::make_unique<GameCommandMapper>(),
@@ -93,8 +95,6 @@ std::unique_ptr<IMessageSender> makeMessageSender() {
 
 std::unique_ptr<IController> makeConsumer(object_ptr<IConcurrentQueue<Payload>> messages) {
   return std::make_unique<ConsumerController>(messages,
-                                              std::make_unique<parameters::HandlerEngine>(),
-                                              std::make_unique<detection_util::ClockEngine>(),
                                               makeRefereeProcessor(),
                                               makeMessageSender());
 }
