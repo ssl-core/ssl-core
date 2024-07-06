@@ -812,7 +812,7 @@ RepeatedPtrField<rc::GameEvent> GameEventsMapper::fromReferee(const tp::Referee&
           fromGameControllerEvent(now, tp_game_event, home_is_blue_team));
     }
 
-    *result.Add() = std::move(it->second);
+    *result.Add() = it->second;
   }
 
   return result;
@@ -850,7 +850,7 @@ GameEventsMapper::proposalsFromReferee(const tp::Referee& referee) {
             fromGameControllerEvent(now, tp_game_event, home_is_blue_team));
       }
 
-      *rc_proposal_group->mutable_game_events()->Add() = std::move(it->second);
+      *rc_proposal_group->mutable_game_events()->Add() = it->second;
     }
   }
 
