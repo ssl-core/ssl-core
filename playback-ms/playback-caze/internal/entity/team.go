@@ -3,6 +3,10 @@ package entity
 import (
 	"encoding/json"
 	"time"
+
+	"github.com/robocin/ssl-core/playback-ms/pkg/pb/common"
+	"github.com/robocin/ssl-core/playback-ms/pkg/pb/referee"
+	"google.golang.org/protobuf/types/known/durationpb"
 )
 
 type Team struct {
@@ -28,4 +32,43 @@ type Team struct {
 
 func (t *Team) ToJson() ([]byte, error) {
 	return json.Marshal(t)
+}
+
+func NewTeamFromRefereeTeam(team_pb *referee.GameStatus_Team) *Team {
+	return &Team{
+		Name:                                   team_pb.Name,
+		Score:                                  team_pb.Score,
+		RobotIds:                               newRobotIdsFromRefereeRobotIds(team_pb.RobotIds),
+		GoalkeeperId:                           NewRobotIdFromCommonRobotId(team_pb.GoalkeeperId),
+		YellowCards:                            team_pb.YellowCards,
+		TimeToExpireActiveYellowCards:          translateTimeDurations(team_pb.TimeToExpireActiveYellowCards),
+		RedCards:                               team_pb.RedCards,
+		TimeoutsLeft:                           team_pb.TimeoutsLeft,
+		TotalTimeoutTimeLeft:                   team_pb.TotalTimeoutTimeLeft.AsDuration(),
+		TotalFoulsCommitted:                    team_pb.TotalFoulsCommitted,
+		ConsecutiveBallPlacementFailures:       team_pb.ConsecutiveBallPlacementFailures,
+		IsBallPlacementEnabled:                 team_pb.IsBallPlacementEnabled,
+		HasBallPlacementFailuresReachedMaximum: team_pb.HasBallPlacementFailuresReachedMaximum,
+		MaximumAllowedRobots:                   team_pb.MaximumAllowedRobots,
+		IsRobotSubstitutionRequested:           team_pb.IsRobotSubstitutionRequested,
+		IsRobotSubstitutionAllowed:             team_pb.IsRobotSubstitutionAllowed,
+		RobotSubstitutionsLeft:                 team_pb.RobotSubstitutionsLeft,
+		RobotSubstitutionTimeLeft:              team_pb.RobotSubstitutionTimeLeft.AsDuration(),
+	}
+}
+
+func newRobotIdsFromRefereeRobotIds(robotIdsPb []*common.RobotId) []RobotId {
+	robotIds := make([]RobotId, len(robotIdsPb))
+	for i, robotIdPb := range robotIdsPb {
+		robotIds[i] = NewRobotIdFromCommonRobotId(robotIdPb)
+	}
+	return robotIds
+}
+
+func translateTimeDurations(timeDurationsPb []*durationpb.Duration) []time.Duration {
+	translatedTimeDurations := make([]time.Duration, len(timeDurationsPb))
+	for i, timeDurationPb := range timeDurationsPb {
+		translatedTimeDurations[i] = timeDurationPb.AsDuration()
+	}
+	return translatedTimeDurations
 }

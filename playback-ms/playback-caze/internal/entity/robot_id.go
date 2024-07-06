@@ -1,10 +1,21 @@
 package entity
 
-import "encoding/json"
+import (
+	"encoding/json"
+
+	"github.com/robocin/ssl-core/playback-ms/pkg/pb/common"
+)
 
 type RobotId struct {
 	Id    uint32
 	Color RobotColor
+}
+
+func NewRobotIdFromCommonRobotId(commonRobotId *common.RobotId) RobotId {
+	return RobotId{
+		Id:    commonRobotId.Number,
+		Color: RobotColor(commonRobotId.Color),
+	}
 }
 
 type RobotColor int

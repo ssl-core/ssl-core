@@ -42,23 +42,47 @@ func (cc *ChunkController) Run(wg *sync.WaitGroup) {
 
 	fmt.Printf("Running ChunkController...\n")
 	for datagram := range cc.channel {
-		go cc.chunkWorker(datagram)
+		go cc.handleChunkRequest(datagram)
 	}
 }
 
-func (cc *ChunkController) chunkWorker(datagram network.ZmqMultipartDatagram) {
+func (cc *ChunkController) handleChunkRequest(datagram network.ZmqMultipartDatagram) {
+	id := datagram.Identifier
+	request := datagram.Message
+	if id == nil || request == nil {
+		fmt.Printf("Error: Chunk request is invalid\n")
+		return
+	}
+
+	// Handle GetGameEventsRequest
+	var getGameEventsRequest gateway.GetGameEventsRequest
+	err := proto.Unmarshal(request, &getGameEventsRequest)
+	if err == nil {
+		cc.gameEventsWorker(&getGameEventsRequest, string(id))
+		return
+	}
+
+	// Handle GetGameEventsRequest
+	var getReplayChunkRequest gateway.GetReplayChunkRequest
+	err = proto.Unmarshal(request, &getReplayChunkRequest)
+	if err == nil {
+		cc.getChunkWorker(&getReplayChunkRequest, string(id))
+		return
+	}
+
+	fmt.Printf("Error: Chunk request is invalid\n")
+}
+
+func (cc *ChunkController) gameEventsWorker(getGameEventsRequest *gateway.GetGameEventsRequest, id string) {
+	events := entity.NewGameEvents(world.GetInstance().GetGameEvents())
+	cc.sender.SendGameEvents(events, id)
+}
+
+func (cc *ChunkController) getChunkWorker(replayChunkRequest *gateway.GetReplayChunkRequest, id string) {
 	// Get latest sample from world to build GetReplayChunkResponse with latest timestamp.
 	sample, err := world.GetInstance().GetLatestSample()
 	if err != nil {
 		fmt.Printf("Error getting latest sample on ChunkWorker: %v\n", err)
-		return
-	}
-
-	// Parse GetReplayChunkRequest message.
-	var replayChunkRequest gateway.GetReplayChunkRequest
-	err = proto.Unmarshal(datagram.Message, &replayChunkRequest)
-	if err != nil {
-		fmt.Printf("Error unmarshalling GetReplayChunkRequest: %v\n", err)
 		return
 	}
 
@@ -78,7 +102,7 @@ func (cc *ChunkController) chunkWorker(datagram network.ZmqMultipartDatagram) {
 
 	// Send chunk to gateway.
 	chunk := entity.NewChunk((*sample).Timestamp, chunkSamples)
-	cc.sender.SendChunk(*chunk, string(datagram.Identifier))
+	cc.sender.SendChunk(*chunk, id)
 }
 
 func parseRedisResultValues(redisMessages []redis.XMessage) []entity.Sample {

@@ -3,11 +3,13 @@ package world
 import (
 	"fmt"
 	"sync"
+	"time"
 
 	"github.com/robocin/ssl-core/playback-ms/internal/entity"
 	"github.com/robocin/ssl-core/playback-ms/internal/service_discovery"
 	"github.com/robocin/ssl-core/playback-ms/network"
 	"github.com/robocin/ssl-core/playback-ms/pkg/pb/perception"
+	"github.com/robocin/ssl-core/playback-ms/pkg/pb/referee"
 	"google.golang.org/protobuf/proto"
 )
 
@@ -15,15 +17,17 @@ type WorldState struct {
 	latestSample          *entity.Sample
 	latestSampleMutex     sync.RWMutex
 	unsavedSamplesChannel chan entity.Sample
+	gameEvents            map[time.Time]([]*entity.GameEvent)
+	gameEventsMutex       sync.RWMutex
 }
 
 var instance *WorldState
 
-var lock sync.Mutex
+var instanceLock sync.Mutex
 
 func GetInstance() *WorldState {
-	lock.Lock()
-	defer lock.Unlock()
+	instanceLock.Lock()
+	defer instanceLock.Unlock()
 	if instance == nil {
 		instance = &WorldState{
 			latestSample:      &entity.Sample{},
@@ -45,20 +49,15 @@ func (ws *WorldState) updateLatestSample(identifier []byte, message []byte) erro
 		if err := proto.Unmarshal(message, &detectionWrapperProto); err != nil {
 			return err
 		}
-		if ws.latestSample.FirstTimestamp.IsZero() {
-			ws.latestSample.FirstTimestamp = detectionWrapperProto.Detection.CreatedAt.AsTime()
-		}
-		ws.latestSample.Timestamp = detectionWrapperProto.Detection.CreatedAt.AsTime()
-		ws.latestSample.Detection = *entity.NewDetection(detectionWrapperProto.Detection)
-		ws.latestSample.RawDetection = *entity.NewRawDetectionFromRawPackets(detectionWrapperProto.RawDetections)
-		ws.latestSample.TrackedDetection = *entity.NewTrackedDetectionFromTrackedPackets(detectionWrapperProto.TrackedDetections)
+		ws.latestSample.UpdateFromPerceptionDetectionWrapper(&detectionWrapperProto)
 		return nil
-	// case service_discovery.GetInstance().GetRefereeTopic():
-	// 	var refereeProto perception.Referee
-	// 	if err := proto.Unmarshal(message, &refereeProto); err != nil {
-	// 		return err
-	// 	}
-	// 	ws.latestSample.Referee = entity.NewReferee(refereeProto)
+	case service_discovery.GetInstance().GetRefereeTopic():
+		var gameStatusProto referee.GameStatus
+		if err := proto.Unmarshal(message, &gameStatusProto); err != nil {
+			return err
+		}
+		ws.latestSample.UpdateFromRefereeGameStatus(&gameStatusProto)
+		return nil
 	default:
 	}
 
@@ -85,4 +84,15 @@ func (ws *WorldState) GetLatestSample() (*entity.Sample, error) {
 		return nil, fmt.Errorf("latestSample is nil")
 	}
 	return ws.latestSample, nil
+}
+
+func (ws *WorldState) GetGameEvents() []*entity.GameEvent {
+	ws.gameEventsMutex.RLock()
+	defer ws.gameEventsMutex.RUnlock()
+
+	var gameEvents []*entity.GameEvent
+	for _, events := range ws.gameEvents {
+		gameEvents = append(gameEvents, events...)
+	}
+	return gameEvents
 }
