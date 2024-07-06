@@ -1,18 +1,17 @@
 services:
   simulator:
+    container_name: simulator
     image: roboticserlangen/simulatorcli:commit-6a4e1c06533b
     restart: unless-stopped
-    container_name: simulator
     environment:
       GEOMETRY: "2020"
       REALISM: "RC2021"
     network_mode: "host"
 
   autoref-tigers:
+    container_name: autoref-tigers
     image: tigersmannheim/auto-referee:1.2.0
     restart: unless-stopped
-    container_name: autoref-tigers
-    # Run without UI in active mode
     command:
       - "-a"
       - "-visionAddress"
@@ -21,7 +20,8 @@ services:
     depends_on:
       - simulator
 
-  ssl-game-controller:
+  game-controller:
+    container_name: game-controller
     image: robocupssl/ssl-game-controller:3.9.0
     command:
       - "-visionAddress"
@@ -40,6 +40,7 @@ services:
       - autoref-tigers
 
   ssl-vision-client:
+    container_name: ssl-vision-client
     image: robocupssl/ssl-vision-client:1.7.3
     command:
       - "-visionAddress"
@@ -49,9 +50,10 @@ services:
       - 8082/tcp
     network_mode: "host"
     depends_on:
-      - ssl-game-controller
+      - game-controller
 
   gateway:
+    container_name: gateway
     build:
       context: .
       dockerfile: gateway/gateway-augusto/Dockerfile
@@ -62,6 +64,7 @@ services:
       - simulator
 
   perception-ms:
+    container_name: perception-ms
     build:
       context: .
       dockerfile: perception-ms/perception-brutus/Dockerfile
@@ -69,9 +72,10 @@ services:
       - /tmp/.ssl-core:/tmp/.ssl-core
     network_mode: "host"
     depends_on:
-      - simulator # gateway
+      - gateway
 
   referee-ms:
+    container_name: referee-ms
     build:
       context: .
       dockerfile: referee-ms/referee-daronco/Dockerfile
@@ -79,7 +83,7 @@ services:
       - /tmp/.ssl-core:/tmp/.ssl-core
     network_mode: "host"
     depends_on:
-      - simulator # perception-ms
+      - perception-ms
 
 networks:
   default:
