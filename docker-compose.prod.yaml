@@ -60,6 +60,8 @@ services:
     volumes:
       - /tmp/.ssl-core:/tmp/.ssl-core
     network_mode: "host"
+    ports:
+      - 50051/tcp
     depends_on:
       - simulator
 
@@ -84,6 +86,43 @@ services:
     network_mode: "host"
     depends_on:
       - perception-ms
+
+  playback-ms:
+    container_name: playback-ms
+    build:
+      context: .
+      dockerfile: playback-ms/playback-caze/Dockerfile
+      args:
+        - SOURCE_DIRECTORY=playback-ms/playback-caze
+    command: ./playback-ms
+    volumes:
+      - /tmp/.ssl-core:/tmp/.ssl-core
+      - ./:/app
+    network_mode: "host"
+    depends_on:
+      - redis-db
+      
+  player-bff:
+    container_name: player-bff
+    build:
+      context: .
+      dockerfile: player-bff/Dockerfile
+      args:
+        - SOURCE_DIRECTORY=player-bff
+    command: ["./player-bff"]
+    network_mode: "host"
+    ports:
+      - 4040/tcp
+    depends_on:
+      - gateway
+      - playback-ms
+      
+  redis-db:
+    container_name: redis-db
+    image: "redis:latest"
+    network_mode: "host"
+    ports:
+      - 6379/tcp
 
 networks:
   default:

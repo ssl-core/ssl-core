@@ -2,6 +2,7 @@ package entity
 
 import (
 	"encoding/json"
+	"fmt"
 	"time"
 
 	"github.com/robocin/ssl-core/playback-ms/internal/util"
@@ -38,6 +39,8 @@ func NewDetection(detection_pb *perception.Detection) Detection {
 	serialId := util.SetDefaultIfNil(detection_pb.SerialId, 0)
 	fps := util.SetDefaultIfNil(detection_pb.Framerate, 0)
 	created_at := util.SetDefaultIfNil(detection_pb.CreatedAt, &timestamppb.Timestamp{}).AsTime()
+
+	fmt.Println("Detection fields: ", serialId, created_at, fps, balls, robots)
 
 	return Detection{
 		SerialId:  serialId,
