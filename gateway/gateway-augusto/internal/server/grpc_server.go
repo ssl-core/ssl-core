@@ -2,7 +2,7 @@ package server
 
 import (
 	"context"
-	"io"
+	"fmt"
 	"net"
 
 	"github.com/robocin/ssl-core/gateway/gateway-augusto/internal/network"
@@ -31,7 +31,7 @@ func NewGrpcServer(address string) *GrpcServer {
 		server:  server,
 		address: address,
 		//TODO: service discovery usage
-		subscriber: *network.NewZmqSubscriberSocket("ipc:///tmp/.ssl-core/playback.ipc", "topic-playback"),
+		subscriber: *network.NewZmqSubscriberSocket("ipc:///tmp/.ssl-core/playback.ipc", "sample"),
 		dealer:     *network.NewZmqDealerSocket("ipc:///tmp/.ssl-core/replay.ipc"),
 	}
 }
@@ -49,15 +49,13 @@ func (s *GrpcServer) Start() {
 
 func (s *GrpcServer) ReceiveLivestream(stream gateway.GatewayService_ReceiveLivestreamServer) error {
 	for {
-		_, err := stream.Recv()
-
-		if err == io.EOF || err != nil {
-			continue
-		}
+		// TODO: Handle stream.Recv()
 
 		datagram := s.subscriber.Receive()
 		var sample playback.Sample
-		err = proto.Unmarshal(datagram.Message, &sample)
+		err := proto.Unmarshal(datagram.Message, &sample)
+
+		fmt.Println("Sending sample: ", sample)
 
 		if err != nil {
 			return err

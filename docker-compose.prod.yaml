@@ -6,7 +6,6 @@ services:
     environment:
       GEOMETRY: "2020"
       REALISM: "RC2021"
-    network_mode: "host"
 
   autoref-tigers:
     container_name: autoref-tigers
@@ -16,7 +15,8 @@ services:
       - "-a"
       - "-visionAddress"
       - "224.5.23.2:10020"
-    network_mode: "host"
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
     depends_on:
       - simulator
 
@@ -35,7 +35,8 @@ services:
     restart: unless-stopped
     ports:
       - 8081/tcp
-    network_mode: "host"
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
     depends_on:
       - autoref-tigers
 
@@ -48,7 +49,8 @@ services:
     restart: unless-stopped
     ports:
       - 8082/tcp
-    network_mode: "host"
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
     depends_on:
       - game-controller
 
@@ -59,9 +61,8 @@ services:
       dockerfile: gateway/gateway-augusto/Dockerfile
     volumes:
       - /tmp/.ssl-core:/tmp/.ssl-core
-    network_mode: "host"
     ports:
-      - 50051/tcp
+      - 50051:50051
     depends_on:
       - simulator
 
@@ -72,7 +73,8 @@ services:
       dockerfile: perception-ms/perception-brutus/Dockerfile
     volumes:
       - /tmp/.ssl-core:/tmp/.ssl-core
-    network_mode: "host"
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
     depends_on:
       - gateway
 
@@ -83,7 +85,8 @@ services:
       dockerfile: referee-ms/referee-daronco/Dockerfile
     volumes:
       - /tmp/.ssl-core:/tmp/.ssl-core
-    network_mode: "host"
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
     depends_on:
       - perception-ms
 
@@ -98,7 +101,8 @@ services:
     volumes:
       - /tmp/.ssl-core:/tmp/.ssl-core
       - ./:/app
-    network_mode: "host"
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
     depends_on:
       - redis-db
       
@@ -110,9 +114,8 @@ services:
       args:
         - SOURCE_DIRECTORY=player-bff
     command: ["./player-bff"]
-    network_mode: "host"
     ports:
-      - 4040/tcp
+      - 4040:4040
     depends_on:
       - gateway
       - playback-ms
@@ -120,11 +123,3 @@ services:
   redis-db:
     container_name: redis-db
     image: "redis:latest"
-    network_mode: "host"
-    ports:
-      - 6379/tcp
-
-networks:
-  default:
-    name: "host"
-    external: true
