@@ -18,6 +18,17 @@ func NewRobotIdFromCommonRobotId(commonRobotId *common.RobotId) RobotId {
 	}
 }
 
+func (ri *RobotId) ToJson() ([]byte, error) {
+	return json.Marshal(ri)
+}
+
+func (ri *RobotId) ToProto() *common.RobotId {
+	return &common.RobotId{
+		Number: ri.Id,
+		Color:  ri.Color.ToProto(),
+	}
+}
+
 type RobotColor int
 
 const (
@@ -36,4 +47,15 @@ func (rc RobotColor) EnumIndex() int {
 
 func (rc *RobotColor) ToJson() ([]byte, error) {
 	return json.Marshal(rc)
+}
+
+func (rc *RobotColor) ToProto() common.RobotId_Color {
+	switch *rc {
+	case Blue:
+		return common.RobotId_COLOR_BLUE
+	case Yellow:
+		return common.RobotId_COLOR_YELLOW
+	default:
+		return common.RobotId_COLOR_UNSPECIFIED
+	}
 }

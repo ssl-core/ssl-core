@@ -1,6 +1,9 @@
 package entity
 
-import "github.com/robocin/ssl-core/playback-ms/pkg/pb/referee"
+import (
+	"github.com/robocin/ssl-core/playback-ms/pkg/pb/playback"
+	"github.com/robocin/ssl-core/playback-ms/pkg/pb/referee"
+)
 
 type GameEventsProposal struct {
 	ProposalId  string       `json:"proposal_id"`
@@ -18,4 +21,12 @@ func NewGameEventsProposalsFromRefereeGameEventsProposals(gameEventsProposals []
 		})
 	}
 	return proposals
+}
+
+func (gep *GameEventsProposal) ToProto() *playback.GameStatus_GameEventsProposal {
+	return &playback.GameStatus_GameEventsProposal{
+		ProposalId:  gep.ProposalId,
+		GameEvents:  gep.GameEvents,
+		WasAccepted: gep.WasAccepted,
+	}
 }

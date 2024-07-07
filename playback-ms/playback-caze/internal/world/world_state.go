@@ -9,6 +9,7 @@ import (
 	"github.com/robocin/ssl-core/playback-ms/internal/service_discovery"
 	"github.com/robocin/ssl-core/playback-ms/network"
 	"github.com/robocin/ssl-core/playback-ms/pkg/pb/perception"
+	"github.com/robocin/ssl-core/playback-ms/pkg/pb/referee"
 	"google.golang.org/protobuf/proto"
 )
 
@@ -51,13 +52,12 @@ func (ws *WorldState) updateLatestSample(identifier []byte, message []byte) erro
 		ws.latestSample.UpdateFromPerceptionDetectionWrapper(&detectionWrapperProto)
 		return nil
 	case service_discovery.GetInstance().GetRefereeTopic():
-		return fmt.Errorf("unimplemented sample update for topic '%s'", topic)
-		// var gameStatusProto referee.GameStatus
-		// if err := proto.Unmarshal(message, &gameStatusProto); err != nil {
-		// 	return err
-		// }
-		// ws.latestSample.UpdateFromRefereeGameStatus(&gameStatusProto)
-		// return nil
+		var gameStatusProto referee.GameStatus
+		if err := proto.Unmarshal(message, &gameStatusProto); err != nil {
+			return err
+		}
+		ws.latestSample.UpdateFromRefereeGameStatus(&gameStatusProto)
+		return nil
 	default:
 	}
 

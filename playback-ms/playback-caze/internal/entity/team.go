@@ -5,6 +5,7 @@ import (
 	"time"
 
 	"github.com/robocin/ssl-core/playback-ms/pkg/pb/common"
+	"github.com/robocin/ssl-core/playback-ms/pkg/pb/playback"
 	"github.com/robocin/ssl-core/playback-ms/pkg/pb/referee"
 	"google.golang.org/protobuf/types/known/durationpb"
 )
@@ -71,4 +72,38 @@ func translateTimeDurations(timeDurationsPb []*durationpb.Duration) []time.Durat
 		translatedTimeDurations[i] = timeDurationPb.AsDuration()
 	}
 	return translatedTimeDurations
+}
+
+func (t *Team) ToProto() *playback.GameStatus_Team {
+	robotIds := make([]*common.RobotId, len(t.RobotIds))
+	for i, robotId := range t.RobotIds {
+		robotIds[i] = robotId.ToProto()
+	}
+
+	var timeToExpireActiveYellowCards []*durationpb.Duration
+	for _, timeDuration := range t.TimeToExpireActiveYellowCards {
+		duration := durationpb.New(timeDuration)
+		timeToExpireActiveYellowCards = append(timeToExpireActiveYellowCards, duration)
+	}
+
+	return &playback.GameStatus_Team{
+		Name:                                   t.Name,
+		Score:                                  t.Score,
+		RobotIds:                               robotIds,
+		GoalkeeperId:                           t.GoalkeeperId.ToProto(),
+		YellowCards:                            t.YellowCards,
+		TimeToExpireActiveYellowCards:          timeToExpireActiveYellowCards,
+		RedCards:                               t.RedCards,
+		TimeoutsLeft:                           t.TimeoutsLeft,
+		TotalTimeoutTimeLeft:                   durationpb.New(t.TotalTimeoutTimeLeft),
+		TotalFoulsCommitted:                    t.TotalFoulsCommitted,
+		ConsecutiveBallPlacementFailures:       t.ConsecutiveBallPlacementFailures,
+		IsBallPlacementEnabled:                 t.IsBallPlacementEnabled,
+		HasBallPlacementFailuresReachedMaximum: t.HasBallPlacementFailuresReachedMaximum,
+		MaximumAllowedRobots:                   t.MaximumAllowedRobots,
+		IsRobotSubstitutionRequested:           t.IsRobotSubstitutionRequested,
+		IsRobotSubstitutionAllowed:             t.IsRobotSubstitutionAllowed,
+		RobotSubstitutionsLeft:                 t.RobotSubstitutionsLeft,
+		RobotSubstitutionTimeLeft:              durationpb.New(t.RobotSubstitutionTimeLeft),
+	}
 }
