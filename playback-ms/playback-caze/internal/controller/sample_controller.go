@@ -57,7 +57,7 @@ func (sc *SampleController) sendLatestSample() {
 			continue
 		}
 		fmt.Printf("Sending latest sample\n")
-		go sc.sender.SendSample(*latestSample)
+		go sc.sender.SendSample(latestSample)
 		currentSample = latestSample
 	}
 }

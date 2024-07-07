@@ -49,7 +49,7 @@ func NewMessageSender() *MessageSender {
 	return &MessageSender{}
 }
 
-func (ms *MessageSender) SendSample(sample entity.Sample) {
+func (ms *MessageSender) SendSample(sample *entity.Sample) {
 	publisher := ms.publishers[LivePublisherID]
 	if publisher == nil {
 		log.Fatalf("Publisher %s not found", LivePublisherID)
