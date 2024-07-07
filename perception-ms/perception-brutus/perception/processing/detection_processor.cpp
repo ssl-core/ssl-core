@@ -9,10 +9,12 @@
 #include <protocols/perception/detection.pb.h>
 #include <ranges>
 #include <robocin/memory/object_ptr.h>
+#include <robocin/output/log.h>
 
 namespace perception {
 namespace {
 
+using ::robocin::ilog;
 using ::robocin::object_ptr;
 
 namespace rc {
@@ -104,11 +106,19 @@ std::optional<rc::DetectionWrapper> DetectionProcessor::process(std::span<const 
     if (std::optional<rc::Detection> processed_detection
         = tracked_detection_filter_->process(tracked_packets)) {
       detection = std::move(*processed_detection);
+    } else {
+      ilog("processed detection from 'tracked_detection_filter' is empty.");
+
+      return std::nullopt;
     }
   } else {
     if (std::optional<rc::Detection> processed_detection = raw_detection_filter_->process(
             rawDetectionsFromRawPackets(raw_detection_mapper_, raw_wrapper_packets))) {
       detection = std::move(*processed_detection);
+    } else {
+      ilog("processed detection from 'raw_detection_filter' is empty.");
+
+      return std::nullopt;
     }
   }
 
