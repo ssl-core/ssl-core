@@ -43,3 +43,16 @@ func NewField(field *playback.Field) Field {
 		GoalCenterToPenaltyMark: goalCenterToPenaltyMark,
 	}
 }
+
+func (f *Field) ToProto() *playback.Field {
+	return &playback.Field{
+		Length:                  f.Length * 1000,
+		Width:                   f.Width * 1000,
+		GoalDepth:               f.GoalDepth * 1000,
+		GoalWidth:               f.GoalWidth * 1000,
+		PenaltyAreaDepth:        f.PenaltyAreaDepth * 1000,
+		PenaltyAreaWidth:        f.PenaltyAreaWidth * 1000,
+		BoundaryWidth:           f.BoundaryWidth * 1000,
+		GoalCenterToPenaltyMark: f.GoalCenterToPenaltyMark * 1000,
+	}
+}

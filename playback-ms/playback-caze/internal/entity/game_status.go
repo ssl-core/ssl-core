@@ -46,3 +46,30 @@ func NewGameStatusFromRefereeGameStatus(game_status_pb *referee.GameStatus) *Gam
 		GameEventsProposals:    NewGameEventsProposalsFromRefereeGameEventsProposals(game_status_pb.GameEventsProposals),
 	}
 }
+
+// func (gs *GameStatus) ToProto() *referee.GameStatus {
+// 	timestamp := timestamppb.New(gs.Timestamp)
+// 	game_stage_time_left := durationpb.New(gs.GameStageTimeLeft)
+// 	command_issued_timestamp := timestamppb.New(gs.CommandIssuedTimestamp)
+// 	command := referee.GameCommand_GameCommandType(referee.GameCommand_GameCommandType_value[gs.Command])
+// 	next_command := referee.GameCommand_GameCommandType(referee.GameCommand_GameCommandType_value[gs.NextCommand])
+// 	game_events := gs.GameEvents
+// 	game_events_proposals := NewRefereeGameEventsProposalsFromGameEventsProposals(gs.GameEventsProposals)
+
+// 	return &referee.GameStatus{
+// 		SourceId:               gs.SourceId,
+// 		Description:            gs.Description,
+// 		Timestamp:              timestamp,
+// 		MatchType:              referee.MatchType(referee.MatchType_value[gs.MatchType]),
+// 		HomeTeam:               gs.HomeTeam.ToProto(),
+// 		AwayTeam:               gs.AwayTeam.ToProto(),
+// 		GameStage:              referee.GameStage(referee.GameStage_value[gs.GameStage]),
+// 		GameStageTimeLeft:      game_stage_time_left,
+// 		TotalCommandsIssued:    gs.TotalCommandsIssued,
+// 		CommandIssuedTimestamp: command_issued_timestamp,
+// 		Command:                &referee.GameCommand{Command: command},
+// 		NextCommand:            &referee.GameCommand{Command: next_command},
+// 		GameEvents:             game_events,
+// 		GameEventsProposals:    game_events_proposals,
+// 	}
+// }

@@ -79,12 +79,7 @@ func (cc *ChunkController) gameEventsWorker(getGameEventsRequest *gateway.GetGam
 }
 
 func (cc *ChunkController) getChunkWorker(replayChunkRequest *gateway.GetReplayChunkRequest, id string) {
-	// Get latest sample from world to build GetReplayChunkResponse with latest timestamp.
-	sample, err := world.GetInstance().GetLatestSample()
-	if err != nil {
-		fmt.Printf("Error getting latest sample on ChunkWorker: %v\n", err)
-		return
-	}
+	sample := world.GetInstance().GetLatestSample()
 
 	// Define the time range for the chunk.
 	startTime := replayChunkRequest.StartTimestamp.AsTime()

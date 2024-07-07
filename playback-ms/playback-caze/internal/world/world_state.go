@@ -77,13 +77,10 @@ func (ws *WorldState) UpdateFromDatagram(datagram *network.ZmqMultipartDatagram)
 	ws.unsavedSamplesChannel <- (*ws.latestSample)
 }
 
-func (ws *WorldState) GetLatestSample() (*entity.Sample, error) {
+func (ws *WorldState) GetLatestSample() *entity.Sample {
 	ws.latestSampleMutex.RLock()
 	defer ws.latestSampleMutex.RUnlock()
-	if ws.latestSample == nil {
-		return nil, fmt.Errorf("latestSample is nil")
-	}
-	return ws.latestSample, nil
+	return ws.latestSample
 }
 
 func (ws *WorldState) GetGameEvents() []*entity.GameEvent {
