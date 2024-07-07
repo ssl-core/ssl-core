@@ -2,7 +2,7 @@ package main
 
 
 import (
-	"os"
+	// "os"
     // "github.com/InfluxCommunity/influxdb3-go/influxdb3"
 	influxdb2 "github.com/influxdata/influxdb-client-go/v2"
 )
@@ -14,21 +14,17 @@ type MetricsFields struct {
 }
 
 func main() {
-	// input:= MetricsFields{
-	// 	id: "1",
-	// 	vel: "10",
-	// 	name: "robo1",
-	// }
-	url := "https://us-east-1-1.aws.cloud2.influxdata.com"
-    token := os.Getenv("INFLUXDB_TOKEN")
 	
-    // Create a new client using an InfluxDB server base URL and an authentication token
+	token_local := "hot5dyT0c7hRIGYDsjnWXi4tHgeUZNhr2MHD7JuS9RFAGsugvi78g3cxZa1f3nlfODlho57KpXhlVsdw94V-ow=="
+	url := "http://localhost:8086"
+
+	token := token_local
+	
     client := influxdb2.NewClient(url, token)
 
-
-	database := "bucket-rc"
-
-	writeAPI := client.WriteAPI("ufpe", database)
+	database := "metrics"
+	org := "robocin"
+	writeAPI := client.WriteAPI(org, database)
 
 	data := map[string]map[string]interface{}{
 		"metric1": {
@@ -58,8 +54,8 @@ func main() {
 		},
 	}
 
-	key:="metric1"
-	point := influxdb2.NewPointWithMeasurement("metrics").AddTag("id", data[key]["id"].(string)).AddField(data[key]["vel"].(string), data[key]["name"].(string))
+	key:="metric2"
+	point := influxdb2.NewPointWithMeasurement("metrics-rc").AddTag("id", data[key]["id"].(string)).AddField(data[key]["name"].(string), data[key]["vel"].(string))
 
 	writeAPI.WritePoint(point)
 
