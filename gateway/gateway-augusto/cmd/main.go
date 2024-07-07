@@ -26,7 +26,7 @@ func startGatewayZmqServer(proxy chan network.ZmqMultipartDatagram, wg *sync.Wai
 func startGatewayGrpcServer(wg *sync.WaitGroup) {
 	defer wg.Done()
 
-	server := server.NewGrpcServer(":50051")
+	server := server.NewGrpcServer("0.0.0.0:50051")
 	server.Start()
 }
 
