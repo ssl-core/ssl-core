@@ -30,13 +30,10 @@ func NewSampleController(
 	datagrams chan network.ZmqMultipartDatagram,
 	samples chan entity.Sample,
 ) *SampleController {
-	wg := sync.WaitGroup{}
-	wg.Add(3)
-
 	return &SampleController{
 		datagrams:  datagrams,
 		samples:    samples,
-		wg:         &wg,
+		wg:         &sync.WaitGroup{},
 		sender:     sender,
 		liveTicker: time.NewTicker(time.Second / liveFrequencyHZ),
 		db_client:  redis_db.NewRedisClient(ChunkStream),
@@ -53,13 +50,15 @@ func (sc *SampleController) sendLatestSample() {
 	defer sc.liveTicker.Stop()
 	defer sc.wg.Done()
 
+	currentSample := world.GetInstance().GetLatestSample()
 	for range sc.liveTicker.C {
-		sample, err := world.GetInstance().GetLatestSample()
-		if err != nil {
+		latestSample := world.GetInstance().GetLatestSample()
+		if latestSample.Timestamp.Equal(currentSample.Timestamp) {
 			continue
 		}
-
-		go sc.sender.SendSample(*sample)
+		fmt.Printf("Sending latest sample\n")
+		go sc.sender.SendSample(latestSample)
+		currentSample = latestSample
 	}
 }
 
@@ -84,6 +83,7 @@ func (sc *SampleController) Run(wg *sync.WaitGroup) {
 	defer wg.Done()
 
 	fmt.Printf("Running SampleController...\n")
+	sc.wg.Add(3)
 	go sc.updateLatestSample()
 	go sc.saveSamples()
 	go sc.sendLatestSample()

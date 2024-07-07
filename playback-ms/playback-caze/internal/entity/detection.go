@@ -25,7 +25,7 @@ func (d *Detection) ProtoReflect() protoreflect.Message {
 	return d.ToProto().ProtoReflect()
 }
 
-func NewDetection(detection_pb *perception.Detection) Detection {
+func NewDetection(detection_pb *perception.Detection) *Detection {
 	balls := make([]Ball, len(detection_pb.Balls))
 	for i, ball := range detection_pb.Balls {
 		balls[i] = NewBall(util.SetDefaultIfNil(ball, &perception.Ball{}))
@@ -42,7 +42,7 @@ func NewDetection(detection_pb *perception.Detection) Detection {
 
 	fmt.Println("Detection fields: ", serialId, created_at, fps, balls, robots)
 
-	return Detection{
+	return &Detection{
 		SerialId:  serialId,
 		CreatedAt: created_at,
 		Fps:       fps,

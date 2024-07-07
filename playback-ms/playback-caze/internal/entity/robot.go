@@ -1,6 +1,8 @@
 package entity
 
 import (
+	"encoding/json"
+
 	"github.com/robocin/ssl-core/playback-ms/internal/util"
 	"github.com/robocin/ssl-core/playback-ms/pkg/pb/common"
 	"github.com/robocin/ssl-core/playback-ms/pkg/pb/perception"
@@ -9,8 +11,7 @@ import (
 
 type Robot struct {
 	Confidence      float32   `json:"confidence"`
-	RobotId         uint8     `json:"robot_id"`
-	RobotColor      string    `json:"robot_color"`
+	RobotId         RobotId   `json:"robot_id"`
 	Position        []float32 `json:"position"`
 	Angle           float32   `json:"angle"`
 	Velocity        []float32 `json:"velocity"`
@@ -23,8 +24,9 @@ type Robot struct {
 func NewRobot(robot_pb *perception.Robot) Robot {
 	confidence := util.SetDefaultIfNil(robot_pb.Confidence, 0)
 	pbRobotId := util.SetDefaultIfNil(robot_pb.RobotId, &common.RobotId{})
-	robotId := uint8(util.SetDefaultIfNil(pbRobotId.Number, 0))
-	robotColor := translateRobotColorFromProto(util.SetDefaultIfNil(pbRobotId.Color, common.RobotId_COLOR_UNSPECIFIED))
+	id := util.SetDefaultIfNil(pbRobotId.Number, 0)
+	color := translateRobotColorFromProto(util.SetDefaultIfNil(pbRobotId.Color, common.RobotId_COLOR_UNSPECIFIED))
+	robotId := RobotId{Id: id, Color: color}
 	pbPosition := util.SetDefaultIfNil(robot_pb.Position, &common.Point2Df{})
 	position := []float32{util.SetDefaultIfNil(pbPosition.X, 0), util.SetDefaultIfNil(pbPosition.Y, 0)}
 	angle := util.SetDefaultIfNil(robot_pb.Angle, 0)
@@ -38,7 +40,6 @@ func NewRobot(robot_pb *perception.Robot) Robot {
 	return Robot{
 		Confidence:      confidence,
 		RobotId:         robotId,
-		RobotColor:      robotColor,
 		Position:        position,
 		Angle:           angle,
 		Velocity:        velocity,
@@ -49,32 +50,36 @@ func NewRobot(robot_pb *perception.Robot) Robot {
 	}
 }
 
-func translateRobotColorFromProto(color common.RobotId_Color) string {
+func translateRobotColorFromProto(color common.RobotId_Color) RobotColor {
 	switch color {
 	case common.RobotId_COLOR_YELLOW:
-		return "yellow"
+		return Yellow
 	case common.RobotId_COLOR_BLUE:
-		return "blue"
+		return Blue
 	}
 
-	return "unspecified"
+	return Unspecified
 }
 
-func translateRobotColorToProto(color string) common.RobotId_Color {
+func translateRobotColorToProto(color RobotColor) common.RobotId_Color {
 	switch color {
-	case "yellow":
+	case Yellow:
 		return common.RobotId_COLOR_YELLOW
-	case "blue":
+	case Blue:
 		return common.RobotId_COLOR_BLUE
 	}
 
 	return common.RobotId_COLOR_UNSPECIFIED
 }
 
+func (r *Robot) ToJson() ([]byte, error) {
+	return json.Marshal(r)
+}
+
 func (r *Robot) ToProto() *playback.Detection_Robot {
 	return &playback.Detection_Robot{
 		Confidence:      r.Confidence,
-		RobotId:         &common.RobotId{Number: uint32(r.RobotId), Color: translateRobotColorToProto(r.RobotColor)},
+		RobotId:         &common.RobotId{Number: uint32(r.RobotId.Id), Color: translateRobotColorToProto(r.RobotId.Color)},
 		Position:        &common.Point2Df{X: r.Position[0], Y: r.Position[1]},
 		Angle:           r.Angle,
 		Velocity:        &common.Point2Df{X: r.Velocity[0], Y: r.Velocity[1]},

@@ -1,6 +1,8 @@
 package entity
 
 import (
+	"encoding/json"
+
 	"github.com/robocin/ssl-core/playback-ms/internal/util"
 	"github.com/robocin/ssl-core/playback-ms/pkg/pb/common"
 	"github.com/robocin/ssl-core/playback-ms/pkg/pb/perception"
@@ -25,6 +27,10 @@ func NewBall(ball_pb *perception.Ball) Ball {
 		Position:   position,
 		Velocity:   velocity,
 	}
+}
+
+func (b *Ball) ToJson() ([]byte, error) {
+	return json.Marshal(b)
 }
 
 func (b *Ball) ToProto() *playback.Detection_Ball {

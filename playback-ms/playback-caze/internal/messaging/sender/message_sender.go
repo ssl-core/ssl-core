@@ -50,7 +50,7 @@ func NewMessageSender() *MessageSender {
 	return &MessageSender{}
 }
 
-func (ms *MessageSender) SendSample(sample entity.Sample) {
+func (ms *MessageSender) SendSample(sample *entity.Sample) {
 	publisher := ms.publishers[LivePublisherID]
 	if publisher == nil {
 		log.Fatalf("Publisher %s not found", LivePublisherID)
@@ -86,6 +86,24 @@ func (ms *MessageSender) SendChunk(chunk entity.Chunk, request_id string) {
 	datagram := network.ZmqMultipartDatagram{
 		Identifier: []byte(request_id),
 		Message:    chunkBytes,
+	}
+	router.Send(datagram)
+}
+
+func (ms *MessageSender) SendGameEvents(gameEvents *entity.GameEvents, request_id string) {
+	router := ms.routers[ChunkRouterID]
+	if router == nil {
+		log.Fatalf("Router %s not found", ChunkRouterID)
+		return
+	}
+
+	gameEventsBytes, err := proto.Marshal(gameEvents.ToProto())
+	if err != nil {
+		log.Fatalf("Failed to marshal GameEvents message: %v", err)
+	}
+	datagram := network.ZmqMultipartDatagram{
+		Identifier: []byte(request_id),
+		Message:    gameEventsBytes,
 	}
 	router.Send(datagram)
 }
