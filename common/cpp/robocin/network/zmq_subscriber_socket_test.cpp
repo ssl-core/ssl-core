@@ -51,7 +51,7 @@ class RecvMockFunctor {
   std::string_view message_str_;
 };
 
-using MockZmqSubscriberSocket = IZmqSubscriberSocket<MockZmqContext, MockZmqSocket>;
+using MockZmqSubscriberSocket = AZmqSubscriberSocket<MockZmqContext, MockZmqSocket>;
 
 /**
   @brief Matcher used to match the zmq::sockopt parameters which wraps a static constant of
