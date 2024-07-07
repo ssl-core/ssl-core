@@ -54,9 +54,9 @@ func (sc *SampleController) sendLatestSample() {
 	for range sc.liveTicker.C {
 		latestSample := world.GetInstance().GetLatestSample()
 		if latestSample.Timestamp.Equal(currentSample.Timestamp) {
-			fmt.Printf("No new sample\n")
 			continue
 		}
+		fmt.Printf("Sending latest sample\n")
 		go sc.sender.SendSample(*latestSample)
 		currentSample = latestSample
 	}

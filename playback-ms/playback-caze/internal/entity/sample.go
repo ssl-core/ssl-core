@@ -6,7 +6,6 @@ import (
 
 	"github.com/robocin/ssl-core/playback-ms/pkg/pb/perception"
 	"github.com/robocin/ssl-core/playback-ms/pkg/pb/playback"
-	"github.com/robocin/ssl-core/playback-ms/pkg/pb/referee"
 	"google.golang.org/protobuf/types/known/timestamppb"
 )
 
@@ -64,6 +63,6 @@ func (s *Sample) UpdateFromPerceptionDetectionWrapper(detectionWrapperProto *per
 	}
 }
 
-func (s *Sample) UpdateFromRefereeGameStatus(gameStatusProto *referee.GameStatus) {
-	s.GameStatus = *NewGameStatusFromRefereeGameStatus(gameStatusProto)
-}
+// func (s *Sample) UpdateFromRefereeGameStatus(gameStatusProto *referee.GameStatus) {
+// 	s.GameStatus = *NewGameStatusFromRefereeGameStatus(gameStatusProto)
+// }
