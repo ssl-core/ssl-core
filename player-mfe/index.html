@@ -1,0 +1,50 @@
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="/robocin.svg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Player Micro-frontend | SSL Core</title>
+    <script type="module" src="/src/main.ts"></script>
+    <style>
+      html, body {
+        margin: 0;
+        padding: 0;
+        background-color: #000000;
+        height: 100%;
+        width: 100%;
+        overflow: hidden;
+      }
+
+      main {
+        display: flex;
+        align-items: flex-end;
+        height: calc(100% - 2rem);
+        width: calc(100% - 2rem);
+        padding: 1rem;
+      }
+
+      .fragment {
+        position: relative;
+        height: 20%;
+        width: 100%;
+        border-radius: 0.75rem;
+        overflow: hidden;
+        background-color: #1a1a1a;
+      }
+      
+      player-mfe {
+        display: flex;
+        height: 100%;
+        width: 100%;
+      }
+    </style>
+  </head>
+  <body>
+    <main>
+      <section class="fragment">
+        <player-mfe></player-mfe>
+      </section>
+    </main>
+  </body>
+</html>
