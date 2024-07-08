@@ -2,7 +2,7 @@
   "name": "C++: Referee Daronco",
   "build": {
     "context": "./../../..",
-    "dockerfile": "./../Dockerfile",
+    "dockerfile": "./../referee-daronco.Dockerfile",
     "target": "devcontainer"
   },
   "initializeCommand": "mkdir -p /tmp/.ssl-core",
