@@ -38,12 +38,12 @@ func NewRawRobot(raw_robot_pb *playback.RawDetection_Camera_Robot) RawRobot {
 }
 
 func NewRawRobotFromSSLDetectionRobot(detection_robot_pb *detection.SSL_DetectionRobot, color common.RobotId_Color) *RawRobot {
-	id := util.SetDefaultIfNil(*detection_robot_pb.RobotId, 0)
+	id := util.SetDefaultIfNil(detection_robot_pb.GetRobotId(), 0)
 	robotId := RobotId{Id: id, Color: translateRawRobotColor(color)}
-	confidence := util.SetDefaultIfNil(*detection_robot_pb.Confidence, 0)
-	position := []float32{util.SetDefaultIfNil(*detection_robot_pb.X, 0), util.SetDefaultIfNil(*detection_robot_pb.Y, 0)}
-	angle := util.SetDefaultIfNil(*detection_robot_pb.Orientation, 0)
-	height := util.SetDefaultIfNil(*detection_robot_pb.Height, 0)
+	confidence := util.SetDefaultIfNil(detection_robot_pb.GetConfidence(), 0)
+	position := []float32{util.SetDefaultIfNil(detection_robot_pb.GetX(), 0), util.SetDefaultIfNil(detection_robot_pb.GetY(), 0)}
+	angle := util.SetDefaultIfNil(detection_robot_pb.GetOrientation(), 0)
+	height := util.SetDefaultIfNil(detection_robot_pb.GetHeight(), 0)
 
 	return &RawRobot{
 		RobotId:    robotId,
