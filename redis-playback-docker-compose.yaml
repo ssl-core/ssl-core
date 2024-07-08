@@ -1,0 +1,22 @@
+version: "3"
+
+services:
+  redis:
+    image: "redis:latest"
+    container_name: redis
+    ports:
+      - "6379:6379"
+
+  playback:
+    build:
+      context: .
+      dockerfile: playback-ms/playback-caze/Dockerfile
+      args:
+        - SOURCE_DIRECTORY=playback-ms/playback-caze
+    container_name: playback
+    command: ./playback-ms
+    volumes:
+      - /tmp/.ssl-core:/tmp/.ssl-core
+      - ./:/app
+    depends_on:
+      - redis

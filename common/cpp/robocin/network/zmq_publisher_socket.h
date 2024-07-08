@@ -20,18 +20,34 @@
 
 namespace robocin {
 
-template <class ZmqSocket, class ZmqContext>
 class IZmqPublisherSocket {
  public:
   using datagram_type = ZmqDatagram;
 
-  explicit IZmqPublisherSocket(int n_threads = 1) :
+  IZmqPublisherSocket() = default;
+
+  IZmqPublisherSocket(const IZmqPublisherSocket&) = delete;
+  IZmqPublisherSocket& operator=(const IZmqPublisherSocket&) = delete;
+  IZmqPublisherSocket(IZmqPublisherSocket&&) = default;
+  IZmqPublisherSocket& operator=(IZmqPublisherSocket&&) = default;
+
+  virtual ~IZmqPublisherSocket() = default;
+
+  virtual void bind(std::string_view address) = 0;
+  virtual void send(const datagram_type& datagram) = 0;
+  virtual void close() = 0;
+};
+
+template <class ZmqSocket, class ZmqContext>
+class AZmqPublisherSocket : public IZmqPublisherSocket {
+ public:
+  explicit AZmqPublisherSocket(int n_threads = 1) :
       context_(n_threads),
       socket_(context_, zmq::socket_type::pub) {}
 
-  void bind(std::string_view address) { socket_.bind(std::string{address}); }
+  void bind(std::string_view address) override { socket_.bind(std::string{address}); }
 
-  void send(const datagram_type& datagram) { // NOLINT
+  void send(const datagram_type& datagram) override {
     if (zmq::message_t zmq_topic(datagram.topic());
         !socket_.send(zmq_topic, zmq::send_flags::sndmore)) {
       throw std::runtime_error("failed to send topic.");
@@ -43,7 +59,7 @@ class IZmqPublisherSocket {
     }
   }
 
-  void close() { socket_.close(); }
+  void close() override { socket_.close(); }
 
  private:
   ZmqContext context_;
@@ -59,7 +75,7 @@ class IZmqPublisherSocket {
   FRIEND_TEST(ZmqPublisherSocketTest, WhenCloseIsSucceeded);
 };
 
-using ZmqPublisherSocket = IZmqPublisherSocket<zmq::socket_t, zmq::context_t>;
+using ZmqPublisherSocket = AZmqPublisherSocket<zmq::socket_t, zmq::context_t>;
 
 } // namespace robocin
 

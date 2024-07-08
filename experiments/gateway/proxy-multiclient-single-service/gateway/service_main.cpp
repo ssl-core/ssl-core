@@ -5,7 +5,7 @@
 int main() {
   zmq::context_t context(1);
   zmq::socket_t socket(context, ZMQ_DEALER);
-  socket.connect("ipc:///tmp/gateway-backend.ipc");
+  socket.connect("ipc:///tmp/.ssl-core/gateway-backend.ipc");
 
   while (true) {
     zmq::multipart_t messages;

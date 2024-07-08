@@ -1,11 +1,22 @@
-FROM robocin/ssl-core-cpp-base:latest AS devcontainer
+FROM robocin/ssl-core-go-base:latest AS devcontainer
 
-COPY .cmake/ /tmp/.cmake/
-COPY common/ /tmp/common/
+COPY /protocols /tmp/protocols
 
-RUN apt-get install nlohmann-json3-dev -y && \
-  \
-  pushd /tmp/common/cpp && rm -rf build && \
-  cmake -B build -S . -G "Ninja" -DCMAKE_CXX_COMPILER=clang++ && \
-  cmake --build build && cmake --install build && \
-  popd && rm -rf /tmp/*
+FROM devcontainer AS build
+
+WORKDIR /app
+
+COPY gateway/gateway-augusto .
+
+RUN make setup
+RUN make build-linux
+
+RUN mkdir /prod && \
+    ldd bin/gateway | awk 'NF == 4 {print $3}; NF == 2 {print $1}' | grep '^/' | xargs -I {} cp --parents {} /prod
+
+FROM gcr.io/distroless/static-debian12 AS prod
+
+COPY --from=build /prod /
+COPY --from=build /app/bin/gateway .
+
+ENTRYPOINT ["./gateway"]
