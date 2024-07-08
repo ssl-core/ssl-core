@@ -68,9 +68,10 @@ services:
 
   perception-ms:
     container_name: perception-ms
-    build:
-      context: .
-      dockerfile: perception-ms/perception-brutus/Dockerfile
+    image: robocin/perception-brutus:manual-5907a5
+#     build:
+#       context: .
+#       dockerfile: perception-ms/perception-brutus/Dockerfile
     volumes:
       - /tmp/.ssl-core:/tmp/.ssl-core
     extra_hosts:
@@ -80,9 +81,10 @@ services:
 
   referee-ms:
     container_name: referee-ms
-    build:
-      context: .
-      dockerfile: referee-ms/referee-daronco/Dockerfile
+    image: robocin/referee-daronco:manual-5907a5
+#     build:
+#       context: .
+#       dockerfile: referee-ms/referee-daronco/Dockerfile
     volumes:
       - /tmp/.ssl-core:/tmp/.ssl-core
     extra_hosts:
@@ -95,17 +97,13 @@ services:
     build:
       context: .
       dockerfile: playback-ms/playback-caze/Dockerfile
-      args:
-        - SOURCE_DIRECTORY=playback-ms/playback-caze
-    command: ./playback-ms
     volumes:
       - /tmp/.ssl-core:/tmp/.ssl-core
-      - ./:/app
     extra_hosts:
       - "host.docker.internal:host-gateway"
     depends_on:
       - redis-db
-      
+
   player-bff:
     container_name: player-bff
     build:
@@ -119,7 +117,7 @@ services:
     depends_on:
       - gateway
       - playback-ms
-      
+
   redis-db:
     container_name: redis-db
     image: "redis:latest"
