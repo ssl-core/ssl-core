@@ -1,6 +1,7 @@
 services:
   gateway:
     container_name: gateway
+    network_mode: "host"
     build:
       context: .
       dockerfile: gateway/gateway-augusto/Dockerfile
