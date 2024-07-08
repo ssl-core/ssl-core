@@ -2,7 +2,7 @@
   "name": "C++: Perception Brutus",
   "build": {
     "context": "./../../..",
-    "dockerfile": "./../Dockerfile",
+    "dockerfile": "./../perception-brutus.Dockerfile",
     "target": "devcontainer"
   },
   "initializeCommand": "mkdir -p /tmp/.ssl-core",

@@ -2,7 +2,7 @@
   "name": "Golang: Gateway Augusto",
   "build": {
     "context": "../../..",
-    "dockerfile": "./../Dockerfile",
+    "dockerfile": "./../gateway-augusto.Dockerfile",
     "target": "devcontainer"
   },
   "initializeCommand": "mkdir -p /tmp/.ssl-core",
