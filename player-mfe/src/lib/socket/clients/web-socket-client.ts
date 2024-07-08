@@ -1,19 +1,27 @@
 import SocketClient from "./socket-client";
-import { Frame } from "../../../entities/frame";
+import { ChunkResponse, FrameResponse } from "../../../types/requests";
 
 class WebSocketClient implements SocketClient {
   private socket: WebSocket | null;
-  private isPlaying: boolean;
+  private playing: boolean;
+  private connected: boolean;
 
   constructor() {
     this.socket = null;
-    this.isPlaying = false;
+    this.playing = false;
+    this.connected = false;
   }
 
   public connect(address: string) {
+    if (this.connected) {
+      return;
+    }
+
     this.socket = new WebSocket(address);
+    this.socket.addEventListener("open", this.receiveStream);
     this.socket.addEventListener("message", this.handleMessage);
-    this.receiveStream();
+    this.sendState("connect");
+    this.connected = true;
   }
 
   public disconnect() {
@@ -21,16 +29,39 @@ class WebSocketClient implements SocketClient {
       throw new Error("Socket not initialized");
     }
 
+    if (!this.connected) {
+      return;
+    }
+
     this.socket.removeEventListener("message", this.handleMessage);
+    this.socket.removeEventListener("open", this.receiveStream);
     this.socket.close();
+
+    this.sendState("disconnected");
+    this.connected = false;
   }
 
-  public play() {
+  public isConnected() {
+    return this.connected;
+  }
+
+  public live() {
     if (!this.socket) {
       throw new Error("Socket not initialized");
     }
 
-    this.isPlaying = true;
+    this.sendState("live");
+    this.playing = true;
+  }
+
+  public play(timestamp: number) {
+    if (!this.socket) {
+      throw new Error("Socket not initialized");
+    }
+
+    this.sendState("play");
+    this.fetchReplay(timestamp);
+    this.playing = true;
   }
 
   public pause() {
@@ -38,7 +69,12 @@ class WebSocketClient implements SocketClient {
       throw new Error("Socket not initialized");
     }
 
-    this.isPlaying = false;
+    this.sendState("pause");
+    this.playing = false;
+  }
+
+  public isPlaying() {
+    return this.playing;
   }
 
   public send(message: any) {
@@ -54,10 +90,15 @@ class WebSocketClient implements SocketClient {
       throw new Error("Socket not initialized");
     }
 
-    this.socket.addEventListener("open", () => {
-      const message = JSON.stringify({ event: "receive-live-stream" });
-      this.socket?.send(message);
-    });
+    this.send({ event: "receive-live-stream" });
+  }
+
+  private fetchReplay(timestamp: number): void {
+    if (!this.socket) {
+      throw new Error("Socket not initialized");
+    }
+
+    this.send({ event: "get-replay-chunk", payload: { timestamp } });
   }
 
   private handleMessage(event: MessageEvent<string>) {
@@ -67,17 +108,32 @@ class WebSocketClient implements SocketClient {
       case "frame":
         this.handleFrame(payload);
         break;
+      case "chunk":
+        this.handleChunk(payload);
+        break;
       default:
         break;
     }
   }
 
-  private handleFrame(frame: Frame) {
-    if (!this.isPlaying) {
+  private handleFrame(frame: FrameResponse) {
+    if (!this.playing) {
       return;
     }
 
     self.postMessage({ type: "frame", payload: frame });
+  }
+
+  private handleChunk(chunk: ChunkResponse) {
+    if (!this.playing) {
+      return;
+    }
+
+    self.postMessage({ type: "chunk", payload: chunk });
+  }
+
+  private sendState(state: string) {
+    self.postMessage({ type: "state", payload: state });
   }
 }
 

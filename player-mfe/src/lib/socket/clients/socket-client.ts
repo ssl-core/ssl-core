@@ -1,8 +1,11 @@
 interface SocketClient {
   connect(address: string): void;
   disconnect(): void;
-  play(): void;
+  isConnected(): boolean;
+  live(): void;
+  play(timestamp: number): void;
   pause(): void;
+  isPlaying(): boolean;
   send(message: any): void;
 }
 

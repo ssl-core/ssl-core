@@ -1,5 +1,4 @@
-import EventBus from "../../lib/event-bus/event-bus";
-import SocketHandler from "../../lib/socket/socket-handler";
+import Playback from "../../entities/playback";
 import { html } from "../../utils/literals";
 import {
   forward5SecIcon,
@@ -25,15 +24,13 @@ type PlayerMFEControlsState = {
 };
 
 class PlayerMFEControls extends HTMLElement {
-  private eventBus: EventBus;
-  private socketHandler: SocketHandler;
+  private playback: Playback;
   private elements: PlayerMFEControlsElements;
   private state: PlayerMFEControlsState;
 
   constructor() {
     super();
-    this.eventBus = inject<EventBus>("eventBus")!;
-    this.socketHandler = inject<SocketHandler>("socketHandler")!;
+    this.playback = inject<Playback>("playback")!;
     this.elements = {
       playButton: null,
       rewindButton: null,
@@ -49,7 +46,7 @@ class PlayerMFEControls extends HTMLElement {
   public connectedCallback() {
     this.render();
     this.elements.playButton!.addEventListener("click", this.handlePlayClick);
-    this.eventBus.subscribe("playback-update", this.handlePlaybackUpdate);
+    this.playback.addEventListener("update", this.handlePlaybackUpdate);
   }
 
   public disconnectedCallback() {}
@@ -112,11 +109,9 @@ class PlayerMFEControls extends HTMLElement {
 
   public handlePlayClick = () => {
     if (this.state.isPlaying) {
-      this.socketHandler.pauseLiveStream();
-      this.state.isPlaying = false;
+      this.playback.pause();
     } else {
-      this.socketHandler.playLiveStream();
-      this.state.isPlaying = true;
+      this.playback.play();
     }
 
     this.syncPlayButton();

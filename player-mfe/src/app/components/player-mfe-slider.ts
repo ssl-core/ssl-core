@@ -1,9 +1,8 @@
-import EventBus from "../../lib/event-bus/event-bus";
+import Playback from "../../entities/playback";
 import { PlaybackUpdateEvent } from "../../events/playback-update";
 import { inject } from "../services/global-provider";
 import { html } from "../../utils/literals";
 import { formatTime } from "../../utils/time";
-import SocketHandler from "../../lib/socket/socket-handler";
 
 type PlayerMFESliderState = {
   currentTime: number;
@@ -19,8 +18,7 @@ type PlayerMFESliderElements = {
 class PlayerMFESlider extends HTMLElement {
   private state: PlayerMFESliderState;
   private elements: PlayerMFESliderElements;
-  private eventBus: EventBus;
-  private socketHandler: SocketHandler;
+  private playback: Playback;
 
   constructor() {
     super();
@@ -33,18 +31,18 @@ class PlayerMFESlider extends HTMLElement {
       currentTime: null,
       slider: null,
     };
-    this.eventBus = inject<EventBus>("eventBus")!;
-    this.socketHandler = inject<SocketHandler>("socketHandler")!;
+    this.playback = inject<Playback>("playback")!;
   }
 
   public connectedCallback() {
     this.render();
     this.initializeElements();
-    this.eventBus.subscribe("playback-update", this.handlePlaybackUpdate);
+    this.playback.addEventListener("update", this.handlePlaybackUpdate);
   }
 
   public disconnectedCallback() {
     this.elements.slider!.removeEventListener("input", this.handleInput);
+    this.playback.removeEventListener("update", this.handlePlaybackUpdate);
   }
 
   public render() {
@@ -102,10 +100,11 @@ class PlayerMFESlider extends HTMLElement {
     this.setDuration(event.duration);
   };
 
-  private handleInput(event: Event) {
+  private handleInput = (event: Event) => {
     const target = event.target as HTMLInputElement;
     this.setCurrentTime(parseInt(target.value));
-  }
+    this.playback.seek(parseInt(target.value));
+  };
 }
 
 customElements.define("player-mfe-slider", PlayerMFESlider);

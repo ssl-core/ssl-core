@@ -1,24 +1,37 @@
 import SocketClient from "./socket-client";
-import { Frame } from "../../../entities/frame";
-import { Ball } from "../../../entities/ball";
-import { Field } from "../../../entities/field";
-import { Robot } from "../../../entities/robot";
+import {
+  BallResponse,
+  ChunkResponse,
+  FieldResponse,
+  FrameResponse,
+  RobotResponse,
+} from "../../../types/requests";
 
 class TestSocketClient implements SocketClient {
   private socket: number | null;
-  private lastFrame: Frame | null;
+  private lastFrame: FrameResponse | null;
   private fps: number;
-  private isPlaying: boolean;
+  private playing: boolean;
+  private connected: boolean;
+  private startTime: number;
 
   constructor(fps: number) {
     this.socket = null;
     this.lastFrame = null;
     this.fps = fps;
-    this.isPlaying = false;
+    this.playing = false;
+    this.connected = false;
+    this.startTime = Date.now();
   }
 
   public connect(_address: string) {
+    if (this.connected) {
+      return;
+    }
+
     this.createFakeSocket();
+    this.sendState("connected");
+    this.connected = true;
   }
 
   public disconnect() {
@@ -26,24 +39,50 @@ class TestSocketClient implements SocketClient {
       throw new Error("Socket not initialized");
     }
 
-    clearInterval(this.socket);
-    this.socket = null;
-  }
-
-  public play() {
-    if (this.isPlaying) {
+    if (!this.connected) {
       return;
     }
 
-    this.isPlaying = true;
+    clearInterval(this.socket);
+    this.sendState("disconnected");
+    this.socket = null;
+    this.connected = false;
+  }
+
+  public isConnected() {
+    return this.connected;
+  }
+
+  public live() {
+    if (this.playing) {
+      return;
+    }
+
+    this.sendState("live");
+    this.playing = true;
+  }
+
+  public play(timestamp: number) {
+    if (this.playing) {
+      return;
+    }
+
+    this.sendState("play");
+    this.fetchReplay(timestamp);
+    this.playing = true;
   }
 
   public pause() {
-    if (!this.isPlaying) {
+    if (!this.playing) {
       return;
     }
 
-    this.isPlaying = false;
+    this.sendState("pause");
+    this.playing = false;
+  }
+
+  public isPlaying() {
+    return this.playing;
   }
 
   public send(message: any) {
@@ -52,6 +91,35 @@ class TestSocketClient implements SocketClient {
     }
 
     console.log("Message received: ", message);
+  }
+
+  private fetchReplay(timestamp: number) {
+    if (!this.lastFrame) {
+      this.lastFrame = this.createDefaultFrame();
+    }
+
+    const CHUNK_SIZE = 100;
+
+    let frames: FrameResponse[] = [];
+
+    for (let i = 0; i < CHUNK_SIZE; i++) {
+      this.lastFrame.balls[0].position = this.generateRandomPosition(
+        this.lastFrame.balls[0].position
+      );
+
+      for (const robot of this.lastFrame.robots) {
+        robot.position = this.generateRandomPosition(robot.position);
+      }
+
+      frames = [...frames, this.lastFrame];
+    }
+
+    const chunk: ChunkResponse = {
+      end_time: timestamp,
+      frames,
+    };
+
+    this.handleChunk(chunk);
   }
 
   private createFakeSocket() {
@@ -71,22 +139,30 @@ class TestSocketClient implements SocketClient {
         robot.position = this.generateRandomPosition(robot.position);
       }
 
-      this.lastFrame.is_playing = this.isPlaying;
+      this.lastFrame.current_time = Date.now();
 
       this.handleFrame(this.lastFrame);
     }, 1000 / this.fps);
   }
 
-  private handleFrame(frame: Frame) {
-    if (!this.isPlaying) {
+  private handleFrame(frame: FrameResponse) {
+    if (!this.playing) {
       return;
     }
 
-    self.postMessage(frame);
+    self.postMessage({ type: "frame", payload: frame });
   }
 
-  private createDefaultFrame(): Frame {
-    const balls: Ball[] = [
+  private handleChunk(chunk: ChunkResponse) {
+    // if (!this.playing) {
+    //   return;
+    // }
+
+    self.postMessage({ type: "chunk", payload: chunk });
+  }
+
+  private createDefaultFrame(): FrameResponse {
+    const balls: BallResponse[] = [
       {
         confidence: 1,
         position: [0, 0, 0],
@@ -94,8 +170,7 @@ class TestSocketClient implements SocketClient {
       },
     ];
 
-    const field: Field = {
-      serial_id: 0,
+    const field: FieldResponse = {
       length: 12,
       width: 9,
       goal_width: 1.8,
@@ -106,7 +181,7 @@ class TestSocketClient implements SocketClient {
       penalty_area_depth: 1.8,
     };
 
-    const robots: Robot[] = [];
+    const robots: RobotResponse[] = [];
 
     for (let i = 0; i < 11; i++) {
       let robot;
@@ -135,10 +210,9 @@ class TestSocketClient implements SocketClient {
     }
 
     return {
-      is_playing: this.isPlaying,
       serial_id: 0,
-      effective_serial_id: 0,
-      created_at: new Date().toISOString(),
+      start_time: this.startTime,
+      current_time: Date.now(),
       fps: this.fps,
       balls,
       field,
@@ -151,7 +225,7 @@ class TestSocketClient implements SocketClient {
     color: RobotColor,
     x: number,
     y: number
-  ): Robot {
+  ): RobotResponse {
     return {
       angle: 0,
       angular_velocity: 0,
@@ -183,6 +257,10 @@ class TestSocketClient implements SocketClient {
     }
 
     return newPosition as T;
+  }
+
+  private sendState(state: string) {
+    self.postMessage({ type: "state", payload: state });
   }
 }
 

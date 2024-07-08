@@ -1,15 +1,14 @@
 import SocketWorker from "../../workers/socket-worker?worker";
-import EventBus from "../event-bus/event-bus";
 
 class SocketHandler {
   private worker: Worker;
   private address: string;
-  private eventBus: EventBus;
+  private listeners: Record<string, Function[]>;
 
-  constructor(address: string, eventBus: EventBus) {
+  constructor(address: string) {
     this.worker = new SocketWorker();
     this.address = address;
-    this.eventBus = eventBus;
+    this.listeners = {};
   }
 
   public connect() {
@@ -18,6 +17,7 @@ class SocketHandler {
   }
 
   public disconnect() {
+    this.send("disconnect");
     this.worker.terminate();
   }
 
@@ -29,14 +29,47 @@ class SocketHandler {
     this.send("pause");
   }
 
+  public fetchReplay(timestamp: number) {
+    this.send("fetch", { timestamp });
+  }
+
+  public addEventListener(event: string, callback: Function) {
+    if (!this.listeners[event]) {
+      this.listeners[event] = [];
+    }
+
+    this.listeners[event].push(callback);
+  }
+
+  public removeEventListener(event: string, callback: Function) {
+    if (!this.listeners[event]) {
+      return;
+    }
+
+    this.listeners[event] = this.listeners[event].filter(
+      (listener) => listener !== callback
+    );
+  }
+
   private send(type: string, payload: any = {}) {
     this.worker.postMessage({ type, payload });
   }
 
   private handleWorkerMessages() {
     this.worker.onmessage = (event) => {
-      this.eventBus.emit("frame", event.data);
+      const { type, payload } = event.data;
+      this.dispatchEvent(type, payload);
     };
+  }
+
+  private dispatchEvent(event: string, payload: any) {
+    if (!this.listeners[event]) {
+      return;
+    }
+
+    this.listeners[event].forEach((listener) => {
+      listener(payload);
+    });
   }
 }
 

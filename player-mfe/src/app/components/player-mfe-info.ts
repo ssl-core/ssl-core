@@ -1,15 +1,34 @@
+import Playback from "../../entities/playback";
 import { html } from "../../utils/literals";
+import { inject } from "../services/global-provider";
+
+type PlayerMFEInfoElements = {
+  liveButton: HTMLButtonElement | null;
+};
 
 class PlayerMFEInfo extends HTMLElement {
+  private playback: Playback;
+  private elements: PlayerMFEInfoElements;
+
   constructor() {
     super();
+    this.playback = inject<Playback>("playback")!;
+    this.elements = {
+      liveButton: null,
+    };
   }
 
   public connectedCallback() {
     this.render();
+    this.elements.liveButton!.addEventListener("click", this.handleLiveClick);
   }
 
-  public disconnectedCallback() {}
+  public disconnectedCallback() {
+    this.elements.liveButton!.removeEventListener(
+      "click",
+      this.handleLiveClick
+    );
+  }
 
   public render() {
     this.innerHTML = html`
@@ -20,7 +39,14 @@ class PlayerMFEInfo extends HTMLElement {
         </button>
       </div>
     `;
+
+    this.elements.liveButton =
+      this.querySelector<HTMLButtonElement>(".info__live-button")!;
   }
+
+  private handleLiveClick = () => {
+    this.playback.live();
+  };
 }
 
 customElements.define("player-mfe-info", PlayerMFEInfo);
