@@ -12,7 +12,7 @@ const (
 	refereeTopic          = "referee"
 
 	playbackAddress = "ipc:///tmp/.ssl-core/playback.ipc"
-	chunkAddress    = "ipc:///tmp/.ssl-core/chunk.ipc"
+	chunkAddress    = "ipc:///tmp/.ssl-core/replay.ipc"
 
 	livePublishTopic = "sample"
 )
