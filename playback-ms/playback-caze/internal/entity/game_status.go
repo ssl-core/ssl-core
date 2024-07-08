@@ -38,7 +38,7 @@ func NewGameStatusFromRefereeGameStatus(game_status_pb *referee.GameStatus) *Gam
 
 	return &GameStatus{
 		SourceId:               game_status_pb.SourceId,
-		Description:            *game_status_pb.Description,
+		Description:            game_status_pb.GetDescription(),
 		Timestamp:              game_status_pb.Timestamp.AsTime(),
 		MatchType:              &game_status_pb.MatchType,
 		HomeTeam:               *NewTeamFromRefereeTeam(game_status_pb.HomeTeam),
@@ -55,19 +55,29 @@ func NewGameStatusFromRefereeGameStatus(game_status_pb *referee.GameStatus) *Gam
 }
 
 func (gs *GameStatus) ToProto() *playback.GameStatus {
-
 	proposals := make([]*playback.GameStatus_GameEventsProposal, 0)
 	for _, proposal := range gs.GameEventsProposals {
 		proposals = append(proposals, proposal.ToProto())
 	}
+
+	matchType := common.MatchType_MATCH_TYPE_UNSPECIFIED
+	if gs.MatchType != nil {
+		matchType = *gs.MatchType
+	}
+
+	gameStage := common.GameStage_GAME_STAGE_UNSPECIFIED
+	if gs.GameStage != nil {
+		gameStage = *gs.GameStage
+	}
+
 	return &playback.GameStatus{
 		SourceId:               gs.SourceId,
 		Description:            &gs.Description,
 		Timestamp:              timestamppb.New(gs.Timestamp),
-		MatchType:              *gs.MatchType,
+		MatchType:              matchType,
 		HomeTeam:               gs.HomeTeam.ToProto(),
 		AwayTeam:               gs.AwayTeam.ToProto(),
-		GameStage:              *gs.GameStage,
+		GameStage:              gameStage,
 		GameStageTimeLeft:      durationpb.New(gs.GameStageTimeLeft),
 		TotalCommandsIssued:    gs.TotalCommandsIssued,
 		CommandIssuedTimestamp: timestamppb.New(gs.CommandIssuedTimestamp),

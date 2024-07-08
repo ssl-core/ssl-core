@@ -22,8 +22,8 @@ func NewEvent(gameEvent *common.GameEvent) Event {
 	return Event{
 		Type:    event.TextName(),
 		Data:    event.Message().Fields(),
-		Sources: gameEvent.Sources,
-		Time:    gameEvent.Timestamp.AsTime(),
+		Sources: gameEvent.GetSources(),
+		Time:    gameEvent.GetTimestamp().AsTime(),
 	}
 }
 

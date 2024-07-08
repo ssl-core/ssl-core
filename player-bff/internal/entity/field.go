@@ -17,14 +17,14 @@ type Field struct {
 }
 
 func NewField(field *playback.Field) Field {
-	length := util.SetDefaultIfNil(field.Length, 0) / 1000
-	width := util.SetDefaultIfNil(field.Width, 0) / 1000
-	goalDepth := util.SetDefaultIfNil(field.GoalDepth, 0) / 1000
-	goalWidth := util.SetDefaultIfNil(field.GoalWidth, 0) / 1000
-	penaltyAreaDepth := util.SetDefaultIfNil(field.PenaltyAreaDepth, 0) / 1000
-	penaltyAreaWidth := util.SetDefaultIfNil(field.PenaltyAreaWidth, 0) / 1000
-	boundaryWidth := util.SetDefaultIfNil(field.BoundaryWidth, 0) / 1000
-	goalCenterToPenaltyMark := util.SetDefaultIfNil(field.GoalCenterToPenaltyMark, 0) / 1000
+	length := util.SetDefaultIfNil(field.GetLength(), 0) / 1000
+	width := util.SetDefaultIfNil(field.GetWidth(), 0) / 1000
+	goalDepth := util.SetDefaultIfNil(field.GetGoalDepth(), 0) / 1000
+	goalWidth := util.SetDefaultIfNil(field.GetGoalWidth(), 0) / 1000
+	penaltyAreaDepth := util.SetDefaultIfNil(field.GetPenaltyAreaDepth(), 0) / 1000
+	penaltyAreaWidth := util.SetDefaultIfNil(field.GetPenaltyAreaWidth(), 0) / 1000
+	boundaryWidth := util.SetDefaultIfNil(field.GetBoundaryWidth(), 0) / 1000
+	goalCenterToPenaltyMark := util.SetDefaultIfNil(field.GetGoalCenterToPenaltyMark(), 0) / 1000
 
 	return Field{
 		Length:                  length,

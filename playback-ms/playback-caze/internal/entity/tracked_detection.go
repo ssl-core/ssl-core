@@ -33,9 +33,9 @@ func NewTrackedDetectionFromTrackedPackets(tracked_packets_pb []*game_controller
 		robots[i] = *NewTrackedRobotFromTracked(tracked_robot_pb)
 	}
 
-	sourceUniqueId := util.SetDefaultIfNil(*tracked_packet_pb.Uuid, "NO-UUID")
-	sourceSoftwareName := util.SetDefaultIfNil(*tracked_packet_pb.SourceName, "UNKONWN")
-	serialId := util.SetDefaultIfNil(*tracked_detection_pb.FrameNumber, 0)
+	sourceUniqueId := util.SetDefaultIfNil(tracked_packet_pb.GetUuid(), "NO-UUID")
+	sourceSoftwareName := util.SetDefaultIfNil(tracked_packet_pb.GetSourceName(), "UNKONWN")
+	serialId := util.SetDefaultIfNil(tracked_detection_pb.GetFrameNumber(), 0)
 
 	return &TrackedDetection{
 		SourceUniqueId:     sourceUniqueId,

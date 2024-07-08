@@ -20,15 +20,15 @@ type TrackedRobot struct {
 }
 
 func NewTrackedRobotFromTracked(tracked_robot_pb *game_controller.TrackedRobot) *TrackedRobot {
-	confidence := util.SetDefaultIfNil(*tracked_robot_pb.Visibility, 0.0)
-	robotId := util.SetDefaultIfNil(*tracked_robot_pb.RobotId.Id, 0)
+	confidence := util.SetDefaultIfNil(tracked_robot_pb.GetVisibility(), 0.0)
+	robotId := util.SetDefaultIfNil(tracked_robot_pb.RobotId.GetId(), 0)
 	robotTeam := util.SetDefaultIfNil(tracked_robot_pb.RobotId.Team.String(), "UNKNOWN")
 	pbPosition := util.SetDefaultIfNil(tracked_robot_pb.Pos, &game_controller.Vector2{})
-	position := []float32{util.SetDefaultIfNil(*pbPosition.X, 0), util.SetDefaultIfNil(*pbPosition.Y, 0)}
-	angle := util.SetDefaultIfNil(*tracked_robot_pb.Orientation, 0)
+	position := []float32{util.SetDefaultIfNil(pbPosition.GetX(), 0), util.SetDefaultIfNil(pbPosition.GetY(), 0)}
+	angle := util.SetDefaultIfNil(tracked_robot_pb.GetOrientation(), 0)
 	pbVelocity := util.SetDefaultIfNil(tracked_robot_pb.Vel, &game_controller.Vector2{})
-	velocity := []float32{util.SetDefaultIfNil(*pbVelocity.X, 0), util.SetDefaultIfNil(*pbVelocity.Y, 0)}
-	angularVelocity := util.SetDefaultIfNil(*tracked_robot_pb.VelAngular, 0)
+	velocity := []float32{util.SetDefaultIfNil(pbVelocity.GetX(), 0), util.SetDefaultIfNil(pbVelocity.GetY(), 0)}
+	angularVelocity := util.SetDefaultIfNil(tracked_robot_pb.GetVelAngular(), 0)
 
 	return &TrackedRobot{
 		Confidence:      confidence,

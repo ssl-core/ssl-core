@@ -28,11 +28,11 @@ type TrackedBall struct {
 // }
 
 func NewTrackedBallFromTracked(tracked_ball_pb *game_controller.TrackedBall) *TrackedBall {
-	confidence := util.SetDefaultIfNil(*tracked_ball_pb.Visibility, 0.0)
+	confidence := util.SetDefaultIfNil(tracked_ball_pb.GetVisibility(), 0.0)
 	pbPosition := util.SetDefaultIfNil(tracked_ball_pb.Pos, &game_controller.Vector3{})
-	position := []float32{util.SetDefaultIfNil(*pbPosition.X, 0), util.SetDefaultIfNil(*pbPosition.Y, 0), util.SetDefaultIfNil(*pbPosition.Z, 0)}
+	position := []float32{util.SetDefaultIfNil(pbPosition.GetX(), 0), util.SetDefaultIfNil(pbPosition.GetY(), 0), util.SetDefaultIfNil(pbPosition.GetZ(), 0)}
 	pbVelocity := util.SetDefaultIfNil(tracked_ball_pb.Vel, &game_controller.Vector3{})
-	velocity := []float32{util.SetDefaultIfNil(*pbVelocity.X, 0), util.SetDefaultIfNil(*pbVelocity.Y, 0), util.SetDefaultIfNil(*pbVelocity.Z, 0)}
+	velocity := []float32{util.SetDefaultIfNil(pbVelocity.GetX(), 0), util.SetDefaultIfNil(pbVelocity.GetY(), 0), util.SetDefaultIfNil(pbVelocity.GetZ(), 0)}
 
 	return &TrackedBall{
 		Confidence: confidence,

@@ -20,22 +20,22 @@ type Frame struct {
 }
 
 func NewFrame(sample *playback.Sample) Frame {
-	field := NewField(util.SetDefaultIfNil(sample.Field, &playback.Field{}))
+	field := NewField(util.SetDefaultIfNil(sample.GetField(), &playback.Field{}))
 
-	balls := make([]Ball, len(sample.Detection.Balls))
-	for i, ball := range sample.Detection.Balls {
+	balls := make([]Ball, len(sample.GetDetection().GetBalls()))
+	for i, ball := range sample.GetDetection().GetBalls() {
 		balls[i] = NewBall(util.SetDefaultIfNil(ball, &playback.Detection_Ball{}))
 	}
 
-	robots := make([]Robot, len(sample.Detection.Robots))
-	for i, robot := range sample.Detection.Robots {
+	robots := make([]Robot, len(sample.GetDetection().GetRobots()))
+	for i, robot := range sample.GetDetection().GetRobots() {
 		robots[i] = NewRobot(util.SetDefaultIfNil(robot, &playback.Detection_Robot{}))
 	}
 
-	serialId := util.SetDefaultIfNil(sample.Detection.SerialId, 0)
-	fps := util.SetDefaultIfNil(sample.Detection.ExpectedFramerate, 0)
-	currentTime := util.SetDefaultIfNil(sample.Timestamp, &timestamppb.Timestamp{}).AsTime()
-	startTime := util.SetDefaultIfNil(sample.FirstTimestamp, &timestamppb.Timestamp{}).AsTime()
+	serialId := util.SetDefaultIfNil(sample.GetDetection().GetSerialId(), 0)
+	fps := util.SetDefaultIfNil(sample.GetDetection().GetExpectedFramerate(), 0)
+	currentTime := util.SetDefaultIfNil(sample.GetTimestamp(), &timestamppb.Timestamp{}).AsTime()
+	startTime := util.SetDefaultIfNil(sample.GetFirstTimestamp(), &timestamppb.Timestamp{}).AsTime()
 
 	return Frame{
 		StartTime:   startTime,

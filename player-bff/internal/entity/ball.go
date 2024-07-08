@@ -13,11 +13,11 @@ type Ball struct {
 }
 
 func NewBall(ball *playback.Detection_Ball) Ball {
-	confidence := util.SetDefaultIfNil(ball.Confidence, 0)
-	pbPosition := util.SetDefaultIfNil(ball.Position, &common.Point3Df{})
-	position := []float32{util.SetDefaultIfNil(pbPosition.X, 0) / 1000, util.SetDefaultIfNil(pbPosition.Y, 0) / 1000, util.SetDefaultIfNil(pbPosition.Z, 0) / 1000}
-	pbVelocity := util.SetDefaultIfNil(ball.Velocity, &common.Point3Df{})
-	velocity := []float32{util.SetDefaultIfNil(pbVelocity.X, 0), util.SetDefaultIfNil(pbVelocity.Y, 0), util.SetDefaultIfNil(pbVelocity.Z, 0)}
+	confidence := util.SetDefaultIfNil(ball.GetConfidence(), 0)
+	pbPosition := util.SetDefaultIfNil(ball.GetPosition(), &common.Point3Df{})
+	position := []float32{util.SetDefaultIfNil(pbPosition.GetX(), 0) / 1000, util.SetDefaultIfNil(pbPosition.GetY(), 0) / 1000, util.SetDefaultIfNil(pbPosition.GetZ(), 0) / 1000}
+	pbVelocity := util.SetDefaultIfNil(ball.GetVelocity(), &common.Point3Df{})
+	velocity := []float32{util.SetDefaultIfNil(pbVelocity.GetX(), 0), util.SetDefaultIfNil(pbVelocity.GetY(), 0), util.SetDefaultIfNil(pbVelocity.GetZ(), 0)}
 
 	return Ball{
 		Confidence: confidence,
