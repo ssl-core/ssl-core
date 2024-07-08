@@ -9,6 +9,7 @@ build-linux:
 
 setup:
 	@go mod download
+	@bash scripts/compile_proto.sh
 
 compile-proto:
 	@bash scripts/compile_proto.sh
