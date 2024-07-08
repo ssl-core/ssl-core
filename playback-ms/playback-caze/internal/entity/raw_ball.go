@@ -31,7 +31,7 @@ func NewRawBallFromSSLDetectionBall(detection_ball_pb *detection.SSL_DetectionBa
 
 	return &RawBall{
 		Confidence: confidence,
-		Position:   []float32{position[0], position[1], 0},
+		Position:   []float32{position[0], position[1], position[2]},
 	}
 }
 

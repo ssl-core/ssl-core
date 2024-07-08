@@ -2,7 +2,6 @@ package main
 
 import (
 	"fmt"
-	"os"
 	"sync"
 	"time"
 
@@ -123,20 +122,24 @@ func debugRun() {
 }
 
 func main() {
-	if args := os.Args; len(args) > 1 {
-		fmt.Printf("Starting playback-ms [MODE %v]...\n", args[1])
-		switch args[1] {
-		case "playback":
-			playbackRun()
-		case "stub":
-			stubRun()
-		case "debug":
-			debugRun()
-		default:
-			fmt.Println("Unknown argument:", args[1])
-		}
-	} else {
-		fmt.Println("No arguments provided. Running `playbackRun` by default.")
-		playbackRun()
-	}
+	// DEBUG
+	// if args := os.Args; len(args) > 1 {
+	// 	fmt.Printf("Starting playback-ms [MODE %v]...\n", args[1])
+	// 	switch args[1] {
+	// 	case "playback":
+	// 		playbackRun()
+	// 	case "stub":
+	// 		stubRun()
+	// 	case "debug":
+	// 		debugRun()
+	// 	default:
+	// 		fmt.Println("Unknown argument:", args[1])
+	// 	}
+	// } else {
+	// 	fmt.Println("No arguments provided. Running `playbackRun` by default.")
+	// 	playbackRun()
+	// }
+
+	fmt.Println("Starting playback-ms...")
+	playbackRun()
 }
