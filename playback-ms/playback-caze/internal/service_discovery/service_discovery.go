@@ -14,8 +14,7 @@ const (
 	playbackAddress = "ipc:///tmp/.ssl-core/playback.ipc"
 	chunkAddress    = "ipc:///tmp/.ssl-core/chunk.ipc"
 
-	livePublishAddress = "ipc:///tmp/gateway-async-frontend.ipc"
-	livePublishTopic   = "sample"
+	livePublishTopic = "sample"
 )
 
 var lock = &sync.Mutex{}
@@ -56,10 +55,6 @@ func (sd *ServiceDiscovery) GetRefereeTopic() string {
 
 func (sd *ServiceDiscovery) GetChunkAddress() string {
 	return chunkAddress
-}
-
-func (sd *ServiceDiscovery) GetLivePublishAddress() string {
-	return livePublishAddress
 }
 
 func (sd *ServiceDiscovery) GetLivePublishTopic() string {
