@@ -18,7 +18,7 @@ class PlayerMFE extends HTMLElement {
   constructor() {
     super();
     this.root = this.attachShadow({ mode: "open" });
-    this.socketHandler = new SocketHandler("player-bff");
+    this.socketHandler = new SocketHandler("http://localhost:4040/ws");
     this.playback = new Playback(this.socketHandler);
   }
 

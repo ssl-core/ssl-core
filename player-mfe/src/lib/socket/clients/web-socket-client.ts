@@ -18,8 +18,10 @@ class WebSocketClient implements SocketClient {
     }
 
     this.socket = new WebSocket(address);
-    this.socket.addEventListener("open", this.receiveStream);
-    this.socket.addEventListener("message", this.handleMessage);
+    this.socket.addEventListener("open", () => this.receiveStream());
+    this.socket.addEventListener("message", (event) =>
+      this.handleMessage(event)
+    );
     this.sendState("connect");
     this.connected = true;
   }

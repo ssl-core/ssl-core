@@ -118,6 +118,18 @@ services:
       - gateway
       - playback-ms
 
+  player-mfe:
+    build:
+      context: .
+      dockerfile: player-mfe/Dockerfile
+      args:
+        - SOURCE_DIRECTORY=player-mfe
+    command: ["-g", "daemon off;"]
+    ports:
+      - 3031:3031
+    depends_on:
+      - player-bff
+
   redis-db:
     container_name: redis-db
     image: "redis:latest"
