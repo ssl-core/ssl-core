@@ -50,7 +50,6 @@ func (s *GrpcServer) Start() {
 func (s *GrpcServer) ReceiveLivestream(stream gateway.GatewayService_ReceiveLivestreamServer) error {
 	for {
 		// TODO: Handle stream.Recv()
-
 		datagram := s.subscriber.Receive()
 		var sample playback.Sample
 		err := proto.Unmarshal(datagram.Message, &sample)
@@ -58,7 +57,8 @@ func (s *GrpcServer) ReceiveLivestream(stream gateway.GatewayService_ReceiveLive
 		fmt.Println("Sending sample: ", sample)
 
 		if err != nil {
-			return err
+			fmt.Println("Error unmarshaling sample: ", datagram.Message, sample)
+			continue
 		}
 
 		response := &gateway.ReceiveLivestreamResponse{
