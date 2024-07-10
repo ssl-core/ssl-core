@@ -15,8 +15,6 @@ services:
       - "-a"
       - "-visionAddress"
       - "224.5.23.2:10020"
-    extra_hosts:
-      - "host.docker.internal:host-gateway"
     depends_on:
       - simulator
 
@@ -35,8 +33,6 @@ services:
     restart: unless-stopped
     ports:
       - 8081/tcp
-    extra_hosts:
-      - "host.docker.internal:host-gateway"
     depends_on:
       - autoref-tigers
 
@@ -49,8 +45,6 @@ services:
     restart: unless-stopped
     ports:
       - 8082/tcp
-    extra_hosts:
-      - "host.docker.internal:host-gateway"
     depends_on:
       - game-controller
 
@@ -60,7 +54,7 @@ services:
       context: .
       dockerfile: gateway/gateway-augusto/gateway-augusto.Dockerfile
     volumes:
-      - /tmp/.ssl-core:/tmp/.ssl-core
+      - .ssl-core:/tmp/.ssl-core
     ports:
       - 50051:50051
     depends_on:
@@ -73,9 +67,7 @@ services:
 #       context: .
 #       dockerfile: perception-ms/perception-brutus/perception-brutus.Dockerfile
     volumes:
-      - /tmp/.ssl-core:/tmp/.ssl-core
-    extra_hosts:
-      - "host.docker.internal:host-gateway"
+      - .ssl-core:/tmp/.ssl-core
     depends_on:
       - gateway
 
@@ -86,9 +78,7 @@ services:
 #       context: .
 #       dockerfile: referee-ms/referee-daronco/referee-daronco.Dockerfile
     volumes:
-      - /tmp/.ssl-core:/tmp/.ssl-core
-    extra_hosts:
-      - "host.docker.internal:host-gateway"
+      - .ssl-core:/tmp/.ssl-core
     depends_on:
       - perception-ms
 
@@ -98,38 +88,39 @@ services:
       context: .
       dockerfile: playback-ms/playback-caze/playback-caze.Dockerfile
     volumes:
-      - /tmp/.ssl-core:/tmp/.ssl-core
-    extra_hosts:
-      - "host.docker.internal:host-gateway"
+      - .ssl-core:/tmp/.ssl-core
     depends_on:
-      - redis-db
+      - referee-ms
 
-  player-bff:
-    container_name: player-bff
-    build:
-      context: .
-      dockerfile: player-bff/Dockerfile
-      args:
-        - SOURCE_DIRECTORY=player-bff
-    command: ["./player-bff"]
-    ports:
-      - 4040:4040
-    depends_on:
-      - gateway
-      - playback-ms
+  # player-bff:
+  #   container_name: player-bff
+  #   build:
+  #     context: .
+  #     dockerfile: player-bff/Dockerfile
+  #     args:
+  #       - SOURCE_DIRECTORY=player-bff
+  #   command: ["./player-bff"]
+  #   ports:
+  #     - 4040:4040
+  #   depends_on:
+  #     - gateway
+  #     - playback-ms
 
-  player-mfe:
-    build:
-      context: .
-      dockerfile: player-mfe/Dockerfile
-      args:
-        - SOURCE_DIRECTORY=player-mfe
-    command: ["-g", "daemon off;"]
-    ports:
-      - 3031:3031
-    depends_on:
-      - player-bff
+  # player-mfe:
+  #   build:
+  #     context: .
+  #     dockerfile: player-mfe/Dockerfile
+  #     args:
+  #       - SOURCE_DIRECTORY=player-mfe
+  #   command: ["-g", "daemon off;"]
+  #   ports:
+  #     - 3031:3031
+  #   depends_on:
+  #     - player-bff
 
-  redis-db:
-    container_name: redis-db
-    image: "redis:latest"
+  # redis-db:
+  #   container_name: redis-db
+  #   image: "redis:latest"
+
+volumes:
+  .ssl-core:

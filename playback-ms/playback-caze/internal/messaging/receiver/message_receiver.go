@@ -3,33 +3,34 @@ package receiver
 import (
 	"sync"
 
-	"github.com/robocin/ssl-core/playback-ms/internal/messaging/receiver/handler"
+	"github.com/robocin/ssl-core/playback-ms/internal/concurrency"
+	"github.com/robocin/ssl-core/playback-ms/network"
 )
 
 type MessageReceiver struct {
-	subscribers []*handler.SubscriberHandler
-	routers     []*handler.RouterHandler
+	subscribers []*network.ZmqSubscriberSocket
 }
 
-func NewMessageReceiver() *MessageReceiver {
-	return &MessageReceiver{}
-}
-
-func (mr *MessageReceiver) AddSubscriberHandler(subscriber *handler.SubscriberHandler) {
-	mr.subscribers = append(mr.subscribers, subscriber)
-}
-
-func (mr *MessageReceiver) AddRouterHandler(router *handler.RouterHandler) {
-	mr.routers = append(mr.routers, router)
-}
-
-func (mr *MessageReceiver) Start(wg *sync.WaitGroup) {
-	wg.Add(len(mr.subscribers) + len(mr.routers))
-	for _, subscriber := range mr.subscribers {
-		go subscriber.Handle(wg)
+func NewMessageReceiver(sockets []*network.ZmqSubscriberSocket) *MessageReceiver {
+	return &MessageReceiver{
+		subscribers: sockets,
 	}
+}
 
-	for _, router := range mr.routers {
-		go router.Handle(wg)
+func (mr *MessageReceiver) Start(datagrams *concurrency.ConcurrentQueue[network.ZmqMultipartDatagram], wg *sync.WaitGroup) {
+	for _, sub := range mr.subscribers {
+		wg.Add(1)
+
+		go func() {
+			defer wg.Done()
+
+			for {
+				datagram := sub.Receive()
+				if datagram.IsEmpty() {
+					continue
+				}
+				datagrams.Enqueue(datagram)
+			}
+		}()
 	}
 }
