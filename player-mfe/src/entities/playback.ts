@@ -9,8 +9,8 @@ export enum PlaybackState {
   Live = "live",
   Play = "play",
   Pause = "pause",
-  Stop = "connected",
-  Disconnected = "disconnected",
+  Stop = "connect",
+  Disconnected = "disconnect",
 }
 
 class Playback {
@@ -19,6 +19,7 @@ class Playback {
   private listeners: Record<string, Function[]>;
   private currentFrame: Frame | null;
   private buffer: Buffer;
+  private eventBus: BroadcastChannel;
 
   constructor(socket: SocketHandler) {
     this.socket = socket;
@@ -36,6 +37,7 @@ class Playback {
     this.socket.addEventListener("chunk", (chunk: ChunkResponse) =>
       this.receiveChunk(chunk)
     );
+    this.eventBus = new BroadcastChannel("event-bus");
   }
 
   public live() {
@@ -62,6 +64,13 @@ class Playback {
   public play(timestamp?: number) {
     if (this.state === PlaybackState.Disconnected) {
       throw new Error("Disconnected");
+    }
+
+    console.log(this.state, timestamp);
+
+    if (this.state === PlaybackState.Stop && !timestamp) {
+      this.live();
+      return;
     }
 
     this.buffer.play({
@@ -95,6 +104,7 @@ class Playback {
   }
 
   public receiveFrame(payload: FrameResponse) {
+    console.log("receiveFrame", payload);
     const frame = new Frame(payload);
     this.currentFrame = frame;
     this.update();
@@ -135,6 +145,9 @@ class Playback {
         this.state === PlaybackState.Play || this.state === PlaybackState.Live,
       frame: this.currentFrame,
     };
+
+    this.eventBus.postMessage({ type: "frame", payload: this.currentFrame });
+    console.log({ type: "frame", payload: this.currentFrame });
 
     this.dispatchEvent("update", data);
   }

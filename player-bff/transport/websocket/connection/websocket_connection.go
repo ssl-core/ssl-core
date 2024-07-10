@@ -1,6 +1,9 @@
 package connection
 
 import (
+	"fmt"
+	"io"
+
 	"github.com/gorilla/websocket"
 	"github.com/robocin/ssl-core/player-bff/internal/application"
 	"github.com/robocin/ssl-core/player-bff/transport/grpc/client"
@@ -37,9 +40,15 @@ func (wc *WebsocketConnection) Listen() {
 		err := wc.conn.ReadJSON(&message)
 
 		if err != nil {
+			if err == io.EOF {
+				break
+			}
+
 			wc.conn.WriteMessage(websocket.TextMessage, []byte("Error: "+err.Error()))
 			continue
 		}
+
+		fmt.Println("Websocket connection: ", message)
 
 		event, _ := message["event"].(string)
 		data, _ := message["data"].(map[string]interface{})
@@ -50,7 +59,11 @@ func (wc *WebsocketConnection) Listen() {
 func (wc *WebsocketConnection) OnNotify(event application.ConnectionProxyEvent) {
 	switch event.Type {
 	case "sample":
-		wc.conn.WriteJSON(event.Payload)
+		message := map[string]interface{}{
+			"type":    "frame",
+			"payload": event.Payload,
+		}
+		wc.conn.WriteJSON(message)
 	}
 }
 
