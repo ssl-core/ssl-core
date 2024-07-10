@@ -11,15 +11,18 @@ import (
 	"github.com/robocin/ssl-core/playback-ms/pkg/pb/playback"
 	"github.com/robocin/ssl-core/playback-ms/pkg/pb/referee"
 	"google.golang.org/protobuf/proto"
+	"google.golang.org/protobuf/types/known/timestamppb"
 )
 
 type LiveHandler struct {
+	firstTimestamp *timestamppb.Timestamp
 	samples        *concurrency.ConcurrentQueue[*playback.Sample]
 	lastGameStatus *playback.GameStatus
 }
 
 func NewLiveHandler() *LiveHandler {
 	return &LiveHandler{
+		firstTimestamp: nil,
 		samples:        concurrency.NewQueue[*playback.Sample](),
 		lastGameStatus: nil,
 	}
@@ -48,7 +51,12 @@ func (lh *LiveHandler) Process(datagram *network.ZmqMultipartDatagram) (*playbac
 		perceptionDetectionWrapper := perception.DetectionWrapper{}
 		proto.Unmarshal(datagram.Message, &perceptionDetectionWrapper)
 
+		if lh.firstTimestamp == nil {
+			lh.firstTimestamp = perceptionDetectionWrapper.GetDetection().GetCreatedAt()
+		}
 		sample.Detection = mappers.DetectionMapper(perceptionDetectionWrapper.GetDetection())
+		sample.Timestamp = sample.Detection.GetCreatedAt()
+		sample.FirstTimestamp = lh.firstTimestamp
 	} else {
 		return nil, fmt.Errorf("datagram with topic '%s' not processed", topic)
 	}

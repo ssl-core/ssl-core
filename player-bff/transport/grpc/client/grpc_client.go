@@ -45,6 +45,7 @@ func (gc *GrpcClient) Close() error {
 }
 
 func (gc *GrpcClient) ReceiveLiveStream(proxy *application.ConnectionProxy) error {
+	fmt.Println("ReceiveLiveStream...")
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
 
@@ -72,7 +73,7 @@ func (gc *GrpcClient) ReceiveLiveStream(proxy *application.ConnectionProxy) erro
 
 		payload := response.Sample
 
-		if payload.String() != "" {
+		if payload.String() == "" {
 			continue
 		}
 
