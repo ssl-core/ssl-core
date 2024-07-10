@@ -15,8 +15,6 @@ services:
       - "-a"
       - "-visionAddress"
       - "224.5.23.2:10020"
-    extra_hosts:
-      - "host.docker.internal:host-gateway"
     depends_on:
       - simulator
 
@@ -35,8 +33,6 @@ services:
     restart: unless-stopped
     ports:
       - 8081/tcp
-    extra_hosts:
-      - "host.docker.internal:host-gateway"
     depends_on:
       - autoref-tigers
 
@@ -49,8 +45,6 @@ services:
     restart: unless-stopped
     ports:
       - 8082/tcp
-    extra_hosts:
-      - "host.docker.internal:host-gateway"
     depends_on:
       - game-controller
 
@@ -60,7 +54,7 @@ services:
       context: .
       dockerfile: gateway/gateway-augusto/gateway-augusto.Dockerfile
     volumes:
-      - ssl_core:/tmp/.ssl-core
+      - .ssl-core:/tmp/.ssl-core
     ports:
       - 50051:50051
     depends_on:
@@ -73,9 +67,7 @@ services:
 #       context: .
 #       dockerfile: perception-ms/perception-brutus/perception-brutus.Dockerfile
     volumes:
-      - ssl_core:/tmp/.ssl-core
-    extra_hosts:
-      - "host.docker.internal:host-gateway"
+      - .ssl-core:/tmp/.ssl-core
     depends_on:
       - gateway
 
@@ -86,9 +78,7 @@ services:
 #       context: .
 #       dockerfile: referee-ms/referee-daronco/referee-daronco.Dockerfile
     volumes:
-      - ssl_core:/tmp/.ssl-core
-    extra_hosts:
-      - "host.docker.internal:host-gateway"
+      - .ssl-core:/tmp/.ssl-core
     depends_on:
       - perception-ms
 
@@ -98,11 +88,9 @@ services:
       context: .
       dockerfile: playback-ms/playback-caze/playback-caze.Dockerfile
     volumes:
-      - ssl_core:/tmp/.ssl-core
-    extra_hosts:
-      - "host.docker.internal:host-gateway"
-    # depends_on:
-    #   - redis-db
+      - .ssl-core:/tmp/.ssl-core
+    depends_on:
+      - referee-ms
 
   # player-bff:
   #   container_name: player-bff
@@ -133,5 +121,6 @@ services:
   # redis-db:
   #   container_name: redis-db
   #   image: "redis:latest"
+
 volumes:
-  ssl_core:
+  .ssl-core:

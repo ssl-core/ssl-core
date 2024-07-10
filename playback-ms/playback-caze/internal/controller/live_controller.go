@@ -1,23 +1,23 @@
 package controller
 
 import (
-	"fmt"
 	"sync"
 
+	"github.com/robocin/ssl-core/playback-ms/internal/concurrency"
 	"github.com/robocin/ssl-core/playback-ms/internal/handler"
 	"github.com/robocin/ssl-core/playback-ms/internal/messaging/sender"
 	"github.com/robocin/ssl-core/playback-ms/network"
 )
 
 type LiveController struct {
-	datagrams <-chan network.ZmqMultipartDatagram
 	sender    *sender.MessageSender
+	datagrams *concurrency.ConcurrentQueue[network.ZmqMultipartDatagram]
 	handler   *handler.LiveHandler
 }
 
 func NewLiveController(
 	sender *sender.MessageSender,
-	datagrams <-chan network.ZmqMultipartDatagram,
+	datagrams *concurrency.ConcurrentQueue[network.ZmqMultipartDatagram],
 	handler *handler.LiveHandler,
 ) *LiveController {
 	return &LiveController{
@@ -27,15 +27,15 @@ func NewLiveController(
 	}
 }
 
-func (sc *LiveController) Run(wg *sync.WaitGroup) {
-	defer fmt.Printf("Finishing LiveController\n")
+func (lc *LiveController) Run(wg *sync.WaitGroup) {
 	defer wg.Done()
+
 	for {
-		for datagram := range sc.datagrams {
-			fmt.Printf(string(datagram.Identifier))
-			sample, err := sc.handler.Process(&datagram)
+		for _, datagram := range lc.datagrams.DequeueAll() {
+			sample, err := lc.handler.Process(&datagram)
+
 			if err == nil {
-				sc.sender.SendSample(sample)
+				lc.sender.SendSample(sample)
 			}
 		}
 	}

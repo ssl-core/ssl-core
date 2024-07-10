@@ -4,64 +4,53 @@ import (
 	"fmt"
 	"sync"
 
+	"github.com/robocin/ssl-core/playback-ms/internal/concurrency"
+	"github.com/robocin/ssl-core/playback-ms/internal/controller"
+	"github.com/robocin/ssl-core/playback-ms/internal/handler"
 	"github.com/robocin/ssl-core/playback-ms/internal/messaging/receiver"
+	"github.com/robocin/ssl-core/playback-ms/internal/messaging/sender"
 	"github.com/robocin/ssl-core/playback-ms/internal/service_discovery"
-	"github.com/robocin/ssl-core/playback-ms/internal/stub"
 	"github.com/robocin/ssl-core/playback-ms/network"
 )
 
 func runPlayback(wg *sync.WaitGroup) {
-	// chunkRequestsChannel := make(chan network.ZmqMultipartDatagram, 10)
-
-	// messageSender := sender.NewMessageSender(
-	// 	service_discovery.GetInstance().GetPlaybackAddress(),
-	// 	service_discovery.GetInstance().GetChunkAddress(),
-	// )
+	// TODO: move to a controller.
+	// receiver:
 
 	perceptionSocket := network.NewZmqSubscriberSocket(
-		service_discovery.GetInstance().GetPerceptionAddress(),
-		service_discovery.GetInstance().GetDetectionWrapperTopic(),
+		service_discovery.PerceptionAddress,
+		service_discovery.PerceptionDetectionWrapperTopic,
 	)
 
 	refereeSocket := network.NewZmqSubscriberSocket(
-		service_discovery.GetInstance().GetRefereeAddress(),
-		service_discovery.GetInstance().GetRefereeTopic(),
+		service_discovery.RefereeAddress,
+		service_discovery.RefereeGameStatusTopic,
 	)
 
-	subscribersDatagramsChannel := make(chan network.ZmqMultipartDatagram, 10)
-	message_receiver := receiver.NewMessageReceiver(subscribersDatagramsChannel, []*network.ZmqSubscriberSocket{perceptionSocket, refereeSocket})
-	fmt.Println("message receiver before start")
-	message_receiver.Start(wg)
+	message_receiver := receiver.NewMessageReceiver(
+		[]*network.ZmqSubscriberSocket{
+			perceptionSocket,
+			refereeSocket,
+		},
+	)
 
-	// liveHandler := handler.NewLiveHandler()
-	// liveController := controller.NewLiveController(
-	// 	messageSender,
-	// 	subscribersDatagramsChannel,
-	// 	liveHandler,
-	// )
-	// go liveController.Run(wg)
+	datagrams := concurrency.NewQueue[network.ZmqMultipartDatagram]()
 
-	// chunkController := controller.NewChunkController(messageSender, chunkRequestsChannel)
-	// go chunkController.Run(wg)
-}
+	// creating goroutines internally but 'Start' does not need to be called by a goroutine.
+	message_receiver.Start(datagrams, wg)
 
-func runPerceptionStub(wg *sync.WaitGroup) {
-	perceptionStub := stub.NewPerceptionStub()
-	perceptionStub.Run(wg)
-}
+	// sender:
+	messageSender := sender.NewMessageSender(service_discovery.PlaybackAddress)
+	liveHandler := handler.NewLiveHandler()
 
-func runSubscriberStub(wg *sync.WaitGroup) {
-	subscriberStub := stub.NewSubscriberStub()
-	subscriberStub.Run(wg)
-}
+	liveController := controller.NewLiveController(messageSender, datagrams, liveHandler)
 
-func runGatewayChunkStub(wg *sync.WaitGroup) {
-	GatewayChunkStub := stub.NewGatewayChunkStub()
-	GatewayChunkStub.Run(wg)
+	wg.Add(1)
+	go liveController.Run(wg)
 }
 
 func main() {
-	fmt.Println("Starting playback-ms...")
+	fmt.Println("playback-caze is runnning!")
 
 	wg := sync.WaitGroup{}
 	runPlayback(&wg)

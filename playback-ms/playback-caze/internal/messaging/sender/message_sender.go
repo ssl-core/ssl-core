@@ -12,62 +12,30 @@ import (
 
 type MessageSender struct {
 	publisher *network.ZmqPublisherSocket
-	router    *network.ZmqRouterSocket
+	// router    *network.ZmqRouterSocket // TODO: add router again.
+	count uint64 // TODO: remove it later.
 }
 
-func NewMessageSender(addressPublisher string, addressRouter string) *MessageSender {
+func NewMessageSender(addressPublisher string) *MessageSender {
 	return &MessageSender{
 		publisher: network.NewZmqPublisherSocket(addressPublisher),
-		router:    network.NewZmqRouterSocket(addressRouter),
 	}
 }
 
 func (ms *MessageSender) SendSample(sample *playback.Sample) {
-	messageBytes, err := proto.Marshal(sample)
+	message, err := proto.Marshal(sample)
+
 	if err != nil {
-		log.Fatalf("Failed to marshal Sample message: %v", err)
-	}
-	datagram := network.ZmqMultipartDatagram{
-		Identifier: []byte(service_discovery.GetInstance().GetLivePublishTopic()),
-		Message:    messageBytes,
+		log.Fatalf("failed to marshal 'Sample' message: %v", err)
+		return
 	}
 
-	fmt.Println("Sending sample: ", sample.String())
+	datagram := network.ZmqMultipartDatagram{
+		Identifier: []byte(service_discovery.GatewayLivestreamTopic),
+		Message:    message,
+	}
+
+	ms.count++
+	fmt.Println(ms.count, "samples sent.")
 	ms.publisher.Send(datagram)
 }
-
-// func (ms *MessageSender) SendChunk(chunk entity.Chunk, request_id string) {
-// 	router := ms.routers[ChunkRouterID]
-// 	if router == nil {
-// 		log.Fatalf("Router %s not found", ChunkRouterID)
-// 		return
-// 	}
-
-// 	chunkBytes, err := proto.Marshal(chunk.ToProto())
-// 	if err != nil {
-// 		log.Fatalf("Failed to marshal Chunk message: %v", err)
-// 	}
-// 	datagram := network.ZmqMultipartDatagram{
-// 		Identifier: []byte(request_id),
-// 		Message:    chunkBytes,
-// 	}
-// 	router.Send(datagram)
-// }
-
-// func (ms *MessageSender) SendGameEvents(gameEvents *entity.GameEvents, request_id string) {
-// 	router := ms.routers[ChunkRouterID]
-// 	if router == nil {
-// 		log.Fatalf("Router %s not found", ChunkRouterID)
-// 		return
-// 	}
-
-// 	gameEventsBytes, err := proto.Marshal(gameEvents.ToProto())
-// 	if err != nil {
-// 		log.Fatalf("Failed to marshal GameEvents message: %v", err)
-// 	}
-// 	datagram := network.ZmqMultipartDatagram{
-// 		Identifier: []byte(request_id),
-// 		Message:    gameEventsBytes,
-// 	}
-// 	router.Send(datagram)
-// }

@@ -3,89 +3,66 @@ package handler
 import (
 	"fmt"
 
+	"github.com/robocin/ssl-core/playback-ms/internal/concurrency"
+	"github.com/robocin/ssl-core/playback-ms/internal/mappers"
 	"github.com/robocin/ssl-core/playback-ms/internal/service_discovery"
 	"github.com/robocin/ssl-core/playback-ms/network"
+	"github.com/robocin/ssl-core/playback-ms/pkg/pb/perception"
 	"github.com/robocin/ssl-core/playback-ms/pkg/pb/playback"
 	"github.com/robocin/ssl-core/playback-ms/pkg/pb/referee"
 	"google.golang.org/protobuf/proto"
 )
 
 type LiveHandler struct {
-	samples        chan<- playback.Sample
+	samples        *concurrency.ConcurrentQueue[*playback.Sample]
 	lastGameStatus *playback.GameStatus
-	//db
 }
 
 func NewLiveHandler() *LiveHandler {
 	return &LiveHandler{
-		samples:        make(chan playback.Sample, 10),
+		samples:        concurrency.NewQueue[*playback.Sample](),
 		lastGameStatus: nil,
-		// db:    redis_db.NewRedisClient(ChunkStream),
 	}
 }
 
 func (lh *LiveHandler) Process(datagram *network.ZmqMultipartDatagram) (*playback.Sample, error) {
 	topic := string(datagram.Identifier)
 
-	if topic == service_discovery.GetInstance().GetRefereeTopic() {
-		var refereeGameStatus referee.GameStatus
+	if topic == service_discovery.RefereeGameStatusTopic {
+		refereeGameStatus := referee.GameStatus{}
 		proto.Unmarshal(datagram.Message, &refereeGameStatus)
 
-		lh.lastGameStatus = parseGameStatus(&refereeGameStatus)
+		lh.lastGameStatus = mappers.GameStatusMapper(&refereeGameStatus)
 
-		return nil, fmt.Errorf("updating local referee.")
+		return nil, fmt.Errorf("updating local referee")
 	}
 
-	var sample playback.Sample
+	if lh.lastGameStatus == nil {
+		return nil, fmt.Errorf("local referee is nil")
+	}
 
-	if topic == service_discovery.GetInstance().GetDetectionWrapperTopic() {
+	sample := playback.Sample{}
+	sample.GameStatus = lh.lastGameStatus
 
+	if topic == service_discovery.PerceptionDetectionWrapperTopic {
+		perceptionDetectionWrapper := perception.DetectionWrapper{}
+		proto.Unmarshal(datagram.Message, &perceptionDetectionWrapper)
+
+		sample.Detection = mappers.DetectionMapper(perceptionDetectionWrapper.GetDetection())
 	} else {
-		return nil, fmt.Errorf("datagram with topic '%s' not processed.", topic)
+		return nil, fmt.Errorf("datagram with topic '%s' not processed", topic)
 	}
 
-	// datagram topic -> referee
+	// Use the lines below to debug as json:
+
+	// if json, err := protojson.Marshal(&sample); err == nil {
+	// 	fmt.Println("sample as json:", string(json))
+	// } else {
+	// 	fmt.Println("error parsing Sample to json:", err)
+	// }
+
+	// enqueue a copy that will be saved into database in another goroutine.
+	// lh.samples.Enqueue(proto.Clone(&sample).(*playback.Sample))
 
 	return &sample, nil
-}
-
-func parseGameStatus(refereeGameStatus *referee.GameStatus) *playback.GameStatus {
-	return &playback.GameStatus{
-		SourceId:               refereeGameStatus.SourceId,
-		Description:            refereeGameStatus.Description,
-		Timestamp:              refereeGameStatus.Timestamp,
-		MatchType:              refereeGameStatus.MatchType,
-		HomeTeam:               parseTeam(refereeGameStatus.HomeTeam),
-		AwayTeam:               parseTeam(refereeGameStatus.AwayTeam),
-		GameStage:              refereeGameStatus.GameStage,
-		GameStageTimeLeft:      refereeGameStatus.GameStageTimeLeft,
-		TotalCommandsIssued:    refereeGameStatus.TotalCommandsIssued,
-		CommandIssuedTimestamp: refereeGameStatus.CommandIssuedTimestamp,
-		Command:                refereeGameStatus.Command,
-		NextCommand:            refereeGameStatus.NextCommand,
-		GameEvents:             refereeGameStatus.GameEvents,
-		GameEventsProposals:    parseGameEventProposals(refereeGameStatus.GameEventsProposals),
-	}
-}
-
-func parseTeam(team *referee.GameStatus_Team) *playback.GameStatus_Team {
-	if team == nil {
-		return nil
-	}
-
-	return &playback.GameStatus_Team{}
-}
-
-func parseGameEventProposals(gameEventsProposal []*referee.GameStatus_GameEventsProposal) []*playback.GameStatus_GameEventsProposal {
-	gameEventsProposals := make([]*playback.GameStatus_GameEventsProposal, 0)
-
-	//	for _, proposal := range gameEventsProposals {
-	//		gameEventsProposals = append(gameEventsProposals, *playback.GameStatus_GameEventsProposal{
-	//			ProposalId:  proposal.ProposalId,
-	//			GameEvents:  proposal.GameEvents,
-	//			WasAccepted: proposal.WasAccepted,
-	//		})
-	//	}
-
-	return gameEventsProposals
 }
