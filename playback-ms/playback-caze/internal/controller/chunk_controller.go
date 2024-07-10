@@ -11,7 +11,6 @@ import (
 	redis_db "github.com/robocin/ssl-core/playback-ms/db/redis"
 	"github.com/robocin/ssl-core/playback-ms/internal/entity"
 	"github.com/robocin/ssl-core/playback-ms/internal/messaging/sender"
-	"github.com/robocin/ssl-core/playback-ms/internal/world"
 	"github.com/robocin/ssl-core/playback-ms/network"
 	"github.com/robocin/ssl-core/playback-ms/pkg/pb/gateway"
 	"google.golang.org/protobuf/proto"
@@ -74,30 +73,30 @@ func (cc *ChunkController) handleChunkRequest(datagram network.ZmqMultipartDatag
 }
 
 func (cc *ChunkController) gameEventsWorker(getGameEventsRequest *gateway.GetGameEventsRequest, id string) {
-	events := entity.NewGameEvents(world.GetInstance().GetGameEvents())
-	cc.sender.SendGameEvents(events, id)
+	//events := entity.NewGameEvents(world.GetInstance().GetGameEvents())
+	//cc.sender.SendGameEvents(events, id)
 }
 
 func (cc *ChunkController) getChunkWorker(replayChunkRequest *gateway.GetReplayChunkRequest, id string) {
-	sample := world.GetInstance().GetLatestSample()
+	// sample := world.GetInstance().GetLatestSample()
 
-	// Define the time range for the chunk.
-	startTime := replayChunkRequest.StartTimestamp.AsTime()
-	endTime := startTime.Add(chunkTimeRange)
+	// // Define the time range for the chunk.
+	// startTime := replayChunkRequest.StartTimestamp.AsTime()
+	// endTime := startTime.Add(chunkTimeRange)
 
-	// Get chunk from database and parse the result into a slice of samples.
-	chunkValues := cc.db_client.GetChunk(startTime, endTime)
-	redisMessages, ok := chunkValues.([]redis.XMessage)
-	if !ok {
-		fmt.Println("Error: chunkValues is not of type []redis.XMessage")
-		return
-	}
-	parseRedisResultValues(redisMessages)
-	chunkSamples := parseRedisResultValues(redisMessages)
+	// // Get chunk from database and parse the result into a slice of samples.
+	// chunkValues := cc.db_client.GetChunk(startTime, endTime)
+	// redisMessages, ok := chunkValues.([]redis.XMessage)
+	// if !ok {
+	// 	fmt.Println("Error: chunkValues is not of type []redis.XMessage")
+	// 	return
+	// }
+	// parseRedisResultValues(redisMessages)
+	// chunkSamples := parseRedisResultValues(redisMessages)
 
 	// Send chunk to gateway.
-	chunk := entity.NewChunk((*sample).Timestamp, chunkSamples)
-	cc.sender.SendChunk(*chunk, id)
+	//chunk := entity.NewChunk((*sample).Timestamp, chunkSamples)
+	//cc.sender.SendChunk(*chunk, id)
 }
 
 func parseRedisResultValues(redisMessages []redis.XMessage) []entity.Sample {

@@ -7,7 +7,7 @@ import (
 )
 
 type ZmqSubscriberSocket struct {
-	socket *goczmq.Sock
+	Socket *goczmq.Sock
 }
 
 func NewZmqSubscriberSocket(address string, topics string) *ZmqSubscriberSocket {
@@ -18,21 +18,21 @@ func NewZmqSubscriberSocket(address string, topics string) *ZmqSubscriberSocket 
 	}
 
 	return &ZmqSubscriberSocket{
-		socket: socket,
+		Socket: socket,
 	}
 }
 
-func (sock *ZmqSubscriberSocket) Receive() ZmqMultipartDatagram {
-	bytes, err := sock.socket.RecvMessage()
+func (socket *ZmqSubscriberSocket) Receive() ZmqMultipartDatagram {
+	bytes, err := socket.Socket.RecvMessageNoWait()
 
 	if err != nil {
-		fmt.Println("failed to receive message", err)
+		fmt.Println("failed to receive message:", err)
 		return *NewZmqMultipartDatagram(nil, nil)
 	}
 
 	return *NewZmqMultipartDatagram(bytes[0], bytes[1])
 }
 
-func (sock *ZmqSubscriberSocket) Close() {
-	sock.socket.Destroy()
+func (socket *ZmqSubscriberSocket) Close() {
+	socket.Socket.Destroy()
 }
