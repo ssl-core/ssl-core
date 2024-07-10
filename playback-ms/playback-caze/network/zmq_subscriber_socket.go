@@ -23,7 +23,7 @@ func NewZmqSubscriberSocket(address string, topics string) *ZmqSubscriberSocket 
 }
 
 func (socket *ZmqSubscriberSocket) Receive() ZmqMultipartDatagram {
-	bytes, err := socket.Socket.RecvMessageNoWait()
+	bytes, err := socket.Socket.RecvMessage()
 
 	if err != nil {
 		fmt.Println("failed to receive message:", err)
