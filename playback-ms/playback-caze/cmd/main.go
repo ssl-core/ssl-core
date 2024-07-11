@@ -14,6 +14,12 @@ import (
 	"github.com/robocin/ssl-core/playback-ms/network"
 )
 
+func insertDatagramIntoQueue(queue *concurrency.ConcurrentQueue[network.ZmqMultipartDatagram]) func(datagram network.ZmqMultipartDatagram) {
+	return func(datagram network.ZmqMultipartDatagram) {
+		queue.Enqueue(datagram)
+	}
+}
+
 func runPlayback(wg *sync.WaitGroup) {
 	perceptionSocket := network.NewZmqSubscriberSocket(
 		service_discovery.PerceptionAddress,
@@ -29,20 +35,17 @@ func runPlayback(wg *sync.WaitGroup) {
 		service_discovery.GatewayReplayChunckAddress,
 	)
 
+	subscriberDatagrams := concurrency.NewQueue[network.ZmqMultipartDatagram]()
+	routerDatagrams := concurrency.NewQueue[network.ZmqMultipartDatagram]()
 	messageReceiver := receiver.NewMessageReceiver(
-		[]*network.ZmqSubscriberSocket{
-			perceptionSocket,
-			refereeSocket,
-		},
-		[]*network.ZmqRouterSocket{
-			replayRouter,
+		[]*receiver.SocketHandler{
+			receiver.NewSocketHandler(perceptionSocket, insertDatagramIntoQueue(subscriberDatagrams)),
+			receiver.NewSocketHandler(refereeSocket, insertDatagramIntoQueue(subscriberDatagrams)),
+			receiver.NewSocketHandler(replayRouter, insertDatagramIntoQueue(routerDatagrams)),
 		},
 	)
 
-	subscriberDatagrams := concurrency.NewQueue[network.ZmqMultipartDatagram]()
-	routerDatagrams := concurrency.NewQueue[network.ZmqMultipartDatagram]()
-
-	messageReceiver.Start(subscriberDatagrams, routerDatagrams, wg)
+	messageReceiver.Start(wg)
 	messageSender := sender.NewMessageSender(service_discovery.PlaybackAddress, replayRouter)
 
 	repositoryFactory := repository.GetRepositoryFactory("redis")
