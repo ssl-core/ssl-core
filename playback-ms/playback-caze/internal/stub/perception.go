@@ -27,7 +27,7 @@ func NewPerceptionStub() *PerceptionStub {
 	return &PerceptionStub{
 		SerialId:  0,
 		ticker:    time.NewTicker(time.Second / time.Duration(perceptionFrequencyHz)),
-		publisher: network.NewZmqPublisherSocket(service_discovery.GetInstance().GetPerceptionAddress()),
+		publisher: network.NewZmqPublisherSocket(service_discovery.PerceptionAddress),
 	}
 }
 
@@ -37,7 +37,7 @@ func (ps *PerceptionStub) makeDetectionWrapperDatagram() network.ZmqMultipartDat
 	if err != nil {
 		panic(err)
 	}
-	topic := []byte(service_discovery.GetInstance().GetDetectionWrapperTopic())
+	topic := []byte(service_discovery.PerceptionDetectionWrapperTopic)
 	return network.ZmqMultipartDatagram{
 		Identifier: topic,
 		Message:    messageBytes,

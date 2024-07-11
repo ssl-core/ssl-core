@@ -18,6 +18,7 @@ type LiveHandler struct {
 	firstTimestamp *timestamppb.Timestamp
 	samples        *concurrency.ConcurrentQueue[*playback.Sample]
 	lastGameStatus *playback.GameStatus
+	lastField      *playback.Field
 }
 
 func NewLiveHandler() *LiveHandler {
@@ -58,9 +59,10 @@ func (lh *LiveHandler) Process(datagram *network.ZmqMultipartDatagram) (*playbac
 		sample.Detection = mappers.DetectionMapper(inputDetection)
 		sample.Timestamp = inputDetection.GetCreatedAt()
 		sample.FirstTimestamp = lh.firstTimestamp
-		if inputDetection != nil {
-			sample.Field = mappers.FieldMapper(inputDetection.GetField())
+		if inputDetection != nil && inputDetection.GetField() != nil {
+			lh.lastField = mappers.FieldMapper(inputDetection.GetField())
 		}
+		sample.Field = lh.lastField
 	} else {
 		return nil, fmt.Errorf("datagram with topic '%s' not processed", topic)
 	}

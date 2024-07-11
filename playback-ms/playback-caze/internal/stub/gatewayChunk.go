@@ -24,7 +24,7 @@ type GatewayChunkStub struct {
 func NewGatewayChunkStub() *GatewayChunkStub {
 	return &GatewayChunkStub{
 		ticker: time.NewTicker(time.Millisecond / time.Duration(chunkRequestFrequencyHz*1000)),
-		dealer: network.NewZmqDealerSocket(service_discovery.GetInstance().GetChunkAddress()),
+		dealer: network.NewZmqDealerSocket(service_discovery.GatewayReplayChunckAddress),
 	}
 }
 
