@@ -1,55 +1,45 @@
 services:
   gateway:
     container_name: gateway
-    network_mode: "host"
     build:
       context: .
-      dockerfile: gateway/gateway-augusto/Dockerfile
+      dockerfile: gateway/gateway-augusto/gateway-augusto.Dockerfile
     volumes:
-      - /tmp/.ssl-core:/tmp/.ssl-core
+      - .ssl-core:/tmp/.ssl-core
     ports:
       - 50051:50051
 
   perception-ms:
     container_name: perception-ms
-    build:
-      context: .
-      dockerfile: perception-ms/perception-brutus/Dockerfile
+    image: robocin/perception-brutus:manual-5907a5
     volumes:
-      - /tmp/.ssl-core:/tmp/.ssl-core
-    extra_hosts:
-      - "host.docker.internal:host-gateway"
+      - .ssl-core:/tmp/.ssl-core
     depends_on:
       - gateway
 
   referee-ms:
     container_name: referee-ms
-    build:
-      context: .
-      dockerfile: referee-ms/referee-daronco/Dockerfile
+    image: robocin/referee-daronco:manual-5907a5
     volumes:
-      - /tmp/.ssl-core:/tmp/.ssl-core
-    extra_hosts:
-      - "host.docker.internal:host-gateway"
+      - .ssl-core:/tmp/.ssl-core
     depends_on:
       - perception-ms
+
+  redis-db:
+    container_name: redis-db
+    image: "redis:latest"
 
   playback-ms:
     container_name: playback-ms
     build:
       context: .
-      dockerfile: playback-ms/playback-caze/Dockerfile
-      args:
-        - SOURCE_DIRECTORY=playback-ms/playback-caze
-    command: ./playback-ms
+      dockerfile: playback-ms/playback-caze/playback-caze.Dockerfile
     volumes:
-      - /tmp/.ssl-core:/tmp/.ssl-core
-      - ./:/app
-    extra_hosts:
-      - "host.docker.internal:host-gateway"
+      - .ssl-core:/tmp/.ssl-core
     depends_on:
+      - referee-ms
       - redis-db
-      
+
   player-bff:
     container_name: player-bff
     build:
@@ -63,7 +53,38 @@ services:
     depends_on:
       - gateway
       - playback-ms
-      
-  redis-db:
-    container_name: redis-db
-    image: "redis:latest"
+
+  player-mfe:
+    build:
+      context: .
+      dockerfile: player-mfe/Dockerfile
+      args:
+        - SOURCE_DIRECTORY=player-mfe
+    command: ["-g", "daemon off;"]
+    ports:
+      - 3031:80
+    depends_on:
+      - player-bff
+
+  viewer-mfe:
+    build:
+      context: .
+      dockerfile: viewer-mfe/Dockerfile
+      args:
+        - SOURCE_DIRECTORY=viewer-mfe
+    command: ["-g", "daemon off;"]
+    ports:
+      - 3032:80
+
+  app-shell:
+    build:
+      context: .
+      dockerfile: app-shell/Dockerfile
+      args:
+        - SOURCE_DIRECTORY=app-shell
+    command: ["-g", "daemon off;"]
+    ports:
+      - 3030:80
+
+volumes:
+  .ssl-core:
