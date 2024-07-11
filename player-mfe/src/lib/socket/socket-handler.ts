@@ -1,4 +1,4 @@
-import SocketWorker from "../../workers/socket-worker?worker";
+import SocketWorker from "../../workers/socket-worker?worker&inline";
 
 class SocketHandler {
   private worker: Worker;

@@ -8,6 +8,7 @@
 }
 
 #app section {
+  position: relative;
   display: flex;
   border-radius: 0.5rem;
   background-color: var(--color-dark-gray);

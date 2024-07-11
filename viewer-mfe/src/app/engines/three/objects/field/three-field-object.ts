@@ -38,13 +38,13 @@ class ThreeFieldObject extends ThreeBaseObject {
       this.linesMesh.setParams(
         params.length,
         params.width,
-        params.penalty_area_depth,
-        params.penalty_area_width
+        params.penaltyAreaDepth,
+        params.penaltyAreaWidth
       );
       this.fieldMesh.setParams(
         params.length,
         params.width,
-        params.boundary_width
+        params.boundaryWidth
       );
     }
 
@@ -64,12 +64,9 @@ class ThreeFieldObject extends ThreeBaseObject {
       !this.params ||
       fuzzyNotEqual(this.params.length, params.length) ||
       fuzzyNotEqual(this.params.width, params.width) ||
-      fuzzyNotEqual(this.params.boundary_width, params.boundary_width) ||
-      fuzzyNotEqual(
-        this.params.penalty_area_depth,
-        params.penalty_area_depth
-      ) ||
-      fuzzyNotEqual(this.params.penalty_area_width, params.penalty_area_width)
+      fuzzyNotEqual(this.params.boundaryWidth, params.boundaryWidth) ||
+      fuzzyNotEqual(this.params.penaltyAreaDepth, params.penaltyAreaDepth) ||
+      fuzzyNotEqual(this.params.penaltyAreaWidth, params.penaltyAreaWidth)
     );
   }
 }

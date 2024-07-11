@@ -1,4 +1,4 @@
-import CommunicationWorker from "./worker/communication-worker?worker";
+import CommunicationWorker from "./worker/communication-worker?worker&inline";
 import CommunicationEventTypes from "./worker/communication-event-types";
 
 class CommunicationHandler {

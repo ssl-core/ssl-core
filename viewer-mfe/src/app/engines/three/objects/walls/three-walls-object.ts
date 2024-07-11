@@ -65,13 +65,13 @@ class ThreeWallsObject extends ThreeBaseObject {
       !this.params ||
       fuzzyNotEqual(params.length, this.params.length) ||
       fuzzyNotEqual(params.width, this.params.width) ||
-      fuzzyNotEqual(params.boundary_width, this.params.boundary_width)
+      fuzzyNotEqual(params.boundaryWidth, this.params.boundaryWidth)
     );
   }
 
   private getWallsParams(params: Field | null) {
-    const length = params ? params.length + params.boundary_width * 2 : 0;
-    const width = params ? params.width + params.boundary_width * 2 : 0;
+    const length = params ? params.length + params.boundaryWidth * 2 : 0;
+    const width = params ? params.width + params.boundaryWidth * 2 : 0;
 
     return [
       {

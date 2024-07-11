@@ -20,7 +20,7 @@ class ThreeGoalObject extends ThreeBaseObject {
 
   public setParams(params: Field, side: number) {
     this.position.set(
-      (side * (params.length + params.goal_depth)) / 2,
+      (side * (params.length + params.goalDepth)) / 2,
       0,
       constants.field.goal.height / 2
     );
@@ -79,8 +79,8 @@ class ThreeGoalObject extends ThreeBaseObject {
   private needsToRedraw(params: Field) {
     return (
       !this.params ||
-      fuzzyNotEqual(params.goal_depth, this.params.goal_depth) ||
-      fuzzyNotEqual(params.goal_width, this.params.goal_width)
+      fuzzyNotEqual(params.goalDepth, this.params.goalDepth) ||
+      fuzzyNotEqual(params.goalWidth, this.params.goalWidth)
     );
   }
 
@@ -99,8 +99,8 @@ class ThreeGoalObject extends ThreeBaseObject {
   }
 
   private getGoalPostsParams(params: Field | null) {
-    const depth = params ? params.goal_depth : 0;
-    const width = params ? params.goal_width : 0;
+    const depth = params ? params.goalDepth : 0;
+    const width = params ? params.goalWidth : 0;
 
     return [
       {

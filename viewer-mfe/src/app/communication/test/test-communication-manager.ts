@@ -67,15 +67,14 @@ class TestSocketManager extends BaseSocketManager {
     ];
 
     const field: Field = {
-      serial_id: 0,
       length: 12,
       width: 9,
-      goal_width: 1.8,
-      goal_depth: 0.18,
-      boundary_width: 0.3,
-      goal_center_to_penalty_mark: 9,
-      penalty_area_width: 3,
-      penalty_area_depth: 1.8,
+      goalWidth: 1.8,
+      goalDepth: 0.18,
+      boundaryWidth: 0.3,
+      goalCenterToPenaltyMark: 9,
+      penaltyAreaWidth: 3,
+      penaltyAreaDepth: 1.8,
     };
 
     const robots: Robot[] = [];
@@ -107,9 +106,10 @@ class TestSocketManager extends BaseSocketManager {
     }
 
     return {
-      serial_id: 0,
-      effective_serial_id: 0,
-      created_at: new Date().toISOString(),
+      serialId: 0,
+      startTime: new Date(),
+      endTime: new Date(),
+      currentTime: new Date(),
       fps: this.fps,
       balls,
       field,
@@ -125,14 +125,14 @@ class TestSocketManager extends BaseSocketManager {
   ): Robot {
     return {
       angle: 0,
-      angular_velocity: 0,
+      angularVelocity: 0,
       confidence: 1,
-      dribbler_width: 0,
+      dribblerWidth: 0,
       height: 0.147,
       position: [x, y],
       radius: 0.09,
-      robot_color: color,
-      robot_id: id,
+      robotColor: color,
+      robotId: id,
       velocity: [0, 0],
     };
   }

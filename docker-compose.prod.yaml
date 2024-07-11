@@ -118,6 +118,18 @@ services:
     depends_on:
       - player-bff
 
+  viewer-mfe:
+    build:
+      context: .
+      dockerfile: viewer-mfe/Dockerfile
+      args:
+        - SOURCE_DIRECTORY=viewer-mfe
+    command: ["-g", "daemon off;"]
+    ports:
+      - 3032:3032
+    depends_on:
+      - viewer-bff
+
   # redis-db:
   #   container_name: redis-db
   #   image: "redis:latest"

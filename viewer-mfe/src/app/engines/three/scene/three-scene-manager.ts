@@ -154,8 +154,8 @@ class ThreeSceneManager {
   private renderRobots(robotsParams: Robot[]) {
     for (const robotParams of robotsParams) {
       const robot = this.pool.getRobot(
-        robotParams.robot_id,
-        robotParams.robot_color
+        robotParams.robotId,
+        robotParams.robotColor
       );
       robot?.setParams(robotParams);
     }

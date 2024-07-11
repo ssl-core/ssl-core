@@ -99,8 +99,8 @@ class Router {
       window.history.pushState({}, "", route.path);
     }
 
-    app.style.gridTemplateRows = route.rows.toString();
-    app.style.gridTemplateColumns = route.cols.toString();
+    app.style.gridTemplateRows = `repeat(${route.rows}, 1fr)`;
+    app.style.gridTemplateColumns = `repeat(${route.cols}, 1fr)`;
 
     Object.values(route.fragments).forEach((routeFragment) => {
       const section = document.createElement("section");

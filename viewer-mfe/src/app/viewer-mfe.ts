@@ -1,12 +1,12 @@
 import BaseRenderEngine from "./engines/base-render-engine";
 import RenderEngineFactory from "./engines/render-engine-factory";
-import SocketHandler from "./communication/communication-handler";
+import CommunicationHandler from "./communication/communication-handler";
 import environment from "../config/environment";
 
 class ViewerMFE extends HTMLElement {
   private root: ShadowRoot;
   private renderEngine: BaseRenderEngine;
-  private socketHandler: SocketHandler;
+  private communicationHandler: CommunicationHandler;
 
   constructor() {
     super();
@@ -15,16 +15,16 @@ class ViewerMFE extends HTMLElement {
       environment.engine,
       this.root
     );
-    this.socketHandler = new SocketHandler(environment.socketUrl);
+    this.communicationHandler = new CommunicationHandler(environment.socketUrl);
   }
 
   public connectedCallback() {
     this.renderEngine.initialize();
-    this.socketHandler.initialize();
+    this.communicationHandler.initialize();
   }
 
   public disconnectedCallback() {
-    this.socketHandler.terminate();
+    this.communicationHandler.terminate();
     this.renderEngine.terminate();
   }
 }

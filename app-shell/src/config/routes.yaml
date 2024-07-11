@@ -1,27 +1,29 @@
 match:
-  path: /match
-  label: Partidas
+  path: /watch
+  label: Assistir
   icon: radio
-  rows: 3
+  rows: 12
   cols: 1
   fragments:
     player:
-      url: https://1.www.s81c.com/common/carbon/web-components/tag/v2/latest/skeleton-placeholder.min.js
+      url: http://127.0.0.1:3032/viewer-mfe.js
       type: webcomponent
       metadata:
-        tag: cds-skeleton-placeholder
+        tag: viewer-mfe
       rows:
         start: 1
-        end: 3
+        end: 11
       cols:
         start: 1
         end: 2
     parameters:
-      url: https://open.spotify.com/embed/track/23n4YuEtkZuALpk0wG3ZMT?utm_source=generator
-      type: iframe
+      url: http://127.0.0.1:3031/match-mfe.js
+      type: webcomponent
+      metadata:
+        tag: player-mfe
       rows:
-        start: 3
-        end: 4
+        start: 11
+        end: 13
       cols:
         start: 1
         end: 2

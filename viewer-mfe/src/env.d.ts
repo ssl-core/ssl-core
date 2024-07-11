@@ -20,13 +20,14 @@ type ThreeSyncMessage = {
 };
 
 type Frame = {
-  serial_id: number;
-  effective_serial_id: number;
+  serialId: number;
+  startTime: Date;
+  currentTime: Date;
+  endTime: Date;
   fps: number;
   balls: Ball[];
   robots: Robot[];
   field: Field;
-  created_at: string;
 };
 
 type Ball = {
@@ -37,25 +38,24 @@ type Ball = {
 
 type Robot = {
   confidence: number;
-  robot_id: number;
-  robot_color: RobotColor;
+  robotId: number;
+  robotColor: RobotColor;
   position: Vector2;
   angle: number;
   velocity: Vector2;
-  angular_velocity: number;
+  angularVelocity: number;
   radius: number;
   height: number;
-  dribbler_width: number;
+  dribblerWidth: number;
 };
 
 type Field = {
-  serial_id: number;
   length: number;
   width: number;
-  goal_depth: number;
-  goal_width: number;
-  penalty_area_depth: number;
-  penalty_area_width: number;
-  boundary_width: number;
-  goal_center_to_penalty_mark: number;
+  goalDepth: number;
+  goalWidth: number;
+  penaltyAreaDepth: number;
+  penaltyAreaWidth: number;
+  boundaryWidth: number;
+  goalCenterToPenaltyMark: number;
 };

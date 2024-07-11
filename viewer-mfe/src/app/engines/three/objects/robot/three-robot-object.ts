@@ -36,8 +36,8 @@ class ThreeRobotObject extends ThreeBaseObject {
     this.rotation.set(0, 0, degreesToRadians(params.angle));
 
     if (this.needsToRedraw(params)) {
-      this.robotId = params.robot_id;
-      this.robotColor = params.robot_color;
+      this.robotId = params.robotId;
+      this.robotColor = params.robotColor;
 
       const dotParams = this.getDotsParams();
       for (const [index, dotParam] of dotParams.entries()) {
@@ -106,8 +106,8 @@ class ThreeRobotObject extends ThreeBaseObject {
   private needsToRedraw(params: Robot) {
     return (
       !this.params ||
-      this.params.robot_id !== params.robot_id ||
-      this.params.robot_color !== params.robot_color
+      this.params.robotId !== params.robotId ||
+      this.params.robotColor !== params.robotColor
     );
   }
 
