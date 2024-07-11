@@ -33,7 +33,6 @@ func (lc *LiveController) Run(wg *sync.WaitGroup) {
 	for {
 		for _, datagram := range lc.datagrams.DequeueAll() {
 			sample, err := lc.handler.Process(&datagram)
-
 			if err == nil {
 				lc.sender.SendSample(sample)
 			}

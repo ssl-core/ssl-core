@@ -5,6 +5,7 @@ import (
 	"time"
 
 	"github.com/robocin/ssl-core/playback-ms/internal/mappers"
+	"github.com/robocin/ssl-core/playback-ms/internal/repository"
 	"github.com/robocin/ssl-core/playback-ms/internal/service_discovery"
 	"github.com/robocin/ssl-core/playback-ms/network"
 	"github.com/robocin/ssl-core/playback-ms/pkg/pb/perception"
@@ -21,12 +22,30 @@ type LiveHandler struct {
 	start          time.Time
 }
 
-func NewLiveHandler() *LiveHandler {
+func NewLiveHandler(sampleRepository repository.SampleRepository) *LiveHandler {
 	return &LiveHandler{
 		firstTimestamp: nil,
 		lastGameStatus: nil,
 		times:          0,
 		start:          time.Now(),
+	}
+}
+
+func (lh *LiveHandler) saveSamples() {
+	for {
+		// samples := lh.samples.DequeueAll()
+		// fmt.Printf("Samples: %v\n", samples)
+		// err := lh.sampleRepository.AddSamples(samples)
+		// if err != nil {
+		// 	fmt.Println("Failed to save samples: ", err)
+		// }
+		for _, sample := range lh.samples.DequeueAll() {
+			fmt.Printf("Sample: %v\n", sample)
+			err := lh.sampleRepository.AddSample(&sample)
+			if err != nil {
+				fmt.Println("Failed to save sample")
+			}
+		}
 	}
 }
 
@@ -75,6 +94,9 @@ func (lh *LiveHandler) Process(datagram *network.ZmqMultipartDatagram) (*playbac
 	lh.times++
 	fmt.Println("elapsed:", elapsed, "times:", lh.times)
 	lh.start = time.Now()
+
+	// enqueue a copy that will be saved into database in another goroutine.
+	// lh.samples.Enqueue(proto.Clone(&sample).(*playback.Sample))
 
 	return &sample, nil
 }
