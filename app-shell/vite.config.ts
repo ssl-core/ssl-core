@@ -13,13 +13,13 @@ export default {
     exclude: [...configDefaults.exclude, "e2e/*"],
   },
   preview: {
-    port: 4000,
+    port: 3030,
     strictPort: true,
   },
   server: {
-    port: 4000,
+    port: 3030,
     strictPort: true,
     host: true,
-    origin: "http://0.0.0.0:4000",
+    origin: "http://0.0.0.0:3030",
   },
 };

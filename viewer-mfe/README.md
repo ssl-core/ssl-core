@@ -22,5 +22,5 @@ yarn start
 - [`src/app`](src/app): Core of application development.
 - [`src/app/engines`](src/app/engines): Rendering engines to the game match.
 - [`src/app/socket`](src/app/socket): Socket communication with the server.
-- [`src/app/viewer-mfe.ts`](src/app/match-mfe.ts): Declaration of the web component.
+- [`src/app/viewer-mfe.ts`](src/app/viewer-mfe.ts): Declaration of the web component.
 - [`src/main.ts`](src/main.ts): Entry point of the microfrontend.

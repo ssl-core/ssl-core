@@ -12,7 +12,7 @@ export default defineConfig({
   build: {
     rollupOptions: {
       input: {
-        "match-mfe": "./index.html",
+        "player-mfe": "./index.html",
       },
       output: {
         entryFileNames: "[name].js",

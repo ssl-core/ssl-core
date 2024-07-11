@@ -114,7 +114,7 @@ services:
         - SOURCE_DIRECTORY=player-mfe
     command: ["-g", "daemon off;"]
     ports:
-      - 3031:3031
+      - 3031:80
     depends_on:
       - player-bff
 
@@ -126,7 +126,7 @@ services:
         - SOURCE_DIRECTORY=viewer-mfe
     command: ["-g", "daemon off;"]
     ports:
-      - 3032:3032
+      - 3032:80
 
   app-shell:
     build:
@@ -136,7 +136,7 @@ services:
         - SOURCE_DIRECTORY=app-shell
     command: ["-g", "daemon off;"]
     ports:
-      - 4000:4000
+      - 3030:80
 
   # redis-db:
   #   container_name: redis-db

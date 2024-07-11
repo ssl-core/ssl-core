@@ -17,7 +17,7 @@ match:
         start: 1
         end: 2
     parameters:
-      url: http://127.0.0.1:3031/match-mfe.js
+      url: http://127.0.0.1:3031/player-mfe.js
       type: webcomponent
       metadata:
         tag: player-mfe
