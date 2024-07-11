@@ -11,19 +11,15 @@ import (
 	"google.golang.org/protobuf/types/known/timestamppb"
 )
 
-const (
-	sampleStream = "sample"
-)
-
-type sampleRedisRepository struct {
+type SampleRedisRepository struct {
 	redisClient *redis_db.RedisClient
 }
 
-func (r *sampleRedisRepository) AddSample(sample *playback.Sample) error {
+func (r *SampleRedisRepository) AddSample(sample *playback.Sample) error {
 	return r.redisClient.Set(sample.Timestamp.AsTime(), sample.String())
 }
 
-func (r *sampleRedisRepository) AddSamples(samples []*playback.Sample) error {
+func (r *SampleRedisRepository) AddSamples(samples []*playback.Sample) error {
 	for _, sample := range samples {
 		err := r.AddSample(sample)
 		if err != nil {
@@ -33,17 +29,29 @@ func (r *sampleRedisRepository) AddSamples(samples []*playback.Sample) error {
 	return nil
 }
 
-func (r *sampleRedisRepository) GetSamples(startTime, endTime *timestamppb.Timestamp) ([]*playback.Sample, error) {
+func (r *SampleRedisRepository) GetLatestSample() (*playback.Sample, error) {
+	dbResult, err := r.redisClient.GetLatest()
+	if err != nil {
+		return nil, err
+	}
+	samples := r.samplesMapper(dbResult)
+	if len(samples) == 1 {
+		return samples[0], nil
+	}
+	return nil, fmt.Errorf("error getting latest sample")
+}
+
+func (r *SampleRedisRepository) GetSamples(startTime, endTime *timestamppb.Timestamp) ([]*playback.Sample, error) {
 	chunkResult, err := r.redisClient.GetChunk(startTime.AsTime(), endTime.AsTime())
 	if err != nil {
 		return nil, err
 	}
-	return samplesMapper(chunkResult), nil
+	return r.samplesMapper(chunkResult), nil
 }
 
 // HELPERS:
 
-func sampleMapper(values map[string]interface{}) (*playback.Sample, error) {
+func (r *SampleRedisRepository) sampleMapper(values map[string]interface{}) (*playback.Sample, error) {
 	if value, ok := values["value"]; ok {
 		var sample playback.Sample
 		err := proto.Unmarshal([]byte(value.(string)), &sample)
@@ -55,7 +63,7 @@ func sampleMapper(values map[string]interface{}) (*playback.Sample, error) {
 	return nil, fmt.Errorf("error mapping sample from redis values")
 }
 
-func samplesMapper(dbResult interface{}) []*playback.Sample {
+func (r *SampleRedisRepository) samplesMapper(dbResult interface{}) []*playback.Sample {
 	samples := make([]*playback.Sample, 0)
 	result, ok := dbResult.(redis.XMessageSliceCmd)
 	if !ok {
@@ -63,7 +71,7 @@ func samplesMapper(dbResult interface{}) []*playback.Sample {
 		return samples
 	}
 	for _, message := range result.Val() {
-		sample, err := sampleMapper(message.Values)
+		sample, err := r.sampleMapper(message.Values)
 		if err != nil {
 			log.Printf("Error mapping sample: %v", err)
 			continue

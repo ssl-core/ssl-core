@@ -41,12 +41,18 @@ func (rc *RedisClient) Set(key time.Time, value interface{}) error {
 	ctx := context.Background()
 	args := &redis.XAddArgs{
 		Stream: rc.stream,
-		ID:     fmt.Sprintf("%d", key.UnixMilli()),
+		ID:     fmt.Sprintf("%d", key.UnixNano()),
 		Values: map[string]interface{}{
 			"value": value,
 		},
 	}
+	fmt.Printf("Setting key %d with value %v...\n", key.UnixNano(), value)
 	return rc.client.XAdd(ctx, args).Err()
+}
+
+func (rc *RedisClient) GetLatest() (interface{}, error) {
+	ctx := context.Background()
+	return rc.client.XRevRangeN(ctx, rc.stream, "+", "-", 1).Result()
 }
 
 func (rc *RedisClient) Get(key time.Time) (interface{}, error) {

@@ -25,24 +25,38 @@ func runPlayback(wg *sync.WaitGroup) {
 		service_discovery.RefereeGameStatusTopic,
 	)
 
+	replayRouter := network.NewZmqRouterSocket(
+		service_discovery.GatewayReplayChunckAddress,
+	)
+
 	messageReceiver := receiver.NewMessageReceiver(
 		[]*network.ZmqSubscriberSocket{
 			perceptionSocket,
 			refereeSocket,
 		},
+		[]*network.ZmqRouterSocket{
+			replayRouter,
+		},
 	)
 
-	datagrams := concurrency.NewQueue[network.ZmqMultipartDatagram]()
+	subscriberDatagrams := concurrency.NewQueue[network.ZmqMultipartDatagram]()
+	routerDatagrams := concurrency.NewQueue[network.ZmqMultipartDatagram]()
 
-	messageReceiver.Start(datagrams, wg)
-	messageSender := sender.NewMessageSender(service_discovery.PlaybackAddress)
+	messageReceiver.Start(subscriberDatagrams, routerDatagrams, wg)
+	messageSender := sender.NewMessageSender(service_discovery.PlaybackAddress, replayRouter)
 
-	sampleRepository := repository.NewSampleRepository("redis")
+	repositoryFactory := repository.GetRepositoryFactory("redis")
+	sampleRepository := repositoryFactory.MakeSampleRepository()
+
 	liveHandler := handler.NewLiveHandler()
-	liveController := controller.NewLiveController(messageSender, datagrams, liveHandler, sampleRepository)
+	liveController := controller.NewLiveController(messageSender, subscriberDatagrams, liveHandler, sampleRepository)
 
-	wg.Add(1)
+	replayHandler := handler.NewReplayHandler()
+	replayController := controller.NewReplayController(messageSender, routerDatagrams, replayHandler, sampleRepository)
+
+	wg.Add(2) // liveController and replayController
 	go liveController.Run(wg)
+	go replayController.Run(wg)
 }
 
 func main() {

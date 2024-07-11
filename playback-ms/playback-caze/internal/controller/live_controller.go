@@ -18,14 +18,14 @@ type LiveController struct {
 	datagrams        *concurrency.ConcurrentQueue[network.ZmqMultipartDatagram]
 	handler          *handler.LiveHandler
 	samples          *concurrency.ConcurrentQueue[*playback.Sample]
-	sampleRepository repository.SampleRepository
+	sampleRepository repository.ISampleRepository
 }
 
 func NewLiveController(
 	sender *sender.MessageSender,
 	datagrams *concurrency.ConcurrentQueue[network.ZmqMultipartDatagram],
 	handler *handler.LiveHandler,
-	sampleRepository repository.SampleRepository,
+	sampleRepository repository.ISampleRepository,
 ) *LiveController {
 	return &LiveController{
 		datagrams:        datagrams,
