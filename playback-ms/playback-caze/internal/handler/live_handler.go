@@ -66,8 +66,5 @@ func (lh *LiveHandler) Process(datagram *network.ZmqMultipartDatagram) (*playbac
 	// 	fmt.Println("error parsing Sample to json:", err)
 	// }
 
-	// enqueue a copy that will be saved into database in another goroutine.
-	// lh.samples.Enqueue(proto.Clone(&sample).(*playback.Sample))
-
 	return &sample, nil
 }
