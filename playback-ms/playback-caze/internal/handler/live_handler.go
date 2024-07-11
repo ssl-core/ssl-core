@@ -54,9 +54,13 @@ func (lh *LiveHandler) Process(datagram *network.ZmqMultipartDatagram) (*playbac
 		if lh.firstTimestamp == nil {
 			lh.firstTimestamp = perceptionDetectionWrapper.GetDetection().GetCreatedAt()
 		}
-		sample.Detection = mappers.DetectionMapper(perceptionDetectionWrapper.GetDetection())
-		sample.Timestamp = sample.Detection.GetCreatedAt()
+		inputDetection := perceptionDetectionWrapper.GetDetection()
+		sample.Detection = mappers.DetectionMapper(inputDetection)
+		sample.Timestamp = inputDetection.GetCreatedAt()
 		sample.FirstTimestamp = lh.firstTimestamp
+		if inputDetection != nil {
+			sample.Field = mappers.FieldMapper(inputDetection.GetField())
+		}
 	} else {
 		return nil, fmt.Errorf("datagram with topic '%s' not processed", topic)
 	}
