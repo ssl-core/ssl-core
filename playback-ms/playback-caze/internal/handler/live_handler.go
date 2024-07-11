@@ -5,7 +5,6 @@ import (
 	"time"
 
 	"github.com/robocin/ssl-core/playback-ms/internal/mappers"
-	"github.com/robocin/ssl-core/playback-ms/internal/repository"
 	"github.com/robocin/ssl-core/playback-ms/internal/service_discovery"
 	"github.com/robocin/ssl-core/playback-ms/network"
 	"github.com/robocin/ssl-core/playback-ms/pkg/pb/perception"
@@ -22,30 +21,12 @@ type LiveHandler struct {
 	start          time.Time
 }
 
-func NewLiveHandler(sampleRepository repository.SampleRepository) *LiveHandler {
+func NewLiveHandler() *LiveHandler {
 	return &LiveHandler{
 		firstTimestamp: nil,
 		lastGameStatus: nil,
 		times:          0,
 		start:          time.Now(),
-	}
-}
-
-func (lh *LiveHandler) saveSamples() {
-	for {
-		// samples := lh.samples.DequeueAll()
-		// fmt.Printf("Samples: %v\n", samples)
-		// err := lh.sampleRepository.AddSamples(samples)
-		// if err != nil {
-		// 	fmt.Println("Failed to save samples: ", err)
-		// }
-		for _, sample := range lh.samples.DequeueAll() {
-			fmt.Printf("Sample: %v\n", sample)
-			err := lh.sampleRepository.AddSample(&sample)
-			if err != nil {
-				fmt.Println("Failed to save sample")
-			}
-		}
 	}
 }
 
