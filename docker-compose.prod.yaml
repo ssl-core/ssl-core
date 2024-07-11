@@ -91,6 +91,7 @@ services:
       - .ssl-core:/tmp/.ssl-core
     depends_on:
       - referee-ms
+      - redis-db
 
   player-bff:
     container_name: player-bff
@@ -118,9 +119,9 @@ services:
     depends_on:
       - player-bff
 
-  # redis-db:
-  #   container_name: redis-db
-  #   image: "redis:latest"
+  redis-db:
+    container_name: redis-db
+    image: "redis:latest"
 
 volumes:
   .ssl-core:

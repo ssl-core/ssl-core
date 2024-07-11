@@ -14,7 +14,7 @@ type SubscriberStub struct {
 
 func NewSubscriberStub() *SubscriberStub {
 	return &SubscriberStub{
-		subscriber: network.NewZmqSubscriberSocket(service_discovery.GetInstance().GetPerceptionAddress(), service_discovery.GetInstance().GetDetectionWrapperTopic()),
+		subscriber: network.NewZmqSubscriberSocket(service_discovery.PerceptionAddress, service_discovery.PerceptionDetectionWrapperTopic),
 	}
 }
 
