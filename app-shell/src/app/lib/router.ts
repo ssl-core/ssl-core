@@ -1,12 +1,15 @@
+import BaseFragment from "../fragments/base-fragment";
 import FragmentFactory from "../fragments/fragment-factory";
 
 class Router {
   private routes: Route[];
   private templates: Record<string, Template>;
+  private fragments: BaseFragment[];
 
   constructor(routes: Route[], templates: Record<string, Template>) {
     this.routes = routes;
     this.templates = templates;
+    this.fragments = [];
   }
 
   initialize() {
@@ -49,12 +52,14 @@ class Router {
     const app = document.getElementById("app")!;
     app.innerHTML = "";
 
+    this.clearFragments();
+
     if (pushState) {
       window.history.pushState({}, "", template);
     }
 
-    app.style.gridTemplateRows = "1";
-    app.style.gridTemplateColumns = "1";
+    app.style.gridTemplateRows = "1fr";
+    app.style.gridTemplateColumns = "1fr";
 
     const section = document.createElement("section");
     section.style.gridArea = "1 / 1 / 2 / 2";
@@ -95,6 +100,8 @@ class Router {
     const app = document.getElementById("app")!;
     app.innerHTML = "";
 
+    this.clearFragments();
+
     if (pushState) {
       window.history.pushState({}, "", route.path);
     }
@@ -111,7 +118,14 @@ class Router {
 
       const fragment = fragmentFactory.createFragment(section, routeFragment);
       fragment.render();
+
+      this.fragments.push(fragment);
     });
+  }
+
+  clearFragments() {
+    this.fragments.forEach((fragment) => fragment.clear());
+    this.fragments = [];
   }
 
   addPopStateListener() {

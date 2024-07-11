@@ -5,27 +5,30 @@ import environment from "../config/environment";
 
 class ViewerMFE extends HTMLElement {
   private root: ShadowRoot;
-  private renderEngine: BaseRenderEngine;
-  private communicationHandler: CommunicationHandler;
+  private renderEngine: BaseRenderEngine | null;
+  private communicationHandler: CommunicationHandler | null;
 
   constructor() {
     super();
     this.root = this.attachShadow({ mode: "open" });
+    this.renderEngine = null;
+    this.communicationHandler = null;
+  }
+
+  public connectedCallback() {
     this.renderEngine = RenderEngineFactory.createEngine(
       environment.engine,
       this.root
     );
     this.communicationHandler = new CommunicationHandler(environment.socketUrl);
-  }
 
-  public connectedCallback() {
     this.renderEngine.initialize();
     this.communicationHandler.initialize();
   }
 
   public disconnectedCallback() {
-    this.communicationHandler.terminate();
-    this.renderEngine.terminate();
+    this.communicationHandler?.terminate();
+    this.renderEngine?.terminate();
   }
 }
 
