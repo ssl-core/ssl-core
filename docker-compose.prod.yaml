@@ -127,8 +127,16 @@ services:
     command: ["-g", "daemon off;"]
     ports:
       - 3032:3032
-    depends_on:
-      - viewer-bff
+
+  app-shell:
+    build:
+      context: .
+      dockerfile: app-shell/Dockerfile
+      args:
+        - SOURCE_DIRECTORY=app-shell
+    command: ["-g", "daemon off;"]
+    ports:
+      - 4000:4000
 
   # redis-db:
   #   container_name: redis-db
