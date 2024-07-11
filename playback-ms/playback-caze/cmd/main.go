@@ -38,8 +38,8 @@ func runPlayback(wg *sync.WaitGroup) {
 	messageSender := sender.NewMessageSender(service_discovery.PlaybackAddress)
 
 	sampleRepository := repository.NewSampleRepository("redis")
-	liveHandler := handler.NewLiveHandler(sampleRepository)
-	liveController := controller.NewLiveController(messageSender, datagrams, liveHandler)
+	liveHandler := handler.NewLiveHandler()
+	liveController := controller.NewLiveController(messageSender, datagrams, liveHandler, sampleRepository)
 
 	wg.Add(1)
 	go liveController.Run(wg)
