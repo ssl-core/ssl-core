@@ -494,7 +494,7 @@ class KickingTeamUtil {
   }
 
   [[nodiscard]] rc::Team getTeamKickingPenalty(rc::Team last_team_kicking_penalty) const {
-    if (referee_util_->isPrepareDirectFreeKick()) {
+    if (referee_util_->isPreparePenalty()) {
       return referee_util_->getTeamFromCommand();
     }
     if (referee_util_->isNormalStart()) {
@@ -543,7 +543,7 @@ class KickingTeamUtil {
     using enum rc::Team;
 
     if (robot.robot_id().color() == rc::RobotId::COLOR_UNSPECIFIED) {
-      return rc::Team::TEAM_UNSPECIFIED;
+      return TEAM_UNSPECIFIED;
     }
 
     if (referee_util_->homeIsBlueTeam()) {
