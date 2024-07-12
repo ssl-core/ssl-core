@@ -4,6 +4,7 @@
 #include "perception/parameters/parameters.h"
 #include "perception/processing/raw_detection/mappers/raw_detection_mapper.h"
 
+#include <algorithm>
 #include <iterator>
 #include <print>
 #include <protocols/perception/detection.pb.h>
@@ -59,26 +60,68 @@ rawDetectionsFromRawPackets(object_ptr<IRawDetectionMapper> raw_detection_mapper
 
 std::optional<rc::Field>
 processFieldFromRawPackets(std::span<const tp::SSL_WrapperPacket> raw_wrapper_packets) {
-  for (const auto& raw_packet : std::ranges::reverse_view(raw_wrapper_packets)) {
-    if (raw_packet.has_geometry()) {
-      const tp::SSL_GeometryFieldSize& geometry = raw_packet.geometry().field();
+  auto field_view = std::ranges::reverse_view(raw_wrapper_packets)
+                    | std::views::filter(&tp::SSL_WrapperPacket::has_geometry)
+                    | std::views::take(1);
 
-      rc::Field field;
-      field.set_length(static_cast<float>(geometry.field_length()));
-      field.set_width(static_cast<float>(geometry.field_width()));
-      field.set_goal_depth(static_cast<float>(geometry.goal_depth()));
-      field.set_goal_width(static_cast<float>(geometry.goal_width()));
-      field.set_penalty_area_depth(static_cast<float>(geometry.penalty_area_depth()));
-      field.set_penalty_area_width(static_cast<float>(geometry.penalty_area_width()));
-      field.set_boundary_width(static_cast<float>(geometry.boundary_width()));
-      field.set_goal_center_to_penalty_mark(
-          static_cast<float>(geometry.goal_center_to_penalty_mark()));
-
-      return field;
-    }
+  if (field_view.empty()) {
+    return std::nullopt;
   }
 
-  return std::nullopt;
+  const tp::SSL_GeometryFieldSize& geometry = field_view.front().geometry().field();
+
+  rc::Field field;
+
+  if (geometry.has_field_length()) {
+    field.set_length(static_cast<float>(geometry.field_length()));
+  } else {
+    field.set_length(pFieldLength());
+  }
+
+  if (geometry.has_field_width()) {
+    field.set_width(static_cast<float>(geometry.field_width()));
+  } else {
+    field.set_width(pFieldWidth());
+  }
+
+  if (geometry.has_goal_depth()) {
+    field.set_goal_depth(static_cast<float>(geometry.goal_depth()));
+  } else {
+    field.set_goal_depth(pGoalDepth());
+  }
+
+  if (geometry.has_goal_width()) {
+    field.set_goal_width(static_cast<float>(geometry.goal_width()));
+  } else {
+    field.set_goal_width(pGoalWidth());
+  }
+
+  if (geometry.has_penalty_area_depth()) {
+    field.set_penalty_area_depth(static_cast<float>(geometry.penalty_area_depth()));
+  } else {
+    field.set_penalty_area_depth(pPenaltyAreaDepth());
+  }
+
+  if (geometry.has_penalty_area_width()) {
+    field.set_penalty_area_width(static_cast<float>(geometry.penalty_area_width()));
+  } else {
+    field.set_penalty_area_width(pPenaltyAreaWidth());
+  }
+
+  if (geometry.has_boundary_width()) {
+    field.set_boundary_width(static_cast<float>(geometry.boundary_width()));
+  } else {
+    field.set_boundary_width(pBoundaryWidth());
+  }
+
+  if (geometry.has_goal_center_to_penalty_mark()) {
+    field.set_goal_center_to_penalty_mark(
+        static_cast<float>(geometry.goal_center_to_penalty_mark()));
+  } else {
+    field.set_goal_center_to_penalty_mark(pGoalCenterToPenaltyMark());
+  }
+
+  return field;
 }
 
 } // namespace
