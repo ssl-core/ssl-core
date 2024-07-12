@@ -3,7 +3,6 @@ package handler
 import (
 	"fmt"
 
-	"github.com/robocin/ssl-core/playback-ms/internal/concurrency"
 	"github.com/robocin/ssl-core/playback-ms/internal/mappers"
 	"github.com/robocin/ssl-core/playback-ms/internal/service_discovery"
 	"github.com/robocin/ssl-core/playback-ms/network"
@@ -16,15 +15,12 @@ import (
 
 type LiveHandler struct {
 	firstTimestamp *timestamppb.Timestamp
-	samples        *concurrency.ConcurrentQueue[*playback.Sample]
 	lastGameStatus *playback.GameStatus
-	lastField      *playback.Field
 }
 
 func NewLiveHandler() *LiveHandler {
 	return &LiveHandler{
 		firstTimestamp: nil,
-		samples:        concurrency.NewQueue[*playback.Sample](),
 		lastGameStatus: nil,
 	}
 }
@@ -45,38 +41,29 @@ func (lh *LiveHandler) Process(datagram *network.ZmqMultipartDatagram) (*playbac
 		return nil, fmt.Errorf("local referee is nil")
 	}
 
-	sample := playback.Sample{}
-	sample.GameStatus = lh.lastGameStatus
-
-	if topic == service_discovery.PerceptionDetectionWrapperTopic {
-		perceptionDetectionWrapper := perception.DetectionWrapper{}
-		proto.Unmarshal(datagram.Message, &perceptionDetectionWrapper)
-
-		if lh.firstTimestamp == nil {
-			lh.firstTimestamp = perceptionDetectionWrapper.GetDetection().GetCreatedAt()
-		}
-		inputDetection := perceptionDetectionWrapper.GetDetection()
-		sample.Detection = mappers.DetectionMapper(inputDetection)
-		sample.Timestamp = inputDetection.GetCreatedAt()
-		sample.FirstTimestamp = lh.firstTimestamp
-		if inputDetection != nil && inputDetection.GetField() != nil {
-			lh.lastField = mappers.FieldMapper(inputDetection.GetField())
-		}
-		sample.Field = lh.lastField
-	} else {
+	if topic != service_discovery.PerceptionDetectionWrapperTopic {
 		return nil, fmt.Errorf("datagram with topic '%s' not processed", topic)
 	}
 
-	// Use the lines below to debug as json:
+	perceptionDetectionWrapper := perception.DetectionWrapper{}
+	proto.Unmarshal(datagram.Message, &perceptionDetectionWrapper)
+	detection := perceptionDetectionWrapper.GetDetection()
+	// rawDetections := perceptionDetectionWrapper.GetRawDetections()
+	// trackedDetections := perceptionDetectionWrapper.GetTrackedDetections()
 
-	// if json, err := protojson.Marshal(&sample); err == nil {
-	// 	fmt.Println("sample as json:", string(json))
-	// } else {
-	// 	fmt.Println("error parsing Sample to json:", err)
-	// }
+	if lh.firstTimestamp == nil {
+		lh.firstTimestamp = detection.GetCreatedAt()
+	}
 
-	// enqueue a copy that will be saved into database in another goroutine.
-	// lh.samples.Enqueue(proto.Clone(&sample).(*playback.Sample))
+	sample := playback.Sample{
+		FirstTimestamp:   lh.firstTimestamp,
+		Timestamp:        detection.GetCreatedAt(),
+		Detection:        mappers.DetectionMapper(detection),
+		Field:            mappers.FieldMapper(detection.GetField()),
+		GameStatus:       lh.lastGameStatus,
+		RawDetection:     nil, // TODO(matheusvtna, joseviccruz): fill raw detection
+		TrackedDetection: nil, // TODO(matheusvtna, joseviccruz): fill tracked detection
+	}
 
 	return &sample, nil
 }
