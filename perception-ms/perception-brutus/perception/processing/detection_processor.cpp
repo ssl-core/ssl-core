@@ -60,15 +60,15 @@ rawDetectionsFromRawPackets(object_ptr<IRawDetectionMapper> raw_detection_mapper
 
 std::optional<rc::Field>
 processFieldFromRawPackets(std::span<const tp::SSL_WrapperPacket> raw_wrapper_packets) {
-  auto field_view = std::ranges::reverse_view(raw_wrapper_packets)
-                    | std::views::filter(&tp::SSL_WrapperPacket::has_geometry)
-                    | std::views::take(1);
+  auto geometries_view = std::ranges::reverse_view(raw_wrapper_packets)
+                         | std::views::filter(&tp::SSL_WrapperPacket::has_geometry)
+                         | std::views::take(1);
 
-  if (field_view.empty()) {
+  if (geometries_view.empty()) {
     return std::nullopt;
   }
 
-  const tp::SSL_GeometryFieldSize& geometry = field_view.front().geometry().field();
+  const tp::SSL_GeometryFieldSize& geometry = geometries_view.front().geometry().field();
 
   rc::Field field;
 
