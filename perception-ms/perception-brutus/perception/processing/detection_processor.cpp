@@ -150,7 +150,7 @@ std::optional<rc::DetectionWrapper> DetectionProcessor::process(std::span<const 
         = tracked_detection_filter_->process(tracked_packets)) {
       detection = std::move(*processed_detection);
     } else {
-      ilog("processed detection from 'tracked_detection_filter' is empty.");
+      // ilog("processed detection from 'tracked_detection_filter' is empty.");
 
       return std::nullopt;
     }
@@ -159,7 +159,7 @@ std::optional<rc::DetectionWrapper> DetectionProcessor::process(std::span<const 
             rawDetectionsFromRawPackets(raw_detection_mapper_, raw_wrapper_packets))) {
       detection = std::move(*processed_detection);
     } else {
-      ilog("processed detection from 'raw_detection_filter' is empty.");
+      // ilog("processed detection from 'raw_detection_filter' is empty.");
 
       return std::nullopt;
     }

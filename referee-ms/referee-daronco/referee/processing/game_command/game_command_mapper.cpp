@@ -227,7 +227,7 @@ class FactoryInternal {
         break;
       }
       default: {
-        elog(kTeamUnavailableMessage);
+        // elog(kTeamUnavailableMessage);
         *result.mutable_halt() = rc::Halt{};
         break;
       }
@@ -249,7 +249,7 @@ class FactoryInternal {
         break;
       }
       default: {
-        elog(kTeamUnavailableMessage);
+        // elog(kTeamUnavailableMessage);
         *result.mutable_halt() = rc::Halt{};
         break;
       }
@@ -271,7 +271,7 @@ class FactoryInternal {
         break;
       }
       default: {
-        elog(kTeamUnavailableMessage);
+        // elog(kTeamUnavailableMessage);
         *result.mutable_halt() = rc::Halt{};
         break;
       }
@@ -293,7 +293,7 @@ class FactoryInternal {
         break;
       }
       default: {
-        elog(kTeamUnavailableMessage);
+        // elog(kTeamUnavailableMessage);
         *result.mutable_halt() = rc::Halt{};
         break;
       }
@@ -323,7 +323,7 @@ class FactoryInternal {
         break;
       }
       default: {
-        wlog(kTeamUnavailableMessage);
+        // wlog(kTeamUnavailableMessage);
         *result.mutable_halt() = rc::Halt{};
         break;
       }
@@ -352,7 +352,7 @@ class FactoryInternal {
         break;
       }
       default: {
-        elog(kTeamUnavailableMessage);
+        // elog(kTeamUnavailableMessage);
         *result.mutable_halt() = rc::Halt{};
         break;
       }
@@ -381,7 +381,7 @@ class FactoryInternal {
         break;
       }
       default: {
-        elog(kTeamUnavailableMessage);
+        // elog(kTeamUnavailableMessage);
         *result.mutable_halt() = rc::Halt{};
         break;
       }
@@ -410,7 +410,7 @@ class FactoryInternal {
         break;
       }
       default: {
-        elog(kTeamUnavailableMessage);
+        // elog(kTeamUnavailableMessage);
         *result.mutable_halt() = rc::Halt{};
         break;
       }
@@ -630,7 +630,8 @@ rc::GameCommand GameCommandMapper::fromDetectionAndReferee(const rc::Detection& 
   }
 
   if (!referee_util.isHalt()) {
-    elog("the expected command was halt, but '{}' was found.", static_cast<int>(referee.command()));
+    // elog("the expected command was halt, but '{}' was found.",
+    // static_cast<int>(referee.command()));
   }
   return factory.makeHalt();
 }

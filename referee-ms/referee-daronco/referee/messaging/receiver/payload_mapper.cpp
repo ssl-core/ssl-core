@@ -43,7 +43,7 @@ Payload PayloadMapper::fromZmqDatagrams(std::span<const ZmqDatagram> messages) c
       game_controller_referee.ParseFromString(std::string{zmq_datagram.message()});
       game_controller_referees.emplace_back(std::move(game_controller_referee));
     } else {
-      wlog("zmq_datagram with topic '{}' not processed.", zmq_datagram.topic());
+      // wlog("zmq_datagram with topic '{}' not processed.", zmq_datagram.topic());
     }
   }
 
