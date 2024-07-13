@@ -6,6 +6,8 @@ services:
     environment:
       GEOMETRY: "2020"
       REALISM: "RC2021"
+    logging:
+      driver: none
 
   autoref-tigers:
     container_name: autoref-tigers
@@ -15,6 +17,8 @@ services:
       - "-a"
       - "-visionAddress"
       - "224.5.23.2:10020"
+    logging:
+      driver: none
     depends_on:
       - simulator
 
@@ -33,6 +37,8 @@ services:
     restart: unless-stopped
     ports:
       - 8081/tcp
+    logging:
+      driver: none
     depends_on:
       - autoref-tigers
 
@@ -45,6 +51,8 @@ services:
     restart: unless-stopped
     ports:
       - 8082/tcp
+    logging:
+      driver: none
     depends_on:
       - game-controller
 
@@ -62,10 +70,10 @@ services:
 
   perception-ms:
     container_name: perception-ms
-    image: robocin/perception-brutus:manual-5907a5
-#     build:
-#       context: .
-#       dockerfile: perception-ms/perception-brutus/perception-brutus.Dockerfile
+    image: robocin/perception-brutus:manual-419128
+#    build:
+#      context: .
+#      dockerfile: perception-ms/perception-brutus/perception-brutus.Dockerfile
     volumes:
       - .ssl-core:/tmp/.ssl-core
     depends_on:
@@ -73,10 +81,10 @@ services:
 
   referee-ms:
     container_name: referee-ms
-    image: robocin/referee-daronco:manual-5907a5
-#     build:
-#       context: .
-#       dockerfile: referee-ms/referee-daronco/referee-daronco.Dockerfile
+    image: robocin/referee-daronco:manual-419128
+#    build:
+#      context: .
+#      dockerfile: referee-ms/referee-daronco/referee-daronco.Dockerfile
     volumes:
       - .ssl-core:/tmp/.ssl-core
     depends_on:
