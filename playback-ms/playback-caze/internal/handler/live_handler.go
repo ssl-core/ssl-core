@@ -2,6 +2,7 @@ package handler
 
 import (
 	"fmt"
+	"time"
 
 	"github.com/robocin/ssl-core/playback-ms/internal/mappers"
 	"github.com/robocin/ssl-core/playback-ms/internal/service_discovery"
@@ -16,12 +17,16 @@ import (
 type LiveHandler struct {
 	firstTimestamp *timestamppb.Timestamp
 	lastGameStatus *playback.GameStatus
+	times          int64
+	start          time.Time
 }
 
 func NewLiveHandler() *LiveHandler {
 	return &LiveHandler{
 		firstTimestamp: nil,
 		lastGameStatus: nil,
+		times:          0,
+		start:          time.Now(),
 	}
 }
 
@@ -64,6 +69,12 @@ func (lh *LiveHandler) Process(datagram *network.ZmqMultipartDatagram) (*playbac
 		RawDetection:     nil, // TODO(matheusvtna, joseviccruz): fill raw detection
 		TrackedDetection: nil, // TODO(matheusvtna, joseviccruz): fill tracked detection
 	}
+
+	// # TODO(joseviccruz): remove this debug.
+	elapsed := time.Since(lh.start)
+	lh.times++
+	fmt.Println("elapsed:", elapsed, "times:", lh.times)
+	lh.start = time.Now()
 
 	return &sample, nil
 }
