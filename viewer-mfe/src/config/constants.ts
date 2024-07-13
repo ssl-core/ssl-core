@@ -1,8 +1,8 @@
 const constants = {
-  background: "#1B1C1F",
+  background: "#131417",
   multiplyEpsilon: 1.001,
   epsilon: 0.001,
-  clippingEpsilon: 0.01,
+  clippingEpsilon: 0.05,
   numRobots: 22,
   numBalls: 1,
   field: {

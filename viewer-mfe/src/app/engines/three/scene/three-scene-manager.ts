@@ -170,7 +170,7 @@ class ThreeSceneManager {
 
   private setCameraPosition() {
     this.camera.up.set(0, 0, 1);
-    this.camera.position.set(0, 0, 12);
+    this.camera.position.set(0, -10, 5);
     this.camera.lookAt(0, 0, 0);
   }
 

@@ -32,7 +32,6 @@ class EventBusCommunicationManager extends BaseCommunicationManager {
   }
 
   private handleMessage(message: EventBusMessage) {
-    console.log(message);
     if (message.type === "frame") {
       this.engineChannel.postMessage(message.payload);
     }

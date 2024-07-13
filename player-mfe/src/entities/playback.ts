@@ -27,6 +27,7 @@ class Playback {
     this.listeners = {};
     this.currentFrame = null;
     this.buffer = new Buffer();
+    this.eventBus = new BroadcastChannel("event-bus");
 
     this.socket.addEventListener("state", (state: PlaybackState) =>
       this.changeState(state)
@@ -37,7 +38,6 @@ class Playback {
     this.socket.addEventListener("chunk", (chunk: ChunkResponse) =>
       this.receiveChunk(chunk)
     );
-    this.eventBus = new BroadcastChannel("event-bus");
   }
 
   public live() {
@@ -65,8 +65,6 @@ class Playback {
     if (this.state === PlaybackState.Disconnected) {
       throw new Error("Disconnected");
     }
-
-    console.log(this.state, timestamp);
 
     if (this.state === PlaybackState.Stop && !timestamp) {
       this.live();
@@ -98,13 +96,11 @@ class Playback {
   }
 
   public changeState(state: PlaybackState) {
-    console.log(state);
     this.state = state;
     this.update();
   }
 
   public receiveFrame(payload: FrameResponse) {
-    console.log("receiveFrame", payload);
     const frame = new Frame(payload);
     this.currentFrame = frame;
     this.update();
@@ -147,7 +143,6 @@ class Playback {
     };
 
     this.eventBus.postMessage({ type: "frame", payload: this.currentFrame });
-    console.log({ type: "frame", payload: this.currentFrame });
 
     this.dispatchEvent("update", data);
   }

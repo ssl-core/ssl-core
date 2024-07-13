@@ -51,6 +51,7 @@ services:
     restart: unless-stopped
     ports:
       - 8082/tcp
+      - 8082:8082
     logging:
       driver: none
     depends_on:

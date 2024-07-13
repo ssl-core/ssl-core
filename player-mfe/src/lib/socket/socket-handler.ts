@@ -57,7 +57,6 @@ class SocketHandler {
 
   private handleWorkerMessages() {
     this.worker.onmessage = (event) => {
-      console.log("event", event);
       const { type, payload } = event.data;
       this.dispatchEvent(type, payload);
     };
