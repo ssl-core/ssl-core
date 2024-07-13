@@ -11,9 +11,6 @@
 namespace perception {
 namespace {
 
-using ::google::protobuf::Timestamp;
-using ::robocin::IPbTimeUtil;
-
 namespace rc {
 
 using ::protocols::common::Point2Df;
@@ -79,6 +76,7 @@ rc::Robot robotFromTrackedRobot(const tp::TrackedRobot& tracked_robot) {
   return robot;
 }
 
+// TODO(joseviccruz): add kick information.
 rc::Ball ballFromTrackedBall(const tp::TrackedBall& tracked_ball) {
   rc::Ball ball;
 
@@ -100,17 +98,11 @@ rc::Ball ballFromTrackedBall(const tp::TrackedBall& tracked_ball) {
 
 } // namespace
 
-TrackedDetectionMapper::TrackedDetectionMapper(std::unique_ptr<IPbTimeUtil> pb_time_util) :
-    pb_time_util_{std::move(pb_time_util)} {}
-
 rc::Detection TrackedDetectionMapper::fromTrackedWrapperPacket(
     const tp::TrackerWrapperPacket& tracked_wrapper_packet) {
   const tp::TrackedFrame& tracked_frame = tracked_wrapper_packet.tracked_frame();
 
   rc::Detection detection;
-
-  Timestamp& timestamp = *detection.mutable_created_at();
-  timestamp = pb_time_util_->getCurrentTime();
 
   for (const auto& tracked_robot : tracked_frame.robots()) {
     rc::Robot& robot = *detection.add_robots();

@@ -1,12 +1,9 @@
 #ifndef PERCEPTION_PROCESSING_TRACKED_DETECTION_MAPPER_TRACKED_DETECTION_MAPPER_H
 #define PERCEPTION_PROCESSING_TRACKED_DETECTION_MAPPER_TRACKED_DETECTION_MAPPER_H
 
-#include <google/protobuf/timestamp.pb.h>
-#include <google/protobuf/util/time_util.h>
 #include <protocols/perception/detection.pb.h>
 #include <protocols/third_party/game_controller/tracked.pb.h>
 #include <protocols/third_party/game_controller/tracked_wrapper.pb.h>
-#include <robocin/third_party/adaptors/pb_time_util.h>
 
 namespace perception {
 
@@ -36,7 +33,7 @@ class ITrackedDetectionMapper {
  */
 class TrackedDetectionMapper : public ITrackedDetectionMapper {
  public:
-  explicit TrackedDetectionMapper(std::unique_ptr<::robocin::IPbTimeUtil> pb_time_util);
+  TrackedDetectionMapper() = default;
 
   /**
    * @brief Converts an TrackedFrame to a Detection object.
@@ -49,9 +46,6 @@ class TrackedDetectionMapper : public ITrackedDetectionMapper {
   ::protocols::perception::Detection fromTrackedWrapperPacket(
       const ::protocols::third_party::game_controller::TrackerWrapperPacket& tracked_wrapper_packet)
       override;
-
- private:
-  std::unique_ptr<::robocin::IPbTimeUtil> pb_time_util_;
 };
 
 } // namespace perception

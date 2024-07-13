@@ -103,13 +103,14 @@ std::unique_ptr<IRawDetectionFilter> makeRawDetectionFilter() {
 
 std::unique_ptr<ITrackedDetectionFilter> makeTrackedDetectionFilter() {
   std::unique_ptr<ITrackedDetectionMapper> tracked_detection_mapper
-      = std::make_unique<TrackedDetectionMapper>(std::make_unique<PbTimeUtil>());
+      = std::make_unique<TrackedDetectionMapper>();
 
   return std::make_unique<TrackedDetectionFilter>(std::move(tracked_detection_mapper));
 }
 
 std::unique_ptr<IDetectionProcessor> makeDetectionProcessor() {
-  return std::make_unique<DetectionProcessor>(makeRawDetectionMapper(),
+  return std::make_unique<DetectionProcessor>(std::make_unique<PbTimeUtil>(),
+                                              makeRawDetectionMapper(),
                                               makeRawDetectionFilter(),
                                               makeTrackedDetectionFilter());
 }

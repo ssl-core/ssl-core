@@ -16,6 +16,7 @@ namespace perception {
 namespace {
 
 using ::robocin::ilog;
+using ::robocin::IPbTimeUtil;
 using ::robocin::object_ptr;
 
 namespace rc {
@@ -127,9 +128,11 @@ processFieldFromRawPackets(std::span<const tp::SSL_WrapperPacket> raw_wrapper_pa
 } // namespace
 
 DetectionProcessor::DetectionProcessor(
+    std::unique_ptr<IPbTimeUtil> pb_time_util,
     std::unique_ptr<IRawDetectionMapper> raw_detection_mapper,
     std::unique_ptr<IRawDetectionFilter> raw_detection_filter,
     std::unique_ptr<ITrackedDetectionFilter> tracked_detection_filter) :
+    pb_time_util_{std::move(pb_time_util)},
     raw_detection_mapper_{std::move(raw_detection_mapper)},
     raw_detection_filter_{std::move(raw_detection_filter)},
     tracked_detection_filter_{std::move(tracked_detection_filter)} {}
@@ -170,6 +173,7 @@ std::optional<rc::DetectionWrapper> DetectionProcessor::process(std::span<const 
   }
 
   detection.set_serial_id(++serial_id_);
+  *detection.mutable_created_at() = pb_time_util_->getCurrentTime();
   detection.set_framerate(k60Fps);
 
   detection_wrapper.mutable_tracked_detections()->Add(

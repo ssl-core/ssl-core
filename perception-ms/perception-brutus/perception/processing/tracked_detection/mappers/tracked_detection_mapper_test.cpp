@@ -40,8 +40,6 @@ using ::protocols::third_party::game_controller::TrackerWrapperPacket;
 
 } // namespace tp
 
-constexpr uint64_t k10Seconds = 10;
-
 class TrackedDetectionMapperTest : public Test {
  protected:
   void SetUp() override {
@@ -51,28 +49,9 @@ class TrackedDetectionMapperTest : public Test {
     parameters::HandlerEngine{}.set(pDribblerWidth, 60.0F);
     // NOLINTEND(*magic-numbers*)
   }
-
-  void setCurrentTime(Timestamp timestamp) { timestamp_ = std::move(timestamp); }
-  object_ptr<TrackedDetectionMapper> getMapper() { return object_ptr{&tracked_detection_mapper_}; }
-
- private:
-  class MockPbTimeUtil : public IPbTimeUtil {
-   public:
-    explicit MockPbTimeUtil(object_ptr<Timestamp> timestamp) : timestamp_{timestamp} {}
-
-    Timestamp getCurrentTime() override { return *timestamp_; }
-
-   private:
-    object_ptr<Timestamp> timestamp_;
-  };
-
-  Timestamp timestamp_;
-  TrackedDetectionMapper tracked_detection_mapper_{std::make_unique<MockPbTimeUtil>(&timestamp_)};
 };
 
 TEST_F(TrackedDetectionMapperTest, WhenMapperReceivesSingleBallAndReturnsBallSuccessfully) {
-  setCurrentTime(TimeUtil::SecondsToTimestamp(k10Seconds));
-
   tp::TrackerWrapperPacket tracked_wrapper_packet = ParseTextOrDie(R"pb(
     uuid: "1df3fba7-adb9-40c4-a7ee-b0a559c40e4e"
     tracked_frame {
@@ -94,13 +73,10 @@ TEST_F(TrackedDetectionMapperTest, WhenMapperReceivesSingleBallAndReturnsBallSuc
     }
   )pb");
 
-  object_ptr mapper = getMapper();
+  auto mapper = std::make_unique<TrackedDetectionMapper>();
   rc::Detection detection = mapper->fromTrackedWrapperPacket(tracked_wrapper_packet);
 
   EXPECT_THAT(detection, EqualsProto(R"pb(
-    created_at {
-      seconds: 10
-    }
     balls {
       confidence: 1
       position {
@@ -118,8 +94,6 @@ TEST_F(TrackedDetectionMapperTest, WhenMapperReceivesSingleBallAndReturnsBallSuc
 }
 
 TEST_F(TrackedDetectionMapperTest, WhenMapperReceivesMultipleBallsAndReturnsBallsSuccessfully) {
-  setCurrentTime(TimeUtil::SecondsToTimestamp(k10Seconds));
-
   tp::TrackerWrapperPacket tracked_wrapper_packet = ParseTextOrDie(R"pb(
     uuid: "1df3fba7-adb9-40c4-a7ee-b0a559c40e4e"
     tracked_frame {
@@ -154,13 +128,10 @@ TEST_F(TrackedDetectionMapperTest, WhenMapperReceivesMultipleBallsAndReturnsBall
     }
   )pb");
 
-  object_ptr mapper = getMapper();
+  auto mapper = std::make_unique<TrackedDetectionMapper>();
   rc::Detection detection = mapper->fromTrackedWrapperPacket(tracked_wrapper_packet);
 
   EXPECT_THAT(detection, EqualsProto(R"pb(
-    created_at {
-      seconds: 10
-    }
     balls {
       confidence: 0.5
       position {
@@ -191,8 +162,6 @@ TEST_F(TrackedDetectionMapperTest, WhenMapperReceivesMultipleBallsAndReturnsBall
 }
 
 TEST_F(TrackedDetectionMapperTest, WhenMapperReceivesMultipleRobotsAndReturnsRobotsSuccessfully) {
-  setCurrentTime(TimeUtil::SecondsToTimestamp(k10Seconds));
-
   tp::TrackerWrapperPacket tracked_wrapper_packet = ParseTextOrDie(R"pb(
     uuid: "1df3fba7-adb9-40c4-a7ee-b0a559c40e4e"
     tracked_frame {
@@ -235,13 +204,10 @@ TEST_F(TrackedDetectionMapperTest, WhenMapperReceivesMultipleRobotsAndReturnsRob
     }
   )pb");
 
-  object_ptr mapper = getMapper();
+  auto mapper = std::make_unique<TrackedDetectionMapper>();
   rc::Detection detection = mapper->fromTrackedWrapperPacket(tracked_wrapper_packet);
 
   EXPECT_THAT(detection, EqualsProto(R"pb(
-    created_at {
-      seconds: 10
-    }
     robots {
       confidence: 0.5
       robot_id {
