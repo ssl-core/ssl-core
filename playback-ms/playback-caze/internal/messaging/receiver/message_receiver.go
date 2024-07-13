@@ -3,33 +3,48 @@ package receiver
 import (
 	"sync"
 
-	"github.com/robocin/ssl-core/playback-ms/internal/concurrency"
 	"github.com/robocin/ssl-core/playback-ms/network"
 )
 
 type MessageReceiver struct {
-	subscribers []*network.ZmqSubscriberSocket
+	handlers []*SocketHandler
 }
 
-func NewMessageReceiver(sockets []*network.ZmqSubscriberSocket) *MessageReceiver {
-	return &MessageReceiver{
-		subscribers: sockets,
+type ISocketReceiver interface {
+	Receive() network.ZmqMultipartDatagram
+}
+
+type SocketHandler struct {
+	socket   ISocketReceiver
+	callback func(network.ZmqMultipartDatagram)
+}
+
+func NewSocketHandler(socket ISocketReceiver, callback func(network.ZmqMultipartDatagram)) *SocketHandler {
+	return &SocketHandler{
+		socket:   socket,
+		callback: callback,
 	}
 }
 
-func (mr *MessageReceiver) Start(datagrams *concurrency.ConcurrentQueue[network.ZmqMultipartDatagram], wg *sync.WaitGroup) {
-	for _, sub := range mr.subscribers {
+func NewMessageReceiver(handlers []*SocketHandler) *MessageReceiver {
+	return &MessageReceiver{
+		handlers: handlers,
+	}
+}
+
+func (mr *MessageReceiver) Start(wg *sync.WaitGroup) {
+	for _, handler := range mr.handlers {
 		wg.Add(1)
 
 		go func() {
 			defer wg.Done()
 
 			for {
-				datagram := sub.Receive()
+				datagram := handler.socket.Receive()
 				if datagram.IsEmpty() {
 					continue
 				}
-				datagrams.Enqueue(datagram)
+				handler.callback(datagram)
 			}
 		}()
 	}

@@ -9,14 +9,18 @@ import (
 	"github.com/robocin/ssl-core/playback-ms/internal/handler"
 	"github.com/robocin/ssl-core/playback-ms/internal/messaging/receiver"
 	"github.com/robocin/ssl-core/playback-ms/internal/messaging/sender"
+	"github.com/robocin/ssl-core/playback-ms/internal/repository"
 	"github.com/robocin/ssl-core/playback-ms/internal/service_discovery"
 	"github.com/robocin/ssl-core/playback-ms/network"
 )
 
-func runPlayback(wg *sync.WaitGroup) {
-	// TODO: move to a controller.
-	// receiver:
+func insertDatagramIntoQueue(queue *concurrency.ConcurrentQueue[network.ZmqMultipartDatagram]) func(datagram network.ZmqMultipartDatagram) {
+	return func(datagram network.ZmqMultipartDatagram) {
+		queue.Enqueue(datagram)
+	}
+}
 
+func runPlayback(wg *sync.WaitGroup) {
 	perceptionSocket := network.NewZmqSubscriberSocket(
 		service_discovery.PerceptionAddress,
 		service_discovery.PerceptionDetectionWrapperTopic,
@@ -27,26 +31,35 @@ func runPlayback(wg *sync.WaitGroup) {
 		service_discovery.RefereeGameStatusTopic,
 	)
 
-	message_receiver := receiver.NewMessageReceiver(
-		[]*network.ZmqSubscriberSocket{
-			perceptionSocket,
-			refereeSocket,
+	replayRouter := network.NewZmqRouterSocket(
+		service_discovery.GatewayReplayChunckAddress,
+	)
+
+	subscriberDatagrams := concurrency.NewQueue[network.ZmqMultipartDatagram]()
+	routerDatagrams := concurrency.NewQueue[network.ZmqMultipartDatagram]()
+	messageReceiver := receiver.NewMessageReceiver(
+		[]*receiver.SocketHandler{
+			receiver.NewSocketHandler(perceptionSocket, insertDatagramIntoQueue(subscriberDatagrams)),
+			receiver.NewSocketHandler(refereeSocket, insertDatagramIntoQueue(subscriberDatagrams)),
+			receiver.NewSocketHandler(replayRouter, insertDatagramIntoQueue(routerDatagrams)),
 		},
 	)
 
-	datagrams := concurrency.NewQueue[network.ZmqMultipartDatagram]()
+	messageReceiver.Start(wg)
+	messageSender := sender.NewMessageSender(service_discovery.PlaybackAddress, replayRouter)
 
-	// creating goroutines internally but 'Start' does not need to be called by a goroutine.
-	message_receiver.Start(datagrams, wg)
+	repositoryFactory := repository.GetRepositoryFactory("redis")
+	sampleRepository := repositoryFactory.MakeSampleRepository()
 
-	// sender:
-	messageSender := sender.NewMessageSender(service_discovery.PlaybackAddress)
 	liveHandler := handler.NewLiveHandler()
+	liveController := controller.NewLiveController(messageSender, subscriberDatagrams, liveHandler, sampleRepository)
 
-	liveController := controller.NewLiveController(messageSender, datagrams, liveHandler)
+	replayHandler := handler.NewReplayHandler()
+	replayController := controller.NewReplayController(messageSender, routerDatagrams, replayHandler, sampleRepository)
 
-	wg.Add(1)
+	wg.Add(2) // liveController and replayController
 	go liveController.Run(wg)
+	go replayController.Run(wg)
 }
 
 func main() {
@@ -54,5 +67,6 @@ func main() {
 
 	wg := sync.WaitGroup{}
 	runPlayback(&wg)
+
 	wg.Wait()
 }

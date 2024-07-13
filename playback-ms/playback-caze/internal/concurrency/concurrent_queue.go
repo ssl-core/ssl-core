@@ -35,3 +35,21 @@ func (q *ConcurrentQueue[T]) DequeueAll() []T {
 	q.items = nil
 	return items
 }
+
+func (q *ConcurrentQueue[T]) DequeueAllWait(n int) []T {
+	q.mutex.Lock()
+	defer q.mutex.Unlock()
+
+	for len(q.items) < n {
+		q.cond.Wait()
+	}
+	items := q.items
+	q.items = nil
+	return items
+}
+
+func (q *ConcurrentQueue[T]) Len() int {
+	q.mutex.Lock()
+	defer q.mutex.Unlock()
+	return len(q.items)
+}
