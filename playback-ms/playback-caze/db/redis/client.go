@@ -3,6 +3,7 @@ package redis_db
 import (
 	"context"
 	"fmt"
+	"strconv"
 	"time"
 
 	"github.com/redis/go-redis/v9"
@@ -41,23 +42,23 @@ func (rc *RedisClient) Set(key time.Time, value interface{}) error {
 	ctx := context.Background()
 	args := &redis.XAddArgs{
 		Stream: rc.stream,
-		ID:     rc.convertTimeToKey(key),
+		ID:     timeToKey(key),
 		Values: map[string]interface{}{
 			"value": value,
 		},
 	}
-	fmt.Printf("Setting key %s for time %v...\n", rc.convertTimeToKey(key), key)
+	fmt.Printf("Setting key %s for time %v...\n", timeToKey(key), key)
 	return rc.client.XAdd(ctx, args).Err()
 }
 
 func (rc *RedisClient) Get(key time.Time) (interface{}, error) {
 	ctx := context.Background()
-	return rc.client.XRangeN(ctx, rc.stream, rc.convertTimeToKey(key), "+", 1).Result()
+	return rc.client.XRangeN(ctx, rc.stream, timeToKey(key), "+", 1).Result()
 }
 
-func (rc *RedisClient) GetChunk(start_time, end_time time.Time) (interface{}, error) {
+func (rc *RedisClient) GetChunk(startTime time.Time, endTime time.Time) (interface{}, error) {
 	ctx := context.Background()
-	return rc.client.XRange(ctx, rc.stream, rc.convertTimeToKey(start_time), rc.convertTimeToKey(end_time)).Result()
+	return rc.client.XRange(ctx, rc.stream, timeToKey(startTime), timeToKey(endTime)).Result()
 }
 
 func (rc *RedisClient) Clear() error {
@@ -65,6 +66,6 @@ func (rc *RedisClient) Clear() error {
 	return rc.client.FlushAll(ctx).Err()
 }
 
-func (rc *RedisClient) convertTimeToKey(t time.Time) string {
-	return fmt.Sprintf("%d", t.UnixNano())
+func timeToKey(t time.Time) string {
+	return strconv.FormatInt(t.UnixNano(), 10)
 }

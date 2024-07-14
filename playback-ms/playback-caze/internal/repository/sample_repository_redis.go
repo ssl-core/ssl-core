@@ -6,6 +6,7 @@ import (
 
 	"github.com/redis/go-redis/v9"
 	redis_db "github.com/robocin/ssl-core/playback-ms/db/redis"
+	"github.com/robocin/ssl-core/playback-ms/internal/time_util"
 	"github.com/robocin/ssl-core/playback-ms/pkg/pb/playback"
 	"google.golang.org/protobuf/proto"
 	"google.golang.org/protobuf/types/known/timestamppb"
@@ -20,33 +21,37 @@ type sampleRedisRepository struct {
 }
 
 func (r *sampleRedisRepository) AddSample(sample *playback.Sample) error {
-	return r.redisClient.Set(sample.Timestamp.AsTime(), sample.String())
+	message, err := proto.Marshal(sample)
+
+	if err != nil {
+		return err
+	}
+
+	return r.redisClient.Set(time_util.TimeFromTimestamp(sample.GetTimestamp()), message)
 }
 
-func (r *sampleRedisRepository) AddSamples(samples []*playback.Sample) error {
+func (r *sampleRedisRepository) AddSamples(samples []*playback.Sample) {
 	for _, sample := range samples {
 		err := r.AddSample(sample)
+
 		if err != nil {
-			return err
+			fmt.Println("Failed to save sample:", err)
 		}
 	}
-	return nil
 }
 
-func (r *sampleRedisRepository) GetSamples(startTime, endTime *timestamppb.Timestamp) ([]*playback.Sample, error) {
-	chunkResult, err := r.redisClient.GetChunk(startTime.AsTime(), endTime.AsTime())
+func (r *sampleRedisRepository) GetSamples(startTime *timestamppb.Timestamp, endTime *timestamppb.Timestamp) ([]*playback.Sample, error) {
+	chunkResult, err := r.redisClient.GetChunk(time_util.TimeFromTimestamp(startTime), time_util.TimeFromTimestamp(endTime))
 	if err != nil {
 		return nil, err
 	}
 	return samplesMapper(chunkResult), nil
 }
 
-// HELPERS:
-
 func sampleMapper(values map[string]interface{}) (*playback.Sample, error) {
-	if value, ok := values["value"]; ok {
+	if encoded, ok := values["value"]; ok {
 		var sample playback.Sample
-		err := proto.Unmarshal([]byte(value.(string)), &sample)
+		err := proto.Unmarshal(encoded.([]byte), &sample)
 		if err != nil {
 			return nil, err
 		}
@@ -59,13 +64,13 @@ func samplesMapper(dbResult interface{}) []*playback.Sample {
 	samples := make([]*playback.Sample, 0)
 	result, ok := dbResult.(redis.XMessageSliceCmd)
 	if !ok {
-		fmt.Println("Error casting dbResult to redis.XMessageSliceCmd")
+		fmt.Println("error casting dbResult to redis.XMessageSliceCmd")
 		return samples
 	}
 	for _, message := range result.Val() {
 		sample, err := sampleMapper(message.Values)
 		if err != nil {
-			log.Printf("Error mapping sample: %v", err)
+			log.Printf("error mapping sample: %v", err)
 			continue
 		}
 		samples = append(samples, sample)

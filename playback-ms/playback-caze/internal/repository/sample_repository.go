@@ -10,7 +10,7 @@ import (
 
 type SampleRepository interface {
 	AddSample(sample *playback.Sample) error
-	AddSamples(samples []*playback.Sample) error
+	AddSamples(samples []*playback.Sample)
 	GetSamples(*timestamppb.Timestamp, *timestamppb.Timestamp) ([]*playback.Sample, error)
 }
 
