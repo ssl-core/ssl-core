@@ -16,4 +16,4 @@ FROM scratch AS prod
 
 COPY --from=build /player-bff/player-sonson/bin/player .
 
-CMD ["./player"]
+ENTRYPOINT ["./player"]
