@@ -9,6 +9,7 @@ import (
 	"github.com/robocin/ssl-core/playback-ms/internal/handler"
 	"github.com/robocin/ssl-core/playback-ms/internal/messaging/sender"
 	"github.com/robocin/ssl-core/playback-ms/internal/repository"
+	"github.com/robocin/ssl-core/playback-ms/internal/time_util"
 	"github.com/robocin/ssl-core/playback-ms/network"
 	"github.com/robocin/ssl-core/playback-ms/pkg/pb/gateway"
 	"google.golang.org/protobuf/types/known/timestamppb"
@@ -40,8 +41,8 @@ func NewReplayController(
 }
 
 func (rc *ReplayController) responseFor(chunkRequest *gateway.GetReplayChunkRequest) (*gateway.GetReplayChunkResponse, error) {
-	start := chunkRequest.StartTimestamp
-	end := timestamppb.New(start.AsTime().Add(chunkSize))
+	start := chunkRequest.GetStartTimestamp()
+	end := timestamppb.New(time_util.TimeFromTimestamp(start).Add(chunkSize))
 	samples, err := rc.sampleRepository.GetSamples(start, end)
 	if err != nil {
 		return nil, err

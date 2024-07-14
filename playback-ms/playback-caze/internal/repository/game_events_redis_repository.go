@@ -6,6 +6,7 @@ import (
 
 	"github.com/redis/go-redis/v9"
 	redis_db "github.com/robocin/ssl-core/playback-ms/db/redis"
+	"github.com/robocin/ssl-core/playback-ms/internal/time_util"
 	"github.com/robocin/ssl-core/playback-ms/pkg/pb/common"
 	"google.golang.org/protobuf/proto"
 	"google.golang.org/protobuf/types/known/timestamppb"
@@ -15,12 +16,13 @@ type GameEventsRedisRepository struct {
 	redisClient *redis_db.RedisClient
 }
 
+// TODO(matheusvtna, joseviccruz): maybe serialize events.
 func (r *GameEventsRedisRepository) AddGameEvents(timestamp *timestamppb.Timestamp, gameEvents []*common.GameEvent) error {
-	return r.redisClient.Set(timestamp.AsTime(), gameEvents)
+	return r.redisClient.Set(time_util.TimeFromTimestamp(timestamp), gameEvents)
 }
 
 func (r *GameEventsRedisRepository) GetGameEventsFrom(timestamp *timestamppb.Timestamp) ([]*common.GameEvent, error) {
-	chunkResult, err := r.redisClient.GetChunk(timestamp.AsTime(), timestamp.AsTime())
+	chunkResult, err := r.redisClient.GetChunk(time_util.TimeFromTimestamp(timestamp), time_util.TimeFromTimestamp(timestamp))
 	if err != nil {
 		return nil, err
 	}
