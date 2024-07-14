@@ -59,7 +59,7 @@ func (r *SampleRedisRepository) GetSamples(startTime *timestamppb.Timestamp, end
 func sampleMapper(values map[string]interface{}) (*playback.Sample, error) {
 	if value, ok := values["value"]; ok {
 		var sample playback.Sample
-		err := proto.Unmarshal(value.([]byte), &sample)
+		err := proto.Unmarshal([]byte(value.(string)), &sample)
 		if err != nil {
 			return nil, err
 		}
