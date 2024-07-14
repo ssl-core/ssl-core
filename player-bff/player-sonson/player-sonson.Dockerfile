@@ -1,9 +1,8 @@
 FROM robocin/ssl-core-go-base:latest AS devcontainer
 
-COPY /protocols /tmp/protocols
-
 FROM devcontainer AS build
 
+COPY protocols /protocols
 COPY common/golang /common/golang
 COPY player-bff/player-sonson /player-bff/player-sonson
 

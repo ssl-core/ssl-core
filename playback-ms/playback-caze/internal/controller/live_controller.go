@@ -8,7 +8,7 @@ import (
 	"github.com/robocin/ssl-core/playback-ms/playback-caze/internal/handler"
 	"github.com/robocin/ssl-core/playback-ms/playback-caze/internal/messaging/sender"
 	"github.com/robocin/ssl-core/playback-ms/playback-caze/internal/repository"
-	"github.com/robocin/ssl-core/playback-ms/playback-caze/pkg/pb/playback"
+	"github.com/robocin/ssl-core/protocols/playback"
 	"google.golang.org/protobuf/proto"
 )
 

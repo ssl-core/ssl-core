@@ -6,9 +6,9 @@ import (
 	"github.com/robocin/ssl-core/common/golang/network"
 	"github.com/robocin/ssl-core/playback-ms/playback-caze/internal/mappers"
 	"github.com/robocin/ssl-core/playback-ms/playback-caze/internal/service_discovery"
-	"github.com/robocin/ssl-core/playback-ms/playback-caze/pkg/pb/perception"
-	"github.com/robocin/ssl-core/playback-ms/playback-caze/pkg/pb/playback"
-	"github.com/robocin/ssl-core/playback-ms/playback-caze/pkg/pb/referee"
+	"github.com/robocin/ssl-core/protocols/perception"
+	"github.com/robocin/ssl-core/protocols/playback"
+	"github.com/robocin/ssl-core/protocols/referee"
 	"google.golang.org/protobuf/proto"
 	"google.golang.org/protobuf/types/known/timestamppb"
 )

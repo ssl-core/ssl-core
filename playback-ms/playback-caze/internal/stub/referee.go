@@ -7,8 +7,8 @@ package stub
 
 // 	"github.com/robocin/ssl-core/playback-ms/playback-caze/internal/service_discovery"
 // 	"github.com/robocin/ssl-core/common/golang/network"
-// 	"github.com/robocin/ssl-core/playback-ms/playback-caze/pkg/pb/common"
-// 	"github.com/robocin/ssl-core/playback-ms/playback-caze/pkg/pb/referee"
+// 	"github.com/robocin/ssl-core/protocols/common"
+// 	"github.com/robocin/ssl-core/protocols/referee"
 // 	"google.golang.org/protobuf/proto"
 // 	"google.golang.org/protobuf/types/known/durationpb"
 // 	"google.golang.org/protobuf/types/known/timestamppb"

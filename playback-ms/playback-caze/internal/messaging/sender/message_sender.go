@@ -6,8 +6,8 @@ import (
 
 	"github.com/robocin/ssl-core/common/golang/network"
 	"github.com/robocin/ssl-core/playback-ms/playback-caze/internal/service_discovery"
-	"github.com/robocin/ssl-core/playback-ms/playback-caze/pkg/pb/gateway"
-	"github.com/robocin/ssl-core/playback-ms/playback-caze/pkg/pb/playback"
+	"github.com/robocin/ssl-core/protocols/gateway"
+	"github.com/robocin/ssl-core/protocols/playback"
 	"google.golang.org/protobuf/proto"
 )
 

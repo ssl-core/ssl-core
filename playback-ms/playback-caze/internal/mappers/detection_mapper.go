@@ -1,8 +1,8 @@
 package mappers
 
 import (
-	"github.com/robocin/ssl-core/playback-ms/playback-caze/pkg/pb/perception"
-	"github.com/robocin/ssl-core/playback-ms/playback-caze/pkg/pb/playback"
+	"github.com/robocin/ssl-core/protocols/perception"
+	"github.com/robocin/ssl-core/protocols/playback"
 )
 
 func DetectionMapper(input *perception.Detection) *playback.Detection {

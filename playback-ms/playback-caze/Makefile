@@ -8,5 +8,5 @@ build-linux:
 	@CGO_ENABLED=1 GOOS=linux GOARCH=amd64 go build -o bin/playback cmd/main.go
 
 setup:
+	@bash ../../common/golang/scripts/compile_proto.sh
 	@go mod download
-	@bash ../../common/golang/scripts/compile_proto.sh github.com/robocin/ssl-core/playback-ms/playback-caze
