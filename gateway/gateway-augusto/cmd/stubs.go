@@ -51,7 +51,7 @@ func stubThirdParty(proxy chan<- network.ZmqMultipartDatagram, id string, wg *sy
 	defer wg.Done()
 	for {
 		fmt.Println("Sending...", id)
-		proxy <- *network.NewZmqMultipartDatagram([]byte("stub-topicsasas"), []byte("stub-message"))
+		proxy <- network.NewZmqMultipartDatagram([]byte("stub-topicsasas"), []byte("stub-message"))
 	}
 }
 
@@ -73,7 +73,7 @@ func stubPlayback() {
 	pub := network.NewZmqPublisherSocket("ipc:///tmp/.ssl-core/playback.ipc")
 	data, _ := proto.Marshal(sample)
 	for {
-		pub.Send(*network.NewZmqMultipartDatagram([]byte("topic-playback"), data))
+		pub.Send(network.NewZmqMultipartDatagram([]byte("topic-playback"), data))
 	}
 }
 
@@ -94,10 +94,10 @@ func stubSubscriber() {
 func handler(data network.ZmqMultipartDatagram) network.ZmqMultipartDatagram {
 	id := data.Identifier
 	if string(data.Message) == "dealer 1" {
-		return *network.NewZmqMultipartDatagram(id, []byte("response 1"))
+		return network.NewZmqMultipartDatagram(id, []byte("response 1"))
 	}
 
-	return *network.NewZmqMultipartDatagram(id, []byte("response 2"))
+	return network.NewZmqMultipartDatagram(id, []byte("response 2"))
 }
 
 func router() {

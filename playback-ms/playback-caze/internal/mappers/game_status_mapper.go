@@ -1,8 +1,8 @@
 package mappers
 
 import (
-	"github.com/robocin/ssl-core/playback-ms/pkg/pb/playback"
-	"github.com/robocin/ssl-core/playback-ms/pkg/pb/referee"
+	"github.com/robocin/ssl-core/playback-ms/playback-caze/pkg/pb/playback"
+	"github.com/robocin/ssl-core/playback-ms/playback-caze/pkg/pb/referee"
 )
 
 func GameStatusMapper(input *referee.GameStatus) *playback.GameStatus {

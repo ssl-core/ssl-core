@@ -43,7 +43,7 @@ func (w *UdpMulticastWorker) Listen() {
 			continue
 		}
 
-		w.proxy <- *network.NewZmqMultipartDatagram(w.id, buffer[:bytes])
+		w.proxy <- network.NewZmqMultipartDatagram(w.id, buffer[:bytes])
 	}
 }
 

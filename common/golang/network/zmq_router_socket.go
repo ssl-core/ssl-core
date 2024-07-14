@@ -31,10 +31,10 @@ func (sock *ZmqRouterSocket) Receive() ZmqMultipartDatagram {
 
 	if err != nil {
 		fmt.Errorf("failed to receive message")
-		return *NewZmqMultipartDatagram(nil, nil)
+		return ZmqMultipartDatagram{}
 	}
 
-	return *NewZmqMultipartDatagram(message[0], message[1])
+	return NewZmqMultipartDatagram(message[0], message[1])
 }
 
 func (sock *ZmqRouterSocket) Close() {

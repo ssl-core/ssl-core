@@ -27,10 +27,10 @@ func (socket *ZmqSubscriberSocket) Receive() ZmqMultipartDatagram {
 
 	if err != nil {
 		fmt.Println("failed to receive message:", err)
-		return *NewZmqMultipartDatagram(nil, nil)
+		return ZmqMultipartDatagram{}
 	}
 
-	return *NewZmqMultipartDatagram(bytes[0], bytes[1])
+	return NewZmqMultipartDatagram(bytes[0], bytes[1])
 }
 
 func (socket *ZmqSubscriberSocket) Close() {

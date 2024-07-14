@@ -4,10 +4,10 @@ import (
 	"fmt"
 	"log"
 
-	"github.com/robocin/ssl-core/playback-ms/internal/service_discovery"
-	"github.com/robocin/ssl-core/playback-ms/network"
-	"github.com/robocin/ssl-core/playback-ms/pkg/pb/gateway"
-	"github.com/robocin/ssl-core/playback-ms/pkg/pb/playback"
+	"github.com/robocin/ssl-core/common/golang/network"
+	"github.com/robocin/ssl-core/playback-ms/playback-caze/internal/service_discovery"
+	"github.com/robocin/ssl-core/playback-ms/playback-caze/pkg/pb/gateway"
+	"github.com/robocin/ssl-core/playback-ms/playback-caze/pkg/pb/playback"
 	"google.golang.org/protobuf/proto"
 )
 

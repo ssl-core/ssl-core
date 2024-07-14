@@ -5,13 +5,13 @@ import (
 	"sync"
 	"time"
 
-	"github.com/robocin/ssl-core/playback-ms/internal/concurrency"
-	"github.com/robocin/ssl-core/playback-ms/internal/handler"
-	"github.com/robocin/ssl-core/playback-ms/internal/messaging/sender"
-	"github.com/robocin/ssl-core/playback-ms/internal/repository"
-	"github.com/robocin/ssl-core/playback-ms/internal/time_util"
-	"github.com/robocin/ssl-core/playback-ms/network"
-	"github.com/robocin/ssl-core/playback-ms/pkg/pb/gateway"
+	"github.com/robocin/ssl-core/common/golang/network"
+	"github.com/robocin/ssl-core/playback-ms/playback-caze/internal/concurrency"
+	"github.com/robocin/ssl-core/playback-ms/playback-caze/internal/handler"
+	"github.com/robocin/ssl-core/playback-ms/playback-caze/internal/messaging/sender"
+	"github.com/robocin/ssl-core/playback-ms/playback-caze/internal/repository"
+	"github.com/robocin/ssl-core/playback-ms/playback-caze/internal/time_util"
+	"github.com/robocin/ssl-core/playback-ms/playback-caze/pkg/pb/gateway"
 	"google.golang.org/protobuf/types/known/timestamppb"
 )
 
