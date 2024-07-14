@@ -32,7 +32,7 @@ services:
 
   perception-ms:
     container_name: perception-ms
-    image: robocin/perception-brutus:manual-5907a5
+    image: robocin/perception-brutus:manual-c7208b
     volumes:
       - .ssl-core:/tmp/.ssl-core
     depends_on:
@@ -40,15 +40,11 @@ services:
 
   referee-ms:
     container_name: referee-ms
-    image: robocin/referee-daronco:manual-5907a5
+    image: robocin/referee-daronco:manual-419128
     volumes:
       - .ssl-core:/tmp/.ssl-core
     depends_on:
       - perception-ms
-
-  redis-db:
-    container_name: redis-db
-    image: "redis:latest"
 
   playback-ms:
     container_name: playback-ms
@@ -65,10 +61,7 @@ services:
     container_name: player-bff
     build:
       context: .
-      dockerfile: player-bff/Dockerfile
-      args:
-        - SOURCE_DIRECTORY=player-bff
-    command: ["./player-bff"]
+      dockerfile: player-bff/player-sonson/player-sonson.Dockerfile
     ports:
       - 4040:4040
     depends_on:
@@ -106,6 +99,10 @@ services:
     command: ["-g", "daemon off;"]
     ports:
       - 3030:80
+
+  redis-db:
+    container_name: redis-db
+    image: "redis:latest"
 
 volumes:
   .ssl-core:

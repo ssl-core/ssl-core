@@ -40,7 +40,7 @@ func main() {
 	wg.Add(3)
 
 	proxy := make(chan network.ZmqMultipartDatagram)
-	go startGatewayUdpMulticastWorker("224.5.23.2:10020", proxy, "vision-third-party", &wg)
+	go startGatewayUdpMulticastWorker("224.5.23.2:10006", proxy, "vision-third-party", &wg)
 	go startGatewayUdpMulticastWorker("224.5.23.2:10010", proxy, "tracked-third-party", &wg)
 	go startGatewayUdpMulticastWorker("224.5.23.1:11003", proxy, "referee-third-party", &wg)
 	go startGatewayZmqServer(proxy, &wg)
