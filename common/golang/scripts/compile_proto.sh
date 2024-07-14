@@ -3,6 +3,7 @@ GREEN="\033[0;32m"
 RED='\033[0;31m'
 NC="\033[0m"
 
+# Check if one argument is provided
 if [ "$#" -ne 1 ]; then
      echo -e "${RED}x Missing go module!${NC}"
     exit 1
@@ -38,5 +39,5 @@ mv ${BUILD_DIR}/protocols ${BUILD_DIR}/pb
 
 pwd
 
-# Print message
+# Print successful message
 echo -e "${GREEN}✓ Protobufs compiled!${NC}"

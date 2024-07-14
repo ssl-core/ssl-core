@@ -1,7 +1,7 @@
 package server
 
 import (
-	"github.com/robocin/ssl-core/gateway/gateway-augusto/internal/network"
+	"github.com/robocin/ssl-core/common/golang/network"
 )
 
 type ZmqServer struct {

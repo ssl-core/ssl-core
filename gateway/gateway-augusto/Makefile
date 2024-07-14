@@ -9,7 +9,4 @@ build-linux: # TODO(joseviccruz): CGO_ENABLED=0, i.e., static linking zmq.
 
 setup:
 	@go mod download
-	@bash scripts/compile_proto.sh
-
-compile-proto:
-	@bash scripts/compile_proto.sh
+	@bash ../../common/golang/scripts/compile_proto.sh github.com/robocin/ssl-core/gateway/gateway-augusto

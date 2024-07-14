@@ -6,6 +6,7 @@ FROM devcontainer AS build
 
 WORKDIR /app
 
+COPY common/golang /common/golang
 COPY gateway/gateway-augusto .
 
 RUN make setup
