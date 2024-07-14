@@ -1,4 +1,4 @@
-module github.com/robocin/ssl-core/player-bff
+module github.com/robocin/ssl-core/player-bff/player-sonson
 
 go 1.22.0
 

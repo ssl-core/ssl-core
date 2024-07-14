@@ -3,7 +3,7 @@ package server
 import (
 	"net/http"
 
-	"github.com/robocin/ssl-core/player-bff/transport/http/handler"
+	"github.com/robocin/ssl-core/player-bff/player-sonson/transport/http/handler"
 )
 
 type HttpServer struct {

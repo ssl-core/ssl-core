@@ -106,10 +106,7 @@ services:
     container_name: player-bff
     build:
       context: .
-      dockerfile: player-bff/Dockerfile
-      args:
-        - SOURCE_DIRECTORY=player-bff
-    command: ["./player-bff"]
+      dockerfile: player-bff/player-sonson/player-sonson.Dockerfile
     ports:
       - 4040:4040
     depends_on:

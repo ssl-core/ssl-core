@@ -5,9 +5,9 @@ import (
 	"net/http"
 
 	"github.com/gorilla/websocket"
-	"github.com/robocin/ssl-core/player-bff/internal/application"
-	"github.com/robocin/ssl-core/player-bff/transport/grpc/client"
-	"github.com/robocin/ssl-core/player-bff/transport/websocket/connection"
+	"github.com/robocin/ssl-core/player-bff/player-sonson/internal/application"
+	"github.com/robocin/ssl-core/player-bff/player-sonson/transport/grpc/client"
+	"github.com/robocin/ssl-core/player-bff/player-sonson/transport/websocket/connection"
 )
 
 type WebsocketServer struct {

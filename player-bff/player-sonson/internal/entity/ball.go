@@ -1,9 +1,9 @@
 package entity
 
 import (
-	"github.com/robocin/ssl-core/player-bff/internal/util"
-	"github.com/robocin/ssl-core/player-bff/pkg/pb/common"
-	"github.com/robocin/ssl-core/player-bff/pkg/pb/playback"
+	"github.com/robocin/ssl-core/player-bff/player-sonson/internal/util"
+	"github.com/robocin/ssl-core/player-bff/player-sonson/pkg/pb/common"
+	"github.com/robocin/ssl-core/player-bff/player-sonson/pkg/pb/playback"
 )
 
 type Ball struct {

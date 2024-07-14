@@ -1,39 +1,47 @@
-// For format details, see https://aka.ms/devcontainer.json. For config options, see the
-// README at: https://github.com/devcontainers/templates/tree/main/src/docker-existing-dockerfile
 {
-	"name": "Golang",
+	"name": "Golang: Player Sonson",
 	"build": {
-		"context": "../..",
-		"dockerfile": "Dockerfile"
+		"context": "../../..",
+		"dockerfile": "./../player-sonson.Dockerfile",
+		"target": "devcontainer"
 	},
-	"postCreateCommand": "make setup",
+	"initializeCommand": "mkdir -p /tmp/.ssl-core",
+	"mounts": [
+		"source=/tmp/.ssl-core/,target=/tmp/.ssl-core/,type=bind,consistency=cached"
+	],
+	"runArgs": [
+		"-e",
+		"DISPLAY=${env:DISPLAY}",
+		"--network=host"
+	],
 	"customizations": {
 		"vscode": {
 			"settings": {
 				// Go Settings
-				"go.buildTags": "",
-				"go.toolsEnvVars": {
-					"CGO_ENABLED": "0"
-				},
-				"go.useLanguageServer": true,
-				"go.testEnvVars": {
-					"CGO_ENABLED": "1"
-				},
-				"go.testFlags": [
-					"-v",
-					"-race"
-				],
-				"go.testTimeout": "10s",
-				"go.coverOnSingleTest": true,
-				"go.coverOnSingleTestFile": true,
-				"go.coverOnTestPackage": true,
-				"go.lintTool": "golangci-lint",
-				"go.lintOnSave": "package",
 				"[go]": {
+					"buildTags": "",
+					"toolsEnvVars": {
+						"CGO_ENABLED": "0"
+					},
+					"useLanguageServer": true,
+					"testEnvVars": {
+						"CGO_ENABLED": "1"
+					},
+					"testFlags": [
+						"-v",
+						"-race"
+					],
+					"testTimeout": "10s",
+					"coverOnSingleTest": true,
+					"coverOnSingleTestFile": true,
+					"coverOnTestPackage": true,
+					"lintTool": "golangci-lint",
+					"lintOnSave": "package",
 					"editor.codeActionsOnSave": {
 						"source.organizeImports": "always"
 					},
 					"editor.tabSize": 2,
+					"editor.insertSpaces": false,
 					"editor.formatOnSave": true
 				},
 				"gopls": {
@@ -41,26 +49,28 @@
 					"staticcheck": true
 				},
 				// Editor Settings
+				"editor.insertSpaces": true,
 				"editor.detectIndentation": true,
 				// Files Settings
 				"files.insertFinalNewline": true,
 				"files.eol": "\n",
 				// JSON Settings
 				"[json]": {
-					"editor.insertSpaces": true,
 					"editor.tabSize": 2,
 					"editor.formatOnSave": true,
 					"editor.defaultFormatter": "vscode.json-language-features"
 				},
 				// YAML Settings
 				"[yaml]": {
-					"editor.insertSpaces": true,
 					"editor.tabSize": 2,
 					"editor.formatOnSave": true,
 					"editor.defaultFormatter": "redhat.vscode-yaml"
 				},
 				"[markdown]": {
 					"editor.formatOnSave": true
+				},
+				"[makefile]": {
+					"editor.insertSpaces": false
 				}
 			},
 			"extensions": [

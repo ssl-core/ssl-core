@@ -1,7 +1,7 @@
 package service
 
 import (
-	"github.com/robocin/ssl-core/player-bff/internal/entity"
+	"github.com/robocin/ssl-core/player-bff/player-sonson/internal/entity"
 )
 
 type PlaybackService interface {

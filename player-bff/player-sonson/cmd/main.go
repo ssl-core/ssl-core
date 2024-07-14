@@ -3,10 +3,10 @@ package main
 import (
 	"fmt"
 
-	"github.com/robocin/ssl-core/player-bff/internal/application"
-	grpcClient "github.com/robocin/ssl-core/player-bff/transport/grpc/client"
-	httpServer "github.com/robocin/ssl-core/player-bff/transport/http/server"
-	websocketServer "github.com/robocin/ssl-core/player-bff/transport/websocket/server"
+	"github.com/robocin/ssl-core/player-bff/player-sonson/internal/application"
+	grpcClient "github.com/robocin/ssl-core/player-bff/player-sonson/transport/grpc/client"
+	httpServer "github.com/robocin/ssl-core/player-bff/player-sonson/transport/http/server"
+	websocketServer "github.com/robocin/ssl-core/player-bff/player-sonson/transport/websocket/server"
 )
 
 const (

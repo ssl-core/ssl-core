@@ -7,9 +7,9 @@ import (
 	"log"
 	"time"
 
-	"github.com/robocin/ssl-core/player-bff/internal/application"
-	"github.com/robocin/ssl-core/player-bff/internal/entity"
-	pb "github.com/robocin/ssl-core/player-bff/pkg/pb/gateway"
+	"github.com/robocin/ssl-core/player-bff/player-sonson/internal/application"
+	"github.com/robocin/ssl-core/player-bff/player-sonson/internal/entity"
+	pb "github.com/robocin/ssl-core/player-bff/player-sonson/pkg/pb/gateway"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials/insecure"
 	"google.golang.org/protobuf/types/known/timestamppb"
