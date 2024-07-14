@@ -1,6 +1,5 @@
 # metrics
 
-
 This folder contains the code implementation of a feature that enables the application to generate statistical data using the application logs.
 
 We aim to develop the following tasks:
