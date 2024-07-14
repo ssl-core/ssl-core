@@ -1,11 +1,18 @@
 # Colors
 GREEN="\033[0;32m"
+RED='\033[0;31m'
 NC="\033[0m"
+
+# Check if one argument is provided
+if [ "$#" -ne 1 ]; then
+     echo -e "${RED}x Missing go module!${NC}"
+    exit 1
+fi
 
 # Directories
 PROTO_DIR="/tmp/protocols"
 BUILD_DIR="./pkg"
-GO_MODULE="github.com/robocin/ssl-core/gateway/gateway-augusto"
+GO_MODULE=$1
 
 # Variables
 FLAGS=""
@@ -30,5 +37,7 @@ protoc -I "${PROTO_DIR}" --go_out="${BUILD_DIR}" --go-grpc_out="${BUILD_DIR}" \
 rm -rf ${BUILD_DIR}/pb
 mv ${BUILD_DIR}/protocols ${BUILD_DIR}/pb
 
-# Print message
+pwd
+
+# Print successful message
 echo -e "${GREEN}✓ Protobufs compiled!${NC}"

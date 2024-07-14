@@ -37,18 +37,6 @@ func (sock *ZmqRouterSocket) Receive() ZmqMultipartDatagram {
 	return *NewZmqMultipartDatagram(message[0], message[1])
 }
 
-func (sock *ZmqRouterSocket) Test() {
-	message, err := sock.socket.RecvMessage()
-
-	if err != nil {
-		fmt.Errorf("failed to receive message")
-		return
-	}
-
-	fmt.Println("Response to", message[0], string(message[1]))
-	sock.socket.SendMessage([][]byte{message[0], []byte("response")})
-}
-
 func (sock *ZmqRouterSocket) Close() {
 	sock.socket.Destroy()
 }
