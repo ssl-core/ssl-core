@@ -1,11 +1,17 @@
 # Colors
 GREEN="\033[0;32m"
+RED='\033[0;31m'
 NC="\033[0m"
+
+if [ "$#" -ne 1 ]; then
+     echo -e "${RED}x Missing go module!${NC}"
+    exit 1
+fi
 
 # Directories
 PROTO_DIR="/tmp/protocols"
 BUILD_DIR="./pkg"
-GO_MODULE="github.com/robocin/ssl-core/playback-ms"
+GO_MODULE=$1
 
 # Variables
 FLAGS=""
