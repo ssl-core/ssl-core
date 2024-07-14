@@ -4,7 +4,7 @@ import (
 	"encoding/json"
 	"time"
 
-	"github.com/robocin/ssl-core/player-bff/player-sonson/pkg/pb/common"
+	"github.com/robocin/ssl-core/protocols/common"
 )
 
 type Event struct {

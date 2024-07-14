@@ -12,8 +12,8 @@ import (
 	"github.com/golang/protobuf/ptypes/timestamp"
 	"github.com/robocin/ssl-core/common/golang/network"
 
-	"github.com/robocin/ssl-core/gateway/gateway-augusto/pkg/pb/gateway"
-	"github.com/robocin/ssl-core/gateway/gateway-augusto/pkg/pb/playback"
+	"github.com/robocin/ssl-core/protocols/gateway"
+	"github.com/robocin/ssl-core/protocols/playback"
 	"google.golang.org/grpc"
 )
 

@@ -1,10 +1,11 @@
 module github.com/robocin/ssl-core/playback-ms/playback-caze
 
-go 1.22.0
+go 1.22
 
 require (
 	github.com/redis/go-redis/v9 v9.5.4
 	github.com/robocin/ssl-core/common/golang v0.0.0-00010101000000-000000000000
+	github.com/robocin/ssl-core/protocols v0.0.0-00010101000000-000000000000
 	github.com/zeromq/goczmq v4.1.0+incompatible
 	google.golang.org/grpc v1.65.0
 	google.golang.org/protobuf v1.34.2
@@ -20,3 +21,5 @@ require (
 )
 
 replace github.com/robocin/ssl-core/common/golang => ../../common/golang
+
+replace github.com/robocin/ssl-core/protocols => /tmp/ssl-core/golang/protocols

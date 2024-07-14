@@ -1,7 +1,7 @@
 package repository
 
 import (
-	"github.com/robocin/ssl-core/playback-ms/playback-caze/pkg/pb/playback"
+	"github.com/robocin/ssl-core/protocols/playback"
 	"google.golang.org/protobuf/types/known/timestamppb"
 )
 

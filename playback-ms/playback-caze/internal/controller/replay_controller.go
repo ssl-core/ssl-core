@@ -11,7 +11,7 @@ import (
 	"github.com/robocin/ssl-core/playback-ms/playback-caze/internal/messaging/sender"
 	"github.com/robocin/ssl-core/playback-ms/playback-caze/internal/repository"
 	"github.com/robocin/ssl-core/playback-ms/playback-caze/internal/time_util"
-	"github.com/robocin/ssl-core/playback-ms/playback-caze/pkg/pb/gateway"
+	"github.com/robocin/ssl-core/protocols/gateway"
 	"google.golang.org/protobuf/types/known/timestamppb"
 )
 

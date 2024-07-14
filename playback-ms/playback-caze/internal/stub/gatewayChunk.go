@@ -7,7 +7,7 @@ import (
 
 	"github.com/robocin/ssl-core/common/golang/network"
 	"github.com/robocin/ssl-core/playback-ms/playback-caze/internal/service_discovery"
-	"github.com/robocin/ssl-core/playback-ms/playback-caze/pkg/pb/gateway"
+	"github.com/robocin/ssl-core/protocols/gateway"
 	"google.golang.org/protobuf/proto"
 	"google.golang.org/protobuf/types/known/timestamppb"
 )
