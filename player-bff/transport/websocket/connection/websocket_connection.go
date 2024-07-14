@@ -64,6 +64,13 @@ func (wc *WebsocketConnection) OnNotify(event application.ConnectionProxyEvent) 
 			"payload": event.Payload,
 		}
 		wc.conn.WriteJSON(message)
+	case "chunk":
+		message := map[string]interface{}{
+			"type":    "chunk",
+			"payload": event.Payload,
+		}
+		fmt.Println("Write message: ", message)
+		wc.conn.WriteJSON(message)
 	}
 }
 
@@ -72,10 +79,17 @@ func (wc *WebsocketConnection) handleEvent(event string, data map[string]interfa
 	case "receive-live-stream":
 		wc.changeState(Live)
 		wc.sharedProxy.AddListener(wc)
-	case "get-chunk":
+	case "get-replay-chunk":
 		wc.changeState(Available)
-		timestamp := data["timestamp"].(string)
-		wc.client.GetReplayChunk(timestamp)
+		timestamp, _ := data["timestamp"].(float64)
+		chunk, err := wc.client.GetReplayChunk(int64(timestamp))
+
+		if err != nil {
+			fmt.Println("Error on GetReplayChunk:", err)
+			return
+		}
+
+		wc.OnNotify(application.NewConnectionProxyEvent("chunk", chunk))
 	case "ping":
 		wc.conn.WriteMessage(websocket.TextMessage, []byte("pong"))
 	case "close":

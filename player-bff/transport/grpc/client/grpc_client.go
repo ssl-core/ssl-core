@@ -5,12 +5,14 @@ import (
 	"fmt"
 	"io"
 	"log"
+	"time"
 
 	"github.com/robocin/ssl-core/player-bff/internal/application"
 	"github.com/robocin/ssl-core/player-bff/internal/entity"
 	pb "github.com/robocin/ssl-core/player-bff/pkg/pb/gateway"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials/insecure"
+	"google.golang.org/protobuf/types/known/timestamppb"
 )
 
 type GrpcClient struct {
@@ -85,21 +87,29 @@ func (gc *GrpcClient) ReceiveLiveStream(proxy *application.ConnectionProxy) erro
 	return nil
 }
 
-func (gc *GrpcClient) GetReplayChunk(timestamp string) (entity.Chunk, error) {
+func (gc *GrpcClient) GetReplayChunk(timestamp int64) (entity.Chunk, error) {
 	client := pb.NewGatewayServiceClient(gc.conn)
 
-	ctx, cancel := context.WithCancel(context.Background())
+	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
 
-	response, err := client.GetGameEvents(ctx, &pb.GetGameEventsRequest{})
-	fmt.Println(response)
+	startTimestamp := timestamppb.New(time.UnixMilli(timestamp))
+
+	response, err := client.GetReplayChunk(ctx, &pb.GetReplayChunkRequest{StartTimestamp: startTimestamp})
 
 	if err != nil {
 		return entity.Chunk{}, err
 	}
 
+	frames := make([]entity.Frame, 0)
+
+	for _, sample := range response.GetSamples() {
+		frames = append(frames, entity.NewFrame(sample))
+	}
+
 	chunk := entity.Chunk{
-		Frames: []entity.Frame{},
+		Frames:  frames,
+		EndTime: response.GetLastTimestamp().AsTime(),
 	}
 
 	return chunk, nil

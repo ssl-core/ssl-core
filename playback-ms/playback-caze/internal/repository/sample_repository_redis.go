@@ -16,7 +16,13 @@ type SampleRedisRepository struct {
 }
 
 func (r *SampleRedisRepository) AddSample(sample *playback.Sample) error {
-	return r.redisClient.Set(sample.Timestamp.AsTime(), sample.String())
+	serializedSample, err := proto.Marshal(sample)
+
+	if err != nil {
+		return err
+	}
+
+	return r.redisClient.Set(sample.Timestamp.AsTime(), serializedSample)
 }
 
 func (r *SampleRedisRepository) AddSamples(samples []*playback.Sample) error {
@@ -65,12 +71,12 @@ func (r *SampleRedisRepository) sampleMapper(values map[string]interface{}) (*pl
 
 func (r *SampleRedisRepository) samplesMapper(dbResult interface{}) []*playback.Sample {
 	samples := make([]*playback.Sample, 0)
-	result, ok := dbResult.(redis.XMessageSliceCmd)
+	result, ok := dbResult.([]redis.XMessage)
 	if !ok {
-		fmt.Println("Error casting dbResult to redis.XMessageSliceCmd")
+		fmt.Println("Error casting dbResult to []redis.XMessage")
 		return samples
 	}
-	for _, message := range result.Val() {
+	for _, message := range result {
 		sample, err := r.sampleMapper(message.Values)
 		if err != nil {
 			log.Printf("Error mapping sample: %v", err)

@@ -100,7 +100,7 @@ class WebSocketClient implements SocketClient {
       throw new Error("Socket not initialized");
     }
 
-    this.send({ event: "get-replay-chunk", payload: { timestamp } });
+    this.send({ event: "get-replay-chunk", data: { timestamp } });
   }
 
   private handleMessage(event: MessageEvent<string>) {
