@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"os"
 	"sync"
 
 	"github.com/robocin/ssl-core/common/golang/network"
@@ -31,6 +32,12 @@ func startGatewayGrpcServer(wg *sync.WaitGroup) {
 }
 
 func main() {
+	visionPort := os.Getenv("VISION_PORT")
+	if visionPort == "" {
+		fmt.Println("VISION_PORT not set")
+		return
+	}
+
 	fmt.Println("gateway-augusto is running!")
 
 	// TODO(aalmds): refactor addresses with service discovery
@@ -40,7 +47,7 @@ func main() {
 	wg.Add(3)
 
 	proxy := make(chan network.ZmqMultipartDatagram)
-	go startGatewayUdpMulticastWorker("224.5.23.2:10006", proxy, "vision-third-party", &wg)
+	go startGatewayUdpMulticastWorker(fmt.Sprintf("224.5.23.2:%s", visionPort), proxy, "vision-third-party", &wg)
 	go startGatewayUdpMulticastWorker("224.5.23.2:10010", proxy, "tracked-third-party", &wg)
 	go startGatewayUdpMulticastWorker("224.5.23.1:11003", proxy, "referee-third-party", &wg)
 	go startGatewayZmqServer(proxy, &wg)

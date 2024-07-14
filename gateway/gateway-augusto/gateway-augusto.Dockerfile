@@ -19,4 +19,6 @@ FROM gcr.io/distroless/static-debian12 AS prod
 COPY --from=build /prod /
 COPY --from=build /gateway/gateway-augusto/bin/gateway .
 
+ENV VISION_PORT ${VISION_PORT}
+
 ENTRYPOINT ["./gateway"]

@@ -62,6 +62,8 @@ services:
     build:
       context: .
       dockerfile: gateway/gateway-augusto/gateway-augusto.Dockerfile
+    environment:
+      - VISION_PORT=10020
     volumes:
       - .ssl-core:/tmp/.ssl-core
     ports:
