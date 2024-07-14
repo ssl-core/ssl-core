@@ -1,4 +1,22 @@
 services:
+  game-controller:
+    container_name: game-controller
+    image: robocupssl/ssl-game-controller:3.9.0
+    command:
+      - "-visionAddress"
+      - "224.5.23.2:10006"
+      - "-trackerAddress"
+      - "224.5.23.2:10010"
+      - "-publishAddress"
+      - "224.5.23.1:11003"
+      - "-address"
+      - ":8081"
+    restart: unless-stopped
+    ports:
+      - 8081/tcp
+    logging:
+      driver: none
+
   gateway:
     container_name: gateway
     build:
@@ -8,6 +26,9 @@ services:
       - .ssl-core:/tmp/.ssl-core
     ports:
       - 50051:50051
+      - "224.5.23.2:10006:10006/udp"
+      - "224.5.23.2:10010:10010/udp"
+      - "224.5.23.1:11003:11003/udp"
 
   perception-ms:
     container_name: perception-ms
