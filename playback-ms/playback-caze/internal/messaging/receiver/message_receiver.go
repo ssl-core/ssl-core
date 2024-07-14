@@ -3,7 +3,7 @@ package receiver
 import (
 	"sync"
 
-	"github.com/robocin/ssl-core/playback-ms/network"
+	"github.com/robocin/ssl-core/common/golang/network"
 )
 
 type MessageReceiver struct {

@@ -1,7 +1,7 @@
 package repository
 
 import (
-	redis_db "github.com/robocin/ssl-core/playback-ms/db/redis"
+	redis_db "github.com/robocin/ssl-core/playback-ms/playback-caze/db/redis"
 )
 
 const (

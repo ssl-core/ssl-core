@@ -4,9 +4,10 @@ COPY /protocols /tmp/protocols
 
 FROM devcontainer AS build
 
-WORKDIR /app
+COPY common/golang /common/golang
+COPY playback-ms/playback-caze /playback-ms/playback-caze
 
-COPY playback-ms/playback-caze .
+WORKDIR /playback-ms/playback-caze
 
 RUN make setup
 RUN make build-linux
@@ -17,6 +18,6 @@ RUN mkdir /prod && \
 FROM gcr.io/distroless/static-debian12 AS prod
 
 COPY --from=build /prod /
-COPY --from=build /app/bin/playback-ms .
+COPY --from=build /playback-ms/playback-caze/bin/playback .
 
-ENTRYPOINT ["./playback-ms"]
+ENTRYPOINT ["./playback"]

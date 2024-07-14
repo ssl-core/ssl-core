@@ -4,8 +4,8 @@ import (
 	"fmt"
 	"sync"
 
-	"github.com/robocin/ssl-core/playback-ms/internal/service_discovery"
-	"github.com/robocin/ssl-core/playback-ms/network"
+	"github.com/robocin/ssl-core/common/golang/network"
+	"github.com/robocin/ssl-core/playback-ms/playback-caze/internal/service_discovery"
 )
 
 type SubscriberStub struct {

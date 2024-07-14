@@ -4,9 +4,10 @@ COPY /protocols /tmp/protocols
 
 FROM devcontainer AS build
 
-WORKDIR /app
+COPY common/golang /common/golang
+COPY gateway/gateway-augusto /gateway/gateway-augusto
 
-COPY gateway/gateway-augusto .
+WORKDIR /gateway/gateway-augusto
 
 RUN make setup
 RUN make build-linux
@@ -17,6 +18,6 @@ RUN mkdir /prod && \
 FROM gcr.io/distroless/static-debian12 AS prod
 
 COPY --from=build /prod /
-COPY --from=build /app/bin/gateway .
+COPY --from=build /gateway/gateway-augusto/bin/gateway .
 
 ENTRYPOINT ["./gateway"]

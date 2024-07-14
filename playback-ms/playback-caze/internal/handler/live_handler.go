@@ -3,12 +3,12 @@ package handler
 import (
 	"fmt"
 
-	"github.com/robocin/ssl-core/playback-ms/internal/mappers"
-	"github.com/robocin/ssl-core/playback-ms/internal/service_discovery"
-	"github.com/robocin/ssl-core/playback-ms/network"
-	"github.com/robocin/ssl-core/playback-ms/pkg/pb/perception"
-	"github.com/robocin/ssl-core/playback-ms/pkg/pb/playback"
-	"github.com/robocin/ssl-core/playback-ms/pkg/pb/referee"
+	"github.com/robocin/ssl-core/common/golang/network"
+	"github.com/robocin/ssl-core/playback-ms/playback-caze/internal/mappers"
+	"github.com/robocin/ssl-core/playback-ms/playback-caze/internal/service_discovery"
+	"github.com/robocin/ssl-core/playback-ms/playback-caze/pkg/pb/perception"
+	"github.com/robocin/ssl-core/playback-ms/playback-caze/pkg/pb/playback"
+	"github.com/robocin/ssl-core/playback-ms/playback-caze/pkg/pb/referee"
 	"google.golang.org/protobuf/proto"
 	"google.golang.org/protobuf/types/known/timestamppb"
 )
