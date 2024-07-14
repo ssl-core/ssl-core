@@ -46,7 +46,7 @@ func (rc *RedisClient) Set(key time.Time, value interface{}) error {
 			"value": value,
 		},
 	}
-	fmt.Printf("Setting key %s with value %v...\n", rc.convertTimeToKey(key), value)
+	fmt.Printf("Setting key %s for time %v...\n", rc.convertTimeToKey(key), key)
 	return rc.client.XAdd(ctx, args).Err()
 }
 
