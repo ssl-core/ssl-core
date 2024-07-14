@@ -6,6 +6,7 @@ import (
 
 	"github.com/redis/go-redis/v9"
 	redis_db "github.com/robocin/ssl-core/playback-ms/db/redis"
+	"github.com/robocin/ssl-core/playback-ms/internal/time_util"
 	"github.com/robocin/ssl-core/playback-ms/pkg/pb/playback"
 	"google.golang.org/protobuf/proto"
 	"google.golang.org/protobuf/types/known/timestamppb"
@@ -16,23 +17,23 @@ type SampleRedisRepository struct {
 }
 
 func (r *SampleRedisRepository) AddSample(sample *playback.Sample) error {
-	serializedSample, err := proto.Marshal(sample)
+	message, err := proto.Marshal(sample)
 
 	if err != nil {
 		return err
 	}
 
-	return r.redisClient.Set(sample.Timestamp.AsTime(), serializedSample)
+	return r.redisClient.Set(time_util.TimeFromTimestamp(sample.GetTimestamp()), message)
 }
 
-func (r *SampleRedisRepository) AddSamples(samples []*playback.Sample) error {
+func (r *SampleRedisRepository) AddSamples(samples []*playback.Sample) {
 	for _, sample := range samples {
 		err := r.AddSample(sample)
+
 		if err != nil {
-			return err
+			fmt.Println("Failed to save sample:", err)
 		}
 	}
-	return nil
 }
 
 func (r *SampleRedisRepository) GetLatestSample() (*playback.Sample, error) {
@@ -40,27 +41,25 @@ func (r *SampleRedisRepository) GetLatestSample() (*playback.Sample, error) {
 	if err != nil {
 		return nil, err
 	}
-	samples := r.samplesMapper(dbResult)
+	samples := samplesMapper(dbResult)
 	if len(samples) == 1 {
 		return samples[0], nil
 	}
 	return nil, fmt.Errorf("error getting latest sample")
 }
 
-func (r *SampleRedisRepository) GetSamples(startTime, endTime *timestamppb.Timestamp) ([]*playback.Sample, error) {
-	chunkResult, err := r.redisClient.GetChunk(startTime.AsTime(), endTime.AsTime())
+func (r *SampleRedisRepository) GetSamples(startTime *timestamppb.Timestamp, endTime *timestamppb.Timestamp) ([]*playback.Sample, error) {
+	chunkResult, err := r.redisClient.GetChunk(time_util.TimeFromTimestamp(startTime), time_util.TimeFromTimestamp(endTime))
 	if err != nil {
 		return nil, err
 	}
-	return r.samplesMapper(chunkResult), nil
+	return samplesMapper(chunkResult), nil
 }
 
-// HELPERS:
-
-func (r *SampleRedisRepository) sampleMapper(values map[string]interface{}) (*playback.Sample, error) {
+func sampleMapper(values map[string]interface{}) (*playback.Sample, error) {
 	if value, ok := values["value"]; ok {
 		var sample playback.Sample
-		err := proto.Unmarshal([]byte(value.(string)), &sample)
+		err := proto.Unmarshal(value.([]byte), &sample)
 		if err != nil {
 			return nil, err
 		}
@@ -69,17 +68,17 @@ func (r *SampleRedisRepository) sampleMapper(values map[string]interface{}) (*pl
 	return nil, fmt.Errorf("error mapping sample from redis values")
 }
 
-func (r *SampleRedisRepository) samplesMapper(dbResult interface{}) []*playback.Sample {
+func samplesMapper(dbResult interface{}) []*playback.Sample {
 	samples := make([]*playback.Sample, 0)
 	result, ok := dbResult.([]redis.XMessage)
 	if !ok {
-		fmt.Println("Error casting dbResult to []redis.XMessage")
+		fmt.Println("error casting dbResult to []redis.XMessage")
 		return samples
 	}
 	for _, message := range result {
-		sample, err := r.sampleMapper(message.Values)
+		sample, err := sampleMapper(message.Values)
 		if err != nil {
-			log.Printf("Error mapping sample: %v", err)
+			log.Printf("error mapping sample: %v", err)
 			continue
 		}
 		samples = append(samples, sample)

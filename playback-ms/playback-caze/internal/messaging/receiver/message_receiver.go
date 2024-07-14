@@ -19,6 +19,14 @@ type SocketHandler struct {
 	callback func(network.ZmqMultipartDatagram)
 }
 
+func (sh *SocketHandler) WhenReceive() {
+	datagram := sh.socket.Receive()
+
+	if !datagram.IsEmpty() {
+		sh.callback(datagram)
+	}
+}
+
 func NewSocketHandler(socket ISocketReceiver, callback func(network.ZmqMultipartDatagram)) *SocketHandler {
 	return &SocketHandler{
 		socket:   socket,
@@ -40,11 +48,7 @@ func (mr *MessageReceiver) Start(wg *sync.WaitGroup) {
 			defer wg.Done()
 
 			for {
-				datagram := handler.socket.Receive()
-				if datagram.IsEmpty() {
-					continue
-				}
-				handler.callback(datagram)
+				handler.WhenReceive()
 			}
 		}()
 	}

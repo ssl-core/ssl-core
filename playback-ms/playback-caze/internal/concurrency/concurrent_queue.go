@@ -36,7 +36,7 @@ func (q *ConcurrentQueue[T]) DequeueAll() []T {
 	return items
 }
 
-func (q *ConcurrentQueue[T]) DequeueAllWait(n int) []T {
+func (q *ConcurrentQueue[T]) DequeueAllWaitLen(n int) []T {
 	q.mutex.Lock()
 	defer q.mutex.Unlock()
 

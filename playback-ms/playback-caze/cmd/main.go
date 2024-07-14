@@ -14,7 +14,7 @@ import (
 	"github.com/robocin/ssl-core/playback-ms/network"
 )
 
-func insertDatagramIntoQueue(queue *concurrency.ConcurrentQueue[network.ZmqMultipartDatagram]) func(datagram network.ZmqMultipartDatagram) {
+func enqueueDatagram(queue *concurrency.ConcurrentQueue[network.ZmqMultipartDatagram]) func(datagram network.ZmqMultipartDatagram) {
 	return func(datagram network.ZmqMultipartDatagram) {
 		queue.Enqueue(datagram)
 	}
@@ -39,9 +39,9 @@ func runPlayback(wg *sync.WaitGroup) {
 	routerDatagrams := concurrency.NewQueue[network.ZmqMultipartDatagram]()
 	messageReceiver := receiver.NewMessageReceiver(
 		[]*receiver.SocketHandler{
-			receiver.NewSocketHandler(perceptionSocket, insertDatagramIntoQueue(subscriberDatagrams)),
-			receiver.NewSocketHandler(refereeSocket, insertDatagramIntoQueue(subscriberDatagrams)),
-			receiver.NewSocketHandler(replayRouter, insertDatagramIntoQueue(routerDatagrams)),
+			receiver.NewSocketHandler(perceptionSocket, enqueueDatagram(subscriberDatagrams)),
+			receiver.NewSocketHandler(refereeSocket, enqueueDatagram(subscriberDatagrams)),
+			receiver.NewSocketHandler(replayRouter, enqueueDatagram(routerDatagrams)),
 		},
 	)
 

@@ -71,7 +71,7 @@ services:
 
   perception-ms:
     container_name: perception-ms
-    image: robocin/perception-brutus:manual-419128
+    image: robocin/perception-brutus:manual-c7208b
 #    build:
 #      context: .
 #      dockerfile: perception-ms/perception-brutus/perception-brutus.Dockerfile

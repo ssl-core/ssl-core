@@ -7,7 +7,7 @@ import (
 
 type ISampleRepository interface {
 	AddSample(sample *playback.Sample) error
-	AddSamples(samples []*playback.Sample) error
+	AddSamples(samples []*playback.Sample)
 	GetLatestSample() (*playback.Sample, error)
 	GetSamples(*timestamppb.Timestamp, *timestamppb.Timestamp) ([]*playback.Sample, error)
 }
