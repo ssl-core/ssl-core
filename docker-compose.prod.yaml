@@ -6,6 +6,8 @@ services:
     environment:
       GEOMETRY: "2020"
       REALISM: "RC2021"
+    logging:
+      driver: none
 
   autoref-tigers:
     container_name: autoref-tigers
@@ -15,8 +17,8 @@ services:
       - "-a"
       - "-visionAddress"
       - "224.5.23.2:10020"
-    extra_hosts:
-      - "host.docker.internal:host-gateway"
+    logging:
+      driver: none
     depends_on:
       - simulator
 
@@ -35,8 +37,8 @@ services:
     restart: unless-stopped
     ports:
       - 8081/tcp
-    extra_hosts:
-      - "host.docker.internal:host-gateway"
+    logging:
+      driver: none
     depends_on:
       - autoref-tigers
 
@@ -49,8 +51,9 @@ services:
     restart: unless-stopped
     ports:
       - 8082/tcp
-    extra_hosts:
-      - "host.docker.internal:host-gateway"
+      - 8082:8082
+    logging:
+      driver: none
     depends_on:
       - game-controller
 
@@ -58,9 +61,9 @@ services:
     container_name: gateway
     build:
       context: .
-      dockerfile: gateway/gateway-augusto/Dockerfile
+      dockerfile: gateway/gateway-augusto/gateway-augusto.Dockerfile
     volumes:
-      - /tmp/.ssl-core:/tmp/.ssl-core
+      - .ssl-core:/tmp/.ssl-core
     ports:
       - 50051:50051
     depends_on:
@@ -68,25 +71,23 @@ services:
 
   perception-ms:
     container_name: perception-ms
-    build:
-      context: .
-      dockerfile: perception-ms/perception-brutus/Dockerfile
+    image: robocin/perception-brutus:manual-c7208b
+#    build:
+#      context: .
+#      dockerfile: perception-ms/perception-brutus/perception-brutus.Dockerfile
     volumes:
-      - /tmp/.ssl-core:/tmp/.ssl-core
-    extra_hosts:
-      - "host.docker.internal:host-gateway"
+      - .ssl-core:/tmp/.ssl-core
     depends_on:
       - gateway
 
   referee-ms:
     container_name: referee-ms
-    build:
-      context: .
-      dockerfile: referee-ms/referee-daronco/Dockerfile
+    image: robocin/referee-daronco:manual-419128
+#    build:
+#      context: .
+#      dockerfile: referee-ms/referee-daronco/referee-daronco.Dockerfile
     volumes:
-      - /tmp/.ssl-core:/tmp/.ssl-core
-    extra_hosts:
-      - "host.docker.internal:host-gateway"
+      - .ssl-core:/tmp/.ssl-core
     depends_on:
       - perception-ms
 
@@ -94,32 +95,59 @@ services:
     container_name: playback-ms
     build:
       context: .
-      dockerfile: playback-ms/playback-caze/Dockerfile
-      args:
-        - SOURCE_DIRECTORY=playback-ms/playback-caze
-    command: ./playback-ms
+      dockerfile: playback-ms/playback-caze/playback-caze.Dockerfile
     volumes:
-      - /tmp/.ssl-core:/tmp/.ssl-core
-      - ./:/app
-    extra_hosts:
-      - "host.docker.internal:host-gateway"
+      - .ssl-core:/tmp/.ssl-core
     depends_on:
+      - referee-ms
       - redis-db
-      
+
   player-bff:
     container_name: player-bff
     build:
       context: .
-      dockerfile: player-bff/Dockerfile
-      args:
-        - SOURCE_DIRECTORY=player-bff
-    command: ["./player-bff"]
+      dockerfile: player-bff/player-sonson/player-sonson.Dockerfile
     ports:
       - 4040:4040
     depends_on:
       - gateway
       - playback-ms
-      
+
+  player-mfe:
+    build:
+      context: .
+      dockerfile: player-mfe/Dockerfile
+      args:
+        - SOURCE_DIRECTORY=player-mfe
+    command: ["-g", "daemon off;"]
+    ports:
+      - 3031:80
+    depends_on:
+      - player-bff
+
+  viewer-mfe:
+    build:
+      context: .
+      dockerfile: viewer-mfe/Dockerfile
+      args:
+        - SOURCE_DIRECTORY=viewer-mfe
+    command: ["-g", "daemon off;"]
+    ports:
+      - 3032:80
+
+  app-shell:
+    build:
+      context: .
+      dockerfile: app-shell/Dockerfile
+      args:
+        - SOURCE_DIRECTORY=app-shell
+    command: ["-g", "daemon off;"]
+    ports:
+      - 3030:80
+
   redis-db:
     container_name: redis-db
     image: "redis:latest"
+
+volumes:
+  .ssl-core:

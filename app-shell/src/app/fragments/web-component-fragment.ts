@@ -1,16 +1,34 @@
 import BaseFragment from "./base-fragment";
 
 class WebComponentFragment extends BaseFragment {
-  render(): void {
-    const script = document.createElement("script");
-    script.type = "module";
-    script.src = this.url;
-    script.onload = () => {
-      const element = document.createElement(this.metadata.tag);
-      this.container.appendChild(element);
-    };
+  private element: HTMLElement | null;
+  private script: HTMLScriptElement | null;
 
-    document.body.appendChild(script);
+  constructor(
+    url: string,
+    container: HTMLElement,
+    metadata: Record<string, any>
+  ) {
+    super(url, container, metadata);
+    this.element = null;
+    this.script = null;
+  }
+
+  render() {
+    this.element = document.createElement(this.metadata.tag);
+    this.container.appendChild(this.element!);
+
+    this.script = document.createElement("script");
+    this.script.type = "module";
+    this.script.crossOrigin = "";
+    this.script.src = this.url;
+
+    document.body.appendChild(this.script);
+  }
+
+  clear() {
+    this.element?.remove();
+    this.script?.remove();
   }
 }
 

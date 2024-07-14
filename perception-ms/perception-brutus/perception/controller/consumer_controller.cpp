@@ -37,7 +37,7 @@ ConsumerController::ConsumerController(
     message_sender_{std::move(message_sender)} {}
 
 void ConsumerController::run() {
-  ilog("running.");
+  // ilog("running.");
 
   while (true) {
     std::vector<Payload> payloads = messages_->dequeue_all();
@@ -46,7 +46,7 @@ void ConsumerController::run() {
 }
 
 void ConsumerController::exec(std::span<const Payload> payloads) {
-  ilog("payloads {} empty.", payloads.empty() ? "is" : "isn't");
+  // ilog("payloads {} empty.", payloads.empty() ? "is" : "isn't");
 
   if (payloads.empty()) {
     return;
@@ -56,7 +56,7 @@ void ConsumerController::exec(std::span<const Payload> payloads) {
   // parameters_handler_engine_->update(parameters_values);
 
   std::optional<rc::DetectionWrapper> detection_wrapper = detection_processor_->process(payloads);
-  ilog("detection_wrapper {} initialized.", detection_wrapper != std::nullopt ? "is" : "isn't");
+  // ilog("detection_wrapper {} initialized.", detection_wrapper != std::nullopt ? "is" : "isn't");
 
   if (detection_wrapper != std::nullopt) {
     message_sender_->send(detection_wrapper->detection());

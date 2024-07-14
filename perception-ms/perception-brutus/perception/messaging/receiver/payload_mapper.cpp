@@ -39,7 +39,7 @@ Payload PayloadMapper::fromZmqDatagrams(std::span<const ZmqDatagram> messages) c
       tracked_packets.emplace_back(std::move(tracked_packet));
 
     } else {
-      wlog("zmq_datagram with topic '{}' not processed.", zmq_datagram.topic());
+      // wlog("zmq_datagram with topic '{}' not processed.", zmq_datagram.topic());
     }
   }
 

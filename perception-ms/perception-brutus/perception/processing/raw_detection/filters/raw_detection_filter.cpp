@@ -21,7 +21,7 @@ using ::robocin::wlog;
 // package "merger" to handle detection, robot and ball merging process separately.
 std::optional<rc::Detection> merge(std::span<const rc::Detection> detections) {
   if (detections.empty()) {
-    wlog("no detections to merge.");
+    // wlog("no detections to merge.");
     return std::nullopt;
   }
 

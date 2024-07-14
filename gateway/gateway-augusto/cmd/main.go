@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"sync"
 
-	"github.com/robocin/ssl-core/gateway/gateway-augusto/internal/network"
+	"github.com/robocin/ssl-core/common/golang/network"
 	"github.com/robocin/ssl-core/gateway/gateway-augusto/internal/server"
 	"github.com/robocin/ssl-core/gateway/gateway-augusto/internal/worker"
 )

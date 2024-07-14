@@ -1,10 +1,25 @@
 import BaseFragment from "./base-fragment";
 
 class IFrameFragment extends BaseFragment {
-  render(): void {
-    const iframe = document.createElement("iframe");
-    iframe.src = this.url;
-    this.container.appendChild(iframe);
+  private iframe: HTMLIFrameElement | null;
+
+  constructor(
+    url: string,
+    container: HTMLElement,
+    metadata: Record<string, any>
+  ) {
+    super(url, container, metadata);
+    this.iframe = null;
+  }
+
+  render() {
+    this.iframe = document.createElement("iframe");
+    this.iframe.src = this.url;
+    this.container.appendChild(this.iframe);
+  }
+
+  clear() {
+    this.iframe?.remove();
   }
 }
 

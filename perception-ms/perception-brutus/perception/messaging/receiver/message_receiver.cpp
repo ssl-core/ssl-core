@@ -24,7 +24,7 @@ MessageReceiver::MessageReceiver(std::unique_ptr<IZmqSubscriberSocket> gateway_s
     payload_mapper_{std::move(payload_mapper)} {}
 
 Payload MessageReceiver::receive() {
-  ilog("running.");
+  // ilog("running.");
 
   std::vector<ZmqDatagram> datagrams{};
 
@@ -41,7 +41,7 @@ Payload MessageReceiver::receive() {
     }
 
     if (datagrams.empty()) {
-      wlog("no datagram received after {} ms.", pPerceptionPollerTimeoutMs());
+      // wlog("no datagram received after {} ms.", pPerceptionPollerTimeoutMs());
     }
   }
 

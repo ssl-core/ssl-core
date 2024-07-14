@@ -17,7 +17,7 @@ ProducerController::ProducerController(
     message_receiver_{std::move(message_receiver)} {}
 
 void ProducerController::run() {
-  ilog("running.");
+  // ilog("running.");
 
   while (true) {
     if (Payload payload = message_receiver_->receive(); !payload.empty()) {

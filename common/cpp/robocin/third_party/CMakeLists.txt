@@ -1,12 +1,12 @@
-if (Protobuf_FOUND)
+if (Protobuf_FOUND AND absl_FOUND)
   robocin_cpp_library(
     NAME third_party_adaptors
     HDRS adaptors/pb_time_util.h
     SRCS adaptors/pb_time_util.cpp
-    DEPS protobuf::libprotobuf
+    DEPS protobuf::libprotobuf absl::time
   )
 
-  if (absl_FOUND AND GTest_FOUND)
+  if (GTest_FOUND)
     robocin_cpp_library(
       NAME third_party_protobuf
       HDRS google/protobuf/test_textproto.h

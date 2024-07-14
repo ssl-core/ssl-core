@@ -5,9 +5,9 @@ import (
 	"sync"
 	"time"
 
-	"github.com/robocin/ssl-core/playback-ms/internal/service_discovery"
-	"github.com/robocin/ssl-core/playback-ms/network"
-	"github.com/robocin/ssl-core/playback-ms/pkg/pb/gateway"
+	"github.com/robocin/ssl-core/common/golang/network"
+	"github.com/robocin/ssl-core/playback-ms/playback-caze/internal/service_discovery"
+	"github.com/robocin/ssl-core/protocols/gateway"
 	"google.golang.org/protobuf/proto"
 	"google.golang.org/protobuf/types/known/timestamppb"
 )
@@ -24,7 +24,7 @@ type GatewayChunkStub struct {
 func NewGatewayChunkStub() *GatewayChunkStub {
 	return &GatewayChunkStub{
 		ticker: time.NewTicker(time.Millisecond / time.Duration(chunkRequestFrequencyHz*1000)),
-		dealer: network.NewZmqDealerSocket(service_discovery.GetInstance().GetChunkAddress()),
+		dealer: network.NewZmqDealerSocket(service_discovery.GatewayReplayChunckAddress),
 	}
 }
 

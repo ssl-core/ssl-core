@@ -3,33 +3,53 @@ package receiver
 import (
 	"sync"
 
-	"github.com/robocin/ssl-core/playback-ms/internal/messaging/receiver/handler"
+	"github.com/robocin/ssl-core/common/golang/network"
 )
 
 type MessageReceiver struct {
-	subscribers []*handler.SubscriberHandler
-	routers     []*handler.RouterHandler
+	handlers []*SocketHandler
 }
 
-func NewMessageReceiver() *MessageReceiver {
-	return &MessageReceiver{}
+type ISocketReceiver interface {
+	Receive() network.ZmqMultipartDatagram
 }
 
-func (mr *MessageReceiver) AddSubscriberHandler(subscriber *handler.SubscriberHandler) {
-	mr.subscribers = append(mr.subscribers, subscriber)
+type SocketHandler struct {
+	socket   ISocketReceiver
+	callback func(network.ZmqMultipartDatagram)
 }
 
-func (mr *MessageReceiver) AddRouterHandler(router *handler.RouterHandler) {
-	mr.routers = append(mr.routers, router)
+func (sh *SocketHandler) WhenReceive() {
+	datagram := sh.socket.Receive()
+
+	if !datagram.IsEmpty() {
+		sh.callback(datagram)
+	}
+}
+
+func NewSocketHandler(socket ISocketReceiver, callback func(network.ZmqMultipartDatagram)) *SocketHandler {
+	return &SocketHandler{
+		socket:   socket,
+		callback: callback,
+	}
+}
+
+func NewMessageReceiver(handlers []*SocketHandler) *MessageReceiver {
+	return &MessageReceiver{
+		handlers: handlers,
+	}
 }
 
 func (mr *MessageReceiver) Start(wg *sync.WaitGroup) {
-	wg.Add(len(mr.subscribers) + len(mr.routers))
-	for _, subscriber := range mr.subscribers {
-		go subscriber.Handle(wg)
-	}
+	for _, handler := range mr.handlers {
+		wg.Add(1)
 
-	for _, router := range mr.routers {
-		go router.Handle(wg)
+		go func() {
+			defer wg.Done()
+
+			for {
+				handler.WhenReceive()
+			}
+		}()
 	}
 }

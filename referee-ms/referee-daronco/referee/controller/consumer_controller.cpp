@@ -30,7 +30,7 @@ ConsumerController::ConsumerController(object_ptr<IConcurrentQueue<Payload>> mes
     message_sender_{std::move(message_sender)} {}
 
 void ConsumerController::run() {
-  ilog("running.");
+  // ilog("running.");
 
   while (true) {
     std::vector<Payload> payloads = messages_->dequeue_all();
@@ -40,7 +40,7 @@ void ConsumerController::run() {
 }
 
 void ConsumerController::exec(std::span<const Payload> payloads) {
-  ilog("payloads {} empty.", payloads.empty() ? "is" : "isn't");
+  // ilog("payloads {} empty.", payloads.empty() ? "is" : "isn't");
 
   if (payloads.empty()) {
     return;

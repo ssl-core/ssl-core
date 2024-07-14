@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"time"
 
-	redis_db "github.com/robocin/ssl-core/playback-ms/db/redis"
+	redis_db "github.com/robocin/ssl-core/playback-ms/playback-caze/db/redis"
 )
 
 const (
@@ -64,7 +64,11 @@ func (de *DatabaseExperiment) databaseExperimentSetGetRange() {
 	end_second := 100
 	start_time := timeAddingSeconds(start_second)
 	end_time := timeAddingSeconds(end_second)
-	values := de.client.GetChunk(start_time, end_time)
+	values, err := de.client.GetChunk(start_time, end_time)
+	if err != nil {
+		fmt.Printf("Error getting chunk from %ds to %ds: %v\n", start_second, end_second, err)
+		return
+	}
 	fmt.Printf("Chunk from %ds to %ds: %v\n", start_second, end_second, values)
 }
 

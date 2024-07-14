@@ -4,6 +4,7 @@
 #include "perception/parameters/parameters.h"
 #include "perception/processing/raw_detection/mappers/raw_detection_mapper.h"
 
+#include <algorithm>
 #include <iterator>
 #include <print>
 #include <protocols/perception/detection.pb.h>
@@ -15,6 +16,7 @@ namespace perception {
 namespace {
 
 using ::robocin::ilog;
+using ::robocin::IPbTimeUtil;
 using ::robocin::object_ptr;
 
 namespace rc {
@@ -59,34 +61,78 @@ rawDetectionsFromRawPackets(object_ptr<IRawDetectionMapper> raw_detection_mapper
 
 std::optional<rc::Field>
 processFieldFromRawPackets(std::span<const tp::SSL_WrapperPacket> raw_wrapper_packets) {
-  for (const auto& raw_packet : std::ranges::reverse_view(raw_wrapper_packets)) {
-    if (raw_packet.has_geometry()) {
-      const tp::SSL_GeometryFieldSize& geometry = raw_packet.geometry().field();
+  auto geometries_view = std::ranges::reverse_view(raw_wrapper_packets)
+                         | std::views::filter(&tp::SSL_WrapperPacket::has_geometry)
+                         | std::views::take(1);
 
-      rc::Field field;
-      field.set_length(static_cast<float>(geometry.field_length()));
-      field.set_width(static_cast<float>(geometry.field_width()));
-      field.set_goal_depth(static_cast<float>(geometry.goal_depth()));
-      field.set_goal_width(static_cast<float>(geometry.goal_width()));
-      field.set_penalty_area_depth(static_cast<float>(geometry.penalty_area_depth()));
-      field.set_penalty_area_width(static_cast<float>(geometry.penalty_area_width()));
-      field.set_boundary_width(static_cast<float>(geometry.boundary_width()));
-      field.set_goal_center_to_penalty_mark(
-          static_cast<float>(geometry.goal_center_to_penalty_mark()));
-
-      return field;
-    }
+  if (geometries_view.empty()) {
+    return std::nullopt;
   }
 
-  return std::nullopt;
+  const tp::SSL_GeometryFieldSize& geometry = geometries_view.front().geometry().field();
+
+  rc::Field field;
+
+  if (geometry.has_field_length()) {
+    field.set_length(static_cast<float>(geometry.field_length()));
+  } else {
+    field.set_length(pFieldLength());
+  }
+
+  if (geometry.has_field_width()) {
+    field.set_width(static_cast<float>(geometry.field_width()));
+  } else {
+    field.set_width(pFieldWidth());
+  }
+
+  if (geometry.has_goal_depth()) {
+    field.set_goal_depth(static_cast<float>(geometry.goal_depth()));
+  } else {
+    field.set_goal_depth(pGoalDepth());
+  }
+
+  if (geometry.has_goal_width()) {
+    field.set_goal_width(static_cast<float>(geometry.goal_width()));
+  } else {
+    field.set_goal_width(pGoalWidth());
+  }
+
+  if (geometry.has_penalty_area_depth()) {
+    field.set_penalty_area_depth(static_cast<float>(geometry.penalty_area_depth()));
+  } else {
+    field.set_penalty_area_depth(pPenaltyAreaDepth());
+  }
+
+  if (geometry.has_penalty_area_width()) {
+    field.set_penalty_area_width(static_cast<float>(geometry.penalty_area_width()));
+  } else {
+    field.set_penalty_area_width(pPenaltyAreaWidth());
+  }
+
+  if (geometry.has_boundary_width()) {
+    field.set_boundary_width(static_cast<float>(geometry.boundary_width()));
+  } else {
+    field.set_boundary_width(pBoundaryWidth());
+  }
+
+  if (geometry.has_goal_center_to_penalty_mark()) {
+    field.set_goal_center_to_penalty_mark(
+        static_cast<float>(geometry.goal_center_to_penalty_mark()));
+  } else {
+    field.set_goal_center_to_penalty_mark(pGoalCenterToPenaltyMark());
+  }
+
+  return field;
 }
 
 } // namespace
 
 DetectionProcessor::DetectionProcessor(
+    std::unique_ptr<IPbTimeUtil> pb_time_util,
     std::unique_ptr<IRawDetectionMapper> raw_detection_mapper,
     std::unique_ptr<IRawDetectionFilter> raw_detection_filter,
     std::unique_ptr<ITrackedDetectionFilter> tracked_detection_filter) :
+    pb_time_util_{std::move(pb_time_util)},
     raw_detection_mapper_{std::move(raw_detection_mapper)},
     raw_detection_filter_{std::move(raw_detection_filter)},
     tracked_detection_filter_{std::move(tracked_detection_filter)} {}
@@ -107,7 +153,7 @@ std::optional<rc::DetectionWrapper> DetectionProcessor::process(std::span<const 
         = tracked_detection_filter_->process(tracked_packets)) {
       detection = std::move(*processed_detection);
     } else {
-      ilog("processed detection from 'tracked_detection_filter' is empty.");
+      // ilog("processed detection from 'tracked_detection_filter' is empty.");
 
       return std::nullopt;
     }
@@ -116,7 +162,7 @@ std::optional<rc::DetectionWrapper> DetectionProcessor::process(std::span<const 
             rawDetectionsFromRawPackets(raw_detection_mapper_, raw_wrapper_packets))) {
       detection = std::move(*processed_detection);
     } else {
-      ilog("processed detection from 'raw_detection_filter' is empty.");
+      // ilog("processed detection from 'raw_detection_filter' is empty.");
 
       return std::nullopt;
     }
@@ -127,6 +173,7 @@ std::optional<rc::DetectionWrapper> DetectionProcessor::process(std::span<const 
   }
 
   detection.set_serial_id(++serial_id_);
+  *detection.mutable_created_at() = pb_time_util_->getCurrentTime();
   detection.set_framerate(k60Fps);
 
   detection_wrapper.mutable_tracked_detections()->Add(

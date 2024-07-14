@@ -5,9 +5,9 @@ import (
 	"fmt"
 	"net"
 
-	"github.com/robocin/ssl-core/gateway/gateway-augusto/internal/network"
-	"github.com/robocin/ssl-core/gateway/gateway-augusto/pkg/pb/gateway"
-	"github.com/robocin/ssl-core/gateway/gateway-augusto/pkg/pb/playback"
+	"github.com/robocin/ssl-core/common/golang/network"
+	"github.com/robocin/ssl-core/protocols/gateway"
+	"github.com/robocin/ssl-core/protocols/playback"
 	"google.golang.org/grpc"
 	"google.golang.org/protobuf/proto"
 	"google.golang.org/protobuf/reflect/protoreflect"
@@ -50,15 +50,15 @@ func (s *GrpcServer) Start() {
 func (s *GrpcServer) ReceiveLivestream(stream gateway.GatewayService_ReceiveLivestreamServer) error {
 	for {
 		// TODO: Handle stream.Recv()
-
 		datagram := s.subscriber.Receive()
 		var sample playback.Sample
 		err := proto.Unmarshal(datagram.Message, &sample)
 
-		fmt.Println("Sending sample: ", sample)
+		// fmt.Println("Sending sample: ", sample)
 
 		if err != nil {
-			return err
+			fmt.Println("Error unmarshaling sample: ", datagram.Message, sample)
+			continue
 		}
 
 		response := &gateway.ReceiveLivestreamResponse{

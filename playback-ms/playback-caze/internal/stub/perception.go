@@ -5,10 +5,10 @@ import (
 	"sync"
 	"time"
 
-	"github.com/robocin/ssl-core/playback-ms/internal/service_discovery"
-	"github.com/robocin/ssl-core/playback-ms/network"
-	"github.com/robocin/ssl-core/playback-ms/pkg/pb/common"
-	"github.com/robocin/ssl-core/playback-ms/pkg/pb/perception"
+	"github.com/robocin/ssl-core/common/golang/network"
+	"github.com/robocin/ssl-core/playback-ms/playback-caze/internal/service_discovery"
+	"github.com/robocin/ssl-core/protocols/common"
+	"github.com/robocin/ssl-core/protocols/perception"
 	"google.golang.org/protobuf/proto"
 	"google.golang.org/protobuf/types/known/timestamppb"
 )
@@ -27,7 +27,7 @@ func NewPerceptionStub() *PerceptionStub {
 	return &PerceptionStub{
 		SerialId:  0,
 		ticker:    time.NewTicker(time.Second / time.Duration(perceptionFrequencyHz)),
-		publisher: network.NewZmqPublisherSocket(service_discovery.GetInstance().GetPerceptionAddress()),
+		publisher: network.NewZmqPublisherSocket(service_discovery.PerceptionAddress),
 	}
 }
 
@@ -37,7 +37,7 @@ func (ps *PerceptionStub) makeDetectionWrapperDatagram() network.ZmqMultipartDat
 	if err != nil {
 		panic(err)
 	}
-	topic := []byte(service_discovery.GetInstance().GetDetectionWrapperTopic())
+	topic := []byte(service_discovery.PerceptionDetectionWrapperTopic)
 	return network.ZmqMultipartDatagram{
 		Identifier: topic,
 		Message:    messageBytes,

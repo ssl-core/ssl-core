@@ -23,7 +23,7 @@ MessageSender::MessageSender(std::unique_ptr<::robocin::IZmqPublisherSocket> det
     detection_socket_{std::move(detection_socket)} {}
 
 void MessageSender::send(const rc::GameStatus& game_status) {
-  ilog("sending... {}", game_status.DebugString());
+  // ilog("sending... {}", game_status.DebugString());
 
   detection_socket_->send({
       service_discovery::kRefereeGameStatusTopic,

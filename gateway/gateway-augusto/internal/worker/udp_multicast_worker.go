@@ -3,7 +3,7 @@ package worker
 import (
 	"net"
 
-	"github.com/robocin/ssl-core/gateway/gateway-augusto/internal/network"
+	"github.com/robocin/ssl-core/common/golang/network"
 )
 
 const protocol = "udp"
@@ -43,7 +43,7 @@ func (w *UdpMulticastWorker) Listen() {
 			continue
 		}
 
-		w.proxy <- *network.NewZmqMultipartDatagram(w.id, buffer[:bytes])
+		w.proxy <- network.NewZmqMultipartDatagram(w.id, buffer[:bytes])
 	}
 }
 
