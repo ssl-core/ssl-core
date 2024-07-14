@@ -4,10 +4,12 @@ import Frame from "./frame";
 class Buffer {
   private chunks: Chunk[];
   private interval: number | null;
+  private isFetching: boolean;
 
   constructor() {
     this.chunks = [];
     this.interval = null;
+    this.isFetching = false;
   }
 
   public add(chunk: Chunk) {
@@ -22,15 +24,19 @@ class Buffer {
     return this.chunks.length === 0;
   }
 
+  public reset() {
+    if (this.interval) {
+      clearInterval(this.interval);
+      this.interval = null;
+    }
+  }
+
   public play(options: {
     timestamp?: number;
     onFrame: (frame: Frame) => void;
     onFetch: (timestamp: number) => void;
   }) {
-    if (this.interval) {
-      clearInterval(this.interval);
-      this.interval = null;
-    }
+    this.reset();
 
     // TODO: optimize if timestamp is in range of current chunks
     if (this.isEmpty() || options.timestamp) {
@@ -45,11 +51,19 @@ class Buffer {
         return;
       }
 
+      if (this.chunks.length < 2) {
+        if (!this.isFetching) {
+          options.onFetch(this.chunks[0].getLastTimestamp());
+          this.isFetching = true;
+        }
+      } else {
+        this.isFetching = false;
+      }
+
       const frame = this.chunks[0].nextFrame();
 
       if (!frame) {
         this.chunks.shift();
-        options.onFetch(this.chunks[0].getLastTimestamp());
         return;
       }
 

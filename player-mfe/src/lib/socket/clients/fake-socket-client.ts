@@ -12,6 +12,7 @@ class TestSocketClient implements SocketClient {
   private lastFrame: FrameResponse | null;
   private fps: number;
   private playing: boolean;
+  private livestreaming: boolean;
   private connected: boolean;
   private startTime: number;
 
@@ -20,6 +21,7 @@ class TestSocketClient implements SocketClient {
     this.lastFrame = null;
     this.fps = fps;
     this.playing = false;
+    this.livestreaming = false;
     this.connected = false;
     this.startTime = Date.now();
   }
@@ -30,7 +32,7 @@ class TestSocketClient implements SocketClient {
     }
 
     this.createFakeSocket();
-    this.sendState("connected");
+    this.sendState("connect");
     this.connected = true;
   }
 
@@ -44,7 +46,7 @@ class TestSocketClient implements SocketClient {
     }
 
     clearInterval(this.socket);
-    this.sendState("disconnected");
+    this.sendState("disconnect");
     this.socket = null;
     this.connected = false;
   }
@@ -54,22 +56,16 @@ class TestSocketClient implements SocketClient {
   }
 
   public live() {
-    if (this.playing) {
-      return;
-    }
-
     this.sendState("live");
     this.playing = true;
+    this.livestreaming = true;
   }
 
   public play(timestamp: number) {
-    if (this.playing) {
-      return;
-    }
-
     this.sendState("play");
-    this.fetchReplay(timestamp);
     this.playing = true;
+    this.livestreaming = false;
+    this.fetchReplay(timestamp);
   }
 
   public pause() {
@@ -79,6 +75,7 @@ class TestSocketClient implements SocketClient {
 
     this.sendState("pause");
     this.playing = false;
+    this.livestreaming = false;
   }
 
   public isPlaying() {
@@ -101,6 +98,7 @@ class TestSocketClient implements SocketClient {
     const CHUNK_SIZE = 100;
 
     let frames: FrameResponse[] = [];
+    let currentTimestamp = timestamp;
 
     for (let i = 0; i < CHUNK_SIZE; i++) {
       this.lastFrame.balls[0].position = this.generateRandomPosition(
@@ -111,7 +109,11 @@ class TestSocketClient implements SocketClient {
         robot.position = this.generateRandomPosition(robot.position);
       }
 
-      frames = [...frames, this.lastFrame];
+      frames = [
+        ...frames,
+        { ...this.lastFrame, current_time: currentTimestamp },
+      ];
+      currentTimestamp += 16;
     }
 
     const chunk: ChunkResponse = {
@@ -146,7 +148,14 @@ class TestSocketClient implements SocketClient {
   }
 
   private handleFrame(frame: FrameResponse) {
-    if (!this.playing) {
+    if (!this.playing || !this.livestreaming) {
+      self.postMessage({
+        type: "duration",
+        payload: {
+          start_time: frame.start_time,
+          end_time: frame.current_time,
+        },
+      });
       return;
     }
 
@@ -154,9 +163,16 @@ class TestSocketClient implements SocketClient {
   }
 
   private handleChunk(chunk: ChunkResponse) {
-    // if (!this.playing) {
-    //   return;
-    // }
+    if (!this.playing || this.livestreaming) {
+      self.postMessage({
+        type: "duration",
+        payload: {
+          start_time: chunk.frames[0].start_time,
+          end_time: chunk.end_time,
+        },
+      });
+      return;
+    }
 
     self.postMessage({ type: "chunk", payload: chunk });
   }

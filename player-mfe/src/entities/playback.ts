@@ -3,7 +3,11 @@ import Buffer from "./buffer";
 import Chunk from "./chunk";
 import Frame from "./frame";
 import { PlaybackUpdateEvent } from "../events/playback-update";
-import { ChunkResponse, FrameResponse } from "../types/requests";
+import {
+  ChunkResponse,
+  DurationResponse,
+  FrameResponse,
+} from "../types/requests";
 
 export enum PlaybackState {
   Live = "live",
@@ -18,6 +22,8 @@ class Playback {
   private state: PlaybackState;
   private listeners: Record<string, Function[]>;
   private currentFrame: Frame | null;
+  private currentTime: number;
+  private duration: number;
   private buffer: Buffer;
   private eventBus: BroadcastChannel;
 
@@ -26,6 +32,8 @@ class Playback {
     this.state = PlaybackState.Disconnected;
     this.listeners = {};
     this.currentFrame = null;
+    this.currentTime = 0;
+    this.duration = 0;
     this.buffer = new Buffer();
     this.eventBus = new BroadcastChannel("event-bus");
 
@@ -38,6 +46,9 @@ class Playback {
     this.socket.addEventListener("chunk", (chunk: ChunkResponse) =>
       this.receiveChunk(chunk)
     );
+    this.socket.addEventListener("duration", (duration: DurationResponse) =>
+      this.receiveDuration(duration)
+    );
   }
 
   public live() {
@@ -49,11 +60,13 @@ class Playback {
       return;
     }
 
+    this.buffer.reset();
     this.socket.playLiveStream();
   }
 
   public seek(seconds: number) {
     if (!this.currentFrame) {
+      this.live();
       return;
     }
 
@@ -92,6 +105,7 @@ class Playback {
       return;
     }
 
+    this.buffer.reset();
     this.socket.pauseLiveStream();
   }
 
@@ -107,8 +121,29 @@ class Playback {
   }
 
   public receiveChunk(payload: ChunkResponse) {
+    console.log("Received chunk", payload);
+
     const chunk = new Chunk(payload);
     this.buffer.add(chunk);
+  }
+
+  public receiveDuration(payload: DurationResponse) {
+    const newDuration = Math.round(
+      (payload.end_time - payload.start_time) / 1000
+    );
+
+    this.duration = Math.max(newDuration, this.duration);
+
+    const data: PlaybackUpdateEvent = {
+      currentTime: this.currentTime,
+      duration: this.duration,
+      isPlaying:
+        this.state === PlaybackState.Play || this.state === PlaybackState.Live,
+      isLive: this.state === PlaybackState.Live,
+      frame: this.currentFrame,
+    };
+
+    this.dispatchEvent("update", data);
   }
 
   public addEventListener(event: string, listener: Function) {
@@ -134,11 +169,15 @@ class Playback {
 
     const { currentTime, duration } = this.currentFrame.parseTimeMetadata();
 
+    this.currentTime = currentTime;
+    this.duration = Math.max(duration, this.duration);
+
     const data: PlaybackUpdateEvent = {
-      currentTime: currentTime,
-      duration: duration,
+      currentTime: this.currentTime,
+      duration: this.duration,
       isPlaying:
         this.state === PlaybackState.Play || this.state === PlaybackState.Live,
+      isLive: this.state === PlaybackState.Live,
       frame: this.currentFrame,
     };
 

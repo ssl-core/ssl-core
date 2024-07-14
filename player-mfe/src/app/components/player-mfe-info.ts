@@ -1,4 +1,5 @@
 import Playback from "../../entities/playback";
+import { PlaybackUpdateEvent } from "../../events/playback-update";
 import { html } from "../../utils/literals";
 import { inject } from "../services/global-provider";
 
@@ -20,10 +21,12 @@ class PlayerMFEInfo extends HTMLElement {
 
   public connectedCallback() {
     this.render();
+    this.playback.addEventListener("update", this.handlePlaybackUpdate);
     this.elements.liveButton!.addEventListener("click", this.handleLiveClick);
   }
 
   public disconnectedCallback() {
+    this.playback.removeEventListener("update", this.handlePlaybackUpdate);
     this.elements.liveButton!.removeEventListener(
       "click",
       this.handleLiveClick
@@ -33,7 +36,11 @@ class PlayerMFEInfo extends HTMLElement {
   public render() {
     this.innerHTML = html`
       <div class="info">
-        <button class="info__live-button" aria-label="Toggle live">
+        <button
+          id="live-button"
+          class="info__live-button"
+          aria-label="Toggle live"
+        >
           <div class="info__live-button__circle"></div>
           <span class="info__live-button__text">Live</span>
         </button>
@@ -41,11 +48,20 @@ class PlayerMFEInfo extends HTMLElement {
     `;
 
     this.elements.liveButton =
-      this.querySelector<HTMLButtonElement>(".info__live-button")!;
+      this.querySelector<HTMLButtonElement>("#live-button")!;
   }
 
   private handleLiveClick = () => {
     this.playback.live();
+  };
+
+  private handlePlaybackUpdate = (event: PlaybackUpdateEvent) => {
+    if (event.isPlaying && event.isLive) {
+      this.elements.liveButton!.classList.add("live");
+      return;
+    }
+
+    this.elements.liveButton!.classList.remove("live");
   };
 }
 

@@ -39,7 +39,7 @@ class WebSocketClient implements SocketClient {
     this.socket.removeEventListener("open", this.receiveStream);
     this.socket.close();
 
-    this.sendState("disconnected");
+    this.sendState("disconnect");
     this.connected = false;
   }
 
@@ -120,6 +120,13 @@ class WebSocketClient implements SocketClient {
 
   private handleFrame(frame: FrameResponse) {
     if (!this.playing) {
+      self.postMessage({
+        type: "duration",
+        payload: {
+          start_time: frame.start_time,
+          end_time: frame.current_time,
+        },
+      });
       return;
     }
 
@@ -128,6 +135,13 @@ class WebSocketClient implements SocketClient {
 
   private handleChunk(chunk: ChunkResponse) {
     if (!this.playing) {
+      self.postMessage({
+        type: "duration",
+        payload: {
+          start_time: chunk.frames[0].start_time,
+          end_time: chunk.end_time,
+        },
+      });
       return;
     }
 

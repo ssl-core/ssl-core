@@ -15,7 +15,7 @@ class Chunk {
   }
 
   public getLastTimestamp() {
-    return this.frames[this.frames.length - 1].getCurrentTimestamp();
+    return this.frames[this.frames.length - 1]?.getCurrentTimestamp();
   }
 }
 

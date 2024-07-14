@@ -42,3 +42,8 @@ export type ChunkResponse = {
   end_time: number;
   frames: FrameResponse[];
 };
+
+export type DurationResponse = {
+  start_time: number;
+  end_time: number;
+};

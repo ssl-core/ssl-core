@@ -1,6 +1,6 @@
 import SocketClientFactory from "../lib/socket/factories/socket-client-factory";
 
-const socketClient = SocketClientFactory.create("websocket");
+const socketClient = SocketClientFactory.create("fake");
 
 self.onmessage = (event) => {
   const { type, payload } = event.data;
