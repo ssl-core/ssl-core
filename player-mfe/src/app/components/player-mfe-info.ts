@@ -56,12 +56,16 @@ class PlayerMFEInfo extends HTMLElement {
   };
 
   private handlePlaybackUpdate = (event: PlaybackUpdateEvent) => {
+    this.elements.liveButton!.classList.remove("live");
+    this.elements.liveButton!.classList.remove("loading");
+
     if (event.isPlaying && event.isLive) {
       this.elements.liveButton!.classList.add("live");
-      return;
     }
 
-    this.elements.liveButton!.classList.remove("live");
+    if (event.isLoading) {
+      this.elements.liveButton!.classList.add("loading");
+    }
   };
 }
 

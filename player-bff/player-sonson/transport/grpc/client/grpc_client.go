@@ -93,7 +93,8 @@ func (gc *GrpcClient) GetReplayChunk(timestamp int64) (entity.Chunk, error) {
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
 
-	startTimestamp := timestamppb.New(time.UnixMilli(timestamp))
+	requestTime := time.UnixMilli(timestamp)
+	startTimestamp := timestamppb.New(requestTime)
 
 	response, err := client.GetReplayChunk(ctx, &pb.GetReplayChunkRequest{StartTimestamp: startTimestamp})
 
@@ -108,8 +109,9 @@ func (gc *GrpcClient) GetReplayChunk(timestamp int64) (entity.Chunk, error) {
 	}
 
 	chunk := entity.Chunk{
-		Frames:  frames,
-		EndTime: response.GetLastTimestamp().AsTime(),
+		RequestTime: requestTime,
+		Frames:      frames,
+		EndTime:     response.GetLastTimestamp().AsTime(),
 	}
 
 	return chunk, nil

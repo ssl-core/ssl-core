@@ -4,16 +4,25 @@ import Frame from "./frame";
 class Buffer {
   private chunks: Chunk[];
   private interval: number | null;
-  private isFetching: boolean;
+  private fetchingChunks: number[];
 
   constructor() {
     this.chunks = [];
     this.interval = null;
-    this.isFetching = false;
+    this.fetchingChunks = [];
   }
 
   public add(chunk: Chunk) {
+    const requestTime = chunk.getRequestTime().getTime();
+
+    if (!this.fetchingChunks.some((timestamp) => timestamp === requestTime)) {
+      return;
+    }
+
     this.chunks.push(chunk);
+    this.fetchingChunks = this.fetchingChunks.filter(
+      (timestamp) => timestamp !== requestTime
+    );
   }
 
   public clear() {
@@ -25,10 +34,22 @@ class Buffer {
   }
 
   public reset() {
-    if (this.interval) {
-      clearInterval(this.interval);
-      this.interval = null;
+    this.fetchingChunks = [];
+
+    if (!this.interval) {
+      return;
     }
+
+    clearInterval(this.interval);
+    this.interval = null;
+  }
+
+  public isFetching() {
+    return this.fetchingChunks.length > 0;
+  }
+
+  public isLoading() {
+    return this.isFetching() && this.isEmpty();
   }
 
   public play(options: {
@@ -38,28 +59,32 @@ class Buffer {
   }) {
     this.reset();
 
+    const { timestamp, onFrame, onFetch } = options;
+
     // TODO: optimize if timestamp is in range of current chunks
-    if (this.isEmpty() || options.timestamp) {
+    if (this.isEmpty() || timestamp) {
       this.clear();
-      options.onFetch(options.timestamp ?? 0);
+      this.fetch(timestamp ?? 0, onFetch);
     }
 
-    // TODO: Move to worker thread?
-    // TODO: Wait the time between two frames (get timestamp of the first frame and then wait until the timestamp of the next frame)
+    let waitTicks = 0;
+
+    // TODO: Move to worker thread
     this.interval = setInterval(() => {
       if (this.isEmpty()) {
         return;
       }
 
-      if (this.chunks.length < 2) {
-        if (!this.isFetching) {
-          options.onFetch(this.chunks[0].getLastTimestamp());
-          this.isFetching = true;
-        }
-      } else {
-        this.isFetching = false;
+      if (waitTicks > 0) {
+        waitTicks--;
+        return;
       }
 
+      if (this.chunks.length < 2 && !this.isFetching()) {
+        this.fetch(this.chunks[0].getLastTimestamp(), onFetch);
+      }
+
+      const lastFrame = this.chunks[0].getLastFrame();
       const frame = this.chunks[0].nextFrame();
 
       if (!frame) {
@@ -67,8 +92,19 @@ class Buffer {
         return;
       }
 
-      options.onFrame(frame);
-    }, 1000 / 60);
+      if (lastFrame) {
+        waitTicks = Math.round(
+          (frame.getCurrentTimestamp() - lastFrame.getCurrentTimestamp()) / 1000
+        );
+      }
+
+      onFrame(frame);
+    }, 1);
+  }
+
+  private fetch(timestamp: number, fn: (timestamp: number) => void) {
+    this.fetchingChunks.push(timestamp);
+    fn(timestamp);
   }
 }
 

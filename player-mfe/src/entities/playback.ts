@@ -140,6 +140,7 @@ class Playback {
       isPlaying:
         this.state === PlaybackState.Play || this.state === PlaybackState.Live,
       isLive: this.state === PlaybackState.Live,
+      isLoading: this.buffer.isLoading(),
       frame: this.currentFrame,
     };
 
@@ -178,6 +179,7 @@ class Playback {
       isPlaying:
         this.state === PlaybackState.Play || this.state === PlaybackState.Live,
       isLive: this.state === PlaybackState.Live,
+      isLoading: this.buffer.isLoading(),
       frame: this.currentFrame,
     };
 

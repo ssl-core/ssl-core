@@ -59,17 +59,24 @@ func (wc *WebsocketConnection) Listen() {
 func (wc *WebsocketConnection) OnNotify(event application.ConnectionProxyEvent) {
 	switch event.Type {
 	case "sample":
+		if wc.state == Available {
+			return
+		}
+
 		message := map[string]interface{}{
 			"type":    "frame",
 			"payload": event.Payload,
 		}
 		wc.conn.WriteJSON(message)
 	case "chunk":
+		if wc.state == Live {
+			return
+		}
+
 		message := map[string]interface{}{
 			"type":    "chunk",
 			"payload": event.Payload,
 		}
-		fmt.Println("Write message: ", message)
 		wc.conn.WriteJSON(message)
 	}
 }
@@ -91,11 +98,19 @@ func (wc *WebsocketConnection) handleEvent(event string, data map[string]interfa
 
 		wc.OnNotify(application.NewConnectionProxyEvent("chunk", chunk))
 	case "ping":
-		wc.conn.WriteMessage(websocket.TextMessage, []byte("pong"))
+		message := map[string]interface{}{
+			"type":    "ping",
+			"payload": "pong",
+		}
+		wc.conn.WriteJSON(message)
 	case "close":
 		wc.conn.Close()
 	default:
-		wc.conn.WriteMessage(websocket.TextMessage, []byte("echo: "+string(event)))
+		message := map[string]interface{}{
+			"type":    "echo",
+			"payload": string(event),
+		}
+		wc.conn.WriteJSON(message)
 	}
 }
 

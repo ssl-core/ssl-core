@@ -53,6 +53,7 @@ class WebSocketClient implements SocketClient {
     }
 
     this.sendState("live");
+    this.receiveStream();
     this.playing = true;
   }
 
@@ -123,8 +124,8 @@ class WebSocketClient implements SocketClient {
       self.postMessage({
         type: "duration",
         payload: {
-          start_time: frame.start_time,
-          end_time: frame.current_time,
+          start_time: Date.parse(frame.start_time),
+          end_time: Date.parse(frame.current_time),
         },
       });
       return;
@@ -138,8 +139,8 @@ class WebSocketClient implements SocketClient {
       self.postMessage({
         type: "duration",
         payload: {
-          start_time: chunk.frames[0].start_time,
-          end_time: chunk.end_time,
+          start_time: Date.parse(chunk.frames[0].start_time),
+          end_time: Date.parse(chunk.end_time),
         },
       });
       return;

@@ -54,6 +54,14 @@
   color: #FFFFFF;
 }
 
+.info__live-button.loading .info__live-button__circle {
+  animation: pulse 1s infinite ease-in-out alternate;
+}
+  
+.info__live-button.loading .info__live-button__text {
+  opacity: 0.25;
+}
+
 .controls {
   display: flex;
   justify-content: center;

@@ -29,8 +29,8 @@ export type RobotResponse = {
 };
 
 export type FrameResponse = {
-  start_time: number;
-  current_time: number;
+  start_time: string;
+  current_time: string;
   serial_id: number;
   fps: number;
   balls: BallResponse[];
@@ -39,7 +39,8 @@ export type FrameResponse = {
 };
 
 export type ChunkResponse = {
-  end_time: number;
+  request_time: string;
+  end_time: string;
   frames: FrameResponse[];
 };
 

@@ -111,13 +111,17 @@ class TestSocketClient implements SocketClient {
 
       frames = [
         ...frames,
-        { ...this.lastFrame, current_time: currentTimestamp },
+        {
+          ...this.lastFrame,
+          current_time: new Date(currentTimestamp).toISOString(),
+        },
       ];
       currentTimestamp += 16;
     }
 
     const chunk: ChunkResponse = {
-      end_time: timestamp,
+      request_time: new Date(timestamp).toISOString(),
+      end_time: new Date(currentTimestamp).toISOString(),
       frames,
     };
 
@@ -141,7 +145,7 @@ class TestSocketClient implements SocketClient {
         robot.position = this.generateRandomPosition(robot.position);
       }
 
-      this.lastFrame.current_time = Date.now();
+      this.lastFrame.current_time = new Date().toISOString();
 
       this.handleFrame(this.lastFrame);
     }, 1000 / this.fps);
@@ -227,8 +231,8 @@ class TestSocketClient implements SocketClient {
 
     return {
       serial_id: 0,
-      start_time: this.startTime,
-      current_time: Date.now(),
+      start_time: new Date(this.startTime).toISOString(),
+      current_time: new Date().toISOString(),
       fps: this.fps,
       balls,
       field,
