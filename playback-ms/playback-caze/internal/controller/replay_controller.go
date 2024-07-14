@@ -68,11 +68,14 @@ func (rc *ReplayController) Run(wg *sync.WaitGroup) {
 				fmt.Printf("Failed to process datagram: %v\n", err)
 				continue
 			}
+			start := time.Now()
 			response, err := rc.responseFor(chunkRequest)
+			elapsed := time.Since(start)
 			if err != nil {
 				fmt.Printf("Failed to handle chunk request: %v\n", err)
 				continue
 			}
+			fmt.Println("total:", len(response.GetSamples()), "entries, time:", elapsed)
 			rc.sender.SendReplayResponse(response, datagram.Identifier)
 		}
 	}

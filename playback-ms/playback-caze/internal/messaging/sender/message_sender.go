@@ -14,7 +14,6 @@ import (
 type MessageSender struct {
 	publisher *network.ZmqPublisherSocket
 	router    *network.ZmqRouterSocket
-	count     uint64 // TODO: remove it later.
 }
 
 func NewMessageSender(addressPublisher string, router *network.ZmqRouterSocket) *MessageSender {
@@ -37,8 +36,6 @@ func (ms *MessageSender) SendSample(sample *playback.Sample) {
 		Message:    message,
 	}
 
-	ms.count++
-	fmt.Println(ms.count, "samples sent.")
 	ms.publisher.Send(datagram)
 }
 
