@@ -15,7 +15,7 @@ graph LR
 
 The `Player` microfrontend is responsible for synchronizing and controlling the playback of a match in the application. It is built as a web component that is seamlessly integrated into the [app-shell](../app-shell/README.md).
 
-The `Player` sends `frame`-type messages to the [app-shell](../gateway/README.md)'s event bus:
+The `Player` sends `frame`-type messages to the [app-shell](../app-shell/README.md)'s event bus:
 
 ```typescript
 {

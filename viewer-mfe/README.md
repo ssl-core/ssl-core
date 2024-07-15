@@ -15,7 +15,7 @@ graph LR
 
 The `Viewer` microfrontend is responsible for displaying the SSL match. It is built as a web component that is seamlessly integrated into the [app-shell](../app-shell/README.md). This component renders match elements (e.g. robots, ball, field), shapes, and other related objects in a 3D environment. It also supports interaction with the environment, including moving, rotating, and zooming.
 
-The `Viewer` listens to the `frame`-type messages of [app-shell](../gateway/README.md)'s event bus:
+The `Viewer` listens to the `frame`-type messages of [app-shell](../app-shell/README.md)'s event bus:
 
 ```typescript
 {
