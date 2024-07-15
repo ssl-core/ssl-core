@@ -7,8 +7,6 @@ This directory contains the output of the referee service.
 - [referee](#referee)
   - [Table of Contents](#table-of-contents)
   - [`GameStatus`](#gamestatus)
-    - [`Team`](#team)
-    - [`GameEventsProposal`](#gameeventsproposal)
 
 ## [`GameStatus`](referee.proto)
 
@@ -29,3 +27,7 @@ A collection of messages that compose the game status.
   - `next_command`: The next game command to be issued.
   - `game_events`: A list of game events that have occurred.
   - `game_events_proposals`: A list of proposed game events and their statuses.
+
+- `Team`:  Details of a team participating in the match.
+
+- `GameEventsProposal`: A proposal for a set of game events.
