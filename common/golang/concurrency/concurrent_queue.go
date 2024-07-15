@@ -2,6 +2,7 @@ package concurrency
 
 import (
 	"sync"
+	"time"
 )
 
 type ConcurrentQueue[T any] struct {
@@ -31,6 +32,18 @@ func (q *ConcurrentQueue[T]) DequeueAll() []T {
 	for len(q.items) == 0 {
 		q.cond.Wait()
 	}
+
+	items := q.items
+	q.items = nil
+	return items
+}
+
+func (q *ConcurrentQueue[T]) DequeueAllWait(millis int64) []T {
+	time.Sleep(time.Millisecond * time.Duration(millis))
+
+	q.mutex.Lock()
+	defer q.mutex.Unlock()
+
 	items := q.items
 	q.items = nil
 	return items
@@ -43,6 +56,7 @@ func (q *ConcurrentQueue[T]) DequeueAllWaitLen(n int) []T {
 	for len(q.items) < n {
 		q.cond.Wait()
 	}
+
 	items := q.items
 	q.items = nil
 	return items

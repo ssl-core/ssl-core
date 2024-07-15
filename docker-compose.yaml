@@ -46,8 +46,8 @@ services:
     depends_on:
       - perception-ms
 
-  redis-db:
-    container_name: redis-db
+  playback-db:
+    container_name: playback-db
     image: "redis:latest"
 
   playback-ms:
@@ -59,7 +59,7 @@ services:
       - .ssl-core:/tmp/.ssl-core
     depends_on:
       - referee-ms
-      - redis-db
+      - playback-db
 
   player-bff:
     container_name: player-bff

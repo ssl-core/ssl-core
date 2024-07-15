@@ -3,8 +3,8 @@ package controller
 import (
 	"sync"
 
+	"github.com/robocin/ssl-core/common/golang/concurrency"
 	"github.com/robocin/ssl-core/common/golang/network"
-	"github.com/robocin/ssl-core/playback-ms/playback-caze/internal/concurrency"
 	"github.com/robocin/ssl-core/playback-ms/playback-caze/internal/handler"
 	"github.com/robocin/ssl-core/playback-ms/playback-caze/internal/messaging/sender"
 	"github.com/robocin/ssl-core/playback-ms/playback-caze/internal/repository"

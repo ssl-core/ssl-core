@@ -2,10 +2,15 @@ package main
 
 import (
 	"fmt"
+	"math"
+	"strconv"
+	"sync"
 	"time"
 
 	influxdb2 "github.com/influxdata/influxdb-client-go/v2"
+	"github.com/robocin/ssl-core/common/golang/concurrency"
 	"github.com/robocin/ssl-core/common/golang/network"
+	"github.com/robocin/ssl-core/common/golang/time_util"
 	"github.com/robocin/ssl-core/metrics-ms/metrics-sherlock/internal/service_discovery"
 	"github.com/robocin/ssl-core/protocols/perception"
 	"github.com/robocin/ssl-core/protocols/playback"
@@ -15,12 +20,13 @@ import (
 )
 
 const (
-	influxDbUrl      = "http://localhost:8086"
+	influxDbUrl      = "http://metrics-db:8086"
 	influxDbToken    = "metrics"
 	influxDbOrg      = "ssl-core"
 	influxDbDatabase = "metrics"
 
-	pollerTimeout = 10 /*ms ~= 100hz*/
+	pollerTimeout     = 10   /*ms ~= 100hz*/
+	dequeueWaitTimeMs = 1000 /*ms ~= 1s*/
 )
 
 func receiveFrom(socket *goczmq.Sock) network.ZmqMultipartDatagram {
@@ -38,6 +44,8 @@ func receiveFrom(socket *goczmq.Sock) network.ZmqMultipartDatagram {
 }
 
 func main() {
+	fmt.Println("metrics-sherlock is runnning!")
+
 	// influxdb setup:
 	client := influxdb2.NewClient(influxDbUrl, influxDbToken)
 	writter := client.WriteAPI(influxDbOrg, influxDbDatabase)
@@ -68,69 +76,117 @@ func main() {
 	poller.Add(refereeSocket.Socket)
 	poller.Add(playbackSocket.Socket)
 
+	datagrams := concurrency.NewQueue[network.ZmqMultipartDatagram]()
+	wg := sync.WaitGroup{}
+
 	// receiving messages:
+	wg.Add(1)
+	go func() {
+		defer wg.Done()
 
-	// - timer 1s.
-	last_time := time.Now()
+		for {
+			socket := poller.Wait(pollerTimeout)
+			datagram := receiveFrom(socket)
 
-	packets := map[string]int{}
-
-	i := 0
-	for {
-		socket := poller.Wait(20) // (pollerTimeout)
-		datagram := receiveFrom(socket)
-
-		if datagram.IsEmpty() {
-			switch i % 3 {
-			case 0:
-				packets["perception"] += 1
-			case 1:
-				packets["referee"] += 1
-			case 2:
-				packets["playback"] += 1
+			if datagram.IsEmpty() {
+				continue
 			}
-			i++
-			//continue
+
+			datagrams.Enqueue(datagram)
 		}
+	}()
 
-		topic := string(datagram.Identifier)
-		switch topic {
-		case service_discovery.PerceptionDetectionWrapperTopic:
-			perceptionDetectionWrapper := perception.DetectionWrapper{}
-			proto.Unmarshal(datagram.Message, &perceptionDetectionWrapper)
+	// processing messages:
+	wg.Add(1)
+	go func() {
+		defer wg.Done()
 
-			// here.
-			packets["perception"] += 1
-		case service_discovery.RefereeGameStatusTopic:
-			refereeGameStatus := referee.GameStatus{}
-			proto.Unmarshal(datagram.Message, &refereeGameStatus)
+		for {
+			detections := make([]*perception.Detection, 0)
+			gameStatus := make([]*referee.GameStatus, 0)
+			samples := make([]*playback.Sample, 0)
 
-			// here.
-			packets["referee"] += 1
-		case service_discovery.PlaybackSampleTopic:
-			playbackSample := playback.Sample{}
-			proto.Unmarshal(datagram.Message, &playbackSample)
+			for _, datagram := range datagrams.DequeueAllWait(dequeueWaitTimeMs) {
+				topic := string(datagram.Identifier)
 
-			// here.
-			packets["playback"] += 1
-		default:
-			// fmt.Println("unexepected topic", topic)
-		}
+				switch topic {
+				case service_discovery.PerceptionDetectionWrapperTopic:
+					message := perception.DetectionWrapper{}
 
-		if time.Since(last_time).Seconds() >= 1.0 {
-			fmt.Println(time.Since(last_time))
+					if proto.Unmarshal(datagram.Message, &message) != nil || message.GetDetection() == nil {
+						continue
+					}
 
-			point := influxdb2.NewPointWithMeasurement("fps").SetTime(time.Now())
+					detections = append(detections, message.GetDetection())
+				case service_discovery.RefereeGameStatusTopic:
+					message := referee.GameStatus{}
 
-			for service, total := range packets {
-				point.AddField(service, map[string]interface{}{"packets": total})
+					if proto.Unmarshal(datagram.Message, &message) != nil {
+						continue
+					}
+
+					gameStatus = append(gameStatus, &message)
+				case service_discovery.PlaybackSampleTopic:
+					message := playback.Sample{}
+
+					if proto.Unmarshal(datagram.Message, &message) != nil {
+						continue
+					}
+
+					samples = append(samples, &message)
+				default:
+					fmt.Println("unexepected topic", topic)
+				}
 			}
-			packets = map[string]int{}
 
-			writter.WritePoint(point)
+			// writting framerate:
+			{
+				framerateData := influxdb2.NewPointWithMeasurement("framerate").SetTime(time.Now())
+				framerateData.AddField("detection", len(detections))
+				framerateData.AddField("game_status", len(gameStatus))
+				framerateData.AddField("samples", len(samples))
+				writter.WritePoint(framerateData)
+			}
+
+			// writting balls:
+			{
+				type Data struct {
+					x, y, z, norm float32
+					when          time.Time
+				}
+				balls := map[string][]Data{}
+				for _, detection := range detections {
+					for idx, ball := range detection.GetBalls() {
+						idxStr := strconv.Itoa(idx)
+						velocity := ball.GetVelocity()
+
+						data := Data{
+							x:    velocity.X,
+							y:    velocity.Y,
+							z:    velocity.Z,
+							norm: float32(math.Sqrt(float64(velocity.X*velocity.X + velocity.Y*velocity.Y + velocity.Z*velocity.Z))),
+							when: time_util.TimeFromTimestamp(detection.GetCreatedAt()),
+						}
+
+						balls[idxStr] = append(balls[idxStr], data)
+					}
+				}
+				for ballIdx, values := range balls {
+					ballData := influxdb2.NewPointWithMeasurement("ball[" + ballIdx + "]")
+					for _, data := range values {
+						ballData.AddField("v_x", data.x)
+						ballData.AddField("v_y", data.y)
+						ballData.AddField("v_z", data.z)
+						ballData.AddField("v_norm", data.norm)
+						ballData.SetTime(data.when)
+					}
+					writter.WritePoint(ballData)
+				}
+			}
+
 			writter.Flush()
-
-			last_time = time.Now()
 		}
-	}
+	}()
+
+	wg.Wait()
 }

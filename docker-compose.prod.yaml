@@ -100,7 +100,11 @@ services:
       - .ssl-core:/tmp/.ssl-core
     depends_on:
       - referee-ms
-      - redis-db
+      - playback-db
+
+  playback-db:
+    container_name: playback-db
+    image: "redis:latest"
 
   player-bff:
     container_name: player-bff
@@ -145,9 +149,39 @@ services:
     ports:
       - 3030:80
 
-  redis-db:
-    container_name: redis-db
-    image: "redis:latest"
+  metrics-ms:
+    container_name: metrics-ms
+    build:
+      context: .
+      dockerfile: metrics-ms/metrics-sherlock/metrics-sherlock.Dockerfile
+    volumes:
+      - .ssl-core:/tmp/.ssl-core
+    depends_on:
+      - playback-ms
+
+  metrics-db:
+    container_name: metrics-db
+    image: influxdb:2
+    environment:
+      DOCKER_INFLUXDB_INIT_MODE: setup
+      DOCKER_INFLUXDB_INIT_USERNAME: ssl-core
+      DOCKER_INFLUXDB_INIT_PASSWORD: ssl-core
+      DOCKER_INFLUXDB_INIT_ORG: ssl-core
+      DOCKER_INFLUXDB_INIT_BUCKET: metrics
+      DOCKER_INFLUXDB_INIT_RETENTION: 3h
+      DOCKER_INFLUXDB_INIT_ADMIN_TOKEN: metrics
+    ports:
+      - 8086:8086
+
+  # grafana:
+  #   container_name: grafana
+  #   image: grafana/grafana
+  #   # user: 1000:1000
+  #   # volumes:
+  #   #   - .grafana/data:/var/lib/grafana
+  #   #   - .grafana/config:/etc/grafana/provisioning
+  #   ports:
+  #     - 3000:3000
 
 volumes:
   .ssl-core:
