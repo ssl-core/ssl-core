@@ -1,8 +1,8 @@
 // This file is used to inject the epsilon values into the epsilon struct if they are not already
 // defined. It should be included in the test files, but not in the library files.
 
-#ifndef ROBOCIN_UTILITY_INTERNAL_EPSILON_INJECTOR_H
-#define ROBOCIN_UTILITY_INTERNAL_EPSILON_INJECTOR_H
+#ifndef ROBOCIN_UTILITY_INTERNAL_TEST_EPSILON_INJECTOR_H
+#define ROBOCIN_UTILITY_INTERNAL_TEST_EPSILON_INJECTOR_H
 
 #include "robocin/utility/epsilon.h"
 
@@ -31,4 +31,4 @@ struct has_epsilon<long double> : std::true_type {
 
 } // namespace robocin
 
-#endif // ROBOCIN_UTILITY_INTERNAL_EPSILON_INJECTOR_H
+#endif // ROBOCIN_UTILITY_INTERNAL_TEST_EPSILON_INJECTOR_H

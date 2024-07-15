@@ -22,40 +22,33 @@ if (NOT ROBOCIN_FLOAT_EPSILON AND NOT ROBOCIN_DOUBLE_EPSILON AND NOT ROBOCIN_LON
 endif ()
 
 robocin_cpp_library(
-  NAME type_traits
+  NAME utility
   HDRS type_traits.h
+       concepts.h
+       fuzzy_compare.h
+       singleton.h
   SRCS type_traits.cpp
+       concepts.cpp
+       fuzzy_compare.cpp
+       singleton.cpp
+  CONFIGS epsilon.h.in
 )
 
 robocin_cpp_test(
   NAME type_traits_test
   SRCS type_traits_test.cpp
-  DEPS type_traits
-)
-
-robocin_cpp_library(
-  NAME concepts
-  HDRS concepts.h
-  SRCS concepts.cpp
+  DEPS utility
 )
 
 robocin_cpp_test(
   NAME concepts_test
   SRCS concepts_test.cpp
-  DEPS concepts protobuf::libprotobuf
-)
-
-robocin_cpp_library(
-  NAME fuzzy_compare
-  HDRS fuzzy_compare.h
-  SRCS fuzzy_compare.cpp
-  CONFIGS epsilon.h.in
-  DEPS type_traits concepts
+  DEPS utility protobuf::libprotobuf
 )
 
 robocin_cpp_test(
   NAME fuzzy_compare_test
   HDRS internal/test/epsilon_injector.h
   SRCS fuzzy_compare_test.cpp
-  DEPS fuzzy_compare
+  DEPS utility
 )

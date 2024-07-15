@@ -1,4 +1,3 @@
-[![RobôCIn](https://img.shields.io/badge/🇧🇷-RobôCIn-009B3A)](https://robocin.com.br)
 [![Issues](https://img.shields.io/github/issues/robocin/ssl-core)](https://github.com/robocin/ssl-core/issues)
 [![Buf: Lint and Formatting Checker](https://github.com/robocin/ssl-core/actions/workflows/buf-lint-and-formatting-checker.yaml/badge.svg?branch=main)](https://github.com/robocin/ssl-core/actions/workflows/buf-lint-and-formatting-checker.yaml?query=branch%3Amain)
 [![C/C++: clang-format](https://github.com/robocin/ssl-core/actions/workflows/cpp-clang-format.yaml/badge.svg?branch=main)](https://github.com/robocin/ssl-core/actions/workflows/cpp-clang-format.yaml?query=branch%3Amain)
@@ -10,9 +9,14 @@
 
 # ssl-core
 
-This repository contains RobôCIn's next yet-to-be-developed software for the RoboCup Small Size Soccer.
+This repository contains the next yet-to-be-developed software for the RoboCup Small Size Soccer.
 
-Its conception consists of a long-term project that tries to apply the concept of microservices to robotics, taking the utmost care to meet the latency and resource management requirements that exist in the category, exploring the single responsibility principle so that each service has an isolated purpose.
+It consists in a long-term project that applies the concept of microservices to robotics, taking the utmost care to meet the latency and resource management requirements that exist in the category while having a portable, modular, and scalabe software.
+
+> [!IMPORTANT]
+> In this repository, there is the implementation of **VAR** _(Video Assistant Referee)_, presented at [RoboCup 2024](https://ssl.robocup.org/robocup-2024-awards#open-source-award) in Eindhoven. The idea is to make this set of microservices usable in official matches of the competition, with a 3D visualization, the ability to replay, and to index events produced by the [game-controller](https://github.com/RoboCup-SSL/ssl-game-controller).
+
+![](.images/ssl-var-ui.png)
 
 ## Table of Contents
 
@@ -35,37 +39,61 @@ All the code developed was done in [Visual Studio Code](https://code.visualstudi
 
 ## Codemap
 
-* [`experiments`](experiments/README.md)
-
-  Contains experiments and prototypes for conceptual validation.
-
-* [`vision-be`](vision-be/README.md)
-
-  Contains the vision microservice.
-
-* [`app-shell`](app-shell/README.md)
-
-  Contains the application shell for mounting microfrontends.
-  
-* [`common`](common/README.md)
-
-  Contains common code and utilities used across the project.
-
 * [`.cmake`](.cmake/README.md)
 
   Contains common [CMake](https://cmake.org) rules and utilities used across the project.
 
-* [`protocols`](protocols/README.md)
+* [`app-shell`](app-shell/README.md)
 
-  Contains the [Protocol Buffers](https://developers.google.com/protocol-buffers) definitions used across the project.
+  Contains the application shell for mounting microfrontends.
+
+* [`common`](common/README.md)
+
+  Contains common code and utilities used across the project.
+
+* [`containers`](containers/README.md)
+
+  Contains common [Docker](https://www.docker.com) files and scripts used across the project.
 
 * [`docs`](docs/README.md)
 
   Contains documentation pages as guides, tutorials, and other useful information.
 
-* [`containers`](containers/README.md)
+* [`experiments`](experiments/README.md)
 
-  Contains common [Docker](https://www.docker.com) files and scripts used across the project.
+  Contains experiments and prototypes for conceptual validation.
+
+* [`gateway`](gateway/README.md)
+
+  Contains the API Gateway.
+
+* [`perception-ms`](perception-ms/README.md)
+
+  Contains the perception microservice.
+
+* [`playback-ms`](playback-ms/README.md)
+
+  Contains the playback microservice.
+
+* [`player-bff`](player-bff/README.md)
+
+  Contains the player backend for frontend.
+
+* [`player-mfe`](player-mfe/README.md)
+
+  Contains the player microfrontend.
+
+* [`protocols`](protocols/README.md)
+
+  Contains the [Protocol Buffers](https://developers.google.com/protocol-buffers) definitions used across the project.
+
+* [`referee-ms`](referee-ms/README.md)
+
+  Contains the referee microservice.
+
+* [`viewer-mfe`](viewer-mfe/README.md)
+
+  Contains the viewer microfrontend.
 
 ## How to Contribute
 
@@ -73,7 +101,7 @@ There are many ways in which you can participate in this project, for example:
 
 * [Reporting bugs, suggesting new features](https://github.com/robocin/ssl-core/issues) and contributing to the validation while they are being checked in
 * Reviewing our [pull requests](https://github.com/robocin/ssl-core/pulls)
-* Reviewing our documentation within this repository and making pull requests for anything from typos to additional new content
+* Reviewing our documentation and making pull requests for anything from typos to additional new content
 
 If you are interested in fixing issues and contributing directly to the code base,
 please see [How to Contribute](docs/how-to-contribute.md).

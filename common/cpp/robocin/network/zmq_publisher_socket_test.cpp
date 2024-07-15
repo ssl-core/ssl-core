@@ -34,7 +34,7 @@ class MockZmqSocket {
   MOCK_METHOD(void, close, ());
 };
 
-using MockZmqPublisherSocket = IZmqPublisherSocket<MockZmqSocket, MockZmqContext>;
+using MockZmqPublisherSocket = AZmqPublisherSocket<MockZmqSocket, MockZmqContext>;
 
 TEST(ZmqPublisherSocketTest, WhenBindIsSucceeded) {
   MockZmqPublisherSocket socket;

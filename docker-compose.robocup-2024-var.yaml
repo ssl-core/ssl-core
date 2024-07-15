@@ -1,0 +1,96 @@
+services:
+  gateway:
+    container_name: gateway
+    build:
+      context: .
+      dockerfile: gateway/gateway-augusto/gateway-augusto.Dockerfile
+    environment:
+      - VISION_PORT=10006
+    volumes:
+      - .ssl-core:/tmp/.ssl-core
+    ports:
+      - 50051:50051
+      - "224.5.23.2:10006:10006/udp"
+      - "224.5.23.2:10010:10010/udp"
+      - "224.5.23.1:11003:11003/udp"
+
+  perception-ms:
+    container_name: perception-ms
+    image: robocin/perception-brutus:manual-c7208b
+    volumes:
+      - .ssl-core:/tmp/.ssl-core
+    depends_on:
+      - gateway
+
+  referee-ms:
+    container_name: referee-ms
+    image: robocin/referee-daronco:manual-419128
+    volumes:
+      - .ssl-core:/tmp/.ssl-core
+    depends_on:
+      - perception-ms
+
+  playback-db:
+    container_name: playback-db
+    image: "redis:latest"
+
+  playback-ms:
+    container_name: playback-ms
+    build:
+      context: .
+      dockerfile: playback-ms/playback-caze/playback-caze.Dockerfile
+    volumes:
+      - .ssl-core:/tmp/.ssl-core
+    depends_on:
+      - referee-ms
+      - playback-db
+
+  player-bff:
+    container_name: player-bff
+    build:
+      context: .
+      dockerfile: player-bff/player-sonson/player-sonson.Dockerfile
+    ports:
+      - 4040:4040
+    depends_on:
+      - gateway
+      - playback-ms
+
+  player-mfe:
+    build:
+      context: .
+      dockerfile: player-mfe/Dockerfile
+      args:
+        - SOURCE_DIRECTORY=player-mfe
+    command: ["-g", "daemon off;"]
+    ports:
+      - 3031:80
+    depends_on:
+      - player-bff
+
+  viewer-mfe:
+    build:
+      context: .
+      dockerfile: viewer-mfe/Dockerfile
+      args:
+        - SOURCE_DIRECTORY=viewer-mfe
+    command: ["-g", "daemon off;"]
+    ports:
+      - 3032:80
+
+  app-shell:
+    build:
+      context: .
+      dockerfile: app-shell/Dockerfile
+      args:
+        - SOURCE_DIRECTORY=app-shell
+    command: ["-g", "daemon off;"]
+    ports:
+      - 3030:80
+
+  redis-db:
+    container_name: redis-db
+    image: "redis:latest"
+
+volumes:
+  .ssl-core:

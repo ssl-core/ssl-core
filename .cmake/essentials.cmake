@@ -48,6 +48,10 @@ include(GNUInstallDirs) # provided by CMake
 
 ########################################################################################################################
 
+set(ZLIB_USE_STATIC_LIBS ON) # required to link ZLIB statically
+
+########################################################################################################################
+
 # find Threads package
 find_package(Threads QUIET)
 if (Threads_FOUND)
@@ -448,7 +452,7 @@ endfunction(robocin_cpp_benchmark_test)
 function(robocin_cpp_executable)
   cmake_parse_arguments(
           ARG                                                             # prefix of output variables
-          ""                                                              # list of names of the boolean arguments
+          "DYNAMIC_LINKING"                                               # list of names of the boolean arguments
           "NAME"                                                          # list of names of mono-valued arguments
           "HDRS;SRCS;MODS;DEPS;MACROS;COMPILE_OPTIONS;COMPILE_FEATURES"   # list of names of multi-valued arguments
           ${ARGN}                                                         # arguments of the function to parse (ARGN contains all the arguments after the function name)
@@ -464,6 +468,13 @@ function(robocin_cpp_executable)
     if (NOT FILTERED_SRCS)
       message(FATAL_ERROR "robocin_cpp_executable (${ARG_NAME}): no source files given with suffix '_main.cpp'.")
     endif ()
+  endif ()
+
+  if (NOT ARG_DYNAMIC_LINKING)
+    list(APPEND ARG_DEPS "-static")
+    message(STATUS "robocin_cpp_executable (${ARG_NAME}): generating the executable with static linking.")
+  else ()
+    message(STATUS "robocin_cpp_executable (${ARG_NAME}): generating the executable with dynamic linking.")
   endif ()
 
   add_executable(${ARG_NAME} ${ARG_HDRS} ${ARG_SRCS} ${ARG_MODS}) # add executable with given name, headers, sources and modules

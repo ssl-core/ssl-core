@@ -18,6 +18,8 @@ A collection of messages that compose the detection.
 - `Robot`: a message containing the robot's identification and kinematic properties.
 - `Field`: a message containing the field's dimensions.
 
+- `DetectionWrapper`: the message that encapsulates all types of detection available, including raw and tracked detections from third-party sources, and the processed detection.
+
 ![](.images/field-dimensions.svg)
 
-> See [Dimensions at Rules of the RoboCup Small Size League](https://robocup-ssl.github.io/ssl-rules/sslrules.html#_dimensions) for more information about the field dimensions.
+> See [Dimensions at Rules of the RoboCup Small Size League](https://robocup-ssl.github.io/)

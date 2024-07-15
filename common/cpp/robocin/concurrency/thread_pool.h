@@ -1,5 +1,5 @@
-#ifndef ROBOCIN_UTILITY_THREAD_POOL_H
-#define ROBOCIN_UTILITY_THREAD_POOL_H
+#ifndef ROBOCIN_CONCURRENCY_THREAD_POOL_H
+#define ROBOCIN_CONCURRENCY_THREAD_POOL_H
 
 #include "robocin/version/version.h"
 
@@ -100,4 +100,4 @@ std::future<std::invoke_result_t<F, Args...>> ThreadPool::enqueue(F&& f, Args&&.
 
 #endif
 
-#endif // ROBOCIN_UTILITY_THREAD_POOL_H
+#endif // ROBOCIN_CONCURRENCY_THREAD_POOL_H

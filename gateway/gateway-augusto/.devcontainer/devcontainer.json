@@ -1,10 +1,14 @@
 {
-  "name": "C++: Gateway Augusto",
+  "name": "Golang: Gateway Augusto",
   "build": {
-    "context": "./../../..",
-    "dockerfile": "./../Dockerfile",
+    "context": "../../..",
+    "dockerfile": "./../gateway-augusto.Dockerfile",
     "target": "devcontainer"
   },
+  "initializeCommand": "mkdir -p /tmp/.ssl-core",
+  "mounts": [
+    "source=/tmp/.ssl-core/,target=/tmp/.ssl-core/,type=bind,consistency=cached"
+  ],
   "runArgs": [
     "-e",
     "DISPLAY=${env:DISPLAY}",
@@ -12,88 +16,86 @@
   ],
   "customizations": {
     "vscode": {
-      "extensions": [
-        // Docker
-        "ms-azuretools.vscode-docker",
-        // Live Share
-        "ms-vsliveshare.vsliveshare",
-        // C/C++ Extension Pack
-        "ms-vscode.cpptools-extension-pack",
-        // clangd
-        "llvm-vs-code-extensions.vscode-clangd",
-        // Buf - Protobuf Language Support
-        "bufbuild.vscode-buf",
-        // GitLens - Git supercharged
-        "eamodio.gitlens",
-        // GitHub Copilot
-        "GitHub.copilot",
-        // Code Spell Checker
-        "streetsidesoftware.code-spell-checker",
-        // Markdown
-        "yzhang.markdown-all-in-one",
-        // YAML
-        "redhat.vscode-yaml"
-      ],
       "settings": {
-        "files.associations": {
-          "*.cppm": "cpp",
-          "*.ixx": "cpp"
-        },
-        // C++ Settings
-        "[cpp]": {
-          "editor.insertSpaces": true,
+        // Go Settings
+        "[go]": {
+          "buildTags": "",
+          "toolsEnvVars": {
+            "CGO_ENABLED": "0"
+          },
+          "useLanguageServer": true,
+          "testEnvVars": {
+            "CGO_ENABLED": "1"
+          },
+          "testFlags": [
+            "-v",
+            "-race"
+          ],
+          "testTimeout": "10s",
+          "coverOnSingleTest": true,
+          "coverOnSingleTestFile": true,
+          "coverOnTestPackage": true,
+          "lintTool": "golangci-lint",
+          "lintOnSave": "package",
+          "editor.codeActionsOnSave": {
+            "source.organizeImports": "always"
+          },
           "editor.tabSize": 2,
-          "editor.formatOnSave": true,
-          "editor.defaultFormatter": "llvm-vs-code-extensions.vscode-clangd"
+          "editor.insertSpaces": false,
+          "editor.formatOnSave": true
         },
-        // C/C++ Settings
-        "C_Cpp.intelliSenseEngine": "disabled", // disabling IntelliSense Engine to use clangd
-        // clangd Settings
-        "clangd.path": "clangd",
-        // CMake Settings
-        "cmake.buildDirectory": "${workspaceFolder}/build",
-        "cmake.cmakePath": "cmake",
-        "cmake.generator": "Ninja",
-        "cmake.options.advanced": {
-          "build": {
-            "statusBarVisibility": "visible"
-          },
-          "launch": {
-            "statusBarVisibility": "visible"
-          },
-          "debug": {
-            "statusBarVisibility": "visible"
-          }
+        "gopls": {
+          "usePlaceholders": false,
+          "staticcheck": true
         },
-        // Code Spell Checker Settings
-        "cSpell.language": "en, pt-BR",
-        "cSpell.words": [
-          "robocin",
-          "RoboCIn",
-          "RobôCIn"
-        ],
         // Editor Settings
+        "editor.insertSpaces": true,
         "editor.detectIndentation": true,
         // Files Settings
         "files.insertFinalNewline": true,
+        "files.eol": "\n",
         // JSON Settings
         "[json]": {
-          "editor.insertSpaces": true,
           "editor.tabSize": 2,
           "editor.formatOnSave": true,
           "editor.defaultFormatter": "vscode.json-language-features"
         },
         // YAML Settings
         "[yaml]": {
-          "editor.insertSpaces": true,
           "editor.tabSize": 2,
           "editor.formatOnSave": true,
           "editor.defaultFormatter": "redhat.vscode-yaml"
         },
         "[markdown]": {
           "editor.formatOnSave": true
+        },
+        "[makefile]": {
+          "editor.insertSpaces": false
         }
-      }
+      },
+      "extensions": [
+        // Go
+        "golang.Go",
+        // GitLens - Git supercharged
+        "eamodio.gitlens",
+        // Docker
+        "ms-azuretools.vscode-docker",
+        // Live Share
+        "ms-vsliveshare.vsliveshare",
+        // Buf - Protobuf Language Support
+        "bufbuild.vscode-buf",
+        // Github Copilot
+        "github.copilot",
+        // Markdown
+        "yzhang.markdown-all-in-one",
+        // YAML
+        "redhat.vscode-yaml"
+      ]
+    }
+  },
+  "features": {
+    "ghcr.io/devcontainers/features/go:1": {
+      "version": "latest"
     }
   }
 }
