@@ -6,6 +6,15 @@
 [![CMake](https://img.shields.io/badge/CMake-3.29%2B-blue.svg)](https://cmake.org/cmake/help/latest/release/3.29.html)
 [![VS Code Dev Containers](https://img.shields.io/static/v1?label=VS+Code&message=Dev+Containers&logo=visualstudiocode&color=007ACC&labelColor=2C2C32&logoColor=007ACC)](https://code.visualstudio.com/docs/devcontainers/containers)
 [![License: MIT](https://img.shields.io/badge/License-MIT-orange.svg)](LICENSE)
+![Docker](https://img.shields.io/badge/docker-%230db7ed.svg?style=for-the-badge&logo=docker&logoColor=white)
+![Redis](https://img.shields.io/badge/redis-%23DD0031.svg?style=for-the-badge&logo=redis&logoColor=white)
+![InfluxDB](https://img.shields.io/badge/InfluxDB-22ADF6?style=for-the-badge&logo=InfluxDB&logoColor=white)
+![Yarn](https://img.shields.io/badge/yarn-%232C8EBB.svg?style=for-the-badge&logo=yarn&logoColor=white)
+![Go](https://img.shields.io/badge/go-%2300ADD8.svg?style=for-the-badge&logo=go&logoColor=white)
+![JavaScript](https://img.shields.io/badge/javascript-%23323330.svg?style=for-the-badge&logo=javascript&logoColor=%23F7DF1E)
+![C++](https://img.shields.io/badge/c++-%2300599C.svg?style=for-the-badge&logo=c%2B%2B&logoColor=white)
+![CMake](https://img.shields.io/badge/CMake-%23008FBA.svg?style=for-the-badge&logo=cmake&logoColor=white)
+![Visual Studio Code](https://img.shields.io/badge/Visual%20Studio%20Code-0078d7.svg?style=for-the-badge&logo=visual-studio-code&logoColor=white)
 
 # ssl-core
 
