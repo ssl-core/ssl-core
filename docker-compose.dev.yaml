@@ -175,15 +175,19 @@ services:
     ports:
       - 8086:8086
 
-  # grafana:
-  #   container_name: grafana
-  #   image: grafana/grafana
-  #   # user: 1000:1000
-  #   # volumes:
-  #   #   - .grafana/data:/var/lib/grafana
-  #   #   - .grafana/config:/etc/grafana/provisioning
-  #   ports:
-  #     - 3000:3000
+  grafana:
+    container_name: grafana
+    image: grafana/grafana
+    environment:
+      - GF_SECURITY_ADMIN_USER=ssl-core
+      - GF_SECURITY_ADMIN_PASSWORD=ssl-core
+      - GF_USERS_ALLOW_SIGN_UP=false
+    logging:
+      driver: none
+    ports:
+      - 3000:3000
+    depends_on:
+      - metrics-db
 
 volumes:
   .ssl-core:
