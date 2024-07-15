@@ -21,6 +21,7 @@ class PlayerMFESlider extends HTMLElement {
   private state: PlayerMFESliderState;
   private elements: PlayerMFESliderElements;
   private playback: Playback;
+  private lockInputUpdate: boolean;
 
   constructor() {
     super();
@@ -36,6 +37,7 @@ class PlayerMFESlider extends HTMLElement {
       tooltip: null,
     };
     this.playback = inject<Playback>("playback")!;
+    this.lockInputUpdate = false;
   }
 
   public connectedCallback() {
@@ -99,22 +101,33 @@ class PlayerMFESlider extends HTMLElement {
   }
 
   private initializeElements() {
-    this.elements.slider!.addEventListener("input", this.handleInput);
+    this.elements.slider!.addEventListener("change", this.handleInput);
+    this.elements.slider!.addEventListener("mousedown", this.handleMouseDown);
     this.elements.slider!.addEventListener("mousemove", this.handleMouseMove);
+    this.elements.slider!.addEventListener("mouseup", this.handleMouseUp);
     this.elements.slider!.setAttribute("max", this.state.duration.toString());
     this.elements.currentTime!.textContent = formatTime(this.state.currentTime);
     this.elements.duration!.textContent = formatTime(this.state.duration);
   }
 
   private handlePlaybackUpdate = (event: PlaybackUpdateEvent) => {
+    if (this.lockInputUpdate) {
+      return;
+    }
+
     this.setDuration(event.duration);
     this.setCurrentTime(event.currentTime);
   };
 
   private handleInput = (event: Event) => {
     const target = event.target as HTMLInputElement;
-    this.setCurrentTime(parseInt(target.value));
     this.playback.seek(parseInt(target.value));
+    this.setCurrentTime(parseInt(target.value));
+  };
+
+  private handleMouseDown = () => {
+    this.lockInputUpdate = true;
+    this.playback.pause();
   };
 
   private handleMouseMove = (event: MouseEvent) => {
@@ -124,11 +137,21 @@ class PlayerMFESlider extends HTMLElement {
     const percentage = x / width;
 
     this.elements.tooltip!.textContent = formatTime(
-      this.state.duration * percentage
+      Math.round(this.state.duration * percentage)
     );
 
     const offsetX = this.elements.container!.getBoundingClientRect().left;
     this.elements.tooltip!.style.left = `${event.clientX - offsetX}px`;
+
+    if (this.lockInputUpdate) {
+      this.elements.slider!.style.backgroundSize = `${percentage * 100}% 100%`;
+    }
+  };
+
+  private handleMouseUp = () => {
+    setTimeout(() => {
+      this.lockInputUpdate = false;
+    }, 200);
   };
 }
 
