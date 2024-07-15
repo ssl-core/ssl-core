@@ -1,4 +1,4 @@
-# Proxy Multiclient Single Service
+# Experiment: Proxy Multiclient Single Service Gateway
 
 This experiments aims to validate the behavior of multiple clients that simulate a Backend For Frontend (BFF) module connecting with a gateway that uses a [ZeroMQ Proxy Pattern](https://zguide.zeromq.org/docs/chapter2/#ZeroMQ-s-Built-In-Proxy-Function) and receiving replies from a single service.
 
@@ -8,11 +8,11 @@ This experiments aims to validate the behavior of multiple clients that simulate
 - [Service](#Service)
 - [Testing](#Testing)
 
-## [Client](gateway/client_main.cpp)
+## [Client](proxy-multiclient-single-service-gateway/client_main.cpp)
 
 The client is a standard client implementation that uses a inter-process communication and a ZMQ_REQ socket, one type of socket made for client-server communication, allowing the client to send requests and receive replies.
 
-## [Gateway](gateway/gateway_main.cpp)
+## [Gateway](proxy-multiclient-single-service-gateway/gateway_main.cpp)
 
 The gateway implements a frontend socket (ZMQ_ROUTER) and a backend socket (ZMQ_DEALER) to properly route the requests made from some client to the service and the response given by the service to the client. 
 
@@ -45,7 +45,7 @@ while (true) {
 }
 ```
 
-## [Service](gateway/service_main.cpp)
+## [Service](proxy-multiclient-single-service-gateway/service_main.cpp)
 
 The service also uses inter-process communication and a ZMQ_DEALER socket to ensure asynchronicity and receive the package sent by the gateway as a multipart message that represents the fields of the extended reply envelope: client's identity, delimiter and message (request).
 
