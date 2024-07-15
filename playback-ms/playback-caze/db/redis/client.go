@@ -10,7 +10,7 @@ import (
 )
 
 const (
-	redisAddress = "redis-db"
+	redisAddress = "playback-db"
 	redisPort    = 6379
 )
 

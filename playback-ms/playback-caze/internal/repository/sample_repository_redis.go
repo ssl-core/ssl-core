@@ -5,8 +5,8 @@ import (
 	"log"
 
 	"github.com/redis/go-redis/v9"
+	"github.com/robocin/ssl-core/common/golang/time_util"
 	redis_db "github.com/robocin/ssl-core/playback-ms/playback-caze/db/redis"
-	"github.com/robocin/ssl-core/playback-ms/playback-caze/internal/time_util"
 	"github.com/robocin/ssl-core/protocols/playback"
 	"google.golang.org/protobuf/proto"
 	"google.golang.org/protobuf/types/known/timestamppb"

@@ -1,0 +1,22 @@
+{
+    "folders": [
+        {
+            "path": ".devcontainer"
+        },
+        {
+            "path": "."
+        },
+        {
+            "path": "../../common/golang"
+        },
+        {
+            "path": "../../protocols"
+        }
+    ],
+    "settings": {
+        "files.exclude": {
+            // only the top-level .devcontainer/ should be displayed
+            "**/**/.devcontainer": true,
+        }
+    }
+}
