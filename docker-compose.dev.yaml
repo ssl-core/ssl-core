@@ -175,19 +175,28 @@ services:
     ports:
       - 8086:8086
 
+  # grafana:
+  #   container_name: grafana
+  #   image: grafana/grafana
+  #   environment:
+  #     - GF_SECURITY_ADMIN_USER=ssl-core
+  #     - GF_SECURITY_ADMIN_PASSWORD=ssl-core
+  #     - GF_AUTH_DISABLE_LOGIN_FORM=true
+  #     - GF_AUTH_ANONYMOUS_ENABLED=true
+  #     - GF_AUTH_ANONYMOUS_ORG_ROLE=Admin
+  #   volumes:
+  #     - grafana-data:/var/lib/grafana
+  #   ports:
+  #     - 3000:3000
+  #   depends_on:
+  #     - metrics-db
+  
   grafana:
-    container_name: grafana
-    image: grafana/grafana
-    environment:
-      - GF_SECURITY_ADMIN_USER=ssl-core
-      - GF_SECURITY_ADMIN_PASSWORD=ssl-core
-      - GF_USERS_ALLOW_SIGN_UP=false
-    logging:
-      driver: none
+    build: './grafana'
+    container_name: 'grafana'
     ports:
-      - 3000:3000
-    depends_on:
-      - metrics-db
+      - '3000:3000'
 
 volumes:
   .ssl-core:
+  grafana-data:
