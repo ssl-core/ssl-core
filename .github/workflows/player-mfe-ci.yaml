@@ -21,6 +21,3 @@ jobs:
           node-version: 18
       - run: npm install -g yarn && yarn
       - run: yarn test
-      - uses: davelosert/vitest-coverage-report-action@v2
-        with:
-          working-directory: ./player-mfe
