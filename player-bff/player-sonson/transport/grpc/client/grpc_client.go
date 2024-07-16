@@ -54,7 +54,7 @@ func (gc *GrpcClient) ReceiveLiveStream(proxy *application.ConnectionProxy) erro
 	stream, err := gc.client.ReceiveLivestream(ctx)
 
 	if err != nil {
-		fmt.Println(err)
+		fmt.Println("ERR: ", err)
 		return err
 	}
 
