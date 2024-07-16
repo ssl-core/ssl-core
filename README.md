@@ -16,6 +16,8 @@ It consists in a long-term project that applies the concept of microservices to 
 > [!IMPORTANT]
 > In this repository, there is the implementation of **VAR** _(Video Assistant Referee)_, presented at [RoboCup 2024](https://ssl.robocup.org/robocup-2024-awards#open-source-award) in Eindhoven. The idea is to make this set of microservices usable in official matches of the competition, with a 3D visualization, the ability to replay, and to index events produced by the [game-controller](https://github.com/RoboCup-SSL/ssl-game-controller).
 
+![](.images/ssl-var-ui.png)
+
 ## Table of Contents
 
 - [ssl-core](#ssl-core)

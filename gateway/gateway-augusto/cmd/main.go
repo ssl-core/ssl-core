@@ -43,10 +43,10 @@ func main() {
 	// TODO(aalmds): refactor addresses with service discovery
 	// TODO(aalmds): review error handlers
 
-	wg := sync.WaitGroup{}
-	wg.Add(3)
-
 	proxy := make(chan network.ZmqMultipartDatagram)
+
+	wg := sync.WaitGroup{}
+	wg.Add(5)
 	go startGatewayUdpMulticastWorker(fmt.Sprintf("224.5.23.2:%s", visionPort), proxy, "vision-third-party", &wg)
 	go startGatewayUdpMulticastWorker("224.5.23.2:10010", proxy, "tracked-third-party", &wg)
 	go startGatewayUdpMulticastWorker("224.5.23.1:11003", proxy, "referee-third-party", &wg)
