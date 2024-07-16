@@ -88,9 +88,48 @@ services:
     ports:
       - 3030:80
 
-  redis-db:
-    container_name: redis-db
-    image: "redis:latest"
+  metrics-ms:
+    container_name: metrics-ms
+    build:
+      context: .
+      dockerfile: metrics-ms/metrics-sherlock/metrics-sherlock.Dockerfile
+    volumes:
+      - .ssl-core:/tmp/.ssl-core
+    depends_on:
+      - playback-ms
+      - metrics-db
+
+  metrics-db:
+    container_name: metrics-db
+    image: influxdb:2
+    environment:
+      DOCKER_INFLUXDB_INIT_MODE: setup
+      DOCKER_INFLUXDB_INIT_USERNAME: ssl-core
+      DOCKER_INFLUXDB_INIT_PASSWORD: ssl-core
+      DOCKER_INFLUXDB_INIT_ORG: ssl-core
+      DOCKER_INFLUXDB_INIT_BUCKET: metrics
+      DOCKER_INFLUXDB_INIT_RETENTION: 3h
+      DOCKER_INFLUXDB_INIT_ADMIN_TOKEN: metrics
+    ports:
+      - 8086:8086
+
+  grafana:
+    container_name: grafana
+    image: grafana/grafana
+    environment:
+      - GF_AUTH_DISABLE_LOGIN_FORM=true
+      - GF_AUTH_ANONYMOUS_ENABLED=true
+      - GF_AUTH_ANONYMOUS_ORG_ROLE=Admin
+    volumes:
+      - .grafana/config.ini:/etc/grafana/config.ini
+      - .grafana/dashboards:/var/lib/grafana/dashboards
+      - .grafana/provisioning:/etc/grafana/provisioning
+    logging:
+      driver: none
+    ports:
+      - 3000:3000
+    depends_on:
+      - metrics-db
 
 volumes:
   .ssl-core:
