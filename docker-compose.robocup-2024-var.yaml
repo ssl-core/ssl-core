@@ -50,6 +50,8 @@ services:
       - referee-ms
       - playback-db
     network_mode: host
+    extra_hosts:
+      - "playback-db:127.0.0.1"
 
   player-bff:
     container_name: player-bff
@@ -103,6 +105,8 @@ services:
       - playback-ms
       - metrics-db
     network_mode: host
+    extra_hosts:
+      - "metrics-db:127.0.0.1"
 
   metrics-db:
     container_name: metrics-db
@@ -133,6 +137,8 @@ services:
     depends_on:
       - metrics-db
     network_mode: host
+    extra_hosts:
+      - "metrics-db:127.0.0.1"
 
 volumes:
   .ssl-core:
