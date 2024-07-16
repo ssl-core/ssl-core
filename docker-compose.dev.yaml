@@ -106,7 +106,7 @@ services:
 
   playback-db:
     container_name: playback-db
-    image: "redis:latest"
+    image: redis:7.2.5
 
   player-bff:
     container_name: player-bff
@@ -160,6 +160,7 @@ services:
       - .ssl-core:/tmp/.ssl-core
     depends_on:
       - playback-ms
+      - metrics-db
 
   metrics-db:
     container_name: metrics-db
@@ -179,9 +180,13 @@ services:
     container_name: grafana
     image: grafana/grafana
     environment:
-      - GF_SECURITY_ADMIN_USER=ssl-core
-      - GF_SECURITY_ADMIN_PASSWORD=ssl-core
-      - GF_USERS_ALLOW_SIGN_UP=false
+      - GF_AUTH_DISABLE_LOGIN_FORM=true
+      - GF_AUTH_ANONYMOUS_ENABLED=true
+      - GF_AUTH_ANONYMOUS_ORG_ROLE=Admin
+    volumes:
+      - .grafana/config.ini:/etc/grafana/config.ini
+      - .grafana/dashboards:/var/lib/grafana/dashboards
+      - .grafana/provisioning:/etc/grafana/provisioning
     logging:
       driver: none
     ports:
