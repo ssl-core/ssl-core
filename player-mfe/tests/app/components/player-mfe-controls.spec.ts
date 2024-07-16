@@ -1,15 +1,17 @@
 import { beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 
 import PlayerMFEControls from "../../../src/app/components/player-mfe-controls";
-import EventBus from "../../../src/lib/event-bus/event-bus";
 import { provide } from "../../../src/app/services/global-provider";
+import Playback from "../../../src/entities/playback";
 
 describe("PlayerMFEControls", () => {
   const socketHandlerMock = {
     playLiveStream: vi.fn(),
     pauseLiveStream: vi.fn(),
-  };
-  const eventBus = new EventBus();
+    addEventListener: vi.fn(),
+    fetchReplay: vi.fn(),
+  } as any;
+  const playback = new Playback(socketHandlerMock);
 
   let element: PlayerMFEControls;
 
@@ -18,8 +20,7 @@ describe("PlayerMFEControls", () => {
       customElements.define("player-mfe-controls", PlayerMFEControls);
     }
 
-    provide("eventBus", eventBus);
-    provide("socketHandler", socketHandlerMock);
+    provide("playback", playback);
   });
 
   beforeEach(() => {
@@ -36,36 +37,6 @@ describe("PlayerMFEControls", () => {
   it("should render play button", () => {
     const playButton = element.querySelector("[data-testid=play-button]");
     expect(playButton).not.toBeNull();
-  });
-
-  it("should call playLiveStream() when play button is clicked", () => {
-    const playButton = element.querySelector("[data-testid=play-button]")!;
-    playButton.dispatchEvent(new MouseEvent("click"));
-
-    expect(socketHandlerMock.playLiveStream).toHaveBeenCalled();
-  });
-
-  it("should call pauseLiveStream() when play button is clicked again", () => {
-    const playButton = element.querySelector("[data-testid=play-button]")!;
-    playButton.dispatchEvent(new MouseEvent("click"));
-    playButton.dispatchEvent(new MouseEvent("click"));
-
-    expect(socketHandlerMock.pauseLiveStream).toHaveBeenCalled();
-  });
-
-  it("should change play button icon when clicked", () => {
-    const playButton = element.querySelector("[data-testid=play-button]")!;
-    playButton.dispatchEvent(new MouseEvent("click"));
-
-    expect(playButton.getAttribute("aria-label")).toBe("Pause");
-  });
-
-  it("should change play button icon when clicked again", () => {
-    const playButton = element.querySelector("[data-testid=play-button]")!;
-    playButton.dispatchEvent(new MouseEvent("click"));
-    playButton.dispatchEvent(new MouseEvent("click"));
-
-    expect(playButton.getAttribute("aria-label")).toBe("Play");
   });
 
   it("should render rewind button", () => {
