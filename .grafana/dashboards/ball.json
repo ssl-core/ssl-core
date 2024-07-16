@@ -18,7 +18,6 @@
   "editable": true,
   "fiscalYearStartMonth": 0,
   "graphTooltip": 0,
-  "id": 1,
   "links": [],
   "liveNow": true,
   "panels": [
@@ -62,7 +61,7 @@
               "mode": "none"
             },
             "thresholdsStyle": {
-              "mode": "off"
+              "mode": "dashed"
             }
           },
           "mappings": [],
@@ -74,8 +73,12 @@
                 "value": null
               },
               {
+                "color": "#EAB839",
+                "value": 4
+              },
+              {
                 "color": "red",
-                "value": 80
+                "value": 5
               }
             ]
           },
@@ -156,7 +159,7 @@
               "mode": "none"
             },
             "thresholdsStyle": {
-              "mode": "off"
+              "mode": "dashed"
             }
           },
           "mappings": [],
@@ -168,8 +171,12 @@
                 "value": null
               },
               {
-                "color": "red",
-                "value": 80
+                "color": "orange",
+                "value": 4000
+              },
+              {
+                "color": "dark-red",
+                "value": 5000
               }
             ]
           },
