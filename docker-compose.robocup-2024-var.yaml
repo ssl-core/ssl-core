@@ -9,11 +9,6 @@ services:
       - GC_PORT=10003
     volumes:
       - .ssl-core:/tmp/.ssl-core
-    ports:
-      - 50051:50051
-      # - "224.5.23.2:10006:10006/udp"
-      # - "224.5.23.2:10010:10010/udp"
-      # - "224.5.23.1:11003:11003/udp"
     network_mode: host
 
   perception-ms:
