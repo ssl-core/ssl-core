@@ -28,6 +28,28 @@ export type RobotResponse = {
   dribbler_width: number;
 };
 
+export type TeamResponse = {
+  name: string;
+  score: number;
+  is_positive_half: boolean;
+  robot_color: RobotColor;
+  goalkeeper_id: number;
+  yellow_cards: number;
+  time_to_expire_active_yellow_cards: number[];
+  red_cards: number;
+  timeouts_left: number;
+  total_timeout_time_left: number;
+  fouls_committed: number;
+  consecutive_ball_placement_failures: number;
+  is_ball_placement_enabled: boolean;
+  has_ball_placement_failures_reached_maximum: boolean;
+  maximum_allowed_robots: number;
+  is_robot_substitution_requested: boolean;
+  is_robot_substitution_allowed: boolean;
+  robot_substitutions_left: number;
+  robot_substitution_time_left: number;
+};
+
 export type FrameResponse = {
   start_time: string;
   current_time: string;
@@ -36,6 +58,17 @@ export type FrameResponse = {
   balls: BallResponse[];
   robots: RobotResponse[];
   field: FieldResponse;
+  away_team: TeamResponse;
+  home_team: TeamResponse;
+  command: any;
+  command_time: string;
+  game_events: any;
+  game_events_proposals: any;
+  game_stage: string;
+  game_stage_time_left: number;
+  match_type: string;
+  next_command: any;
+  total_commands: number;
 };
 
 export type ChunkResponse = {

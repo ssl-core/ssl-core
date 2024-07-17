@@ -9,16 +9,6 @@ type EventBusMessage<T = any> = {
   payload: T;
 };
 
-type ProxyEvent = {
-  id: number;
-  data: any;
-};
-
-type ThreeSyncMessage = {
-  camera: (string | number | undefined)[];
-  time: number;
-};
-
 type Frame = {
   serialId: number;
   startTime: Date;
@@ -28,6 +18,17 @@ type Frame = {
   balls: Ball[];
   robots: Robot[];
   field: Field;
+  homeTeam: Team;
+  awayTeam: Team;
+  command: any;
+  commandTime: Date;
+  gameEvents: any;
+  gameEventsProposals: any;
+  gameStage: string;
+  gameStageTimeLeft: Date;
+  matchType: string;
+  nextCommand: any;
+  totalCommands: number;
 };
 
 type Ball = {
@@ -58,4 +59,26 @@ type Field = {
   penaltyAreaWidth: number;
   boundaryWidth: number;
   goalCenterToPenaltyMark: number;
+};
+
+type Team = {
+  name: string;
+  score: number;
+  isPositiveHalf: boolean;
+  color: RobotColor;
+  goalkeeperId: number;
+  yellowCards: number;
+  timeToExpireActiveYellowCards: number[];
+  redCards: number;
+  timeoutsLeft: number;
+  totalTimeoutTimeLeft: Date;
+  foulsCommitted: number;
+  consecutiveBallPlacementFailures: number;
+  isBallPlacementEnabled: boolean;
+  hasBallPlacementFailuresReachedMaximum: boolean;
+  maximumAllowedRobots: number;
+  isRobotSubstitutionRequested: boolean;
+  isRobotSubstitutionAllowed: boolean;
+  robotSubstitutionsLeft: number;
+  robotSubstitutionTimeLeft: Date;
 };

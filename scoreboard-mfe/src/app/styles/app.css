@@ -55,8 +55,11 @@
 }
 
 .scoreboard__score-period {
-  font-size: 0.75rem;
+  font-size: 0.625rem;
   color: #9ca3af;
+  text-transform: capitalize;
+  max-width: 5rem;
+  text-align: center;
 }
 
 .scoreboard__score-result {
@@ -103,6 +106,13 @@
 .scoreboard__event-time {
   color: #a1a1aa;
   width: 5rem;
+}
+
+.scoreboard__event-blank {
+  color: #a1a1aa;
+  width: 100%;
+  text-align: center;
+  margin: 0.5rem 0;
 }
 
 .scoreboard__event-description {
