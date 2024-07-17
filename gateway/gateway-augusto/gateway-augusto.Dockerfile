@@ -20,5 +20,6 @@ COPY --from=build /prod /
 COPY --from=build /gateway/gateway-augusto/bin/gateway .
 
 ENV VISION_PORT ${VISION_PORT}
+ENV GC_PORT ${GC_PORT}
 
 ENTRYPOINT ["./gateway"]

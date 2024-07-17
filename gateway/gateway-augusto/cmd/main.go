@@ -38,6 +38,12 @@ func main() {
 		return
 	}
 
+	gcPort := os.Getenv("GC_PORT")
+	if gcPort == "" {
+		fmt.Println("GC_PORT not set")
+		return
+	}
+
 	fmt.Println("gateway-augusto is running!")
 
 	// TODO(aalmds): refactor addresses with service discovery
@@ -49,7 +55,7 @@ func main() {
 	wg.Add(5)
 	go startGatewayUdpMulticastWorker(fmt.Sprintf("224.5.23.2:%s", visionPort), proxy, "vision-third-party", &wg)
 	go startGatewayUdpMulticastWorker("224.5.23.2:10010", proxy, "tracked-third-party", &wg)
-	go startGatewayUdpMulticastWorker("224.5.23.1:11003", proxy, "referee-third-party", &wg)
+	go startGatewayUdpMulticastWorker(fmt.Sprintf("224.5.23.1:%s", gcPort), proxy, "referee-third-party", &wg)
 	go startGatewayZmqServer(proxy, &wg)
 	go startGatewayGrpcServer(&wg)
 
