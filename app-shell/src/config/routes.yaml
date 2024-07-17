@@ -3,9 +3,9 @@ match:
   label: Assistir
   icon: radio
   rows: 12
-  cols: 1
+  cols: 5
   fragments:
-    player:
+    viewer:
       url: http://127.0.0.1:3032/viewer-mfe.js
       type: webcomponent
       metadata:
@@ -15,8 +15,8 @@ match:
         end: 11
       cols:
         start: 1
-        end: 2
-    parameters:
+        end: 5
+    player:
       url: http://127.0.0.1:3031/player-mfe.js
       type: webcomponent
       metadata:
@@ -26,4 +26,15 @@ match:
         end: 13
       cols:
         start: 1
-        end: 2
+        end: 5
+    scoreboard:
+      url: http://127.0.0.1:3033/scoreboard-mfe.js
+      type: webcomponent
+      metadata:
+        tag: scoreboard-mfe
+      rows:
+        start: 1
+        end: 13
+      cols:
+        start: 5
+        end: 6

@@ -141,6 +141,16 @@ services:
     ports:
       - 3032:80
 
+  scoreboard-mfe:
+    build:
+      context: .
+      dockerfile: scoreboard-mfe/Dockerfile
+      args:
+        - SOURCE_DIRECTORY=scoreboard-mfe
+    command: ["-g", "daemon off;"]
+    ports:
+      - 3033:80
+
   app-shell:
     build:
       context: .
