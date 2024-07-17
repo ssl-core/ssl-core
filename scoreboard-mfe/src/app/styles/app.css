@@ -1,0 +1,132 @@
+.scoreboard {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  padding: 0.5rem;
+  color: #ffffff;
+}
+
+.scoreboard__header {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  padding: 0.5rem;
+}
+
+.scoreboard__team {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.25rem;
+}
+
+.scoreboard__team-name {
+  font-size: 0.75rem;
+  color: #ffffff;
+}
+
+.scoreboard__team-logo {
+  border-radius: 9999px;
+  width: 4rem;
+  height: 4rem;
+  font-size: 1.5rem;
+  font-weight: bold;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #ffffff;
+}
+
+.scoreboard__team-logo--home {
+  background-color: #16a34a;
+}
+
+.scoreboard__team-logo--away {
+  background-color: #2563eb;
+}
+
+.scoreboard__score {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  align-items: center;
+  justify-content: center;
+}
+
+.scoreboard__score-period {
+  font-size: 0.75rem;
+  color: #9ca3af;
+}
+
+.scoreboard__score-result {
+  font-size: 1.875rem;
+  font-weight: bold;
+}
+
+.scoreboard__score-time {
+  font-size: 0.75rem;
+  color: #9ca3af;
+}
+
+.scoreboard__events {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  margin-top: 0.5rem;
+  font-size: 0.75rem;
+  font-weight: 500;
+  flex: 1;
+}
+
+.scoreboard__events-title {
+  color: #9ca3af;
+  width: 5rem;
+}
+
+.scoreboard__events-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  font-size: 0.75rem;
+}
+
+.scoreboard__event {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  background-color: #1C1E21;
+  border-radius: 0.5rem;
+  padding: 0.5rem;
+}
+
+.scoreboard__event-time {
+  color: #a1a1aa;
+  width: 5rem;
+}
+
+.scoreboard__event-description {
+  color: #ffffff;
+  display: inline-flex;
+  gap: 0.25rem;
+}
+
+.scoreboard__player {
+  border-radius: 9999px;
+  width: 1rem;
+  height: 1rem;
+  font-size: 0.5rem;
+  font-weight: bold;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #ffffff;
+}
+
+.scoreboard__player--home {
+  background-color: #16a34a;
+}
+
+.scoreboard__player--away {
+  background-color: #2563eb;
+}

@@ -1,0 +1,4 @@
+@keyframes pulse {
+  from { transform: scale(0.5); opacity: 0.5; }
+  to { transform: scale(1); opacity: 1; }
+}
