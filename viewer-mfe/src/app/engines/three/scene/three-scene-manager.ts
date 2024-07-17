@@ -152,6 +152,8 @@ class ThreeSceneManager {
   }
 
   private renderRobots(robotsParams: Robot[]) {
+    this.pool.resetRobots();
+
     for (const robotParams of robotsParams) {
       const robot = this.pool.getRobot(
         robotParams.robotId,
@@ -162,6 +164,8 @@ class ThreeSceneManager {
   }
 
   private renderBalls(ballsParams: Ball[]) {
+    this.pool.resetBalls();
+
     for (const [index, ballParams] of ballsParams.entries()) {
       const ball = this.pool.getBall(index);
       ball?.setParams(ballParams);
