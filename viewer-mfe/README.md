@@ -13,9 +13,9 @@ graph LR
 
 ## How it works
 
-The `Viewer` microfrontend is responsible for displaying the SSL match. It It is built as a web component that is seamlessly integrated into the [app-shell](../app-shell/README.md). This component renders match elements (e.g. robots, ball, field), shapes, and other related objects in a 3D environment. It also supports interaction with the environment, including moving, rotating, and zooming.
+The `Viewer` microfrontend is responsible for displaying the SSL match. It is built as a web component that is seamlessly integrated into the [app-shell](../app-shell/README.md). This component renders match elements (e.g. robots, ball, field), shapes, and other related objects in a 3D environment. It also supports interaction with the environment, including moving, rotating, and zooming.
 
-The `Viewer` listens to the `frame` type messages of [app-shell](../gateway/README.md)'s event bus:
+The `Viewer` listens to the `frame`-type messages of [app-shell](../app-shell/README.md)'s event bus:
 
 ```typescript
 {
@@ -59,7 +59,7 @@ The `Viewer` listens to the `frame` type messages of [app-shell](../gateway/READ
 
 The application operates with a main thread and two web workers:
 
-- **Main Thread**: Instantiates the WebComponent, handles user events, and coordinates rendering.
+- **Main Thread**: Instantiates the Web Component, handles user events, and coordinates rendering.
 - **Communication Worker**: Listens to the Event Bus, filters, processes messages, and sends them to the rendering worker via a Broadcast Channel.
 - **Rendering Worker**: Uses Three.js to render the 3D environment. This worker is responsible for the actual drawing and updating of the match objects.
 
@@ -80,6 +80,6 @@ yarn dev
 - [`src/app/engines`](src/app/engines): Rendering engines to the game match.
 - [`src/app/communication`](src/app/communication): Communication with the event bus.
 - [`src/app/viewer-mfe.ts`](src/app/viewer-mfe.ts): Declaration of the web component.
-- [`src/config`](src/app/config): Configuration files.
-- [`src/utils`](src/app/utils): Helpers and utility functionsapplication.
+- [`src/config`](src/config): Configuration files.
+- [`src/utils`](src/utils): Helpers and utility functions.
 - [`src/main.ts`](src/main.ts): Entry point of the microfrontend.

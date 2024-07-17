@@ -67,7 +67,8 @@ class Buffer {
       this.fetch(timestamp ?? 0, onFetch);
     }
 
-    let waitTicks = 0;
+    let waitTime = 0;
+    let lastTime = performance.now();
 
     // TODO: Move to worker thread
     this.interval = setInterval(() => {
@@ -75,8 +76,9 @@ class Buffer {
         return;
       }
 
-      if (waitTicks > 0) {
-        waitTicks--;
+      const elapsed = performance.now() - lastTime;
+
+      if (waitTime > elapsed) {
         return;
       }
 
@@ -93,12 +95,15 @@ class Buffer {
       }
 
       if (lastFrame) {
-        waitTicks = Math.round(
-          (frame.getCurrentTimestamp() - lastFrame.getCurrentTimestamp()) / 1000
-        );
+        const correction = elapsed - waitTime;
+        waitTime =
+          frame.getCurrentTimestamp() -
+          lastFrame.getCurrentTimestamp() -
+          correction;
       }
 
       onFrame(frame);
+      lastTime = performance.now();
     }, 1);
   }
 

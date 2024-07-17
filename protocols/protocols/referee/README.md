@@ -8,7 +8,7 @@ This directory contains the output of the referee service.
   - [Table of Contents](#table-of-contents)
   - [`GameStatus`](#gamestatus)
 
-## [`GameStatus`](referee.proto)
+## [`GameStatus`](game_status.proto)
 
 A collection of messages that compose the game status.
 
