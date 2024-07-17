@@ -12,6 +12,7 @@ import (
 	"github.com/robocin/ssl-core/playback-ms/playback-caze/internal/messaging/sender"
 	"github.com/robocin/ssl-core/playback-ms/playback-caze/internal/repository"
 	"github.com/robocin/ssl-core/protocols/gateway"
+	"google.golang.org/protobuf/proto"
 	"google.golang.org/protobuf/types/known/timestamppb"
 )
 
@@ -63,20 +64,36 @@ func (rc *ReplayController) Run(wg *sync.WaitGroup) {
 
 	for {
 		for _, datagram := range rc.datagrams.DequeueAll() {
-			chunkRequest, err := rc.handler.Process(&datagram)
-			if err != nil {
-				fmt.Printf("Failed to process datagram: %v\n", err)
-				continue
+			if chunkRequest, err := rc.handler.ProcessIfReplayChunk(&datagram); err == nil {
+				start := time.Now()
+				response, err := rc.responseFor(chunkRequest)
+				elapsed := time.Since(start)
+				if err != nil {
+					fmt.Printf("Failed to handle chunk request: %v\n", err)
+					continue
+				}
+				fmt.Println("total:", len(response.GetSamples()), "entries, time:", elapsed)
+
+				message, err := proto.Marshal(response)
+
+				if err != nil {
+					fmt.Printf("failed to marshal 'GetReplayChunkResponse' message: %v\n", err)
+					continue
+				}
+
+				rc.sender.SendReplayResponse(message, datagram.Identifier)
 			}
-			start := time.Now()
-			response, err := rc.responseFor(chunkRequest)
-			elapsed := time.Since(start)
-			if err != nil {
-				fmt.Printf("Failed to handle chunk request: %v\n", err)
-				continue
+
+			if gameEventsRequest, err := rc.handler.ProcessIfGameEvents(&datagram); err == nil {
+				response, err := rc.responseForGameEvents(gameEventsRequest)
+
+				if err != nil {
+					fmt.Printf("Failed to handle game events request: %v\n", err)
+					continue
+				}
+
+				rc.sender.SendReplayResponse(response, datagram.Identifier)
 			}
-			fmt.Println("total:", len(response.GetSamples()), "entries, time:", elapsed)
-			rc.sender.SendReplayResponse(response, datagram.Identifier)
 		}
 	}
 }

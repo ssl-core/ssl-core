@@ -6,7 +6,6 @@ import (
 
 	"github.com/robocin/ssl-core/common/golang/network"
 	"github.com/robocin/ssl-core/playback-ms/playback-caze/internal/service_discovery"
-	"github.com/robocin/ssl-core/protocols/gateway"
 	"github.com/robocin/ssl-core/protocols/playback"
 	"google.golang.org/protobuf/proto"
 )
@@ -39,13 +38,7 @@ func (ms *MessageSender) SendSample(sample *playback.Sample) {
 	ms.publisher.Send(datagram)
 }
 
-func (ms *MessageSender) SendReplayResponse(chunk *gateway.GetReplayChunkResponse, identifier []byte) {
-	message, err := proto.Marshal(chunk)
-
-	if err != nil {
-		log.Fatalf("failed to marshal 'GetReplayChunkResponse' message: %v", err)
-		return
-	}
+func (ms *MessageSender) SendReplayResponse(message []byte, identifier []byte) {
 	datagram := network.ZmqMultipartDatagram{
 		Identifier: identifier,
 		Message:    message,
