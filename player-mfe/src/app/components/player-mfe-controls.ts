@@ -21,6 +21,8 @@ type PlayerMFEControlsElements = {
 
 type PlayerMFEControlsState = {
   isPlaying: boolean;
+  currentTime: number;
+  duration: number;
 };
 
 class PlayerMFEControls extends HTMLElement {
@@ -40,12 +42,30 @@ class PlayerMFEControls extends HTMLElement {
     };
     this.state = {
       isPlaying: false,
+      currentTime: 0,
+      duration: 0,
     };
   }
 
   public connectedCallback() {
     this.render();
     this.elements.playButton!.addEventListener("click", this.handlePlayClick);
+    this.elements.rewindButton!.addEventListener(
+      "click",
+      this.handleRewindClick
+    );
+    this.elements.rewind5Button!.addEventListener(
+      "click",
+      this.handleRewind5Click
+    );
+    this.elements.forwardButton!.addEventListener(
+      "click",
+      this.handleForwardClick
+    );
+    this.elements.forward5Button!.addEventListener(
+      "click",
+      this.handleForward5Click
+    );
     this.playback.addEventListener("update", this.handlePlaybackUpdate);
   }
 
@@ -117,7 +137,28 @@ class PlayerMFEControls extends HTMLElement {
     this.syncPlayButton();
   };
 
+  public handleRewindClick = () => {
+    alert("Not implemented yet");
+  };
+
+  public handleRewind5Click = () => {
+    this.playback.seek(Math.max(this.state.currentTime - 5, 0));
+  };
+
+  public handleForwardClick = () => {
+    alert("Not implemented yet");
+  };
+
+  public handleForward5Click = () => {
+    this.playback.seek(
+      Math.min(this.state.currentTime + 5, this.state.duration)
+    );
+  };
+
   public handlePlaybackUpdate = (event: PlaybackUpdateEvent) => {
+    this.state.currentTime = event.currentTime;
+    this.state.duration = event.duration;
+
     if (event.isPlaying === this.state.isPlaying) {
       return;
     }
