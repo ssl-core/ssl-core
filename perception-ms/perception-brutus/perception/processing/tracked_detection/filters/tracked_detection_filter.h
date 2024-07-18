@@ -36,7 +36,6 @@ class TrackedDetectionFilter : public ITrackedDetectionFilter {
               tracked_detections) override;
 
  private:
-  std::optional<::protocols::perception::Detection> last_detection_;
   std::unique_ptr<ITrackedDetectionMapper> tracked_detection_mapper_;
 };
 

@@ -26,11 +26,10 @@ std::optional<rc::Detection>
 TrackedDetectionFilter::process(std::span<const tp::TrackerWrapperPacket> tracked_detections) {
   // TODO(matheusvtna): Implement the merge method instead of return the last detection.
   if (!tracked_detections.empty()) {
-    last_detection_
-        = tracked_detection_mapper_->fromTrackedWrapperPacket(tracked_detections.back());
+    return tracked_detection_mapper_->fromTrackedWrapperPacket(tracked_detections.back());
   }
 
-  return last_detection_;
+  return std::nullopt;
 }
 
 } // namespace perception

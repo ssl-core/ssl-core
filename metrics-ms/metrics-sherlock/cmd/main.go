@@ -51,6 +51,13 @@ func main() {
 	writter := client.WriteAPI(influxDbOrg, influxDbDatabase)
 
 	// zmq services setup:
+	gatewaySocket := network.NewZmqSubscriberSocket(
+		service_discovery.GatewayThirdPartyAddress,
+		fmt.Sprintf("%s,%s,%s", service_discovery.GatewayThirdPartyVisionTopic,
+			service_discovery.GatewayThirdPartyTrackedTopic,
+			service_discovery.GatewayThirdPartyRefereeTopic),
+	)
+
 	perceptionSocket := network.NewZmqSubscriberSocket(
 		service_discovery.PerceptionAddress,
 		service_discovery.PerceptionDetectionWrapperTopic,
@@ -72,6 +79,7 @@ func main() {
 		panic(fmt.Errorf("error creating poller"))
 	}
 
+	poller.Add(gatewaySocket.Socket)
 	poller.Add(perceptionSocket.Socket)
 	poller.Add(refereeSocket.Socket)
 	poller.Add(playbackSocket.Socket)
@@ -102,6 +110,9 @@ func main() {
 		defer wg.Done()
 
 		for {
+			raws := 0
+			trackeds := 0
+			referees := 0
 			detections := make([]*perception.Detection, 0)
 			gameStatus := make([]*referee.GameStatus, 0)
 			samples := make([]*playback.Sample, 0)
@@ -110,6 +121,12 @@ func main() {
 				topic := string(datagram.Identifier)
 
 				switch topic {
+				case service_discovery.GatewayThirdPartyVisionTopic:
+					raws++
+				case service_discovery.GatewayThirdPartyTrackedTopic:
+					trackeds++
+				case service_discovery.GatewayThirdPartyRefereeTopic:
+					referees++
 				case service_discovery.PerceptionDetectionWrapperTopic:
 					message := perception.DetectionWrapper{}
 
@@ -142,9 +159,12 @@ func main() {
 			// writting framerate:
 			{
 				framerateData := influxdb2.NewPointWithMeasurement("framerate").SetTime(time.Now())
+				framerateData.AddField("raw_detection", raws)
+				framerateData.AddField("tracked_detection", trackeds)
+				framerateData.AddField("game_controller", referees)
 				framerateData.AddField("detection", len(detections))
 				framerateData.AddField("game_status", len(gameStatus))
-				framerateData.AddField("samples", len(samples))
+				framerateData.AddField("sample", len(samples))
 				writter.WritePoint(framerateData)
 			}
 

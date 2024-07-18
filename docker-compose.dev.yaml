@@ -73,10 +73,10 @@ services:
 
   perception-ms:
     container_name: perception-ms
-    image: robocin/perception-brutus:manual-c7208b
-#    build:
-#      context: .
-#      dockerfile: perception-ms/perception-brutus/perception-brutus.Dockerfile
+#    image: robocin/perception-brutus:manual-c7208b
+    build:
+      context: .
+      dockerfile: perception-ms/perception-brutus/perception-brutus.Dockerfile
     volumes:
       - .ssl-core:/tmp/.ssl-core
     depends_on:
