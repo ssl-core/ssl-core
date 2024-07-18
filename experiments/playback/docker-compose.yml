@@ -1,0 +1,10 @@
+version: '3.8'
+services:
+  my_rust_service:
+    build: .
+    ports:
+      - "50051:50051"
+    depends_on:
+      - redis
+  redis:
+    image: redis:7.0-alpine

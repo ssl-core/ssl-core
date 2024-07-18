@@ -107,3 +107,6 @@ __pycache__
 
 # Node.js
 node_modules/
+
+# Rust
+target/

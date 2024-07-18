@@ -1,0 +1,15 @@
+[package]
+name = "playback"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+tonic = "0.9"           # gRPC framework for Rust
+redis = "0.22"          # Redis client library
+prost = "0.11"
+tokio = { version = "1.21", features = ["full"] }
+
+[build-dependencies]
+tonic-build = "0.12"
+prost-build = "0.13"
+dlprotoc = "0.3"
