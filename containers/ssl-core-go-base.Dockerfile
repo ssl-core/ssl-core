@@ -1,5 +1,7 @@
 FROM mcr.microsoft.com/devcontainers/go:1.22
 
+SHELL ["/bin/bash", "-c"]
+
 RUN set -x && \
     apt update && apt upgrade -y && \
     \

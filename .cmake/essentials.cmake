@@ -160,6 +160,15 @@ endif ()
 
 ########################################################################################################################
 
+# find libtorch installation
+# looks for libtorch cmake config files installed by libtorch's cmake installation.
+find_package(Torch CONFIG QUIET HINTS "/usr/local/libtorch" "/opt/libtorch")
+if (Torch_FOUND)
+  message(STATUS "Using Torch: ${Torch_VERSION}")
+endif ()
+
+########################################################################################################################
+
 # add cpp library
 # named parameters:
 #  NAME: name of the library

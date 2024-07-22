@@ -62,7 +62,7 @@ Thumbs.db
 
 # VS Code generated files
 .cache/
-.vscode/*.log
+.vscode/*
 
 # MinGW generated files
 *.Debug
