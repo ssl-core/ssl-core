@@ -1,0 +1,198 @@
+services:
+  simulator:
+    container_name: simulator
+    image: roboticserlangen/simulatorcli:commit-6a4e1c06533b
+    restart: unless-stopped
+    environment:
+      GEOMETRY: "2020"
+      REALISM: "RC2021"
+    logging:
+      driver: none
+
+  autoref-tigers:
+    container_name: autoref-tigers
+    image: tigersmannheim/auto-referee:1.2.0
+    restart: unless-stopped
+    command:
+      - "-a"
+      - "-visionAddress"
+      - "224.5.23.2:10020"
+    logging:
+      driver: none
+    depends_on:
+      - simulator
+
+  game-controller:
+    container_name: game-controller
+    image: robocupssl/ssl-game-controller:3.9.0
+    command:
+      - "-visionAddress"
+      - "224.5.23.2:10020"
+      - "-trackerAddress"
+      - "224.5.23.2:11010"
+      - "-publishAddress"
+      - "224.5.23.1:11003"
+      - "-address"
+      - ":8081"
+    restart: unless-stopped
+    ports:
+      - 8081/tcp
+    logging:
+      driver: none
+    depends_on:
+      - autoref-tigers
+
+  ssl-vision-client:
+    container_name: ssl-vision-client
+    image: robocupssl/ssl-vision-client:1.7.3
+    command:
+      - "-visionAddress"
+      - "224.5.23.2:10020"
+    restart: unless-stopped
+    ports:
+      - 8082/tcp
+      - 8082:8082
+    logging:
+      driver: none
+    depends_on:
+      - game-controller
+
+  gateway:
+    container_name: gateway
+    build:
+      context: .
+      dockerfile: gateway/gateway-augusto/gateway-augusto.Dockerfile
+    environment:
+      - VISION_PORT=10020
+    volumes:
+      - .ssl-core:/tmp/.ssl-core
+    ports:
+      - 50051:50051
+    depends_on:
+      - simulator
+
+  perception-ms:
+    container_name: perception-ms
+#    image: robocin/perception-brutus:manual-c7208b
+    build:
+      context: .
+      dockerfile: perception-ms/perception-brutus/perception-brutus.Dockerfile
+    volumes:
+      - .ssl-core:/tmp/.ssl-core
+    depends_on:
+      - gateway
+
+  referee-ms:
+    container_name: referee-ms
+    image: robocin/referee-daronco:manual-419128
+#    build:
+#      context: .
+#      dockerfile: referee-ms/referee-daronco/referee-daronco.Dockerfile
+    volumes:
+      - .ssl-core:/tmp/.ssl-core
+    depends_on:
+      - perception-ms
+
+  playback-ms:
+    container_name: playback-ms
+    build:
+      context: .
+      dockerfile: playback-ms/playback-caze/playback-caze.Dockerfile
+    volumes:
+      - .ssl-core:/tmp/.ssl-core
+    depends_on:
+      - referee-ms
+      - playback-db
+
+  playback-db:
+    container_name: playback-db
+    image: redis:7.2.5
+
+  player-bff:
+    container_name: player-bff
+    build:
+      context: .
+      dockerfile: player-bff/player-sonson/player-sonson.Dockerfile
+    ports:
+      - 4040:4040
+    depends_on:
+      - gateway
+      - playback-ms
+
+  player-mfe:
+    build:
+      context: .
+      dockerfile: player-mfe/Dockerfile
+      args:
+        - SOURCE_DIRECTORY=player-mfe
+    command: ["-g", "daemon off;"]
+    ports:
+      - 3031:80
+    depends_on:
+      - player-bff
+
+  viewer-mfe:
+    build:
+      context: .
+      dockerfile: viewer-mfe/Dockerfile
+      args:
+        - SOURCE_DIRECTORY=viewer-mfe
+    command: ["-g", "daemon off;"]
+    ports:
+      - 3032:80
+
+  app-shell:
+    build:
+      context: .
+      dockerfile: app-shell/Dockerfile
+      args:
+        - SOURCE_DIRECTORY=app-shell
+    command: ["-g", "daemon off;"]
+    ports:
+      - 3030:80
+
+  metrics-ms:
+    container_name: metrics-ms
+    build:
+      context: .
+      dockerfile: metrics-ms/metrics-sherlock/metrics-sherlock.Dockerfile
+    volumes:
+      - .ssl-core:/tmp/.ssl-core
+    depends_on:
+      - playback-ms
+      - metrics-db
+
+  metrics-db:
+    container_name: metrics-db
+    image: influxdb:2
+    environment:
+      DOCKER_INFLUXDB_INIT_MODE: setup
+      DOCKER_INFLUXDB_INIT_USERNAME: ssl-core
+      DOCKER_INFLUXDB_INIT_PASSWORD: ssl-core
+      DOCKER_INFLUXDB_INIT_ORG: ssl-core
+      DOCKER_INFLUXDB_INIT_BUCKET: metrics
+      DOCKER_INFLUXDB_INIT_RETENTION: 3h
+      DOCKER_INFLUXDB_INIT_ADMIN_TOKEN: metrics
+    ports:
+      - 8086:8086
+
+  grafana:
+    container_name: grafana
+    image: grafana/grafana
+    environment:
+      - GF_AUTH_DISABLE_LOGIN_FORM=true
+      - GF_AUTH_ANONYMOUS_ENABLED=true
+      - GF_AUTH_ANONYMOUS_ORG_ROLE=Admin
+    volumes:
+      - .grafana/config.ini:/etc/grafana/config.ini
+      - .grafana/dashboards:/var/lib/grafana/dashboards
+      - .grafana/provisioning:/etc/grafana/provisioning
+    logging:
+      driver: none
+    ports:
+      - 3000:3000
+    depends_on:
+      - metrics-db
+
+volumes:
+  .ssl-core:

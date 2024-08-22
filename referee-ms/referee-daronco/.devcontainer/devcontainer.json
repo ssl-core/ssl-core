@@ -1,0 +1,116 @@
+{
+  "name": "C++: Referee Daronco",
+  "build": {
+    "context": "./../../..",
+    "dockerfile": "./../referee-daronco.Dockerfile",
+    "target": "devcontainer"
+  },
+  "initializeCommand": "mkdir -p /tmp/.ssl-core",
+  "mounts": [
+    "source=/tmp/.ssl-core/,target=/tmp/.ssl-core/,type=bind,consistency=cached"
+  ],
+  "runArgs": [
+    "-e",
+    "DISPLAY=${env:DISPLAY}",
+    "--network=host"
+  ],
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        // Docker
+        "ms-azuretools.vscode-docker",
+        // Live Share
+        "ms-vsliveshare.vsliveshare",
+        // C/C++ Extension Pack
+        "ms-vscode.cpptools-extension-pack",
+        // clangd
+        "llvm-vs-code-extensions.vscode-clangd",
+        // Buf - Protobuf Language Support
+        "bufbuild.vscode-buf",
+        // GitLens - Git supercharged
+        "eamodio.gitlens",
+        // GitHub Copilot
+        "GitHub.copilot",
+        // Code Spell Checker
+        "streetsidesoftware.code-spell-checker",
+        // Markdown
+        "yzhang.markdown-all-in-one",
+        // YAML
+        "redhat.vscode-yaml"
+      ],
+      "settings": {
+        "files.associations": {
+          "*.cppm": "cpp",
+          "*.ixx": "cpp"
+        },
+        // C++ Settings
+        "[cpp]": {
+          "editor.insertSpaces": true,
+          "editor.tabSize": 2,
+          "editor.formatOnSave": true,
+          "editor.defaultFormatter": "llvm-vs-code-extensions.vscode-clangd"
+        },
+        // C/C++ Settings
+        "C_Cpp.intelliSenseEngine": "disabled", // disabling IntelliSense Engine to use clangd
+        // clangd Settings
+        "clangd.path": "clangd",
+        "clangd.checkUpdates": false,
+        // CMake Settings
+        "cmake.buildDirectory": "${workspaceFolder}/build",
+        "cmake.cmakePath": "cmake",
+        "cmake.generator": "Ninja",
+        "cmake.options.advanced": {
+          "kit": {
+            "statusBarVisibility": "visible"
+          },
+          "launchTarget": {
+            "statusBarVisibility": "visible"
+          },
+          "launch": {
+            "statusBarVisibility": "visible"
+          },
+          "debug": {
+            "statusBarVisibility": "visible"
+          },
+          "variant": {
+            "statusBarVisibility": "visible"
+          },
+          "build": {
+            "statusBarVisibility": "visible"
+          },
+          "buildTarget": {
+            "statusBarVisibility": "visible"
+          }
+        },
+        // Code Spell Checker Settings
+        "cSpell.language": "en, pt-BR",
+        "cSpell.words": [
+          "robocin",
+          "RoboCIn",
+          "RobôCIn"
+        ],
+        // Editor Settings
+        "editor.detectIndentation": true,
+        // Files Settings
+        "files.insertFinalNewline": true,
+        // JSON Settings
+        "[json]": {
+          "editor.insertSpaces": true,
+          "editor.tabSize": 2,
+          "editor.formatOnSave": true,
+          "editor.defaultFormatter": "vscode.json-language-features"
+        },
+        // YAML Settings
+        "[yaml]": {
+          "editor.insertSpaces": true,
+          "editor.tabSize": 2,
+          "editor.formatOnSave": true,
+          "editor.defaultFormatter": "redhat.vscode-yaml"
+        },
+        "[markdown]": {
+          "editor.formatOnSave": true
+        }
+      }
+    }
+  }
+}

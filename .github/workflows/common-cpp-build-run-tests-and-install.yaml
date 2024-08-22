@@ -1,0 +1,53 @@
+name: "Common C++ Library: Build, Run Tests and Install"
+on:
+  pull_request:
+    paths: ["common/cpp/**"]
+  push:
+    branches:
+      - main
+    paths: ["common/cpp/**"]
+  workflow_dispatch:
+
+jobs:
+  build_run_tests_and_install:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        cpp:
+          [
+            {
+              container: ssl-core-cpp-mbed-base,
+              compiler: arm-none-eabi-g++,
+              flags: "-DCMAKE_CXX_FLAGS='--specs=nosys.specs'",
+            },
+            { container: ssl-core-cpp-base, compiler: clang++, flags: "" },
+            { container: ssl-core-cpp-base, compiler: g++, flags: "" },
+          ]
+    container: robocin/${{matrix.cpp.container}}:latest
+    steps:
+      - uses: actions/checkout@v4
+      - shell: bash
+        run: ${{ matrix.cpp.compiler }} --version
+      - working-directory: common/cpp
+        shell: bash
+        run: |
+          set -e
+
+          cmake -B build \
+                -S . \
+                -G Ninja \
+                -DCMAKE_CXX_COMPILER=${{ matrix.cpp.compiler }} \
+                ${{ matrix.cpp.flags }}
+          cmake --build build
+      - working-directory: common/cpp
+        shell: bash
+        run: |
+          set -e
+
+          ctest --test-dir build
+      - working-directory: common/cpp
+        shell: bash
+        run: |
+          set -e
+
+          cmake --install build

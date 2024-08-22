@@ -14,6 +14,7 @@ abstract class BaseFragment {
   }
 
   abstract render(): void;
+  abstract clear(): void;
 }
 
 export default BaseFragment;

@@ -1,53 +1,87 @@
 #ifndef ROBOCIN_NETWORK_ZMQ_SUBSCRIBER_SOCKET_H
 #define ROBOCIN_NETWORK_ZMQ_SUBSCRIBER_SOCKET_H
 
-#include <gtest/gtest_prod.h>
-#include <span>
+#include "robocin/version/version.h"
+
+#if defined(__robocin_lib_zmq) and __robocin_lib_zmq >= 202405L
+#if defined(__robocin_lib_cppzmq) and __robocin_lib_cppzmq >= 202405L
+
+#include "robocin/network/zmq_datagram.h"
+
 #include <string>
 #include <string_view>
 #include <zmq.h>
 #include <zmq.hpp>
 
+#if defined(__robocin_lib_googletest)
+#include <gtest/gtest_prod.h>
+#else
+#define FRIEND_TEST(...)
+#endif
+
 namespace robocin {
 
-struct ZmqDatagram {
-  std::string topic;
-  std::string message;
+class IZmqSubscriberSocket {
+ public:
+  using datagram_type = ZmqDatagram;
 
-  friend inline bool operator==(const ZmqDatagram& lhs, const ZmqDatagram& rhs) = default;
+  IZmqSubscriberSocket() = default;
+
+  IZmqSubscriberSocket(const IZmqSubscriberSocket&) = delete;
+  IZmqSubscriberSocket& operator=(const IZmqSubscriberSocket&) = delete;
+  IZmqSubscriberSocket(IZmqSubscriberSocket&&) = default;
+  IZmqSubscriberSocket& operator=(IZmqSubscriberSocket&&) = default;
+
+  virtual ~IZmqSubscriberSocket() = default;
+
+  virtual void connect(std::string_view address, std::span<const std::string> topics) = 0;
+  virtual void connect(std::string_view address, std::span<const std::string_view> topics) = 0;
+
+  virtual datagram_type receive() = 0;
+
+  virtual void close() = 0;
+
+  [[nodiscard]] virtual int fd() const = 0;
 };
 
 template <class ZmqContext, class ZmqSocket>
-class IZmqSubscriberSocket {
+class AZmqSubscriberSocket : public IZmqSubscriberSocket {
  public:
-  using receive_type = ZmqDatagram;
-
-  explicit IZmqSubscriberSocket(int n_threads = 1) :
+  explicit AZmqSubscriberSocket(int n_threads = 1) :
       context_(n_threads),
       socket_(context_, zmq::socket_type::sub) {}
 
-  void connect(std::string_view address, std::span<const std::string_view> topics) {
+  void connect(std::string_view address, std::span<const std::string> topics) override {
     socket_.connect(std::string{address});
-    for (const auto& topic : topics) {
+    for (const std::string& topic : topics) {
       socket_.set(zmq::sockopt::subscribe, topic);
     }
   }
 
-  receive_type receive() {
+  void connect(std::string_view address, std::span<const std::string_view> topics) override {
+    socket_.connect(std::string{address});
+    for (const std::string_view topic : topics) {
+      socket_.set(zmq::sockopt::subscribe, topic);
+    }
+  }
+
+  datagram_type receive() override {
     if (zmq::message_t zmq_topic; socket_.recv(zmq_topic, zmq::recv_flags::dontwait)) {
-      if (zmq::message_t zmq_result; socket_.recv(zmq_result, zmq::recv_flags::dontwait)) {
-        return {.topic = zmq_topic.to_string(), .message = zmq_result.to_string()};
+      if (zmq::message_t zmq_message; socket_.recv(zmq_message, zmq::recv_flags::dontwait)) {
+        return {zmq_topic.to_string(), zmq_message.to_string()};
       }
     }
 
     return {};
   }
 
-  void close() { socket_.close(); }
+  void close() override { socket_.close(); }
 
-  [[nodiscard]] int fd() const { return socket_.get(zmq::sockopt::fd); }
+  [[nodiscard]] int fd() const override { return socket_.get(zmq::sockopt::fd); }
 
  private:
+  friend class ZmqPoller;
+
   ZmqContext context_;
   ZmqSocket socket_;
 
@@ -63,8 +97,11 @@ class IZmqSubscriberSocket {
   FRIEND_TEST(ZmqSubscriberSocketTest, WhenCloseIsSucceeded);
 };
 
-using ZmqSubscriberSocket = IZmqSubscriberSocket<zmq::context_t, zmq::socket_t>;
+using ZmqSubscriberSocket = AZmqSubscriberSocket<zmq::context_t, zmq::socket_t>;
 
 } // namespace robocin
+
+#endif
+#endif
 
 #endif // ROBOCIN_NETWORK_ZMQ_SUBSCRIBER_SOCKET_H

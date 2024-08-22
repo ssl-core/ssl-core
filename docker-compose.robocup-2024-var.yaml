@@ -1,0 +1,139 @@
+services:
+  gateway:
+    container_name: gateway
+    build:
+      context: .
+      dockerfile: gateway/gateway-augusto/gateway-augusto.Dockerfile
+    environment:
+      - VISION_PORT=10006
+      - GC_PORT=10003
+    volumes:
+      - .ssl-core:/tmp/.ssl-core
+    network_mode: host
+
+  perception-ms:
+    container_name: perception-ms
+    image: robocin/perception-brutus:manual-c7208b
+    volumes:
+      - .ssl-core:/tmp/.ssl-core
+    depends_on:
+      - gateway
+    network_mode: host
+
+  referee-ms:
+    container_name: referee-ms
+    image: robocin/referee-daronco:manual-419128
+    volumes:
+      - .ssl-core:/tmp/.ssl-core
+    depends_on:
+      - perception-ms
+    network_mode: host
+
+  playback-db:
+    container_name: playback-db
+    image: "redis:latest"
+    network_mode: host
+
+  playback-ms:
+    container_name: playback-ms
+    build:
+      context: .
+      dockerfile: playback-ms/playback-caze/playback-caze.Dockerfile
+    volumes:
+      - .ssl-core:/tmp/.ssl-core
+    depends_on:
+      - referee-ms
+      - playback-db
+    network_mode: host
+    extra_hosts:
+      - "playback-db:127.0.0.1"
+
+  player-bff:
+    container_name: player-bff
+    build:
+      context: .
+      dockerfile: player-bff/player-sonson/player-sonson.Dockerfile
+    depends_on:
+      - gateway
+      - playback-ms
+    network_mode: host
+    extra_hosts:
+      - "gateway:127.0.0.1"
+
+  player-mfe:
+    build:
+      context: .
+      dockerfile: player-mfe/Dockerfile
+      args:
+        - SOURCE_DIRECTORY=player-mfe
+    command: ["-g", "daemon off;"]
+    depends_on:
+      - player-bff
+    network_mode: host
+
+  viewer-mfe:
+    build:
+      context: .
+      dockerfile: viewer-mfe/Dockerfile
+      args:
+        - SOURCE_DIRECTORY=viewer-mfe
+    command: ["-g", "daemon off;"]
+    network_mode: host
+
+  app-shell:
+    build:
+      context: .
+      dockerfile: app-shell/Dockerfile
+      args:
+        - SOURCE_DIRECTORY=app-shell
+    command: ["-g", "daemon off;"]
+    network_mode: host
+
+  metrics-ms:
+    container_name: metrics-ms
+    build:
+      context: .
+      dockerfile: metrics-ms/metrics-sherlock/metrics-sherlock.Dockerfile
+    volumes:
+      - .ssl-core:/tmp/.ssl-core
+    depends_on:
+      - playback-ms
+      - metrics-db
+    network_mode: host
+    extra_hosts:
+      - "metrics-db:127.0.0.1"
+
+  metrics-db:
+    container_name: metrics-db
+    image: influxdb:2
+    environment:
+      DOCKER_INFLUXDB_INIT_MODE: setup
+      DOCKER_INFLUXDB_INIT_USERNAME: ssl-core
+      DOCKER_INFLUXDB_INIT_PASSWORD: ssl-core
+      DOCKER_INFLUXDB_INIT_ORG: ssl-core
+      DOCKER_INFLUXDB_INIT_BUCKET: metrics
+      DOCKER_INFLUXDB_INIT_RETENTION: 3h
+      DOCKER_INFLUXDB_INIT_ADMIN_TOKEN: metrics
+    network_mode: host
+
+  grafana:
+    container_name: grafana
+    image: grafana/grafana
+    environment:
+      - GF_AUTH_DISABLE_LOGIN_FORM=true
+      - GF_AUTH_ANONYMOUS_ENABLED=true
+      - GF_AUTH_ANONYMOUS_ORG_ROLE=Admin
+    volumes:
+      - .grafana/config.ini:/etc/grafana/config.ini
+      - .grafana/dashboards:/var/lib/grafana/dashboards
+      - .grafana/provisioning:/etc/grafana/provisioning
+    logging:
+      driver: none
+    depends_on:
+      - metrics-db
+    network_mode: host
+    extra_hosts:
+      - "metrics-db:127.0.0.1"
+
+volumes:
+  .ssl-core:

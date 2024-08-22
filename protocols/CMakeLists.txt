@@ -6,7 +6,7 @@ list(APPEND CMAKE_MODULE_PATH ${CMAKE_CURRENT_LIST_DIR}/../.cmake)
 
 include(project)
 
-project(protocols LANGUAGES CXX)
+project(protocols LANGUAGES C CXX)
 
 ########################################################################################################################
 
@@ -19,26 +19,36 @@ function (get_protobufs prefix_path result)
   set(${result} ${files} PARENT_SCOPE)
 endfunction ()
 
-get_protobufs("protocols/third_party" third_party_protos)
+get_protobufs("protocols" all_protos)
+
+set(protos_only ${all_protos})
+list(FILTER protos_only EXCLUDE REGEX "_service\.proto$")
+
+set(services_only ${all_protos})
+list(FILTER services_only INCLUDE REGEX "_service\.proto$")
+
+########################################################################################################################
 
 robocin_cpp_proto_library(
-  NAME third_party
-  PROTOS ${third_party_protos}
+  NAME protobufs
+  PROTOS ${protos_only}
 )
 
-get_protobufs("protocols/common" common_protos)
-
-robocin_cpp_proto_library(
-  NAME common
-  PROTOS ${common_protos}
+robocin_cpp_nanopb_library(
+  NAME nanopbs
+  PROTOS ${protos_only}
 )
 
-get_protobufs("protocols/vision" vision_protos)
+robocin_cpp_grpc_library(
+  NAME grpcs
+  PROTOS ${services_only}
+  DEPS protobufs
+)
 
 robocin_cpp_proto_library(
-  NAME vision
-  PROTOS ${vision_protos}
-  DEPS common
+  NAME perception
+  PROTOS ${perception_protos}
+  DEPS common third_party
 )
 
 ########################################################################################################################

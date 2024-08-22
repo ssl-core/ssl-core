@@ -1,9 +1,11 @@
 # experiments
 
-This folder provides a collection of experiments made for validation of specific architecture requirements.
+This folder provides a collection of experiments to validate specific architecture and functionalities requirements.
 
-## Gateway
+## Codemap
 
-The [gateway](gateway) folder contains different implementations of the gateway as the middlebox between frontend and backend.
+* [`proxy-multiclient-single-service-gateway`](proxy-multiclient-single-service-gateway/README.md): 
+    Contains the first gateway proof of concept focused on proxy behavior using ZeroMQ.
 
-It is strongly based in [ZeroMQ](https://zguide.zeromq.org/docs/preface/) concepts - a framework to distributed application - and even though each approach has it's own documentation, further knowledge may be needed (see [ZeroMQ socket documentation](https://libzmq.readthedocs.io/en/latest/zmq_socket.html) to improve understanding and readability).
+* [`thread_pool`](thread_pool/README.md):  
+    Contains an experiment for a thread poll implementation.

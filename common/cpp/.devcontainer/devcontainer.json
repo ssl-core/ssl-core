@@ -1,9 +1,6 @@
 {
-  "name": "C++",
-  "build": {
-    "context": "./../../..",
-    "dockerfile": "Dockerfile"
-  },
+  "name": "Common C++ Library",
+  "image": "robocin/ssl-core-cpp-base:latest",
   "runArgs": [
     "-e",
     "DISPLAY=${env:DISPLAY}",

@@ -20,7 +20,7 @@ tags/
 .DS_Store
 .directory
 *.debug
-Makefile*
+# Makefile* # TODO(joseviccruz): assert that by removing this line, it would not impact the program.
 *.prl
 *.app
 moc_*.h
@@ -104,3 +104,6 @@ __pycache__
 
 # Jetbrains IDE
 .idea/
+
+# Node.js
+node_modules/
