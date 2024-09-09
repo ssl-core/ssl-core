@@ -12,7 +12,7 @@ RUN make setup
 RUN make build-linux
 
 RUN mkdir /prod && \
-    ldd bin/playback-ms | awk 'NF == 4 {print $3}; NF == 2 {print $1}' | grep '^/' | xargs -I {} cp --parents {} /prod
+    ldd bin/playback | awk 'NF == 4 {print $3}; NF == 2 {print $1}' | grep '^/' | xargs -I {} cp --parents {} /prod
 
 FROM gcr.io/distroless/static-debian12 AS prod
 

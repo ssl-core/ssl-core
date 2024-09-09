@@ -9,4 +9,5 @@ build-linux: # TODO(joseviccruz): CGO_ENABLED=0, i.e., static linking zmq.
 
 setup:
 	@bash ../../common/golang/scripts/compile_proto.sh
+	@go mod tidy
 	@go mod download

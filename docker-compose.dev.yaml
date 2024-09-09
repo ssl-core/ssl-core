@@ -17,6 +17,9 @@ services:
       - "-a"
       - "-visionAddress"
       - "224.5.23.2:10020"
+      - "-refereeAddress"
+      - "224.5.23.1:11003"
+
     logging:
       driver: none
     depends_on:
@@ -64,6 +67,7 @@ services:
       dockerfile: gateway/gateway-augusto/gateway-augusto.Dockerfile
     environment:
       - VISION_PORT=10020
+      - GC_PORT=11003
     volumes:
       - .ssl-core:/tmp/.ssl-core
     ports:
@@ -73,7 +77,6 @@ services:
 
   perception-ms:
     container_name: perception-ms
-#    image: robocin/perception-brutus:manual-c7208b
     build:
       context: .
       dockerfile: perception-ms/perception-brutus/perception-brutus.Dockerfile
@@ -85,9 +88,6 @@ services:
   referee-ms:
     container_name: referee-ms
     image: robocin/referee-daronco:manual-419128
-#    build:
-#      context: .
-#      dockerfile: referee-ms/referee-daronco/referee-daronco.Dockerfile
     volumes:
       - .ssl-core:/tmp/.ssl-core
     depends_on:
@@ -125,9 +125,9 @@ services:
       dockerfile: player-mfe/Dockerfile
       args:
         - SOURCE_DIRECTORY=player-mfe
-    command: ["-g", "daemon off;"]
+    command: [ "-g", "daemon off;" ]
     ports:
-      - 3031:80
+      - 3031:3031
     depends_on:
       - player-bff
 
@@ -137,9 +137,9 @@ services:
       dockerfile: viewer-mfe/Dockerfile
       args:
         - SOURCE_DIRECTORY=viewer-mfe
-    command: ["-g", "daemon off;"]
+    command: [ "-g", "daemon off;" ]
     ports:
-      - 3032:80
+      - 3032:3032
 
   app-shell:
     build:
@@ -147,9 +147,9 @@ services:
       dockerfile: app-shell/Dockerfile
       args:
         - SOURCE_DIRECTORY=app-shell
-    command: ["-g", "daemon off;"]
+    command: [ "-g", "daemon off;" ]
     ports:
-      - 3030:80
+      - 3030:3030
 
   metrics-ms:
     container_name: metrics-ms
