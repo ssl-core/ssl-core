@@ -1,0 +1,23 @@
+syntax = "proto3";
+
+package protocols.common;
+
+message RobotKick {
+    oneof kick {
+        KickCommand kick_command = 1;
+        KickInfo kick_info = 2;
+    }
+
+    message KickCommand {
+        double kick_strength = 1;
+        bool is_front = 2;
+        bool is_chip = 3;
+        bool charge_capacitor = 4;
+        bool is_bypass_ir = 5;
+    }
+
+    message KickInfo {
+        double capacitor_charge = 1;
+        bool is_ball_detected = 2;
+    }
+}

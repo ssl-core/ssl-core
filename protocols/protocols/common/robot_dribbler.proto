@@ -1,0 +1,21 @@
+syntax = "proto3";
+
+package protocols.common;
+
+message RobotDribbler {
+	oneof dribbler {
+		DribblerCommand dribbler_command = 1;
+		DribblerInfo dribbler_info = 2;
+	}
+	
+	message DribblerCommand {
+		double dribbler_speed = 1;
+		bool is_active = 2;
+	}
+
+	message DribblerInfo {
+		double dribbler_speed = 1;
+		double dribbler_current = 2;
+		bool is_ball_detected = 3;
+	}
+}

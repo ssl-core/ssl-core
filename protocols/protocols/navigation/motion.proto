@@ -1,0 +1,97 @@
+syntax = "proto3";
+
+package protocols.navigation;
+
+import "protocols/common/geometry.proto";
+
+message DiscretizedPath {
+    repeated PathNode path = 1;
+    GoToPoint go_to_point = 2;
+}
+
+message PathNode {
+    common.Point2Df position = 1;
+    common.Point2Df velocity = 2;
+    double time = 3;
+}
+
+message RotateInPoint {
+	common.Point2Df target = 1;
+	double target_angle = 2;
+	bool clockwise = 3;
+	double orbit_radius = 4;
+	
+	double rotate_velocity = 5;
+	double min_velocity = 6;
+	double approach_kp = 7;
+	double angle_kp = 8;
+}
+
+message RotateOnSelf {
+	double target_angle = 1;
+	common.Point2Df velocity = 2;
+	double kp = 3;
+}
+
+message GoToPoint {
+	common.Point2Df target = 1;
+	double target_angle = 2;
+	
+	MovingProfile moving_profile = 3;
+	PrecisionToTarget precision_to_target = 4;
+	bool sync_rotate_with_linear_movement = 5;
+}
+
+message GoToPointWithTrajectory {
+    GoToPoint go_to_point = 1;
+    PathConfig path_config = 2;
+}
+
+message PathConfig {
+    common.Point2Df target_velocity = 1;
+    bool avoid_ball = 2;
+    bool avoid_ball_placement = 3;
+    bool avoid_ally_penalty_area = 4;
+    bool avoid_enemy_penalty_area = 5;
+    bool avoid_ally_robots = 6;
+    bool avoid_enemy_robots = 7;
+
+    repeated int32 ally_skipped = 8;
+    repeated int32 enemy_skipped = 9;
+}
+
+enum PrecisionToTarget {
+	High = 0;
+	Normal = 1;
+}
+
+enum MovingProfile {
+	   // Move safely profile
+    SafeInStopSpeed = 0;
+
+    // Specific movement profile
+    BalancedInApproachBallSpeed = 1;
+    BalancedInCarryBallSpeed = 2;
+    BalancedInCarryBallLowSpeed = 3;
+
+    // Goto point direct profile
+    DirectApproachBallSpeed = 4;
+    DirectSafeKickBallSpeed = 5;
+    DirectBalancedKickBallSpeed = 6;
+    DirectKickBallwithEnemyClose = 7;
+    gotoBallWithEnemy = 8;
+    PushBallInPenalty = 9;
+    TOTOZINHO = 10;
+
+    // Default movement profile
+    BalancedInSlowSpeed = 11;
+    BalancedInMedianSpeed = 12;
+    BalancedInDefaultSpeed = 13;
+    BalancedInHighSpeed = 14;
+
+    // Goalkepper profile
+    GoalkeeperInTopSpeed = 15;
+
+    // Penalty push ball
+    PenaltyPushBall = 16;
+}

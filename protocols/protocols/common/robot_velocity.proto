@@ -1,0 +1,10 @@
+syntax = "proto3";
+
+package protocols.common;
+
+import "protocols/common/geometry.proto";
+
+message RobotVelocity {
+    Point2Df velocity = 1;
+    float angular_velocity = 2  ;
+}

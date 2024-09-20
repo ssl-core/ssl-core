@@ -1,0 +1,33 @@
+syntax = "proto3";
+
+package protocols.behavior.unification;
+
+import "protocols/common/peripheral_actuation.proto";
+
+import "protocols/navigation/motion.proto";
+import "protocols/navigation/navigation.proto";
+import "protocols/navigation/planning.proto";
+
+/* 
+    Remove this implementation after CBR-2024.
+    This is a replica of current implementation of ssl-unification behavior output.
+*/
+
+message Behavior {
+    oneof output {
+        Motion motion = 1;
+        navigation.Planning planning = 2;
+        navigation.Navigation navigation = 3;
+    }
+}
+
+message Motion {
+    oneof type {
+        navigation.GoToPoint go_to_point = 1;
+        navigation.GoToPointWithTrajectory go_to_point_with_trajectory = 2;
+        navigation.RotateInPoint rotate_in_point = 3;
+        navigation.RotateOnSelf rotate_on_self = 4;
+    }
+    common.PeripheralActuation peripheral_actuation = 5;
+}
+

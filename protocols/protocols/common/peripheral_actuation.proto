@@ -1,0 +1,12 @@
+syntax = "proto3";
+
+package protocols.common;
+
+import "protocols/common/robot_kick.proto";
+import "protocols/common/robot_dribbler.proto";
+
+message PeripheralActuation {
+	RobotKick.KickCommand kick_command = 1;
+	RobotDribbler robot_dribbler = 2;
+}
+

@@ -1,0 +1,39 @@
+syntax = "proto3";
+
+package protocols.behavior;
+
+import "protocols/common/geometry.proto";
+import "protocols/common/robot_id.proto";
+import "protocols/common/peripheral_actuation.proto";
+
+/* BETA:
+    These messages are not implemented in CBR-2024 release.
+    It is a beta version for future development.
+*/
+
+message Motion {
+  Target target = 1;
+  Obstacles obstacles = 2;
+  common.PeripheralActuation peripheral_actuation = 3;
+}
+
+message Target {
+  common.Point2Df position = 1;
+  float angle = 2;
+  common.Point2Df velocity = 3;
+
+  reserved "acceleration";
+  reserved 4;
+}
+
+message Obstacles {
+  bool ball = 1; // TODO: Review support for multiple balls.
+  repeated common.RobotId robots = 2;
+  bool left_penalty_area = 3;
+  bool right_penalty_area = 4;
+  bool field_boundary = 5;
+  bool left_goal_post = 6;
+  bool right_goal_post = 7;
+
+  // TODO: Add game state obstacles: Stop, ball placement...
+}

@@ -1,0 +1,22 @@
+syntax = "proto3";
+
+package protocols.common;
+
+import "protocols/common/robot_id.proto";
+import "protocols/common/robot_pose.proto";
+import "protocols/common/robot_kick.proto";
+import "protocols/common/robot_velocity.proto";
+import "protocols/common/robot_motor.proto";
+
+message Feedback {
+    Telemetry telemetry = 1;
+    optional RobotPose pose = 2;
+    
+    message Telemetry {
+        RobotId robot_id = 1;
+        RobotVelocity robot_velocity = 2;
+        RobotMotor robot_motor = 3;
+        RobotKick.KickInfo kick_info = 4;
+    }    
+}
+
