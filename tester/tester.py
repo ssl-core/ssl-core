@@ -1,4 +1,4 @@
-from datetime import datetime as dt
+from datetime import timedelta, datetime as dt
 import json
 import argparse
 import sys
@@ -51,7 +51,7 @@ def __create_subscriber(response):
 def create_subscriber_from_response(message):
     return __create_subscriber(message["response"]) if "response" in message else None
 
-
+f = 840
 if __name__ == "__main__":
     # TODO($ISSUE_N): Fix to work calling from any directory.
     # os.chdir(os.path.dirname(os.path.abspath(__file__)))
@@ -67,30 +67,80 @@ if __name__ == "__main__":
         for request in data["requests"]:
             publisher = create_publisher(request)
             message = create_message(request)
-            subscriber = create_subscriber_from_response(request)
+            # subscriber = create_subscriber_from_response(request)
 
             serialized_message = serialize(message)
 
             print(f"publisher type: {type(publisher)}")
             print(f"message type: {type(message)}")
-            print(f"subscriber type: {type(subscriber)}")
+            # print(f"subscriber type: {type(subscriber)}")
 
             # TODO($ISSUE_N): Fix count fps and.
             count = request["count"] if "count" in request else -1
             fps = request["fps"] if "fps" in request else 60
-
+            
             total_sent = 0
             diffs = []
+
+            interval = 1 / fps  # Time interval between messages
+
+            start_time = dt.now()
+            next_send_time = start_time  # Set the initial time to start sending
+
+            n = -2500
+
             while total_sent != count:
-                pub_time = dt.now()
-                publisher.send(serialized_message)
-                if subscriber:
-                    received = subscriber.receive(PubSubMode.Wait)
-                    if received:
-                        rcv_time = dt.now()
-                        diffs.append((rcv_time - pub_time).total_seconds() * 1000)
+                now = dt.now()
 
-                total_sent += 1
-                # time.sleep(1 / fps) # commented because it its impacting the benchmark.
+                # If the current time is greater than or equal to the next scheduled time, send the message
+                if now >= next_send_time:
+                    # print(f"sending: {total_sent}")
+                    pub_time = now
+                    publisher.send(serialized_message)
 
-            print(diffs)
+                    # if subscriber:
+                    #     received = subscriber.receive(PubSubMode.Wait)
+                    #     if received:
+                    #         rcv_time = dt.now()
+                    #         diffs.append((rcv_time - pub_time).total_seconds() * 1000)
+
+                    total_sent += 1
+                    next_send_time += timedelta(seconds=interval)  # Schedule next message send
+                    
+                    n += 1
+                    f += 1
+                    
+                    # Ensure the value stays within the range [-2500, -500]
+                    if n > -500:
+                        n = -2500
+                    elif n < -2500:
+                        n = -500
+
+                    message.detection.robots_blue[0].x = n
+                    message.detection.frame_number = f
+
+                    serialized_message = serialize(message)
+
+                    if (total_sent % 60 == 0):
+                        print(f"time: {now}, fps: {60 / (now - start_time).total_seconds()}")
+                        start_time = now
+
+                # Sleep for a very short time to prevent busy-waiting (optional)
+                time.sleep(0.001)  # A short sleep to yield CPU for other processes
+
+            # total_sent = 0
+            # diffs = []
+            # while total_sent != count:
+            #     print(f"sending: {total_sent}")
+            #     pub_time = dt.now()
+            #     publisher.send(serialized_message)
+            #     # if subscriber:
+            #     #     received = subscriber.receive(PubSubMode.Wait)
+            #     #     if received:
+            #     #         rcv_time = dt.now()
+            #     #         diffs.append((rcv_time - pub_time).total_seconds() * 1000)
+
+            #     total_sent += 1
+            #     time.sleep(1/fps) # commented because it its impacting the benchmark.
+
+            # print(diffs)
