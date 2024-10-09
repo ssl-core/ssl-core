@@ -1,0 +1,38 @@
+syntax = "proto3";
+
+package protocols.communication;
+
+import "protocols/common/game_command.proto";
+import "protocols/common/robot_id.proto";
+import "protocols/common/message_type.proto";
+import "protocols/common/feedback.proto";
+import "protocols/common/robot_velocity.proto";
+import "protocols/common/robot_kick.proto";
+import "protocols/common/robot_dribbler.proto";
+
+message RobotComm {
+    oneof type {
+        Command command = 1;
+        common.Feedback feedback = 2;
+    }
+}
+
+message Command {
+    common.MessageType msg_type = 1;
+    common.RobotId robot_id = 2;
+
+    common.GameCommand ref_command = 3;
+
+    common.RobotVelocity robot_velocity = 4;
+
+    common.RobotKick.KickCommand kick_command = 5;
+    common.RobotDribbler.DribblerCommand dribbler_command = 6;
+    
+    Flags robot_flags = 7;
+}
+
+message Flags {
+    bool robot_locked = 1;
+    bool critical_move = 2;
+    bool global_speed = 3;
+}

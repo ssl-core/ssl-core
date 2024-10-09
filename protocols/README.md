@@ -24,4 +24,5 @@ Protocol Buffers offer numerous advantages, such as efficient serialization, pla
 - [`protocols/gateway`](protocols/gateway/README.md): Contains the gateway bidirectional protobufs.
 - [`protocols/playback`](protocols/playback/README.md): Contains the playback microservice output protobufs.
 - [`protocols/referee`](protocols/referee/README.md): Contains the referee microservice output protobufs.
+- [`protocols/communication`](protocols/communication/README.md): Contains the communication microservice output protobufs.
 
