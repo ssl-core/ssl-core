@@ -1,0 +1,25 @@
+{
+    "folders": [
+        {
+            "path": ".devcontainer"
+        },
+        {
+            "path": "../../.cmake"
+        },
+        {
+            "path": "."
+        },
+        {
+            "path": "../../common/cpp"
+        },
+        {
+            "path": "../../protocols"
+        }
+    ],
+    "settings": {
+        "files.exclude": {
+            // only the top-level .devcontainer/ should be displayed
+            "**/**/.devcontainer": true,
+        }
+    }
+}
