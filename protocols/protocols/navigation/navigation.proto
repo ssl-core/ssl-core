@@ -4,26 +4,29 @@ package protocols.navigation;
 
 import "google/protobuf/timestamp.proto";
 import "protocols/common/geometry.proto";
+import "protocols/common/peripheral_actuation.proto";
+import "protocols/common/robot_id.proto";
 import "protocols/common/robot_pose.proto";
 import "protocols/navigation/motion.proto";
 
 message Navigation {
-	uint32 id = 1;
-	google.protobuf.Timestamp timestamp = 2;
-	double forward_velocity = 3;
-	double left_velocity = 4;
-	double angular_velocity = 5;
+	common.RobotId id = 1;
+	common.PeripheralActuation peripheral_actuation = 2;
+	google.protobuf.Timestamp timestamp = 3;
+	double forward_velocity = 4;
+	double left_velocity = 5;
+	double angular_velocity = 6;
 	
-	uint32 custom_command = 6;
+	uint32 custom_command = 7;
 	
-	uint32 sequence_number = 7;
-	common.Point2Df output_global_linear_velocity = 8;
+	uint32 sequence_number = 8;
+	common.Point2Df output_global_linear_velocity = 9;
 	
 	// Real robot only, odometry control
 	oneof motion {
-		GoToPoint go_to_point = 9;
-		RotateInPoint rotate_in_point = 10;
-		RotateOnSelf rotate_on_self = 11;
+		GoToPoint go_to_point = 10;
+		RotateInPoint rotate_in_point = 11;
+		RotateOnSelf rotate_on_self = 12;
 	}
-	common.RobotPose robot_pose = 12;
+	common.RobotPose robot_pose = 13;
 }

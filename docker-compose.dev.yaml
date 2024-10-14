@@ -194,5 +194,13 @@ services:
     depends_on:
       - metrics-db
 
+  navigation-ms:
+    container_name: navigation-ms
+    build:
+      context: .
+      dockerfile: navigation-ms/navigation-luffy/navigation-luffy.Dockerfile
+    volumes:
+      - .ssl-core:/tmp/.ssl-core
+
 volumes:
   .ssl-core:
