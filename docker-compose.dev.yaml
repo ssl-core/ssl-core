@@ -40,6 +40,7 @@ services:
     restart: unless-stopped
     ports:
       - 8081/tcp
+      - 8081:8081
     logging:
       driver: none
     depends_on:
