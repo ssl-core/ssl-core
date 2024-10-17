@@ -10,7 +10,7 @@ import "protocols/common/robot_velocity.proto";
 import "protocols/common/robot_kick.proto";
 import "protocols/common/robot_dribbler.proto";
 
-message RobotComm {
+message RobotInfo {
     oneof type {
         Command command = 1;
         common.Feedback feedback = 2;
