@@ -19,7 +19,6 @@ services:
       - "224.5.23.2:10020"
       - "-refereeAddress"
       - "224.5.23.1:11003"
-
     logging:
       driver: none
     depends_on:
