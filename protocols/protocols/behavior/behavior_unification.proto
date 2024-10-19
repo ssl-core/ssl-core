@@ -4,9 +4,9 @@ package protocols.behavior.unification;
 
 import "protocols/common/peripheral_actuation.proto";
 
-import "protocols/navigation/motion.proto";
+import "protocols/behavior/motion.proto";
 import "protocols/navigation/navigation.proto";
-import "protocols/navigation/planning.proto";
+import "protocols/behavior/planning.proto";
 
 /* 
     Remove this implementation after CBR-2024.
@@ -15,18 +15,30 @@ import "protocols/navigation/planning.proto";
 
 message Behavior {
     oneof output {
-        Motion motion = 1;
-        navigation.Planning planning = 2;
-        navigation.Navigation navigation = 3;
+        MotionList motion = 1;
+        PlanningList planning = 2;
+        NavigationList navigation = 3;
     }
+}
+
+message MotionList {
+    repeated Motion motion = 1;
+}
+
+message PlanningList {
+    repeated Planning planning = 1;
+}
+
+message NavigationList {
+    repeated navigation.Navigation navigation = 1;
 }
 
 message Motion {
     oneof type {
-        navigation.GoToPoint go_to_point = 1;
-        navigation.GoToPointWithTrajectory go_to_point_with_trajectory = 2;
-        navigation.RotateInPoint rotate_in_point = 3;
-        navigation.RotateOnSelf rotate_on_self = 4;
+        GoToPoint go_to_point = 1;
+        GoToPointWithTrajectory go_to_point_with_trajectory = 2;
+        RotateInPoint rotate_in_point = 3;
+        RotateOnSelf rotate_on_self = 4;
     }
     common.PeripheralActuation peripheral_actuation = 5;
 }

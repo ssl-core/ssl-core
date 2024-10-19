@@ -7,9 +7,12 @@ import "protocols/common/geometry.proto";
 import "protocols/common/peripheral_actuation.proto";
 import "protocols/common/robot_id.proto";
 import "protocols/common/robot_pose.proto";
-import "protocols/navigation/motion.proto";
 
 message Navigation {
+	repeated Output output = 1;
+}
+
+message Output {
 	common.RobotId id = 1;
 	common.PeripheralActuation peripheral_actuation = 2;
 	google.protobuf.Timestamp timestamp = 3;
@@ -22,11 +25,5 @@ message Navigation {
 	uint32 sequence_number = 8;
 	common.Point2Df output_global_linear_velocity = 9;
 	
-	// Real robot only, odometry control
-	oneof motion {
-		GoToPoint go_to_point = 10;
-		RotateInPoint rotate_in_point = 11;
-		RotateOnSelf rotate_on_self = 12;
-	}
 	common.RobotPose robot_pose = 13;
 }
