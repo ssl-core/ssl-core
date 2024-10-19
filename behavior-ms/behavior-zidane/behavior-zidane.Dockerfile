@@ -34,4 +34,4 @@ FROM scratch AS prod
 
 COPY --from=build /behavior-ms/behavior-zidane/bin/behavior_main /behavior_main
 
-ENTRYPOINT [ "./decision_main" ]
+ENTRYPOINT [ "./behavior_main" ]
