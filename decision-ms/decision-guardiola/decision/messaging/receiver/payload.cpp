@@ -20,6 +20,6 @@ std::span<const rc::Detection> Payload::getDetections() const { return detection
 
 std::span<const rc::GameStatus> Payload::getGameStatus() const { return game_status_; }
 
-bool Payload::empty() const { return detections_.empty(); }
+bool Payload::empty() const { return detections_.empty() and game_status_.empty(); }
 
 } // namespace decision

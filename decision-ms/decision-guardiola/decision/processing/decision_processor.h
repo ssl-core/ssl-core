@@ -34,6 +34,7 @@ class DecisionProcessor : public IDecisionProcessor {
 
  private:
   std::unique_ptr<::robocin::parameters::IHandlerEngine> parameters_handler_engine_;
+  std::optional<::protocols::referee::GameStatus> last_game_status_;
 };
 
 } // namespace decision
