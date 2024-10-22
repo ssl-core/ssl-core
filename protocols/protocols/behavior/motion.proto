@@ -1,6 +1,6 @@
 syntax = "proto3";
 
-package protocols.navigation;
+package protocols.behavior;
 
 import "protocols/common/geometry.proto";
 
