@@ -35,6 +35,7 @@ class BehaviorProcessor : public IBehaviorProcessor {
 
  private:
   std::unique_ptr<::robocin::parameters::IHandlerEngine> parameters_handler_engine_;
+  std::optional<::protocols::decision::Decision> last_decision_;
 };
 
 } // namespace behavior
