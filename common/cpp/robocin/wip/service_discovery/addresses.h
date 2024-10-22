@@ -19,8 +19,15 @@ inline constexpr std::string_view kPerceptionDetectionWrapperTopic = "wrapper";
 inline constexpr std::string_view kRefereeAddress = "ipc:///tmp/.ssl-core/referee.ipc";
 inline constexpr std::string_view kRefereeGameStatusTopic = "game-status";
 
+inline constexpr std::string_view kCommunicationAddress = "ipc:///tmp/.ssl-core/communication.ipc";
+inline constexpr std::string_view kCommunicationCommandTopic = "command";
+inline constexpr std::string_view kCommunicationFeedbackTopic = "feedback";
+
 inline constexpr std::string_view kNavigationAddress = "ipc:///tmp/.ssl-core/navigation.ipc";
 inline constexpr std::string_view kNavigationOutputTopic = "navigation-output";
+
+inline constexpr std::string_view kRobotAddress = "224.0.0.1";
+inline constexpr int kRobotPort = 19901;
 
 inline constexpr std::string_view kDecisionAddress = "ipc:///tmp/.ssl-core/decision.ipc";
 inline constexpr std::string_view kDecisionTopic = "decision";

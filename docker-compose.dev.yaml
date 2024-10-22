@@ -228,6 +228,18 @@ services:
       dockerfile: behavior-ms/behavior-zidane/behavior-zidane.Dockerfile
     volumes:
       - .ssl-core:/tmp/.ssl-core
+  
+  communication-ms:
+    container_name: communication-ms
+    build:
+      context: .
+      dockerfile: communication-ms/communication-jaiminho/communication-jaiminho.Dockerfile
+    volumes:
+      - .ssl-core:/tmp/.ssl-core
+    depends_on:
+      - gateway
+    network_mode: "host"
+
 
 volumes:
   .ssl-core:
