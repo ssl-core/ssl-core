@@ -125,5 +125,52 @@ services:
     command: [ "-g", "daemon off;" ]
     network_mode: host
 
+  decision-ms:
+    container_name: decision-ms
+    build:
+      context: .
+      dockerfile: decision-ms/decision-guardiola/decision-guardiola.Dockerfile
+    volumes:
+      - .ssl-core:/tmp/.ssl-core
+    depends_on:
+      - perception-ms
+      - referee-ms
+
+  behavior-ms:
+    container_name: behavior-ms
+    build:
+      context: .
+      dockerfile: behavior-ms/behavior-zidane/behavior-zidane.Dockerfile
+    volumes:
+      - .ssl-core:/tmp/.ssl-core
+    depends_on:
+      - perception-ms
+      - decision-ms
+
+  navigation-ms:
+    container_name: navigation-ms
+    build:
+      context: .
+      dockerfile: navigation-ms/navigation-luffy/navigation-luffy.Dockerfile
+    volumes:
+      - .ssl-core:/tmp/.ssl-core
+    depends_on:
+      - perception-ms
+      - behavior-ms
+
+  communication-ms:
+    container_name: communication-ms
+    build:
+      context: .
+      dockerfile: communication-ms/communication-jaiminho/communication-jaiminho.Dockerfile
+    volumes:
+      - .ssl-core:/tmp/.ssl-core
+    depends_on:
+      - gateway
+    network_mode: "host"
+    depends_on:
+      - perception-ms
+      - navigation-ms
+
 volumes:
   .ssl-core:
