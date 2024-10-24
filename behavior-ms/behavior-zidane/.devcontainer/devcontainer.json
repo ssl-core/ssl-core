@@ -1,8 +1,8 @@
 {
-    "name": "C++: Behavior Zidane",
+    "name": "C++: Behavior Bruxo",
     "build": {
         "context": "./../../..",
-        "dockerfile": "./../behavior-zidane.Dockerfile",
+        "dockerfile": "./../behavior-bruxo.Dockerfile",
         "target": "devcontainer"
     },
     "initializeCommand": "mkdir -p /tmp/.ssl-core",

@@ -22,7 +22,7 @@ FROM devcontainer AS build
 
 COPY . /
 
-WORKDIR /behavior-ms/behavior-zidane
+WORKDIR /behavior-ms/behavior-bruxo
 
 RUN set -x && \
     rm -rf build bin && \
@@ -32,6 +32,6 @@ RUN set -x && \
 
 FROM scratch AS prod
 
-COPY --from=build /behavior-ms/behavior-zidane/bin/behavior_main /behavior_main
+COPY --from=build /behavior-ms/behavior-bruxo/bin/behavior_main /behavior_main
 
 ENTRYPOINT [ "./behavior_main" ]

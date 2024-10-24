@@ -92,7 +92,7 @@ std::unique_ptr<IController> makeConsumer(object_ptr<IConcurrentQueue<Payload>> 
 //////////////////////////////////////////////////////////////////////////////////////////////////
 
 int main() {
-  std::println("behavior-zidane is runnning!");
+  std::println("behavior-bruxo is runnning!");
 
   std::unique_ptr<IConcurrentQueue<Payload>> messages
       = std::make_unique<ConditionVariableConcurrentQueue<Payload>>();
