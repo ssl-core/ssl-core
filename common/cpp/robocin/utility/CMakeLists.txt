@@ -27,10 +27,12 @@ robocin_cpp_library(
        concepts.h
        fuzzy_compare.h
        singleton.h
+       iproto_convertible.h
   SRCS type_traits.cpp
        concepts.cpp
        fuzzy_compare.cpp
        singleton.cpp
+       iproto_convertible.cpp
   CONFIGS epsilon.h.in
 )
 
