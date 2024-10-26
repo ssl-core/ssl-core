@@ -9,21 +9,21 @@ import "protocols/common/robot_id.proto";
 import "protocols/common/robot_pose.proto";
 
 message Navigation {
-	repeated Output output = 1;
+  repeated Output output = 1;
 }
 
 message Output {
-	common.RobotId robot_id = 1;
-	common.PeripheralActuation peripheral_actuation = 2;
-	google.protobuf.Timestamp timestamp = 3;
-	double forward_velocity = 4;
-	double left_velocity = 5;
-	double angular_velocity = 6;
-	
-	uint32 custom_command = 7;
-	
-	uint32 sequence_number = 8;
-	common.Point2Df output_global_linear_velocity = 9;
-	
-	common.RobotPose robot_pose = 13;
+  common.RobotId robot_id = 1;
+  common.PeripheralActuation peripheral_actuation = 2;
+  google.protobuf.Timestamp timestamp = 3;
+  double forward_velocity = 4;
+  double left_velocity = 5;
+  double angular_velocity = 6;
+
+  uint32 custom_command = 7;
+
+  uint32 sequence_number = 8;
+  common.Point2Df output_global_linear_velocity = 9;
+
+  common.RobotPose robot_pose = 13;
 }

@@ -3,11 +3,11 @@ syntax = "proto3";
 package protocols.common;
 
 message RobotMotor {
-    repeated Motor motor = 4;
+  repeated Motor motor = 4;
 
-    message Motor {
-        uint32 motor_id = 1;
-        float motor_speed = 2;
-        float motor_current = 3;
-    }   
+  message Motor {
+    uint32 motor_id = 1;
+    float motor_speed = 2;
+    float motor_current = 3;
+  }
 }

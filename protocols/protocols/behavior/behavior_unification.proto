@@ -2,32 +2,30 @@ syntax = "proto3";
 
 package protocols.behavior.unification;
 
+import "protocols/behavior/motion.proto";
+import "protocols/behavior/planning.proto";
 import "protocols/common/peripheral_actuation.proto";
 import "protocols/common/robot_id.proto";
 
-import "protocols/behavior/motion.proto";
-import "protocols/behavior/planning.proto";
-
-/* 
-    Remove this implementation after CBR-2024.
-    This is a replica of current implementation of ssl-unification behavior output.
+/*
+   Remove this implementation after CBR-2024.
+   This is a replica of current implementation of ssl-unification behavior output.
 */
 
 message Behavior {
-    repeated Output output = 1;
+  repeated Output output = 1;
 }
 
 message Output {
-    common.RobotId robot_id = 1;
-    Motion motion = 2;
-    Planning planning = 3;
+  common.RobotId robot_id = 1;
+  Motion motion = 2;
+  Planning planning = 3;
 }
 
 message Motion {
-    GoToPoint go_to_point = 1;
-    GoToPointWithTrajectory go_to_point_with_trajectory = 2;
-    RotateInPoint rotate_in_point = 3;
-    RotateOnSelf rotate_on_self = 4;
-    common.PeripheralActuation peripheral_actuation = 5;
+  GoToPoint go_to_point = 1;
+  GoToPointWithTrajectory go_to_point_with_trajectory = 2;
+  RotateInPoint rotate_in_point = 3;
+  RotateOnSelf rotate_on_self = 4;
+  common.PeripheralActuation peripheral_actuation = 5;
 }
-

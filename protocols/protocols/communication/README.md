@@ -6,7 +6,7 @@ This directory contains the output of the communication service.
 
 - [communication](#communication)
   - [Table of Contents](#table-of-contents)
-  - [`RobotInfo`](#robot-command)
+  - [`RobotInfo`](#robotinfo)
 
 ## [`RobotInfo`](robot_info.proto)
 

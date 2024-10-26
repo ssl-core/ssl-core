@@ -3,12 +3,12 @@ syntax = "proto3";
 package protocols.behavior;
 
 import "protocols/common/geometry.proto";
-import "protocols/common/robot_id.proto";
 import "protocols/common/peripheral_actuation.proto";
+import "protocols/common/robot_id.proto";
 
 /* BETA:
-    These messages are not implemented in CBR-2024 release.
-    It is a beta version for future development.
+   These messages are not implemented in CBR-2024 release.
+   It is a beta version for future development.
 */
 
 message Motion {

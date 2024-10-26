@@ -2,29 +2,29 @@ syntax = "proto3";
 
 package protocols.decision;
 
-import "protocols/common/robot_id.proto";
 import "protocols/common/geometry.proto";
+import "protocols/common/robot_id.proto";
 
 message Decision {
-    repeated Behavior behavior = 1;
-    TacticalPlan plan = 2;
+  repeated Behavior behavior = 1;
+  TacticalPlan plan = 2;
 }
 
 message Behavior {
-    uint32 id = 1;
-    common.RobotId robot_id = 2;
-    optional common.Point2Df target = 3;
+  uint32 id = 1;
+  common.RobotId robot_id = 2;
+  optional common.Point2Df target = 3;
 }
 
 message TacticalPlan {
-    OffensivePlan offensive = 1;
-    DefensivePlan defensive = 2;
+  OffensivePlan offensive = 1;
+  DefensivePlan defensive = 2;
 }
 
 message DefensivePlan {
-    // todo: mapear cálculos que podem ser repassados para o behavior do decision
+  // todo: mapear cálculos que podem ser repassados para o behavior do decision
 }
 
 message OffensivePlan {
-    // todo: mapear cálculos que podem ser repassados para o behavior do decision
+  // todo: mapear cálculos que podem ser repassados para o behavior do decision
 }

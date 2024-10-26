@@ -9,9 +9,9 @@ This directory contains the output of the playback service.
   - [`detection`](#detection)
   - [`field`](#field)
   - [`game_status`](#game_status)
-  - [`raw_detection`](#raw_detection) 
+  - [`raw_detection`](#raw_detection)
   - [`sample`](#sample)
-  - [`tracked_detection`](#tracked_detection) 
+  - [`tracked_detection`](#tracked_detection)
 
 ## [`detection`](detection.proto)
 
