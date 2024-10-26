@@ -3,6 +3,10 @@
 
 #include "behavior/messaging/receiver/payload.h"
 
+#include "behavior/processing/messages/behavior/behavior_message.h"
+#include "behavior/processing/messages/motion/motion_message.h"
+#include "behavior/processing/messages/common/robot_id/robot_id.h"
+
 #include <protocols/behavior/behavior_unification.pb.h>
 #include <protocols/decision/decision.pb.h>
 #include <protocols/perception/detection.pb.h>

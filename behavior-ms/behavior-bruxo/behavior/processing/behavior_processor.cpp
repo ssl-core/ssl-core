@@ -55,7 +55,6 @@ BehaviorProcessor::BehaviorProcessor(
     parameters_handler_engine_{std::move(parameters_handler_engine)} {}
 
 std::optional<rc::Behavior> BehaviorProcessor::process(std::span<const Payload> payloads) {
-  rc::Behavior behavior_output;
 
   if(std::vector<rc::Decision> decision_messages = decisionfromPayloads(payloads);
     !decision_messages.empty()) {
@@ -76,30 +75,22 @@ std::optional<rc::Behavior> BehaviorProcessor::process(std::span<const Payload> 
 
   // TODO: implement the logic to generate the behavior based on the last detection and the last decision
   ///////////////////////////////////////////////////////////////////////////////////
-  for(const auto& behavior_ : last_decision_->behavior()) {
-    rc::Output output;
-    output.mutable_robot_id()->CopyFrom(behavior_.robot_id());
+  
+  BehaviorMessage behavior_message;
+  
+  for (const auto& robot : last_detection.robots()) {
     
-    if(behavior_.id() == 0) {
-      rc::Ball ball = last_detection.balls(last_detection.balls_size() - 1);
-
-      auto* go_to_point = output.mutable_motion()->mutable_go_to_point();
-      go_to_point->mutable_target()->set_x(ball.position().x());
-      go_to_point->mutable_target()->set_y(ball.position().y());
-      go_to_point->set_target_angle(0.0);
-    } else {
-      auto* go_to_point = output.mutable_motion()->mutable_go_to_point();
-      go_to_point->mutable_target()->set_x(0.0);
-      go_to_point->mutable_target()->set_y(0.0);
-      go_to_point->set_target_angle(0.0);
-    }
-
-    behavior_output.add_output()->CopyFrom(output);
+    behavior_message.output.emplace_back(
+      OutputMessage{
+        RobotIdMessage{std::nullopt, robot.robot_id().number()},
+        MotionMessage{},
+        PlanningMessage{}
+     });
   }
 
   ///////////////////////////////////////////////////////////////////////////////////
 
-  return behavior_output;
+  return behavior_message.toProto();
 }
 
 } // namespace behavior
