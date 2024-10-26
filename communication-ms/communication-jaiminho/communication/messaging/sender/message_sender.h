@@ -1,8 +1,8 @@
 #ifndef COMMUNICATION_MESSAGING_SENDER_MESSAGE_SENDER_H
 #define COMMUNICATION_MESSAGING_SENDER_MESSAGE_SENDER_H
 
-#include "robocin/network/zmq_publisher_socket.h"
 #include "robocin/network/udp_multicast_socket_sender.h"
+#include "robocin/network/zmq_publisher_socket.h"
 
 #include <protocols/communication/robot_info.pb.h>
 

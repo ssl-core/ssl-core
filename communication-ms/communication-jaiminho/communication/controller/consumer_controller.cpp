@@ -22,9 +22,10 @@ using ::protocols::communication::RobotInfo;
 
 } // namespace
 
-ConsumerController::ConsumerController(object_ptr<IConcurrentQueue<Payload>> messages,
-                                       std::unique_ptr<ICommunicationProcessor> communication_processor,
-                                       std::unique_ptr<IMessageSender> message_sender) :
+ConsumerController::ConsumerController(
+    object_ptr<IConcurrentQueue<Payload>> messages,
+    std::unique_ptr<ICommunicationProcessor> communication_processor,
+    std::unique_ptr<IMessageSender> message_sender) :
     messages_{messages},
     communication_processor_{std::move(communication_processor)},
     message_sender_{std::move(message_sender)} {}
@@ -48,8 +49,8 @@ void ConsumerController::exec(std::span<const Payload> payloads) {
 
   if (std::optional<rc::RobotInfo> robot_command = communication_processor_->process(payloads);
       robot_command != std::nullopt) {
-    if(robot_command->has_command()) {
-    //   ilog("command: {} sent.", robot_command->command().DebugString());
+    if (robot_command->has_command()) {
+      //   ilog("command: {} sent.", robot_command->command().DebugString());
       message_sender_->send(*robot_command);
     }
   }
