@@ -22,55 +22,51 @@ namespace robocin {
 UdpMulticastSocketSender::UdpMulticastSocketSender(size_t size) :
     fd_(socket(AF_INET, SOCK_DGRAM, 0)),
     size_(size) {
-        if (fd_ == -1) {
-            throw std::runtime_error("failed to create socket.");
-        }
-    }
+  if (fd_ == -1) {
+    throw std::runtime_error("failed to create socket.");
+  }
+}
 
 void UdpMulticastSocketSender::connect(std::string_view ip_address, int port) const {
-    if (::setsockopt(fd_,
-                    SOL_SOCKET,
-                    SO_REUSEADDR,
-                    &std::integral_constant<int, 1>::value,
-                    sizeof(int))
-        == -1) {
-        throw std::runtime_error("failed to set SO_REUSEADDR.");
-    }
+  if (::setsockopt(fd_,
+                   SOL_SOCKET,
+                   SO_REUSEADDR,
+                   &std::integral_constant<int, 1>::value,
+                   sizeof(int))
+      == -1) {
+    throw std::runtime_error("failed to set SO_REUSEADDR.");
+  }
 
-    sockaddr_in udp_addr{};
-    udp_addr.sin_family = AF_INET;
-    udp_addr.sin_port = ::htons(port);
-    udp_addr.sin_addr.s_addr = ::inet_addr(std::string{ip_address}.c_str());
+  sockaddr_in udp_addr{};
+  udp_addr.sin_family = AF_INET;
+  udp_addr.sin_port = ::htons(port);
+  udp_addr.sin_addr.s_addr = ::inet_addr(std::string{ip_address}.c_str());
 
-    if (::connect(fd_,
-                    reinterpret_cast<sockaddr*>(&udp_addr),
-                    sizeof(udp_addr)) == -1) {
-        throw std::runtime_error("failed to connect to multicast group.");
-    }
+  if (::connect(fd_, reinterpret_cast<sockaddr*>(&udp_addr), sizeof(udp_addr)) == -1) {
+    throw std::runtime_error("failed to connect to multicast group.");
+  }
 }
 
 void UdpMulticastSocketSender::send(const send_type& message) const {
-    if (::send(fd_, message.data(), message.size(), 0) == -1)
-        throw std::runtime_error("failed to send message.");
-    else if (static_cast<size_t>(::send(fd_, message.data(), message.size(), 0)) != message.size())
-        throw std::runtime_error("failed to send all message.");
+  if (::send(fd_, message.data(), message.size(), 0) == -1)
+    throw std::runtime_error("failed to send message.");
+  else if (static_cast<size_t>(::send(fd_, message.data(), message.size(), 0)) != message.size())
+    throw std::runtime_error("failed to send all message.");
 }
 
 void UdpMulticastSocketSender::send(std::string_view message) const {
-    if (::send(fd_, message.data(), message.size(), 0) == -1)
-        throw std::runtime_error("failed to send message.");
-    else if (static_cast<size_t>(::send(fd_, message.data(), message.size(), 0)) != message.size())
-        throw std::runtime_error("failed to send all message.");
+  if (::send(fd_, message.data(), message.size(), 0) == -1)
+    throw std::runtime_error("failed to send message.");
+  else if (static_cast<size_t>(::send(fd_, message.data(), message.size(), 0)) != message.size())
+    throw std::runtime_error("failed to send all message.");
 }
 
-int UdpMulticastSocketSender::fd() const {
-    return fd_;
-}
+int UdpMulticastSocketSender::fd() const { return fd_; }
 
 void UdpMulticastSocketSender::close() const {
-    if (::close(fd_) == -1) {
-        throw std::runtime_error("failed to close socket.");
-    }
+  if (::close(fd_) == -1) {
+    throw std::runtime_error("failed to close socket.");
+  }
 }
 
 } // namespace robocin
