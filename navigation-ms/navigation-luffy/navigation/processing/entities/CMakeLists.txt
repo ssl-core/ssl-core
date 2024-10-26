@@ -1,7 +1,7 @@
 robocin_cpp_library(
-  NAME navigation_utils
-  HDRS move_task_state.h
-  SRCS move_task_state.cpp
+  NAME navigation_entities
+  HDRS robot_move.h
+  SRCS robot_move.cpp
   DEPS common::geometry 
        protocols::protobufs
 )

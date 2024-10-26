@@ -4,4 +4,6 @@ robocin_cpp_library(
   SRCS motion_parser.cpp
   DEPS protocols::protobufs
        navigation_utils
+       navigation_entities
+       parameters
 )
