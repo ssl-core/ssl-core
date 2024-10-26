@@ -8,6 +8,7 @@
 #include <optional>
 #include <protocols/behavior/behavior_unification.pb.h>
 #include <protocols/navigation/navigation.pb.h>
+#include <protocols/referee/game_status.pb.h>
 #include <robocin/parameters/parameters.h>
 
 namespace navigation {
@@ -38,7 +39,6 @@ class NavigationProcessor : public INavigationProcessor {
   std::unique_ptr<IMotionParser> motion_parser_;
 
   std::optional<::protocols::behavior::unification::Behavior> last_behavior_;
-
 };
 
 } // namespace navigation
