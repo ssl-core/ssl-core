@@ -26,8 +26,8 @@ using ::protocols::navigation::Navigation;
 } // namespace
 
 ConsumerController::ConsumerController(object_ptr<IConcurrentQueue<Payload>> messages,
-                                        std::unique_ptr<INavigationProcessor> navigation_processor,
-                                        std::unique_ptr<IMessageSender> message_sender) :
+                                       std::unique_ptr<INavigationProcessor> navigation_processor,
+                                       std::unique_ptr<IMessageSender> message_sender) :
     messages_{messages},
     navigation_processor_{std::move(navigation_processor)},
     message_sender_{std::move(message_sender)} {}
@@ -49,7 +49,7 @@ void ConsumerController::exec(std::span<const Payload> payloads) {
   }
 
   if (std::optional<rc::Navigation> navigation_msg = navigation_processor_->process(payloads);
-    navigation_msg != std::nullopt) {
+      navigation_msg != std::nullopt) {
     message_sender_->send(*navigation_msg);
   }
 }

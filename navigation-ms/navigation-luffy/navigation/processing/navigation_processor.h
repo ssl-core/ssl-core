@@ -38,7 +38,6 @@ class NavigationProcessor : public INavigationProcessor {
   std::unique_ptr<IMotionParser> motion_parser_;
 
   std::optional<::protocols::behavior::unification::Behavior> last_behavior_;
-
 };
 
 } // namespace navigation

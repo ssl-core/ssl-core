@@ -33,15 +33,13 @@ Payload PayloadMapper::fromZmqDatagrams(std::span<const ZmqDatagram> messages) c
       behavior.ParseFromString(std::string{zmq_datagram.message()});
       // ilog("Received from behavior: {}", behavior.DebugString());
       behaviors.emplace_back(std::move(behavior));
-
-    } 
+    }
     if (zmq_datagram.topic() == service_discovery::kPerceptionDetectionTopic) {
       rc::Detection detection;
       detection.ParseFromString(std::string{zmq_datagram.message()});
       // ilog("Received from perception: {}", detection.DebugString());
       detections.emplace_back(std::move(detection));
-    }
-    else {
+    } else {
       // wlog("zmq_datagram with topic '{}' not processed.", zmq_datagram.topic());
     }
   }

@@ -19,7 +19,6 @@ class IMessageSender {
   virtual ~IMessageSender() = default;
 
   virtual void send(const ::protocols::navigation::Navigation& navigation) = 0;
-
 };
 
 class MessageSender : public IMessageSender {
