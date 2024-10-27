@@ -3,16 +3,13 @@
 #include "behavior/messaging/receiver/payload.h"
 #include "behavior/parameters/parameters.h"
 
-#include <protocols/behavior/motion.pb.h>
 #include <protocols/behavior/behavior_unification.pb.h>
-
+#include <protocols/behavior/motion.pb.h>
 #include <protocols/decision/decision.pb.h>
-
 #include <protocols/perception/detection.pb.h>
-
+#include <ranges>
 #include <robocin/memory/object_ptr.h>
 #include <robocin/output/log.h>
-#include <ranges>
 
 namespace behavior {
 
@@ -25,16 +22,15 @@ using ::robocin::object_ptr;
 
 namespace rc {
 
-
 using ::protocols::common::RobotId;
+using ::protocols::decision::Decision;
 using ::protocols::perception::Ball;
 using ::protocols::perception::Detection;
-using ::protocols::decision::Decision;
 
 using ::protocols::behavior::GoToPoint;
+using ::protocols::behavior::unification::Behavior;
 using ::protocols::behavior::unification::Motion;
 using ::protocols::behavior::unification::Output;
-using ::protocols::behavior::unification::Behavior;
 
 } // namespace rc
 
@@ -57,30 +53,30 @@ BehaviorProcessor::BehaviorProcessor(
 std::optional<rc::Behavior> BehaviorProcessor::process(std::span<const Payload> payloads) {
   rc::Behavior behavior_output;
 
-  if(std::vector<rc::Decision> decision_messages = decisionfromPayloads(payloads);
-    !decision_messages.empty()) {
+  if (std::vector<rc::Decision> decision_messages = decisionfromPayloads(payloads);
+      !decision_messages.empty()) {
     last_decision_ = decision_messages.back();
   }
 
-  if(!last_decision_) {
+  if (!last_decision_) {
     return std::nullopt;
   }
 
   std::vector<rc::Detection> detection_messages = detectionFromPayloads(payloads);
-  if(detection_messages.empty()) {
+  if (detection_messages.empty()) {
     // a new package must be generated only when a new detection is received.
     return std::nullopt;
   }
   const rc::Detection last_detection = detection_messages.back();
-  
 
-  // TODO: implement the logic to generate the behavior based on the last detection and the last decision
+  // TODO: implement the logic to generate the behavior based on the last detection and the last
+  // decision
   ///////////////////////////////////////////////////////////////////////////////////
-  for(const auto& behavior_ : last_decision_->behavior()) {
+  for (const auto& behavior_ : last_decision_->behavior()) {
     rc::Output output;
     output.mutable_robot_id()->CopyFrom(behavior_.robot_id());
-    
-    if(behavior_.id() == 0) {
+
+    if (behavior_.id() == 0) {
       rc::Ball ball = last_detection.balls(last_detection.balls_size() - 1);
 
       auto* go_to_point = output.mutable_motion()->mutable_go_to_point();

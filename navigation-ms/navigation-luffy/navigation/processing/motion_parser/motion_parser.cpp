@@ -90,10 +90,10 @@ RobotMove MotionParser::fromGoToPoint(const ::protocols::behavior::GoToPoint& go
     tmp_point->set_y(go_to_point.target().y());
     new_path_node.set_allocated_position(tmp_point);
 
-    return RobotMove{new_velocity, mathematics::bound(kp * d_theta, -maxAngularVel, maxAngularVel)};
+    return RobotMove{new_velocity, std::clamp(kp * d_theta, -maxAngularVel, maxAngularVel)};
   }
 
-  return RobotMove{{0, 0}, mathematics::bound(kp * d_theta, -maxAngularVel, maxAngularVel)};
+  return RobotMove{{0, 0}, std::clamp(kp * d_theta, -maxAngularVel, maxAngularVel)};
 }
 
 RobotMove

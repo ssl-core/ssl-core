@@ -43,15 +43,14 @@ Payload MessageReceiver::receive() {
       datagrams.emplace_back(std::move(behavior_zmq_datagram));
     }
 
-    while(true) {
+    while (true) {
       ZmqDatagram perception_zmq_datagram = zmq_poller_->receive(*perception_socket_);
       if (perception_zmq_datagram.empty()) {
         break;
       }
-      
+
       datagrams.emplace_back(std::move(perception_zmq_datagram));
     }
-
 
     if (datagrams.empty()) {
       // wlog("no datagram received after {} ms.", pRefereePollerTimeoutMs());

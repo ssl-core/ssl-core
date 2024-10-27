@@ -3,7 +3,7 @@ robocin_cpp_library(
   HDRS motion_parser.h
   SRCS motion_parser.cpp
   DEPS protocols::protobufs
-       common::utility
+       angular
        common::geometry
        navigation_utils
        navigation_entities

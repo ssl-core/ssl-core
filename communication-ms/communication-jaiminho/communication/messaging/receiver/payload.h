@@ -15,7 +15,8 @@ class Payload {
           std::vector<::protocols::navigation::Navigation> navigation);
 
   [[nodiscard]] std::span<const ::protocols::navigation::Navigation> getNavigation() const;
-  [[nodiscard]] std::span<const ::protocols::third_party::game_controller::Referee> getReferee() const;
+  [[nodiscard]] std::span<const ::protocols::third_party::game_controller::Referee>
+  getReferee() const;
 
   [[nodiscard]] bool empty() const;
 
