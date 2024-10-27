@@ -20,8 +20,8 @@ class ICommunicationProcessor {
 
   virtual ~ICommunicationProcessor() = default;
 
-  virtual std::optional<::protocols::communication::RobotInfo> process(std::span<const Payload> payloads)
-      = 0;
+  virtual std::optional<::protocols::communication::RobotInfo>
+  process(std::span<const Payload> payloads) = 0;
 };
 
 class CommunicationProcessor : public ICommunicationProcessor {

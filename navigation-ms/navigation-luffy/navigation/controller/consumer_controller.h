@@ -15,10 +15,9 @@ namespace navigation {
 
 class ConsumerController : public IController {
  public:
-  ConsumerController(
-      ::robocin::object_ptr<::robocin::IConcurrentQueue<Payload>> messages,
-      std::unique_ptr<INavigationProcessor> navigation_processor,
-      std::unique_ptr<IMessageSender> message_sender);
+  ConsumerController(::robocin::object_ptr<::robocin::IConcurrentQueue<Payload>> messages,
+                     std::unique_ptr<INavigationProcessor> navigation_processor,
+                     std::unique_ptr<IMessageSender> message_sender);
 
   void run() override;
 

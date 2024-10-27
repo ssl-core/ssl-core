@@ -24,4 +24,3 @@ class ProducerController : public IController {
 } // namespace navigation
 
 #endif // NAVIGATION_CONTROLLER_PRODUCER_CONTROLLER_H
-

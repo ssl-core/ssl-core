@@ -11,9 +11,9 @@ namespace {
 
 namespace service_discovery = robocin::service_discovery;
 
+using ::robocin::ilog;
 using ::robocin::wlog;
 using ::robocin::ZmqDatagram;
-using ::robocin::ilog;
 
 namespace rc {
 

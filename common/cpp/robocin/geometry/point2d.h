@@ -1,10 +1,10 @@
 #ifndef ROBOCIN_GEOMETRY_POINT2D_H
 #define ROBOCIN_GEOMETRY_POINT2D_H
 
-#include <type_traits>
-#include <stdexcept>
 #include <math.h>
 #include <ostream>
+#include <stdexcept>
+#include <type_traits>
 
 namespace robocin {
 
@@ -17,16 +17,14 @@ struct Point2D {
   // Constructors:
   inline constexpr Point2D() : x(0), y(0) {}
   inline constexpr Point2D(value_type x, value_type y) : x(x), y(y) {}
-  
+
   template <class U, class V>
   inline constexpr Point2D(const std::pair<U, V>& pair) :
-    x(static_cast<value_type>(pair.first)),
-    y(static_cast<value_type>(pair.second)) {}
+      x(static_cast<value_type>(pair.first)),
+      y(static_cast<value_type>(pair.second)) {}
 
   // Static methods:
-  inline static constexpr Point2D null() {
-    return Point2D(0, 0);
-  }
+  inline static constexpr Point2D null() { return Point2D(0, 0); }
 
   inline static constexpr Point2D fromPolar(value_type angle) {
     return Point2D(std::cos(angle), std::sin(angle));
@@ -38,7 +36,7 @@ struct Point2D {
 
   // Floatint-point comparison:
   bool fuzzyIsNull(value_type value, value_type epsilon = static_cast<value_type>(1e-9)) {
-      return std::abs(value) < epsilon;
+    return std::abs(value) < epsilon;
   }
 
   inline constexpr bool operator==(const Point2D& other) const {
@@ -48,7 +46,7 @@ struct Point2D {
   // Arithmetic-assignment operators:
   inline constexpr Point2D& operator+=(const Point2D& other) {
     x += other.x, y += other.y;
-    return *this; 
+    return *this;
   }
 
   inline constexpr Point2D& operator-=(const Point2D& other) {
@@ -67,21 +65,13 @@ struct Point2D {
   }
 
   // arithmetic operators:
-  inline constexpr Point2D operator+(const Point2D& other) const {
-    return Point2D(*this) += other;
-  }
+  inline constexpr Point2D operator+(const Point2D& other) const { return Point2D(*this) += other; }
 
-  inline constexpr Point2D operator-(const Point2D& other) const {
-    return Point2D(*this) -= other;
-  }
+  inline constexpr Point2D operator-(const Point2D& other) const { return Point2D(*this) -= other; }
 
-  inline constexpr Point2D operator*(value_type factor) const {
-    return Point2D(*this) *= factor;
-  }
+  inline constexpr Point2D operator*(value_type factor) const { return Point2D(*this) *= factor; }
 
-  inline constexpr Point2D operator/(value_type factor) const {
-    return Point2D(*this) /= factor;
-  }
+  inline constexpr Point2D operator/(value_type factor) const { return Point2D(*this) /= factor; }
 
   // arithmetic friends:
   friend inline constexpr Point2D operator*(value_type factor, const Point2D& point) {
@@ -89,47 +79,31 @@ struct Point2D {
   }
 
   // sign operators:
-  inline constexpr Point2D operator+() const {
-    return *this;
-  }
+  inline constexpr Point2D operator+() const { return *this; }
 
-  inline constexpr Point2D operator-() const {
-    return Point2D(-x, -y);
-  }
+  inline constexpr Point2D operator-() const { return Point2D(-x, -y); }
 
   // Custom
-  [[nodiscard]] inline constexpr bool isNull() const {
-    return fuzzyIsNull(x) and fuzzyIsNull(y);
-  }
+  [[nodiscard]] inline constexpr bool isNull() const { return fuzzyIsNull(x) and fuzzyIsNull(y); }
 
-  inline constexpr void transpose() {
-    std::swap(x, y);
-  }
+  inline constexpr void transpose() { std::swap(x, y); }
 
-  inline constexpr Point2D transposed() const {
-    return Point2D{y, x};
-  }
+  inline constexpr Point2D transposed() const { return Point2D{y, x}; }
 
   inline constexpr void swap(Point2D& other) noexcept {
     std::swap(x, other.x);
     std::swap(y, other.y);
   }
 
-  inline constexpr std::pair<value_type, value_type> toPair() const {
-    return std::make_pair(x, y);
-  }
+  inline constexpr std::pair<value_type, value_type> toPair() const { return std::make_pair(x, y); }
   template <class U, class V = U>
   inline constexpr std::pair<U, V> toPair() const {
     return std::make_pair(static_cast<U>(x), static_cast<V>(y));
   }
 
-  inline constexpr value_type manhattanLength() const {
-    return std::abs(x) + std::abs(y);
-  }
+  inline constexpr value_type manhattanLength() const { return std::abs(x) + std::abs(y); }
 
-  inline constexpr value_type dot(const Point2D& other) const {
-    return x * other.x + y * other.y;
-  }
+  inline constexpr value_type dot(const Point2D& other) const { return x * other.x + y * other.y; }
 
   inline constexpr value_type cross(const Point2D& other) const {
     return x * other.y - y * other.x;
@@ -143,9 +117,7 @@ struct Point2D {
     return std::sqrt(distanceSquaredTo(other));
   }
 
-  inline constexpr void rotateClockWise90() {
-    std::swap(x, y), y = -y;
-  }
+  inline constexpr void rotateClockWise90() { std::swap(x, y), y = -y; }
 
   inline constexpr Point2D rotatedClockWise90() const {
     Point2D result{*this};
@@ -153,9 +125,7 @@ struct Point2D {
     return result;
   }
 
-  inline constexpr void rotateCounterClockWise90() {
-    std::swap(x, y), x = -x;
-  }
+  inline constexpr void rotateCounterClockWise90() { std::swap(x, y), x = -x; }
 
   inline constexpr Point2D rotatedCounterClockWise90() const {
     Point2D result{*this};
@@ -195,25 +165,17 @@ struct Point2D {
     return result;
   }
 
-  inline constexpr auto angle() const {
-    return std::atan2(y, x);
-  }
+  inline constexpr auto angle() const { return std::atan2(y, x); }
 
   inline constexpr auto angleTo(const Point2D& other) const {
     return std::atan2(cross(other), dot(other));
   }
 
-  inline constexpr value_type lengthSquared() const {
-    return dot(*this);
-  }
+  inline constexpr value_type lengthSquared() const { return dot(*this); }
 
-  inline constexpr auto length() const {
-    return std::sqrt(lengthSquared());
-  }
+  inline constexpr auto length() const { return std::sqrt(lengthSquared()); }
 
-  inline constexpr auto norm() const {
-    return std::sqrt(lengthSquared());
-  }
+  inline constexpr auto norm() const { return std::sqrt(lengthSquared()); }
 
   inline constexpr void resize(value_type t) {
     if (auto norm = this->norm(); not fuzzyIsNull(norm)) {
@@ -298,10 +260,9 @@ struct Point2D {
   }
 
   friend inline std::ostream& operator<<(std::ostream& os, const Point2D& point) {
-      os << '(' << point.x << ", " << point.y << ')';
-      return os;
+    os << '(' << point.x << ", " << point.y << ')';
+    return os;
   }
-
 };
 
 Point2D() -> Point2D<double>;
