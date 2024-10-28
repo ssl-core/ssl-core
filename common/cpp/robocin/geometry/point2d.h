@@ -161,7 +161,7 @@ struct Point2D {
 
   inline constexpr Point2D rotatedCounterClockWise(value_type t) const {
     Point2D result{*this};
-    result.rotateCCW(t);
+    result.rotateCounterClockWise(t);
     return result;
   }
 
