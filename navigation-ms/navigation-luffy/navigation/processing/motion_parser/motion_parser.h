@@ -1,7 +1,7 @@
 #ifndef NAVIGATION_PROCESSING_MOTION_PARSER_H
 #define NAVIGATION_PROCESSING_MOTION_PARSER_H
 
-#include <navigation/processing/utils/robot_move.h>
+#include <navigation/processing/entities/robot_move.h>
 #include <protocols/behavior/behavior_unification.pb.h>
 #include <protocols/behavior/motion.pb.h>
 #include <protocols/perception/detection.pb.h>

@@ -1,6 +1,7 @@
 #include "navigation/processing/motion_parser/motion_parser.h"
 
-#include "robocin/geometry/point2d.h"
+#include <robocin/geometry/point2d.h>
+#include <robocin/utility/angular.h>
 
 namespace navigation {
 
@@ -57,8 +58,11 @@ MotionParser::fromRotateInPoint(const ::protocols::behavior::RotateInPoint& rota
 RobotMove MotionParser::fromRotateOnSelf(const ::protocols::behavior::RotateOnSelf& rotate_on_self,
                                          const ::protocols::perception::Robot& robot) {
 
-  // PROCESSAMENTO DO ROTATEINPOINT
-  return RobotMove{};
+  auto d_theta = robocin::smallestAngleDiff<double>(robot.angle(), rotate_on_self.target_angle());
+  robocin::Point2Dd velocity
+      = robocin::Point2Dd{rotate_on_self.velocity().x(), rotate_on_self.velocity().y()};
+
+  return RobotMove{velocity, rotate_on_self.kp() * d_theta};
 }
 
 } // namespace navigation
