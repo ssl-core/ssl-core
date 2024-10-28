@@ -8,7 +8,6 @@
 #include <optional>
 #include <protocols/behavior/behavior_unification.pb.h>
 #include <protocols/navigation/navigation.pb.h>
-#include <protocols/referee/game_status.pb.h>
 #include <robocin/parameters/parameters.h>
 
 namespace navigation {

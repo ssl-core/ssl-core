@@ -7,7 +7,6 @@
 #include <protocols/behavior/planning.pb.h>
 #include <protocols/navigation/navigation.pb.h>
 #include <protocols/perception/detection.pb.h>
-#include <protocols/referee/game_status.pb.h>
 #include <ranges>
 
 namespace navigation {
@@ -27,8 +26,6 @@ using ::protocols::navigation::Output;
 using ::protocols::perception::Detection;
 using ::protocols::perception::Robot;
 
-using ::protocols::referee::GameStatus;
-
 using ::protocols::common::PeripheralActuation;
 using ::protocols::common::RobotId;
 
@@ -43,11 +40,6 @@ std::vector<rc::Behavior> behaviorFromPayloads(std::span<const Payload> payloads
 
 std::vector<rc::Detection> detectionFromPayloads(std::span<const Payload> payloads) {
   return payloads | std::views::transform(&Payload::getDetections) | std::views::join
-         | std::ranges::to<std::vector>();
-}
-
-std::vector<rc::GameStatus> gameStatusFromPayloads(std::span<const Payload> payloads) {
-  return payloads | std::views::transform(&Payload::getGameStatuses) | std::views::join
          | std::ranges::to<std::vector>();
 }
 
@@ -67,14 +59,12 @@ std::optional<rc::Navigation> NavigationProcessor::process(std::span<const Paylo
     return std::nullopt;
   }
 
-  std::vector<rc::GameStatus> game_statuses = gameStatusFromPayloads(payloads);
   std::vector<rc::Detection> detections = detectionFromPayloads(payloads);
-  if (detections.empty() or game_statuses.empty()) {
+  if (detections.empty()) {
     // a new package must be generated only when a new detection is received.
     return std::nullopt;
   }
   rc::Detection last_detection = detections.back();
-  rc::GameStatus last_game_status = game_statuses.back();
 
   ///////////////////////////////////////////////////////////////////////////
   for (const auto& behavior_ : last_behavior_->output()) {
@@ -94,8 +84,7 @@ std::optional<rc::Navigation> NavigationProcessor::process(std::span<const Paylo
         RobotMove move;
         if (behavior_.motion().has_go_to_point()) {
           move = motion_parser_->fromGoToPoint(behavior_.motion().go_to_point(),
-                                               ally,
-                                               last_game_status);
+                                               ally);
         } else if (behavior_.motion().has_rotate_in_point()) {
           move = motion_parser_->fromRotateInPoint(behavior_.motion().rotate_in_point(), ally);
         } else if (behavior_.motion().has_rotate_on_self()) {

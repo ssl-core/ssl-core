@@ -13,8 +13,7 @@ namespace navigation {
 MotionParser::MotionParser() {}
 
 RobotMove MotionParser::fromGoToPoint(const ::protocols::behavior::GoToPoint& go_to_point,
-                                      const ::protocols::perception::Robot& robot,
-                                      const ::protocols::referee::GameStatus& game_status) {
+                                      const ::protocols::perception::Robot& robot) {
 
   robocin::Point2Dd s0 = robocin::Point2Dd(robot.position().x(), robot.position().y());
   robocin::Point2Dd s = robocin::Point2Dd(go_to_point.target().x(), go_to_point.target().y());

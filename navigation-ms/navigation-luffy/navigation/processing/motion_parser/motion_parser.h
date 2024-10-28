@@ -5,7 +5,6 @@
 #include <protocols/behavior/behavior_unification.pb.h>
 #include <protocols/behavior/motion.pb.h>
 #include <protocols/perception/detection.pb.h>
-#include <protocols/referee/game_status.pb.h>
 
 #define PI 3.14159265358979323846
 
@@ -23,8 +22,7 @@ class IMotionParser {
   virtual ~IMotionParser() = default;
 
   virtual RobotMove fromGoToPoint(const ::protocols::behavior::GoToPoint& go_to_point,
-                                  const ::protocols::perception::Robot& robot,
-                                  const ::protocols::referee::GameStatus& game_status)
+                                  const ::protocols::perception::Robot& robot)
       = 0;
 
   virtual RobotMove fromRotateInPoint(const ::protocols::behavior::RotateInPoint& rotate_in_point,
@@ -41,8 +39,7 @@ class MotionParser : public IMotionParser {
   MotionParser();
 
   RobotMove fromGoToPoint(const ::protocols::behavior::GoToPoint& go_to_point,
-                          const ::protocols::perception::Robot& robot,
-                          const ::protocols::referee::GameStatus& game_status) override;
+                          const ::protocols::perception::Robot& robot) override;
 
   RobotMove fromRotateInPoint(const ::protocols::behavior::RotateInPoint& rotate_in_point,
                               const ::protocols::perception::Robot& robot) override;
