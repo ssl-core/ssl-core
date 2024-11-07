@@ -142,6 +142,16 @@ services:
     ports:
       - 3032:3032
 
+  params-mfe:
+    build:
+      context: .
+      dockerfile: params-mfe/Dockerfile
+      args:
+        - SOURCE_DIRECTORY=params-mfe
+    command: [ "-g", "daemon off;" ]
+    ports:
+      - 3033:3033 
+
   app-shell:
     build:
       context: .
