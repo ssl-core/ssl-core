@@ -1,0 +1,18 @@
+.numeric-input-container {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px;
+}
+
+.numeric-input-container label {
+  font-size: 14px;
+}
+
+.numeric-input {
+  background-color: #262626;
+  color: #ccc;
+  border: 1px solid #A3A3A3;
+  padding: 4px;
+  border-radius: 4px;
+}

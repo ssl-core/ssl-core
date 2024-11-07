@@ -1,0 +1,97 @@
+/* Styles to not export */
+
+:root {
+  --color-background: #050505;
+  --color-dark-gray: #131417;
+  --color-gray: #26282C;
+  --color-green: #047857;
+  --color-light-green: #059669;
+  --color-danger: #E44343;
+  --color-white: #FFFFFF;
+}
+
+
+@font-face {
+  font-family: "Manrope", sans-serif;
+  src: url('fonts/Manrope.ttf') format("truetype");
+}
+
+:root {
+  font-family: "Manrope", sans-serif;
+  font-weight: 400;
+  color: var(--color-white);
+  background-color: var(--color-background);
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+html, body {
+  margin: 0;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+}
+
+body {
+  display: flex;
+  flex-direction: row;
+}
+
+a {
+  text-decoration: none;
+  color: inherit;
+}
+
+ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+
+/* Styles to remove */
+
+.container {
+  display: flex;
+  gap: 32px;
+  height: 1000px;
+}
+
+.sidebar {
+  padding: 32px;
+  background-color: #181414;
+  border: 1px solid #3F3F46;
+}
+
+.sidebar__list {
+  list-style-type: none;
+  margin: 0;
+  padding: 0;
+}
+
+.sidebar__list-item {
+  padding: 8px 0;
+}
+
+.tab-section {
+  padding: 32px;
+}
+
+.tab-nav-btn {
+  background-color: transparent;
+  color: white;
+  font-size: 16px;
+  border: none;
+  cursor: pointer;
+}
+
+.tab-nav-btn.selected {
+  color: #059669;
+  text-decoration: underline;
+}
+
+.tab-nav-btn:hover {
+  text-decoration: underline;
+}
