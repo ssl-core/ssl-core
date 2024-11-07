@@ -27,3 +27,22 @@ match:
       cols:
         start: 1
         end: 2
+
+parameters:
+  path: /parameters
+  label: Parâmetros
+  icon: radio # change later
+  rows: 1
+  cols: 1
+  fragments:
+    player:
+      url: http://127.0.0.1:3033/params-mfe.js
+      type: webcomponent
+      metadata:
+        tag: params-mfe
+      rows:
+        start: 1
+        end: 2
+      cols:
+        start: 1
+        end: 2
