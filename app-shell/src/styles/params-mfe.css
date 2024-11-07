@@ -1,0 +1,167 @@
+.container {
+  display: flex;
+  gap: 32px;
+  height: 1000px;
+}
+
+.sidebar {
+  padding: 32px;
+  background-color: #181414;
+  border: 1px solid #3F3F46;
+}
+
+.sidebar__list {
+  list-style-type: none;
+  margin: 0;
+  padding: 0;
+}
+
+.sidebar__list-item {
+  padding: 8px 0;
+}
+
+.tab-section {
+  padding: 32px;
+  display: flex !important;
+  flex-direction: column !important;
+}
+
+.tab-nav-btn {
+  background-color: transparent;
+  color: white;
+  font-size: 16px;
+  border: none;
+  cursor: pointer;
+}
+
+.tab-nav-btn.selected {
+  color: #059669;
+  text-decoration: underline;
+}
+
+.tab-nav-btn:hover {
+  text-decoration: underline;
+}
+
+/* DynamicForm styles */
+
+.form-submit-btn {
+  padding: 8px;
+  min-width: 100px;
+  background-color: #047857;
+  border: 1px solid #059669;
+  border-radius: 4px;
+  color: white;
+  font-size: 14px;
+  cursor: pointer;
+}
+
+/* FormFieldset styles */
+
+.form-fieldset {
+  border: none;
+  margin: 8px 0;
+  background-color: #262626;
+  border-radius: 4px;
+  border: 1px solid #3F3F46;
+}
+
+.form-fieldset legend {
+  font-size: 20px;
+}
+
+/* BooleanParameterInput styles */
+
+.switch-container {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px;
+}
+
+.switch-container span {
+  font-size: 14px;
+}
+
+.switch {
+  position: relative;
+  display: inline-block;
+  width: 40px;
+  height: 20px; 
+}
+
+/* Hide default HTML checkbox */
+.switch input {
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+/* The slider */
+.slider {
+  position: absolute;
+  cursor: pointer;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: #ccc;
+  -webkit-transition: .2s;
+  transition: .2s;
+}
+
+.slider:before {
+  position: absolute;
+  content: "";
+  height: 16px; 
+  width: 16px;
+  left: 3px; 
+  bottom: 2px; 
+  background-color: white;
+  -webkit-transition: .2s;
+  transition: .2s;
+}
+
+input:checked + .slider {
+  background-color: #38A169; 
+}
+
+input:focus + .slider {
+  box-shadow: 0 0 1px #38A169;
+}
+
+input:checked + .slider:before {
+  -webkit-transform: translateX(18px); 
+  -ms-transform: translateX(18px);
+  transform: translateX(18px);
+}
+
+/* Rounded sliders */
+.slider.round {
+  border-radius: 20px; 
+}
+
+.slider.round:before {
+  border-radius: 50%;
+}
+
+/* NumericParameterInput styles */
+
+.numeric-input-container {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px;
+}
+
+.numeric-input-container label {
+  font-size: 14px;
+}
+
+.numeric-input {
+  background-color: #262626;
+  color: #ccc;
+  border: 1px solid #A3A3A3;
+  padding: 4px;
+  border-radius: 4px;
+}

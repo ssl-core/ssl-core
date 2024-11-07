@@ -9,6 +9,7 @@ import "./styles/variables.css";
 import "./styles/defaults.css";
 import "./styles/sidebar.css";
 import "./styles/app.css";
+import "./styles/params-mfe.css";
 
 const routes = Object.values(configRoutes);
 
