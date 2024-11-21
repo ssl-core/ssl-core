@@ -1,0 +1,16 @@
+{
+  "name": "composition-layer",
+  "version": "0.0.1",
+  "main": "index.js",
+  "license": "MIT",
+  "scripts": {
+    "build": "esbuild src/index.jsx --outfile=dist/draw-mfe.js --bundle --minify --external:react --external:react-dom --define:process.env.NODE_ENV='production' --target=chrome58,firefox57,safari11,edge16"
+  },
+  "dependencies": {
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0"
+  },
+  "devDependencies": {
+    "esbuild": "^0.19.8"
+  }
+}

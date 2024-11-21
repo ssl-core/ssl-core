@@ -1,0 +1,16 @@
+{
+  "name": "common",
+  "version": "1.0.0",
+  "main": "index.js",
+  "license": "MIT",
+  "scripts": {
+    "build": "esbuild index.js --outfile=dist/common-dependencies.js --bundle"
+  },
+  "dependencies": {
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0"
+  },
+  "devDependencies": {
+    "esbuild": "^0.19.8"
+  }
+}
