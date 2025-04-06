@@ -49,7 +49,7 @@ func (lh *LiveHandler) Process(datagram *network.ZmqMultipartDatagram) (*playbac
 	proto.Unmarshal(datagram.Message, &perceptionDetectionWrapper)
 	detection := perceptionDetectionWrapper.GetDetection()
 	// rawDetections := perceptionDetectionWrapper.GetRawDetections()
-	// trackedDetections := perceptionDetectionWrapper.GetTrackedDetections()
+	trackedDetections := perceptionDetectionWrapper.GetTrackedDetections()
 
 	if lh.firstTimestamp == nil {
 		lh.firstTimestamp = detection.GetCreatedAt()
@@ -62,7 +62,7 @@ func (lh *LiveHandler) Process(datagram *network.ZmqMultipartDatagram) (*playbac
 		Field:            mappers.FieldMapper(detection.GetField()),
 		GameStatus:       lh.lastGameStatus,
 		RawDetection:     nil, // TODO(matheusvtna, joseviccruz): fill raw detection
-		TrackedDetection: nil, // TODO(matheusvtna, joseviccruz): fill tracked detection
+		TrackedDetection: mappers.TrackedDetectionMapper(trackedDetections),
 	}
 
 	return &sample, nil

@@ -9,4 +9,5 @@ build-linux:
 
 setup:
 	@bash ../../common/golang/scripts/compile_proto.sh
+	@go mod tidy
 	@go mod download

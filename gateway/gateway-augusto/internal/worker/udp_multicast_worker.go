@@ -9,13 +9,15 @@ import (
 const protocol = "udp"
 
 type UdpMulticastWorker struct {
-	conn  *net.UDPConn
-	size  int
-	proxy chan<- network.ZmqMultipartDatagram
-	id    []byte
+	conn      *net.UDPConn
+	size      int
+	proxy     chan<- network.ZmqMultipartDatagram
+	id        []byte
+	onReceive func(datagram network.ZmqMultipartDatagram)
 }
 
-func NewUdpMulticastWorker(address string, size int, proxy chan<- network.ZmqMultipartDatagram, id string) *UdpMulticastWorker {
+func NewUdpMulticastWorker(address string, size int, proxy chan<- network.ZmqMultipartDatagram, id string, onReceive func(datagram network.ZmqMultipartDatagram)) *UdpMulticastWorker {
+
 	addr, err := net.ResolveUDPAddr(protocol, address)
 	if err != nil {
 		panic(err)
@@ -26,11 +28,18 @@ func NewUdpMulticastWorker(address string, size int, proxy chan<- network.ZmqMul
 		panic(err)
 	}
 
+	if onReceive == nil {
+		onReceive = func(datagram network.ZmqMultipartDatagram) {
+			// Default behavior: no-op
+		}
+	}
+
 	return &UdpMulticastWorker{
-		conn:  conn,
-		size:  size,
-		proxy: proxy,
-		id:    []byte(id),
+		conn:      conn,
+		size:      size,
+		proxy:     proxy,
+		id:        []byte(id),
+		onReceive: onReceive,
 	}
 }
 
@@ -43,7 +52,9 @@ func (w *UdpMulticastWorker) Listen() {
 			continue
 		}
 
-		w.proxy <- network.NewZmqMultipartDatagram(w.id, buffer[:bytes])
+		datagram := network.NewZmqMultipartDatagram(w.id, buffer[:bytes])
+		w.proxy <- datagram
+		w.onReceive(datagram)
 	}
 }
 

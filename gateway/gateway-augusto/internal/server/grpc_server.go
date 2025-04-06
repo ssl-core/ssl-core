@@ -6,6 +6,7 @@ import (
 	"net"
 
 	"github.com/robocin/ssl-core/common/golang/network"
+	"github.com/robocin/ssl-core/gateway/gateway-augusto/internal/socket"
 	"github.com/robocin/ssl-core/protocols/gateway"
 	"github.com/robocin/ssl-core/protocols/playback"
 	"google.golang.org/grpc"
@@ -16,10 +17,10 @@ import (
 const protocol = "tcp"
 
 type GrpcServer struct {
-	server     *grpc.Server
-	address    string
-	subscriber network.ZmqSubscriberSocket
-	dealer     network.ZmqDealerSocket
+	server            *grpc.Server
+	address           string
+	subscriberHandler socket.SocketReceiverHandler
+	dealer            network.ZmqDealerSocket
 
 	gateway.UnimplementedGatewayServiceServer
 }
@@ -31,8 +32,19 @@ func NewGrpcServer(address string) *GrpcServer {
 		server:  server,
 		address: address,
 		//TODO: service discovery usage
-		subscriber: *network.NewZmqSubscriberSocket("ipc:///tmp/.ssl-core/playback.ipc", "sample"),
-		dealer:     *network.NewZmqDealerSocket("ipc:///tmp/.ssl-core/replay.ipc"),
+		subscriberHandler: *socket.NewSocketReceiverHandler(network.NewZmqSubscriberSocket("ipc:///tmp/.ssl-core/playback.ipc", "sample"), nil),
+		dealer:            *network.NewZmqDealerSocket("ipc:///tmp/.ssl-core/replay.ipc"),
+	}
+}
+
+func NewGrpcServerWithSubscriberHandler(address string, subscriberHandler socket.SocketReceiverHandler) *GrpcServer {
+	server := grpc.NewServer()
+
+	return &GrpcServer{
+		server:            server,
+		address:           address,
+		subscriberHandler: subscriberHandler,
+		dealer:            *network.NewZmqDealerSocket("ipc:///tmp/.ssl-core/replay.ipc"),
 	}
 }
 
@@ -50,7 +62,7 @@ func (s *GrpcServer) Start() {
 func (s *GrpcServer) ReceiveLivestream(stream gateway.GatewayService_ReceiveLivestreamServer) error {
 	for {
 		// TODO: Handle stream.Recv()
-		datagram := s.subscriber.Receive()
+		datagram := s.subscriberHandler.OnReceive()
 		var sample playback.Sample
 		err := proto.Unmarshal(datagram.Message, &sample)
 
