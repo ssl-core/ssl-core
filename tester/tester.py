@@ -123,13 +123,15 @@ if __name__ == "__main__":
             diffs = []
             while total_sent != count:
                 pub_time = dt.now()
-                # print(f'sent {len(serialized_message)} bytes.', flush=True)
+                print(f'sent {len(serialized_message)} bytes.', flush=True)
                 publisher.send(serialized_message)
                 if subscriber:
                     received = subscriber.receive(PubSubMode.Wait)
                     if received:
                         rcv_time = dt.now()
                         diffs.append((rcv_time - pub_time).total_seconds() * 1000)
+                else:
+                    print("no subscriber to receive message.")
 
                 total_sent += 1
                 time.sleep(1 / fps) # commented because it its impacting the benchmark.
