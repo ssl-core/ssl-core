@@ -23,7 +23,7 @@ services:
       args:
         - SOURCE_DIRECTORY=vision-be/vision-panettone
     working_dir: /workspaces/vision-be/vision-panettone
-    command: ["bin/microservice_main", "0", "960000", "0"]
+    command: ["bin/microservice_main", "0", "2"]
     extra_hosts:
       - "host.docker.internal:host-gateway"
     volumes:
@@ -38,7 +38,7 @@ services:
       args:
         - SOURCE_DIRECTORY=vision-be/vision-panettone
     working_dir: /workspaces/vision-be/vision-panettone
-    command: ["bin/microservice_main", "1", "666000", "0"]
+    command: ["bin/microservice_main", "1", "2"]
     extra_hosts:
       - "host.docker.internal:host-gateway"
     volumes:
@@ -53,7 +53,7 @@ services:
       args:
         - SOURCE_DIRECTORY=vision-be/vision-panettone
     working_dir: /workspaces/vision-be/vision-panettone
-    command: ["bin/microservice_main", "2", "260000", "0"]
+    command: ["bin/microservice_main", "2", "2"]
     extra_hosts:
       - "host.docker.internal:host-gateway"
     volumes:
@@ -68,7 +68,7 @@ services:
       args:
         - SOURCE_DIRECTORY=vision-be/vision-panettone
     working_dir: /workspaces/vision-be/vision-panettone
-    command: ["bin/microservice_main", "3", "3150000", "0"]
+    command: ["bin/microservice_main", "3", "2"]
     extra_hosts:
       - "host.docker.internal:host-gateway"
     volumes:
@@ -83,7 +83,7 @@ services:
       args:
         - SOURCE_DIRECTORY=vision-be/vision-panettone
     working_dir: /workspaces/vision-be/vision-panettone
-    command: ["bin/microservice_main", "4", "185000", "0"]
+    command: ["bin/microservice_main", "4", "2"]
     extra_hosts:
       - "host.docker.internal:host-gateway"
     volumes:
