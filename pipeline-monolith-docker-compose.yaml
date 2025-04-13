@@ -21,7 +21,7 @@ services:
       args:
         - SOURCE_DIRECTORY=vision-be/vision-panettone
     working_dir: /workspaces/vision-be/vision-panettone
-    command: ["bin/monolith_main", "inproc", "0", "0", "0", "0", "0"]
+    command: ["bin/monolith_main", "ipc", "0", "0", "0", "0", "0"]
     container_name: monolith
     extra_hosts:
       - "host.docker.internal:host-gateway"

@@ -78,10 +78,6 @@ def req_rep_fn(service_id: int):
         time.sleep(1)
         value += 1
 
-def exportToFile(diffs):
-    exportPath = f'analytics/outputs/latency_{time.time}.txt'
-    Path(exportPath).write_text(str(diffs))
-
 if __name__ == "__main__":
     # TODO($ISSUE_N): Fix to work calling from any directory.
     # os.chdir(os.path.dirname(os.path.abspath(__file__)))
@@ -140,7 +136,6 @@ if __name__ == "__main__":
                 # time.sleep(1 / fps) # commented because it was impacting the benchmark.
 
             print(f'DIFFS = {diffs}')
-            exportToFile(diffs)
 
             for thread in threads:
                 thread.join()
