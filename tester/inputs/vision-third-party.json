@@ -1,7 +1,7 @@
 {
   "requests": [
     {
-      "count": 10,
+      "count": 300,
       "fps": 60,
       "udp_multicast": {
         "ip": "224.5.23.2",

@@ -38,4 +38,6 @@ robocin_cpp_project_setup(STANDARD 23)
 
 add_subdirectory(microservice)
 
+add_subdirectory(monolith)
+
 ########################################################################################################################

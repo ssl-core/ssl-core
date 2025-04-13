@@ -1,7 +1,5 @@
 # docker-compose -f casca-docker-compose.yaml up --build
 
-version: '3'
-
 services:
   gateway:
     build:
@@ -23,7 +21,7 @@ services:
       args:
         - SOURCE_DIRECTORY=vision-be/vision-panettone
     working_dir: /workspaces/vision-be/vision-panettone
-    command: ["bin/microservice_main", "0", "2"]
+    command: ["bin/microservice_main", "0", "0"]
     extra_hosts:
       - "host.docker.internal:host-gateway"
     volumes:
@@ -38,7 +36,7 @@ services:
       args:
         - SOURCE_DIRECTORY=vision-be/vision-panettone
     working_dir: /workspaces/vision-be/vision-panettone
-    command: ["bin/microservice_main", "1", "2"]
+    command: ["bin/microservice_main", "1", "0"]
     extra_hosts:
       - "host.docker.internal:host-gateway"
     volumes:
@@ -53,7 +51,7 @@ services:
       args:
         - SOURCE_DIRECTORY=vision-be/vision-panettone
     working_dir: /workspaces/vision-be/vision-panettone
-    command: ["bin/microservice_main", "2", "2"]
+    command: ["bin/microservice_main", "2", "0"]
     extra_hosts:
       - "host.docker.internal:host-gateway"
     volumes:
@@ -68,7 +66,7 @@ services:
       args:
         - SOURCE_DIRECTORY=vision-be/vision-panettone
     working_dir: /workspaces/vision-be/vision-panettone
-    command: ["bin/microservice_main", "3", "2"]
+    command: ["bin/microservice_main", "3", "0"]
     extra_hosts:
       - "host.docker.internal:host-gateway"
     volumes:
@@ -83,7 +81,7 @@ services:
       args:
         - SOURCE_DIRECTORY=vision-be/vision-panettone
     working_dir: /workspaces/vision-be/vision-panettone
-    command: ["bin/microservice_main", "4", "2"]
+    command: ["bin/microservice_main", "4", "0"]
     extra_hosts:
       - "host.docker.internal:host-gateway"
     volumes:

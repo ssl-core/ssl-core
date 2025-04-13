@@ -78,6 +78,9 @@ def req_rep_fn(service_id: int):
         time.sleep(1)
         value += 1
 
+def exportToFile(diffs):
+    exportPath = f'analytics/outputs/latency_{time.time}.txt'
+    Path(exportPath).write_text(str(diffs))
 
 if __name__ == "__main__":
     # TODO($ISSUE_N): Fix to work calling from any directory.
@@ -92,9 +95,9 @@ if __name__ == "__main__":
     with open(f"inputs/{args.input_file}") as json_input:
         data = json.load(json_input)
 
-        # for i in range(40):
-        #     time.sleep(1)
-        #     print(f"slept for {i}s.", flush=True)
+        for i in range(5):
+            time.sleep(1)
+            print(f"slept for {i}s.", flush=True)
 
         for request in data["requests"]:
             threads = []
@@ -134,9 +137,10 @@ if __name__ == "__main__":
                     print("no subscriber to receive message.")
 
                 total_sent += 1
-                time.sleep(1 / fps) # commented because it its impacting the benchmark.
+                # time.sleep(1 / fps) # commented because it was impacting the benchmark.
 
-            print(diffs)
+            print(f'DIFFS = {diffs}')
+            exportToFile(diffs)
 
             for thread in threads:
                 thread.join()
