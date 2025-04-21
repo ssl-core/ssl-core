@@ -168,10 +168,10 @@ ZmqSubscriberSocket makeSubscriberSocket(int id) {
     static constexpr std::string_view k3rdPartyTopic = "vision-third-party";
 
     sub.connect(k3rdPartyAddress, std::span{&k3rdPartyTopic, 1});
-    std::cout << std::format("Service {} receiving from third party.", id) << std::endl;
+    // std::cout << std::format("Service {} receiving from third party.", id) << std::endl;
   } else {
     std::string address = std::format("ipc:///tmp/channel{}.ipc", id - 1);
-    std::cout << std::format("Service {} receiving from Service {}.", id, id - 1) << std::endl;
+    // std::cout << std::format("Service {} receiving from Service {}.", id, id - 1) << std::endl;
     sub.connect(address, std::span{&kTopic, 1});
   }
 
@@ -182,7 +182,7 @@ ZmqPublisherSocket makePublisherSocket(int id) {
   ZmqPublisherSocket pub;
 
   std::string address = std::format("ipc:///tmp/channel{}.ipc", id);
-  std::cout << std::format("Service {} bind at: '{}'", id, address) << std::endl;
+  // std::cout << std::format("Service {} bind at: '{}'", id, address) << std::endl;
   pub.bind(address);
 
   return pub;
