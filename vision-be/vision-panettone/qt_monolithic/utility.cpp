@@ -145,7 +145,7 @@ void AModule::ParallelRun() {
 }
 
 void AModule::ISendMessage(const ZmqDatagram& message) {
-  std::cout << std::format("Here {}...", id_) << std::endl;
+  // std::cout << std::format("Here {}...", id_) << std::endl;
   emit QtSendMessage(message);
 }
 
@@ -174,7 +174,7 @@ void AModule::ReceiveMessage(const ZmqDatagram& message) {
     shared_packages_.push_back(message);
   }
 
-  std::cout << std::format("[{}] Received at Module {}.", GetDateTimeNow(), id_) << std::endl;
+  // std::cout << std::format("[{}] Received at Module {}.", GetDateTimeNow(), id_) << std::endl;
 
   cv_.notify_one();
 }

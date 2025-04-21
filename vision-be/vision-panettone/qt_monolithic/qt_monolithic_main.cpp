@@ -90,7 +90,7 @@ class ManualFirstModule : public AModule {
     while (true) {
       MockedSleep();
       
-      std::cout << std::format("\n[{}] Sending at Module {}.", GetDateTimeNow(), id_) << std::endl;
+      // std::cout << std::format("\n[{}] Sending at Module {}.", GetDateTimeNow(), id_) << std::endl;
       ISendMessage({.topic = std::string(kTopic), .message = GetMockedFrame(frame_id++).SerializeAsString()});
     }
   }
@@ -107,7 +107,7 @@ class FirstModule : public AModule {
  protected:
   void ParallelRun() override {
     zmq_subscriber_socket_.connect(k3rdPartyAddress, std::span{&k3rdPartyTopic, 1});
-    std::cout << std::format("Service {} receiving from third party.", id_) << std::endl;
+    // std::cout << std::format("Service {} receiving from third party.", id_) << std::endl;
 
     // std::this_thread::sleep_for(std::chrono::duration<int>(1)); // 1s sleep before start.
 
@@ -131,15 +131,15 @@ class LastModule : public AModule {
   LastModule(int id, float sleep_duration_ms)
     : AModule(id, sleep_duration_ms) {
     std::string address = std::format("ipc:///tmp/channel{}.ipc", id);
-    std::cout << std::format("Last addr: '{}'.", address);
+    // std::cout << std::format("Last addr: '{}'.", address);
 
     zmq_publisher_socket_.bind(address);
   }
 
   void LastSendMessage(const ZmqDatagram& message) {
-    std::cout << "Sending Using ZMQ..." << std::endl;
+    // std::cout << "Sending Using ZMQ..." << std::endl;
     zmq_publisher_socket_.send(kTopic, message.message);
-    std::cout << "Sent!" << std::endl;
+    // std::cout << "Sent!" << std::endl;
   }
 
   void ParallelRun() override {
