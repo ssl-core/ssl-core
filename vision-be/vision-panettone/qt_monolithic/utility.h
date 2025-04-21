@@ -1,12 +1,12 @@
 #ifndef VISION_QT_MONOLITHIC_UTILITY_H
 #define VISION_QT_MONOLITHIC_UTILITY_H
 
-#include <QtCore>
-#include <QObject>
 #include <mutex>
-#include <vector>
-#include <thread>
+#include <QObject>
+#include <QtCore>
 #include <robocin/network/zmq_subscriber_socket.h>
+#include <thread>
+#include <vector>
 
 namespace vision::qt_monolithic {
 
@@ -26,9 +26,13 @@ class AModule : public QObject {
   void Run();
 
   void MockedSleep();
-  void Connect(AModule& prev);
 
- protected:
+  template <class Sender, class Receiver>
+  void Connect(AModule& prev) {
+    connect(&prev, &Sender::QtSendMessage, this, &Receiver::ReceiveMessage, Qt::DirectConnection);
+  }
+
+ public:
   const int id_;
 
   virtual void ParallelRun();
@@ -55,6 +59,6 @@ class AModule : public QObject {
   void ReceiveMessage(const ::robocin::ZmqDatagram& message);
 };
 
-} // namespace vision::qt
+} // namespace vision::qt_monolithic
 
 #endif // VISION_QT_MONOLITHIC_UTILITY_H

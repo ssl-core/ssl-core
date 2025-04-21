@@ -1,10 +1,10 @@
 #include "qt_monolithic/utility.h"
 
+#include <google/protobuf/util/time_util.h>
 #include <protocols/common/robot_id.pb.h>
 #include <protocols/third_party/detection/raw_wrapper.pb.h>
 #include <protocols/ui/messages.pb.h>
 #include <protocols/vision/frame.pb.h>
-#include <google/protobuf/util/time_util.h>
 
 namespace vision::qt_monolithic {
 namespace {
@@ -76,8 +76,7 @@ Frame WrapperPacketToFrame(int serial_id, int field_serial_id, const SSL_Wrapper
         = WrapperRobotToRobot(packet_robot, RobotIdColor::RobotId_Color_COLOR_YELLOW);
   }
   for (const auto& packet_robot : packet.detection().robots_blue()) {
-    *frame.add_robots()
-        = WrapperRobotToRobot(packet_robot, RobotIdColor::RobotId_Color_COLOR_BLUE);
+    *frame.add_robots() = WrapperRobotToRobot(packet_robot, RobotIdColor::RobotId_Color_COLOR_BLUE);
   }
 
   if (packet.has_geometry()) {
@@ -110,21 +109,22 @@ Frame ParseMessage(std::string_view message, int id, int serial_id, int field_se
 
   Frame frame;
   frame.ParseFromString(std::string(message));
+  if (id == 4) {
+    // std::cout << std::format("Frame {}: ", frame.DebugString()) << std::endl;
+  }
+
   return frame;
 }
 
 } // namespace
 
-AModule::AModule(int id, float sleep_duration_ms)
-  : id_(id),
-    sleep_duration_ms_(sleep_duration_ms) {
-}
+AModule::AModule(int id, float sleep_duration_ms) :
+    id_(id),
+    sleep_duration_ms_(sleep_duration_ms) {}
 
-void AModule::Run() {
-  thread_ = std::make_unique<std::jthread>([this]() {
-    ParallelRun();
-  });
-}
+// void AModule::Run() {
+//   thread_ = std::make_unique<std::jthread>([this]() { ParallelRun(); });
+// }
 
 void AModule::ParallelRun() {
   while (true) {
@@ -157,14 +157,6 @@ void AModule::MockedSleep() {
   std::this_thread::sleep_for(std::chrono::duration<float, std::milli>(sleep_duration_ms_));
 }
 
-void AModule::Connect(AModule& prev) {
-  connect(&prev,
-          &AModule::QtSendMessage,
-          this,
-          &AModule::ReceiveMessage,
-          Qt::DirectConnection);
-}
-
 void AModule::ReceiveMessage(const ZmqDatagram& message) {
   {
     std::lock_guard lock(mutex_);
@@ -179,4 +171,4 @@ void AModule::ReceiveMessage(const ZmqDatagram& message) {
   cv_.notify_one();
 }
 
-} // namespace vision::qt
+} // namespace vision::qt_monolithic
