@@ -1,0 +1,26 @@
+python3 stats.py outputs/April21/20h01min_pipeline_qt_monolith_5_threads_waiting_3ms_2-5ms_0-5ms_9ms_0-5ms_3000_messages_sending_to_monolith_via_ipc.txt outputs/April21/20h09min_pipeline_microservices_5_instances_waiting_3ms_2-5ms_0-5ms_9ms_0-5ms_3000_messages_sending_to_gateway_via_udp.txt all
+-----------------Running t-test
+Number of outliers removed: 6
+Number of samples to get mean:  994
+Number of outliers removed: 25
+Number of samples to get mean:  975
+Mean and standard deviation of outputs/April21/20h01min_pipeline_qt_monolith_5_threads_waiting_3ms_2-5ms_0-5ms_9ms_0-5ms_3000_messages_sending_to_monolith_via_ipc.txt: 16.666492957746478, 0.06323521650427297
+Mean and standard deviation of outputs/April21/20h09min_pipeline_microservices_5_instances_waiting_3ms_2-5ms_0-5ms_9ms_0-5ms_3000_messages_sending_to_gateway_via_udp.txt: 16.79670666666667, 0.27899128578738647
+T-statistic: -14.336840745780616, P-value: 2.054563070119789e-44
+The means are significantly different.
+-----------------Running u-test
+Number of outliers removed: 6
+Number of samples to get mean:  994
+Number of outliers removed: 25
+Number of samples to get mean:  975
+Mean and standard deviation of outputs/April21/20h01min_pipeline_qt_monolith_5_threads_waiting_3ms_2-5ms_0-5ms_9ms_0-5ms_3000_messages_sending_to_monolith_via_ipc.txt: 16.666492957746478, 0.06323521650427297
+Mean and standard deviation of outputs/April21/20h09min_pipeline_microservices_5_instances_waiting_3ms_2-5ms_0-5ms_9ms_0-5ms_3000_messages_sending_to_gateway_via_udp.txt: 16.79670666666667, 0.27899128578738647
+U-statistic: 286585.0, P-value: 1.5939268563325609e-55
+The means are significantly different.
+-----------------Running Cliff's delta
+Number of outliers removed: 6
+Number of samples to get mean:  994
+Number of outliers removed: 25
+Number of samples to get mean:  975
+Cliff's delta: -0.4085848423876593
+The effect size is negligible.

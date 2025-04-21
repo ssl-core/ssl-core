@@ -150,14 +150,29 @@ def cliffs_delta(first_filename, second_filename):
     else:
         print("The effect size is large.")
 
-if len(sys.argv) == 3:
+if len(sys.argv) == 4:
     first_filename = sys.argv[1]
     second_filename = sys.argv[2]
-    # plot_error_bar_graph(first_filename, second_filename)
-    cliffs_delta(first_filename, second_filename)
+    method = sys.argv[3]
+
+    valid_methods = ['t-test', 'u-test', 'cliffs-delta', 'all']
+    if method not in valid_methods:
+        print(f"Error; The method should be one of {valid_methods}")
+        sys.exit(1)
+
+    if method == 't-test' or method == 'all':
+        print("-----------------Running t-test")
+        t_test(first_filename, second_filename)
+    if method == 'u-test' or method == 'all':
+        print("-----------------Running u-test")
+        u_test(first_filename, second_filename)
+    if method == 'cliffs-delta' or method == 'all':
+        print("-----------------Running Cliff's delta")
+        cliffs_delta(first_filename, second_filename)
+    
 elif len(sys.argv) == 2:
     filename = sys.argv[1]    
     plot_distribution_graph(filename)
 else:
-    print("Error; The correct usage of this script is `python3 script.py filename`")
+    print("Error; The correct usage of this script is `python3 script.py filename` or `python3 script.py filename1 filename2 method`")
     sys.exit(1)
