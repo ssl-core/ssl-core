@@ -1,4 +1,4 @@
-# docker-compose -f casca-docker-compose.yaml up --build
+# docker-compose -f pipeline-microservices-docker-compose.yaml up --build
 
 services:
   gateway:
@@ -95,7 +95,7 @@ services:
       context: .
       dockerfile: ./tester/.devcontainer/Dockerfile
     working_dir: /tester
-    command: ["python", "tester.py", "--input_file", "vision-third-party.json"]
+    command: ["python", "tester.py", "--input_file", "vision-third-party-to-gateway.json"]
     volumes:
       - /tmp:/tmp
     depends_on:

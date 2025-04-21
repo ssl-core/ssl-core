@@ -1,19 +1,6 @@
-# docker-compose -f casca-docker-compose.yaml up --build
+# docker-compose -f pipeline-monolith-docker-compose.yaml up --build
 
 services:
-  gateway:
-    build:
-      context: .
-      dockerfile: gateway/gateway-augusto/.devcontainer/Dockerfile
-      args:
-        - SOURCE_DIRECTORY=gateway/gateway-augusto
-    working_dir: /workspaces/gateway/gateway-augusto
-    container_name: gateway
-    command: ["bin/gateway_main"]
-    volumes:
-      - /tmp:/tmp
-      - ./:/app
-
   monolith:
     build:
       context: .
@@ -22,22 +9,20 @@ services:
         - SOURCE_DIRECTORY=vision-be/vision-panettone
     working_dir: /workspaces/vision-be/vision-panettone
     command: ["bin/monolith_main", "ipc", "0", "0", "0", "0", "0"]
-    container_name: monolith
+    container_name: monolith    
     extra_hosts:
       - "host.docker.internal:host-gateway"
     volumes:
       - /tmp:/tmp
     depends_on:
-      - gateway
-
+      - tester
+    
   tester:
     container_name: tester
     build:
       context: .
       dockerfile: ./tester/.devcontainer/Dockerfile
     working_dir: /tester
-    command: ["python", "tester.py", "--input_file", "vision-third-party.json"]
+    command: ["python", "tester.py", "--input_file", "vision-third-party-to-monolith.json"]
     volumes:
-      - /tmp:/tmp
-    depends_on:
-      - monolith
+      - /tmp:/tmp           

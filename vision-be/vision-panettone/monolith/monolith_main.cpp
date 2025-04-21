@@ -163,7 +163,7 @@ int main(int argc, char* argv[]) {
   for (int index = 0; index < number_of_modules; index++) {
     threads[index] = std::make_unique<std::jthread>(makeModule,
                                                     index,
-                                                    std::stoi(times_to_wait[index]),
+                                                    std::stof(times_to_wait[index]),
                                                     protocol);
   }
   return 0;
@@ -244,11 +244,11 @@ ZmqPublisherSocket makePublisherSocket(int id, ZMQProtocol protocol) {
 
   if (id == number_of_modules - 1) {
     std::string address = std::format("ipc:///tmp/channel{}.ipc", id);
-    std::cout << std::format("Module {} bind at: '{}'", id, address) << std::endl;
+    // std::cout << std::format("Module {} bind at: '{}'", id, address) << std::endl;
     pub.bind(address);
   } else {
     std::string address = formatAddress(protocol, std::format("channel{}", id));
-    std::cout << std::format("Module {} bind at: '{}'", id, address) << std::endl;
+    // std::cout << std::format("Module {} bind at: '{}'", id, address) << std::endl;
     pub.bind(address);
   }
 

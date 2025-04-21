@@ -3,6 +3,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 import seaborn as sns
 from scipy import stats
+import tikzplotlib as tkz
 
 def remove_outliers(values, threshold=3):
     z_scores = np.abs(stats.zscore(values, nan_policy='omit'))
@@ -35,7 +36,7 @@ def get_values_and_stats_from_file(filename, removing_outliers=False):
                 filtered_values = remove_outliers(values)
                 print(f'Number of outliers removed: {len(values) - len(filtered_values)}')
 
-            mean, std = get_mean_and_std_deviation(values)
+            mean, std = get_mean_and_std_deviation(filtered_values)
             return filtered_values, values, mean, std
 
     except FileNotFoundError:
@@ -67,7 +68,7 @@ def plot_error_bar_graph(first_filename, second_filename):
     plt.show()
 
 def plot_distribution_graph(filename):
-    filtered_values, original_values, mean, std = get_values_and_stats_from_file(filename)
+    filtered_values, original_values, mean, std = get_values_and_stats_from_file(filename, True)
     print(f'Mean and standard deviation of first column: {mean}, {std}')
     
     # Calculate the number of bins using Freedman-Diaconis Rule
@@ -77,15 +78,19 @@ def plot_distribution_graph(filename):
     
     ax = sns.histplot(filtered_values, kde=True, bins=num_bins, color="yellowgreen")
     ax.lines[0].set_color('green')
-    plt.axvline(mean, color='orange', linestyle='--', label=f'Mean = {np.round(mean, 2)} ms')
+    plt.axvline(mean, color='orange', linestyle='--', label=f'μ = {np.round(mean, 2)} ms')
+    plt.axvline(mean - std, color='red', linestyle=':', label=f'- σ = {np.round(mean - std, 2)} ms')
+    plt.axvline(mean + std, color='red', linestyle=':', label=f'+ σ = {np.round(mean + std, 2)} ms')
     plt.xlabel("Pipeline Latency (ms)")
     plt.ylabel("Frequency")
 
     n = len(original_values)
     plt.title(f'Distribution of Pipeline Latency')
     plt.legend()
-    plt.savefig(f'{filename}-distribution.png')
-    # tikzplotlib.save(f'distribution_{filename}.tex')
+    plt.savefig(f'{filename}-distribution.svg')
+
+    # Save the figure as a TikZ file
+    # tkz.save(f"{filename}.tex",axis_height=f"\\{filename}H", axis_width=f"\\{filename}W", extra_groupstyle_parameters={f'vertical sep=\\{filename}VS'}, strict=True)
 
 def plot_linear_graph(filename):
     filtered_values, original_values, mean, std = get_values_and_stats_from_file(filename)

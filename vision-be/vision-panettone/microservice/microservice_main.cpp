@@ -117,10 +117,10 @@ int main(int argc, char* argv[]) {
   // args[1] is the number of milliseconds to wait.
 
   int service_id = std::stoi(args[0]);
-  time_to_wait_ms = std::stoi(args[1]);
+  time_to_wait_ms = std::stof(args[1]);
 
-  std::cout << std::format("Service {} is running and waiting {} ms.!", service_id, time_to_wait_ms)
-            << std::endl;
+  // std::cout << std::format("Service {} is running and waiting {} ms.!", service_id, time_to_wait_ms)
+  //           << std::endl;
 
   sub = std::make_unique<ZmqSubscriberSocket>(makeSubscriberSocket(service_id));
   pub = std::make_unique<ZmqPublisherSocket>(makePublisherSocket(service_id));

@@ -19,6 +19,7 @@ from pathlib import Path
 def create_publisher(request):
     if "zmq" in request:
         zmq_request = request["zmq"]
+        print(f'request["zmq"]: {zmq_request}')
         return ZmqPublisherSocket(zmq_request["topic"], zmq_request["address"])
 
     elif "udp_multicast" in request:
@@ -91,10 +92,6 @@ if __name__ == "__main__":
     with open(f"inputs/{args.input_file}") as json_input:
         data = json.load(json_input)
 
-        for i in range(5):
-            time.sleep(1)
-            print(f"slept for {i}s.", flush=True)
-
         for request in data["requests"]:
             threads = []
 
@@ -106,6 +103,11 @@ if __name__ == "__main__":
 
             publisher = create_publisher(request)
             message = create_message(request)
+
+            for i in range(10):
+                time.sleep(1)
+                print(f"slept for {i+1}s.", flush=True)
+            
             subscriber = create_subscriber_from_response(request)
 
             serialized_message = serialize(message)
@@ -122,7 +124,7 @@ if __name__ == "__main__":
             diffs = []
             while total_sent != count:
                 pub_time = dt.now()
-                print(f'sent {len(serialized_message)} bytes.', flush=True)
+                #print(f'sent {len(serialized_message)} bytes.', flush=True)
                 publisher.send(serialized_message)
                 if subscriber:
                     received = subscriber.receive(PubSubMode.Wait)
