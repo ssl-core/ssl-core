@@ -1,0 +1,28 @@
+# docker-compose -f pipeline-monolith-docker-compose.yaml up --build
+
+services:
+  monolith:
+    build:
+      context: .
+      dockerfile: vision-be/vision-panettone/.devcontainer/Dockerfile
+      args:
+        - SOURCE_DIRECTORY=vision-be/vision-panettone
+    working_dir: /workspaces/vision-be/vision-panettone
+    command: ["bin/qt_monolithic_main"]
+    container_name: qt_monolithic
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    volumes:
+      - /tmp:/tmp
+    depends_on:
+      - tester
+    
+  tester:
+    container_name: tester
+    build:
+      context: .
+      dockerfile: ./tester/.devcontainer/Dockerfile
+    working_dir: /tester
+    command: ["python", "tester.py", "--input_file", "vision-third-party-to-monolith.json", "--log_sent_bytes", "True"]
+    volumes:
+      - /tmp:/tmp           

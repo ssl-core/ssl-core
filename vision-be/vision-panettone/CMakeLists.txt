@@ -6,7 +6,7 @@ list(APPEND CMAKE_MODULE_PATH ${CMAKE_CURRENT_LIST_DIR}/../../.cmake)
 
 include(project)
 
-project(vision LANGUAGES CXX)
+project(microservice LANGUAGES CXX)
 
 ########################################################################################################################
 
@@ -36,8 +36,10 @@ set(mongocxx_deps mongo::mongoc_shared mongo::bson_shared mongo::mongocxx_shared
 
 robocin_cpp_project_setup(STANDARD 23)
 
-add_subdirectory(microservice)
+# add_subdirectory(microservice)
 
 add_subdirectory(monolith)
+
+add_subdirectory(qt_monolithic)
 
 ########################################################################################################################

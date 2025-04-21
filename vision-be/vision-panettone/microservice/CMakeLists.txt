@@ -6,6 +6,4 @@ robocin_cpp_executable(
        protocols::third_party
        protocols::messages
        protocols::vision
-       irepository_factory
-       repository_factory_mapping
 )
