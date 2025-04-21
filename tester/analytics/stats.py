@@ -6,6 +6,8 @@ from scipy import stats
 from scipy.stats import ttest_ind
 from scipy.stats import mannwhitneyu
 
+shouldRemoveOutliers = True
+
 def remove_outliers(values, threshold=3):
     z_scores = np.abs(stats.zscore(values, nan_policy='omit'))
 
@@ -30,7 +32,7 @@ def get_values_and_stats_from_file(filename, removing_outliers=False):
             values = np.array(values)
             from_index = int(len(values)/3)
             to_index = 2*from_index
-            values = values[from_index:to_index]
+            values = values[2000:3999]
             
             filtered_values = values
             if removing_outliers: 
@@ -69,7 +71,7 @@ def plot_error_bar_graph(first_filename, second_filename):
     plt.show()
 
 def plot_distribution_graph(filename):
-    filtered_values, original_values, mean, std = get_values_and_stats_from_file(filename, True)
+    filtered_values, original_values, mean, std = get_values_and_stats_from_file(filename, shouldRemoveOutliers)
     print(f'Mean and standard deviation of first column: {mean}, {std}')
     
     # Calculate the number of bins using Freedman-Diaconis Rule
@@ -107,8 +109,8 @@ def plot_linear_graph(filename):
 
 
 def t_test(first_filename, second_filename):
-    first_filtered_values, first_values, first_mean, first_std = get_values_and_stats_from_file(first_filename, True)
-    second_filtered_values, second_values, second_mean, second_std = get_values_and_stats_from_file(second_filename, True)
+    first_filtered_values, first_values, first_mean, first_std = get_values_and_stats_from_file(first_filename, shouldRemoveOutliers)
+    second_filtered_values, second_values, second_mean, second_std = get_values_and_stats_from_file(second_filename, shouldRemoveOutliers)
     t_stat, p_value = ttest_ind(first_filtered_values, second_filtered_values, equal_var=True)
     print(f'Mean and standard deviation of {first_filename}: {first_mean}, {first_std}')
     print(f'Mean and standard deviation of {second_filename}: {second_mean}, {second_std}')
@@ -120,8 +122,8 @@ def t_test(first_filename, second_filename):
 
     
 def u_test(first_filename, second_filename):
-    first_filtered_values, first_values, first_mean, first_std = get_values_and_stats_from_file(first_filename, True)
-    second_filtered_values, second_values, second_mean, second_std = get_values_and_stats_from_file(second_filename, True)
+    first_filtered_values, first_values, first_mean, first_std = get_values_and_stats_from_file(first_filename, shouldRemoveOutliers)
+    second_filtered_values, second_values, second_mean, second_std = get_values_and_stats_from_file(second_filename, shouldRemoveOutliers)
     u_stat, p_value = mannwhitneyu(first_filtered_values, second_filtered_values, alternative='two-sided')
 
     print(f'Mean and standard deviation of {first_filename}: {first_mean}, {first_std}')
@@ -133,13 +135,13 @@ def u_test(first_filename, second_filename):
         print("The means are not significantly different.")
 
 def cliffs_delta(first_filename, second_filename):
-    first_filtered_values, first_values, first_mean, first_std = get_values_and_stats_from_file(first_filename, True)
-    second_filtered_values, second_values, second_mean, second_std = get_values_and_stats_from_file(second_filename, True)
+    first_filtered_values, first_values, first_mean, first_std = get_values_and_stats_from_file(first_filename, shouldRemoveOutliers)
+    second_filtered_values, second_values, second_mean, second_std = get_values_and_stats_from_file(second_filename, shouldRemoveOutliers)
 
     # Calculate Cliff's delta
     n1 = len(first_filtered_values)
     n2 = len(second_filtered_values)
-    delta = (np.sum(np.sign(np.subtract.outer(first_filtered_values, second_filtered_values))) / (n1 * n2))
+    delta = abs((np.sum(np.sign(np.subtract.outer(first_filtered_values, second_filtered_values))) / (n1 * n2)))
     print(f'Cliff\'s delta: {delta}')
     if delta < 0.147:
         print("The effect size is negligible.")

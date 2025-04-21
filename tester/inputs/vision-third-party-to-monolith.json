@@ -1,7 +1,7 @@
 {
   "requests": [
     {
-      "count": 3000,
+      "count": 6000,
       "fps": 60,
       "zmq": {
         "address": "ipc:///tmp/gateway-pub-th-parties.ipc",

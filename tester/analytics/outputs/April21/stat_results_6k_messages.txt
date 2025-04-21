@@ -1,0 +1,26 @@
+python3 stats.py outputs/April21/qt_6000_messages.txt outputs/April21/ms_6000_messages.txt all
+-----------------Running t-test
+Number of outliers removed: 0
+Number of samples to get mean:  1000
+Number of outliers removed: 28
+Number of samples to get mean:  972
+Mean and standard deviation of outputs/April21/qt_6000_messages.txt: 16.673565000000004, 0.05848245698497968
+Mean and standard deviation of outputs/April21/ms_6000_messages.txt: 16.79885390946502, 0.3096580007411204
+T-statistic: -12.559843885621373, P-value: 7.318583005827648e-35
+The means are significantly different.
+-----------------Running u-test
+Number of outliers removed: 0
+Number of samples to get mean:  1000
+Number of outliers removed: 28
+Number of samples to get mean:  972
+Mean and standard deviation of outputs/April21/qt_6000_messages.txt: 16.673565000000004, 0.05848245698497968
+Mean and standard deviation of outputs/April21/ms_6000_messages.txt: 16.79885390946502, 0.3096580007411204
+U-statistic: 344918.5, P-value: 6.395606405710661e-29
+The means are significantly different.
+-----------------Running Cliff's delta
+Number of outliers removed: 0
+Number of samples to get mean:  1000
+Number of outliers removed: 28
+Number of samples to get mean:  972
+Cliff's delta: 0.2902911522633745
+The effect size is small.
