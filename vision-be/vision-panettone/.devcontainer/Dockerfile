@@ -6,6 +6,8 @@ COPY .cmake/ /tmp/.cmake/
 COPY common/ /tmp/common/
 COPY protocols/ /tmp/protocols/
 
+RUN sudo apt update && sudo apt install qt6-base-dev -y
+
 RUN \
   pushd /tmp/common/cpp && rm -rf build && \
   cmake -B build -S . -G "Ninja" -DCMAKE_CXX_COMPILER=clang++ && \
@@ -14,8 +16,6 @@ RUN \
   pushd /tmp/protocols && rm -rf build && \
   cmake -B build -S . -G "Ninja" -DCMAKE_CXX_COMPILER=clang++ && \
   cmake --build build && cmake --install build && popd && \
-#   \
-#  sudo apt update && sudo apt install qt6-base-dev -y
   \
   rm -rf /tmp/.cmake/ /tmp/common/ /tmp/protocols/
 
