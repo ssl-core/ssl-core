@@ -86,6 +86,7 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument("--input_file", required=True)
     parser.add_argument("--req_rep_dummy", default="False")
+    parser.add_argument("--log_sent_bytes", default="False")
 
     args = parser.parse_args()
 
@@ -124,7 +125,10 @@ if __name__ == "__main__":
             diffs = []
             while total_sent != count:
                 pub_time = dt.now()
-                #print(f'sent {len(serialized_message)} bytes.', flush=True)
+
+                if args.log_sent_bytes == "True":
+                    print(f'sent {len(serialized_message)} bytes.', flush=True)
+                    
                 publisher.send(serialized_message)
                 if subscriber:
                     received = subscriber.receive(PubSubMode.Wait)

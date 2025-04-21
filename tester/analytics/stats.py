@@ -3,7 +3,8 @@ import numpy as np
 import matplotlib.pyplot as plt
 import seaborn as sns
 from scipy import stats
-import tikzplotlib as tkz
+from scipy.stats import ttest_ind
+from scipy.stats import mannwhitneyu
 
 def remove_outliers(values, threshold=3):
     z_scores = np.abs(stats.zscore(values, nan_policy='omit'))
@@ -72,15 +73,15 @@ def plot_distribution_graph(filename):
     print(f'Mean and standard deviation of first column: {mean}, {std}')
     
     # Calculate the number of bins using Freedman-Diaconis Rule
-    IQR = np.percentile(filtered_values, 75) - np.percentile(filtered_values, 25)
-    bin_width = 2 * IQR / len(filtered_values) ** (1/3)
+    iqr = np.percentile(filtered_values, 75) - np.percentile(filtered_values, 25)
+    bin_width = 2 * iqr / len(filtered_values) ** (1/3)
     num_bins = int(np.ceil((filtered_values.max() - filtered_values.min()) / bin_width))
     
     ax = sns.histplot(filtered_values, kde=True, bins=num_bins, color="yellowgreen")
     ax.lines[0].set_color('green')
-    plt.axvline(mean, color='orange', linestyle='--', label=f'μ = {np.round(mean, 2)} ms')
-    plt.axvline(mean - std, color='red', linestyle=':', label=f'- σ = {np.round(mean - std, 2)} ms')
-    plt.axvline(mean + std, color='red', linestyle=':', label=f'+ σ = {np.round(mean + std, 2)} ms')
+    plt.axvline(mean, color='red', linestyle='--', label=f'μ = {np.round(mean, 2)} ms')
+    plt.axvline(mean - std, color='orange', linestyle=':', label=f'σ = {np.round(std, 2)} ms')
+    plt.axvline(mean + std, color='orange', linestyle=':', label=f'')
     plt.xlabel("Pipeline Latency (ms)")
     plt.ylabel("Frequency")
 
@@ -104,10 +105,56 @@ def plot_linear_graph(filename):
     plt.legend()
     plt.show()
 
+
+def t_test(first_filename, second_filename):
+    first_filtered_values, first_values, first_mean, first_std = get_values_and_stats_from_file(first_filename, True)
+    second_filtered_values, second_values, second_mean, second_std = get_values_and_stats_from_file(second_filename, True)
+    t_stat, p_value = ttest_ind(first_filtered_values, second_filtered_values, equal_var=True)
+    print(f'Mean and standard deviation of {first_filename}: {first_mean}, {first_std}')
+    print(f'Mean and standard deviation of {second_filename}: {second_mean}, {second_std}')
+    print(f'T-statistic: {t_stat}, P-value: {p_value}')
+    if p_value < 0.05:
+        print("The means are significantly different.")
+    else:
+        print("The means are not significantly different.")
+
+    
+def u_test(first_filename, second_filename):
+    first_filtered_values, first_values, first_mean, first_std = get_values_and_stats_from_file(first_filename, True)
+    second_filtered_values, second_values, second_mean, second_std = get_values_and_stats_from_file(second_filename, True)
+    u_stat, p_value = mannwhitneyu(first_filtered_values, second_filtered_values, alternative='two-sided')
+
+    print(f'Mean and standard deviation of {first_filename}: {first_mean}, {first_std}')
+    print(f'Mean and standard deviation of {second_filename}: {second_mean}, {second_std}')
+    print(f'U-statistic: {u_stat}, P-value: {p_value}')
+    if p_value < 0.05:
+        print("The means are significantly different.")
+    else:
+        print("The means are not significantly different.")
+
+def cliffs_delta(first_filename, second_filename):
+    first_filtered_values, first_values, first_mean, first_std = get_values_and_stats_from_file(first_filename, True)
+    second_filtered_values, second_values, second_mean, second_std = get_values_and_stats_from_file(second_filename, True)
+
+    # Calculate Cliff's delta
+    n1 = len(first_filtered_values)
+    n2 = len(second_filtered_values)
+    delta = (np.sum(np.sign(np.subtract.outer(first_filtered_values, second_filtered_values))) / (n1 * n2))
+    print(f'Cliff\'s delta: {delta}')
+    if delta < 0.147:
+        print("The effect size is negligible.")
+    elif delta < 0.33:
+        print("The effect size is small.")
+    elif delta < 0.474:
+        print("The effect size is medium.")
+    else:
+        print("The effect size is large.")
+
 if len(sys.argv) == 3:
     first_filename = sys.argv[1]
     second_filename = sys.argv[2]
-    plot_error_bar_graph(first_filename, second_filename)
+    # plot_error_bar_graph(first_filename, second_filename)
+    cliffs_delta(first_filename, second_filename)
 elif len(sys.argv) == 2:
     filename = sys.argv[1]    
     plot_distribution_graph(filename)

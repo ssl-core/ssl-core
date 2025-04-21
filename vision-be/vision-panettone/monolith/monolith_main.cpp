@@ -29,9 +29,102 @@ using RobotIdColor = protocols::common::RobotId::Color;
 using robocin::ZmqDatagram;
 using robocin::ZmqPublisherSocket;
 using robocin::ZmqSubscriberSocket;
+
 enum ZMQProtocol {
   IPC,
   INPROC
+};
+
+struct SharedData {
+  std::mutex mutex;
+  std::condition_variable cv;
+  std::string bytes;
+};
+
+std::unordered_map<std::string, SharedData> global_data = []() {
+  std::unordered_map<std::string, SharedData> result;
+  result.reserve(54'321); // to avoid rehash on initialization.
+
+  return result;
+}();
+
+class PubSocket {
+ public:
+  void bind(std::string_view address) {
+    addr_ = std::string(address);
+    if (address.starts_with("ipc")) {
+      zmq_pub_->bind(address);
+    } else {
+      std::cout << "Using thread communication!" << std::endl;
+    }
+  }
+
+  void send(std::string_view topic, std::string_view message) {
+    if (zmq_pub_ != nullptr) {
+      zmq_pub_ = std::make_unique<ZmqPublisherSocket>();
+      zmq_pub_->send(topic, message);
+    } else {
+      auto& data = global_data[std::format("{}/{}", addr_, topic)];
+      {
+        std::lock_guard locker(data.mutex);
+        data.bytes = message;
+      }
+
+      data.cv.notify_one();
+    }
+  }
+
+  void close() {
+    if (zmq_pub_ != nullptr) {
+      zmq_pub_->close();
+    }
+  }
+
+ private:
+  std::string addr_;
+  std::unique_ptr<ZmqPublisherSocket> zmq_pub_;
+};
+
+class SubSocket {
+ public:
+  void connect(std::string_view address, std::string_view topic) {
+    addr_ = std::string(address);
+    topic_ = std::string(topic);
+
+    if (address.starts_with("ipc")) {
+      zmq_sub_ = std::make_unique<ZmqSubscriberSocket>();
+      zmq_sub_->connect(address, std::span{&topic, 1});
+    } else {
+      std::cout << "Using thread communication!" << std::endl;
+    }
+  }
+
+  robocin::ZmqDatagram receive() {
+    if (zmq_sub_ != nullptr) {
+      return zmq_sub_->receive();
+    } else {
+      auto& data = global_data[std::format("{}/{}", addr_, topic_)];
+
+      std::unique_lock lk(data.mutex);
+      data.cv.wait(lk, [&] { return !data.bytes.empty(); });
+
+      auto result = std::move(data.bytes);
+      data.bytes.clear();
+
+      return {.topic = topic_, .message = result};
+    }
+  }
+
+  void close() {
+    if (zmq_sub_ != nullptr) {
+      zmq_sub_->close();
+    }
+  }
+
+ private:
+  std::string addr_;
+  std::string topic_;
+  std::unique_ptr<ZmqSubscriberSocket> zmq_sub_;
 };
 
 std::string formatAddress(ZMQProtocol protocol, const std::string& address) {
@@ -66,8 +159,8 @@ struct ModuleInfo {
   int id;
   float time_to_wait_ms = 0.0F;
 
-  std::unique_ptr<ZmqSubscriberSocket> sub;
-  std::unique_ptr<ZmqPublisherSocket> pub;
+  std::unique_ptr<SubSocket> sub;
+  std::unique_ptr<PubSocket> pub;
 
   std::mutex mutex;
   std::condition_variable cv;
@@ -96,8 +189,8 @@ void subscriberRun(ModuleInfo& info) {
   }
 }
 
-ZmqSubscriberSocket makeSubscriberSocket(int id, ZMQProtocol protocol);
-ZmqPublisherSocket makePublisherSocket(int id, ZMQProtocol protocol);
+SubSocket makeSubscriberSocket(int id, ZMQProtocol protocol);
+PubSocket makePublisherSocket(int id, ZMQProtocol protocol);
 void makeModule(int id, float time_to_wait_ms, ZMQProtocol protocol);
 Frame mapWrapperPacketToFrame(const SSL_WrapperPacket& packet);
 void mockedSleep(float time_to_wait_ms);
@@ -177,8 +270,8 @@ void makeModule(int id, float time_to_wait_ms, ZMQProtocol protocol) {
   ModuleInfo info;
   info.id = id;
   info.time_to_wait_ms = time_to_wait_ms;
-  info.sub = std::make_unique<ZmqSubscriberSocket>(makeSubscriberSocket(id, protocol));
-  info.pub = std::make_unique<ZmqPublisherSocket>(makePublisherSocket(id, protocol));
+  info.sub = std::make_unique<SubSocket>(makeSubscriberSocket(id, protocol));
+  info.pub = std::make_unique<PubSocket>(makePublisherSocket(id, protocol));
 
   std::jthread published_thread(publisherRun, std::ref(info));
 
@@ -221,26 +314,26 @@ void makeModule(int id, float time_to_wait_ms, ZMQProtocol protocol) {
 //
 //
 //
-ZmqSubscriberSocket makeSubscriberSocket(int id, ZMQProtocol protocol) {
-  ZmqSubscriberSocket sub;
+SubSocket makeSubscriberSocket(int id, ZMQProtocol protocol) {
+  SubSocket sub;
 
   if (id == 0) {
     static constexpr std::string_view k3rdPartyAddress = "ipc:///tmp/gateway-pub-th-parties.ipc";
     static constexpr std::string_view k3rdPartyTopic = "vision-third-party";
 
-    sub.connect(k3rdPartyAddress, std::span{&k3rdPartyTopic, 1});
+    sub.connect(k3rdPartyAddress, k3rdPartyTopic);
     // std::cout << std::format("Module {} receiving from third party.", id) << std::endl;
   } else {
     std::string address = formatAddress(protocol, std::format("channel{}", id - 1));
     // std::cout << std::format("Module {} receiving from Module {}.", id, id - 1) << std::endl;
-    sub.connect(address, std::span{&kTopic, 1});
+    sub.connect(address, kTopic);
   }
 
   return sub;
 }
 
-ZmqPublisherSocket makePublisherSocket(int id, ZMQProtocol protocol) {
-  ZmqPublisherSocket pub;
+PubSocket makePublisherSocket(int id, ZMQProtocol protocol) {
+  PubSocket pub;
 
   if (id == number_of_modules - 1) {
     std::string address = std::format("ipc:///tmp/channel{}.ipc", id);
