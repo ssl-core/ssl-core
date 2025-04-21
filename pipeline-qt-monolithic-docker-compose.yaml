@@ -23,6 +23,6 @@ services:
       context: .
       dockerfile: ./tester/.devcontainer/Dockerfile
     working_dir: /tester
-    command: ["python", "tester.py", "--input_file", "vision-third-party-to-monolith.json", "--log_sent_bytes", "True"]
+    command: ["python", "tester.py", "--input_file", "vision-third-party-to-monolith.json"]
     volumes:
       - /tmp:/tmp           
